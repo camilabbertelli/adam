@@ -1,0 +1,155 @@
+body{
+    background-color: #FFEFD5;
+}
+
+
+.video-background {
+    position: relative;
+    top: -20vh;
+    height: 90vh;
+    width: 100%;
+}
+
+video {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    object-fit: cover;
+}
+
+.row.home {
+    width: 100%;
+    position: absolute;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    top: 0px;
+}
+
+.section {
+    align-items: left;
+    padding-left: 10%;
+    padding-right: 10%;
+    color: white;
+}
+
+.title.big {
+    font-family: "Celtic";
+    font-size: 2.5em;
+}
+
+.button-home {
+    font-family: "Celtic";
+    display: inline-block;
+    outline: none;
+    font-size: large;
+    border-radius: 500px;
+    transition-property: background-color, border-color, color, box-shadow, filter;
+    transition-duration: .3s;
+    border: none;
+    min-width: 160px;
+    text-align: center;
+    padding: 4%;
+    color: #000000;
+    background-color: #FFF8ED;
+}
+
+.button-home:hover {
+    background-color: #d4cec4;
+}
+
+button a {
+    text-decoration: none;
+    color: black;
+}
+
+.row.doubleArrow {
+    width: 100%;
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    top: 85%;
+}
+
+.hidden {
+    opacity: 0;
+    transition: all 2s;
+}
+
+.show {
+    opacity: 1;
+}
+
+
+.show.scroll-bounce { 
+    opacity: 1;
+    animation: bounce 2s ease-in-out; 
+} 
+
+.hidden.aboutUs{
+    opacity: 0;
+    filter: blur(5px);
+    transition: all 2s;
+}
+
+.show.aboutUs{
+    opacity: 1;
+    filter: blur(0);
+}
+
+.aboutSection{
+    padding: 50px;
+    color: black;
+    background-color: #D9AB96;
+}
+
+.gallery{
+    align-items: center;
+    padding: 2% 20%;
+    background-color: FFEFD5;
+}
+
+.aboutUs-title{
+    font-family: "Celtic";
+}
+
+.aboutUs{
+    align-items: left;
+    padding: 2% 10%
+}
+
+.border-end{
+    border-right: var(--bs-border-width) var(--bs-border-style) black !important;
+}
+
+
+.images{
+    width: 288px; /* You can set the dimensions to whatever you want */
+    height: 200px;
+    object-fit: cover;
+    padding: 15px 5px;
+}
+
+@media(prefers-reduced-motion){
+    .hidden{
+        transition: none;
+    }
+}
+
+@keyframes bounce { 
+    0%, 
+    20%, 
+    50%, 
+    80%, 
+    100% { 
+        transform: translateY(0); 
+    } 
+
+    40% { 
+        transform: translateY(-30px); 
+    } 
+
+    60% { 
+        transform: translateY(-15px); 
+    } 
+} 

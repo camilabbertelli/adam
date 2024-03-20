@@ -1,0 +1,25 @@
+@font-face {
+  font-family: 'Celtic';
+  src: local('Celtic'), url(./assets/fonts/celtic.TTF) format('truetype');
+}
+
+@font-face {
+  font-family: 'EB Garamond';
+  src: local('EB Garamond'), url(./assets/fonts/EBGaramond-Medium.ttf) format('truetype');
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'EB Garamond', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 18px;
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
