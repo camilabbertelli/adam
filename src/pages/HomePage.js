@@ -20,7 +20,7 @@ const GalleryImage = ({src, title, description}) => {
             <div className="bg-image hover-overlay" data-mdb-ripple-color="light">
                 <img className="images" alt="medieval-img" src={require(`./../assets/images/gallery/${src}.png`)}/>
                 <div className='modal fade' id={title.replace(/\s+/g, '')} tabIndex="-1" aria-hidden="true">
-                    <div className='modal-dialog justify-content-center omg'>
+                    <div className='modal-dialog'>
                         <div className='modal-body'>
                             <div className="card">
                                 <img alt="medieval-img" src={require(`./../assets/images/gallery/${src}.png`)} className='card-img-top d-block w-100'/>
