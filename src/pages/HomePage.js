@@ -1,4 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/js/src/modal'
+
+import 'mdb-ui-kit/css/mdb.min.css';
 import '../styles/Home.css';
 
 import { Link } from "react-router-dom";
@@ -7,8 +10,65 @@ import { useEffect } from 'react';
 import videoBg from '../assets/video-background.mp4'
 import doubleArrow from "../assets/images/doubleArrow.png"
 import logos from "../assets/images/logos.png"
-import test from "../assets/images/test.png"
 
+import gallery from './gallery';
+
+const GalleryImage = ({src, title, description}) => {
+    return (
+        <>
+        <div className='col'>
+            <div className="bg-image hover-overlay" data-mdb-ripple-color="light">
+                <img className="images" alt="medieval-img" src={require(`./../assets/images/gallery/${src}.png`)}/>
+                <div className='modal fade' id={title.replace(/\s+/g, '')} tabIndex="-1" aria-hidden="true">
+                    <div className='modal-dialog justify-content-center omg'>
+                        <div className='modal-body'>
+                            <div className="card">
+                                <img alt="medieval-img" src={require(`./../assets/images/gallery/${src}.png`)} className='card-img-top d-block w-100'/>
+                                <div className="card-body card-click">
+                                    <h4 className="title">{title}</h4>
+                                    <p>{description}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div data-bs-toggle="modal" data-bs-target={`#${title.replace(/\s+/g, '')}`} className="mask text-light d-flex justify-content-center flex-column text-left card-img">
+                    <h4 className="title">{title}</h4>
+                    <p>{description}</p>
+                </div>
+            </div>
+        </div>
+        </>
+    )
+}
+
+const GalleryImages = ({currentRow}) => {
+    
+    let desiredRows = 3;
+    let content = [];
+    
+    let factor = (gallery.length/desiredRows);
+    for (let index = currentRow * (factor + 1); index < (currentRow + 1) * (factor + 1); index++) {
+        const element = gallery[index];
+        if (element) 
+        content.push(
+            <GalleryImage src={element.src} title={element.title} description={element.description}/>
+        )
+    }
+
+    return content;
+}
+
+const Gallery = () => {
+    let desiredRows = 3;
+    let content = [];
+
+    for (let row = 0; row < desiredRows; row++){
+        content.push(<div className='row'><GalleryImages currentRow={row}/></div>)
+    }
+        
+    return content;
+}
 
 const HomePage = () => {
     useEffect(() => {
@@ -40,13 +100,7 @@ const HomePage = () => {
                     <button type="button" className="button-home"><Link to="/dashboard">Discover more</Link></button>
             </div>
             <div className="col section">
-                            
-                <script src="http://d3js.org/d3.v4.js"></script>
-                <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-                <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
-
-                <center><svg id="my_dataviz" width="400" height="300"></svg></center>
-
+                        
             </div>
         </div>
         <div className='row doubleArrow hidden scroll-bounce'>
@@ -59,29 +113,8 @@ const HomePage = () => {
         <div id='gallery' className=' row gallery hidden align-items-center'>
             <center>
             <div className='col'>
-                <h1 className='aboutUs-title'>Our gallery</h1>
-                <div className='row'>
-                    <div className='col col-4'>
-                        <img className="images" alt="medieval-img" src={test}/>
-                    </div>
-                    <div className='col col-4'> 
-                        <img className="images" alt="medieval-img" src={test}/>
-                    </div>
-                    <div className='col col-4'>
-                        <img className="images" alt="medieval-img" src={test}/>
-                    </div>
-                </div>
-                <div className='row'>
-                    <div className='col col-4'>
-                        <img className="images" alt="medieval-img" src={test}/>
-                    </div>
-                    <div className='col col-4'>
-                        <img className="images" alt="medieval-img" src={test}/>
-                    </div>
-                    <div className='col col-4'>
-                        <img className="images" alt="medieval-img" src={test}/>
-                    </div>
-                </div>
+                <h1 className='title'>Our gallery</h1>
+                <Gallery/>
             </div>
             </center>
         </div>

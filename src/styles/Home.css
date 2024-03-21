@@ -1,5 +1,6 @@
 body{
     background-color: #FFEFD5;
+    font-family: "EB Garamond";
 }
 
 
@@ -109,7 +110,7 @@ button a {
     background-color: FFEFD5;
 }
 
-.aboutUs-title{
+.title{
     font-family: "Celtic";
 }
 
@@ -128,6 +129,22 @@ button a {
     height: 200px;
     object-fit: cover;
     padding: 15px 5px;
+}
+
+.card-img{
+    background-color: rgba(0, 0, 0, 0.5);
+    text-align: left;
+    padding: 5%;
+}
+
+.card-click{
+    background-color: #FFEFD5;
+    text-align: left;
+    padding: 5%;
+}
+
+.omg{
+    vertical-align: middle;
 }
 
 @media(prefers-reduced-motion){

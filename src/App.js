@@ -15,14 +15,14 @@ function App() {
       <BrowserRouter>
             <div className="App">
                 <NavBar/>
-                <div>
-                    <Routes >
-                        <Route path="/" element={<HomePage/>} />
-                        <Route path="/dashboard" element={<DashboardPage/>} />
-                        <Route path="/library" element={<LibraryPage/>} />
-                        <Route path="*" element={<NotFoundPage/>}/>
-                    </Routes>
-                </div>
+                  <div>
+                      <Routes >
+                          <Route path="/" element={<HomePage/>} />
+                          <Route path="/dashboard" element={<DashboardPage/>} />
+                          <Route path="/library" element={<LibraryPage/>} />
+                          <Route path="*" element={<NotFoundPage/>}/>
+                      </Routes>
+                  </div>
             </div>
         </BrowserRouter>
     </div>
