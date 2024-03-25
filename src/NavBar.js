@@ -16,13 +16,28 @@ const NavBar = () => {
     
     const {t, i18n} = useTranslation();
 
-    const [style, setStyle] = useState("dropdown-content-hide");
+    const [styleDropdown, setStyleDropdown] = useState("dropdown-content-hide");
+    
+    const [styleLanguage_en, setStyleLanguage_en] = useState("flagbutton flagselected");
+    const [styleLanguage_pt, setStyleLanguage_pt] = useState("flagbutton");
 
     const changeStyle = () => {
-        if (style !== "dropdown-content-hide") setStyle("dropdown-content-hide");
-        else setStyle("dropdown-content-show");
+        if (styleDropdown !== "dropdown-content-hide") setStyleDropdown("dropdown-content-hide");
+        else setStyleDropdown("dropdown-content-show");
     };
 
+
+    const changeLng = (lng) => {
+        i18n.changeLanguage(lng);
+
+        setStyleLanguage_en("flagbutton");
+        setStyleLanguage_pt("flagbutton");
+
+        if (lng === "en") setStyleLanguage_en("flagbutton flagselected");
+        if (lng === "pt") setStyleLanguage_pt("flagbutton flagselected");
+
+        setStyleDropdown("dropdown-content-hide");
+    }
 
     return (
         <nav className="sticky-top">
@@ -38,12 +53,12 @@ const NavBar = () => {
             <div className="languages">
                 <div className='dropdown'>
                     <button className='dropbtn'><img className="icon-language" src={languages} alt="language selection" onClick={changeStyle} /></button>
-                    <div className={style}>
-                        <button className={`flagbutton ${(i18n.language === 'en' ? "flagselected" : null)}`} onClick={() => i18n.changeLanguage("en")}>
+                    <div className={styleDropdown}>
+                        <button className={styleLanguage_en} onClick={() => changeLng("en")}>
                             <img className="flag" src={ukflag} alt="language uk" /> 
                             <p>English</p>
                         </button>
-                        <button className={`flagbutton ${(i18n.language === 'pt' ? "flagselected" : null)}`} onClick={() => i18n.changeLanguage("pt")}>  
+                        <button className={styleLanguage_pt} onClick={() => changeLng("pt")}>  
                             <img className="flag" src={ptflag} alt="language pt"/>
                             <p>Português</p>
                         </button>
