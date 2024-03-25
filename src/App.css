@@ -9,12 +9,16 @@
 }
 
 html, body {
-  scroll-behavior: smooth;
-  max-width: 100%;
-  overflow-x: hidden;
+  overflow: unset;
 }
 
 body {
   font-family: 'EB Garamond', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 18px;
+}
+
+.pageBody{
+  scroll-behavior: smooth;
+  max-width: 100%;
+  overflow-x: hidden;
 }

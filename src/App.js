@@ -10,12 +10,13 @@ import DashboardPage from './pages/DashboardPage';
 import LibraryPage from './pages/LibraryPage';
 
 function App() {
+  
   return (
     <div className="App">
       <BrowserRouter>
             <div className="App">
                 <NavBar/>
-                  <div>
+                  <div className='pageBody'>
                       <Routes >
                           <Route path="/" element={<HomePage/>} />
                           <Route path="/dashboard" element={<DashboardPage/>} />

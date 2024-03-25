@@ -83,7 +83,6 @@ button a {
     opacity: 1;
 }
 
-
 .show.scroll-bounce { 
     opacity: 1;
     animation: bounce 2s ease-in-out; 
@@ -126,30 +125,29 @@ button a {
     border-right: var(--bs-border-width) var(--bs-border-style) black !important;
 }
 
-
 .images{
-    width: 288px; /* You can set the dimensions to whatever you want */
+    width: 288px;
     height: 200px;
     object-fit: cover;
     padding: 15px 5px;
+}
+
+.smaller{
+    font-size: 1.2dvw;
 }
 
 .card-img{
     background-color: rgba(0, 0, 0, 0.5);
     text-align: left;
     padding: 5%;
+    cursor: pointer;
+    font-size: 0.8dvw;
 }
 
 .card-click{
     background-color: #FFEFD5;
     text-align: left;
     padding: 5%;
-}
-
-.omg{
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 @media(prefers-reduced-motion){

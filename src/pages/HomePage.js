@@ -33,7 +33,7 @@ const GalleryImage = ({src, title, description}) => {
                     </div>
                 </div>
                 <div data-bs-toggle="modal" data-bs-target={`#${title.replace(/\s+/g, '')}`} className="mask text-light d-flex justify-content-center flex-column text-left card-img">
-                    <h4 className="title">{title}</h4>
+                    <h4 className="title smaller">{title}</h4>
                     <p>{description}</p>
                 </div>
             </div>
@@ -120,7 +120,7 @@ const HomePage = () => {
         </div>
         <div className=' row aboutSection hidden align-items-center'>
             <div className='col col-7 border-end aboutUs'>
-                <h1 className='aboutUs-title'>About us</h1>
+                <h1 className='title'>About us</h1>
                 <p>This dashboard website is the product of an interdisciplinary project designed with the purpose of lorem ipsum dolor sit amet,
                     consectetur adipiscing elit. Suspendisse ac iaculis augue. Integer sit amet pulvinar lectus. Vestibulum ante ipsum primis in faucibus orci 
                     luctus et ultrices posuere cubilia curae; Aliquam eu aliquam leo, non pretium elit. Fusce nec tempus mauris. In hac habitasse platea dictumst. 
