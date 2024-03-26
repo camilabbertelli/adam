@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/js/src/modal'
 
 import 'mdb-ui-kit/css/mdb.min.css';
-import '../../styles/Home.css';
+import '../../styles/GalleryChart.css';
 
 import gallery from './../../assets/gallery.js';
 

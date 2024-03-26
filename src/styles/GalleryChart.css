@@ -1,0 +1,95 @@
+.row{
+    -bs-gutter-x: 0rem;
+}
+
+.modal-dialog{
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    align-content: space-between;
+}
+
+.modal-body{
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+}
+
+
+.gallery{
+    width: 100%;
+    align-items: center;
+    padding: 2% 20%;
+    background-color: #FFEFD5;
+}
+
+.title{
+    font-family: "Celtic";
+}
+
+.mask{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 288px;
+    height: 185px;
+    padding: 15px 5px;
+    overflow: hidden;
+    background-attachment: fixed;
+}
+
+.images{
+    width: 288px;
+    height: 200px;
+    object-fit: cover;
+    padding: 15px 5px;
+}
+
+.smaller{
+    font-size: 1.2dvw;
+}
+
+.card-img{
+    background-color: rgba(0, 0, 0, 0.5);
+    text-align: left;
+    padding: 5%;
+    cursor: pointer;
+    font-size: 0.8dvw;
+}
+
+.card-click{
+    background-color: #FFEFD5;
+    text-align: left;
+    padding: 5%;
+}
+
+@media(prefers-reduced-motion){
+    .hidden{
+        transition: none;
+    }
+}
+
+@keyframes bounce { 
+    0%, 
+    20%, 
+    50%, 
+    80%, 
+    100% { 
+        transform: translateY(0); 
+    } 
+
+    40% { 
+        transform: translateY(-30px); 
+    } 
+
+    60% { 
+        transform: translateY(-15px); 
+    } 
+} 

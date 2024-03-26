@@ -124,17 +124,6 @@ button a {
     background-color: #D9AB96;
 }
 
-.gallery{
-    width: 100%;
-    align-items: center;
-    padding: 2% 20%;
-    background-color: FFEFD5;
-}
-
-.title{
-    font-family: "Celtic";
-}
-
 .aboutUs{
     align-items: left;
     padding: 2% 10%
@@ -144,51 +133,6 @@ button a {
     border-right: var(--bs-border-width) var(--bs-border-style) black !important;
 }
 
-.images{
-    width: 288px;
-    height: 200px;
-    object-fit: cover;
-    padding: 15px 5px;
+.title{
+    font-family: "Celtic";
 }
-
-.smaller{
-    font-size: 1.2dvw;
-}
-
-.card-img{
-    background-color: rgba(0, 0, 0, 0.5);
-    text-align: left;
-    padding: 5%;
-    cursor: pointer;
-    font-size: 0.8dvw;
-}
-
-.card-click{
-    background-color: #FFEFD5;
-    text-align: left;
-    padding: 5%;
-}
-
-@media(prefers-reduced-motion){
-    .hidden{
-        transition: none;
-    }
-}
-
-@keyframes bounce { 
-    0%, 
-    20%, 
-    50%, 
-    80%, 
-    100% { 
-        transform: translateY(0); 
-    } 
-
-    40% { 
-        transform: translateY(-30px); 
-    } 
-
-    60% { 
-        transform: translateY(-15px); 
-    } 
-} 
