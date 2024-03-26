@@ -1,0 +1,29 @@
+.background {
+  fill: none;
+  pointer-events: all;
+}
+
+.viz{
+  position:relative;
+  padding-top: 10%;
+}
+
+#countries {
+  fill: none;
+  stroke: black;
+  stroke-linejoin: round;
+  stroke-width: 0.5px;
+}
+
+#countries .active {
+  display: none;
+}
+
+.country:hover {
+  fill: #b89281
+}
+
+
+.mark:hover {
+  fill: #6d2c0e
+}

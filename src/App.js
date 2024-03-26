@@ -4,10 +4,11 @@ import NavBar from './NavBar';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
-import HomePage from './pages/HomePage';
+import HomePage from './pages/Home/HomePage';
 import NotFoundPage from './pages/NotFoundPage';
 import DashboardPage from './pages/DashboardPage';
 import LibraryPage from './pages/LibraryPage';
+import DatabasePage from './pages/DatabasePage';
 
 function App() {
   
@@ -20,6 +21,7 @@ function App() {
                       <Routes >
                           <Route path="/" element={<HomePage/>} />
                           <Route path="/dashboard" element={<DashboardPage/>} />
+                          <Route path="/database" element={<DatabasePage/>} />
                           <Route path="/library" element={<LibraryPage/>} />
                           <Route path="*" element={<NotFoundPage/>}/>
                       </Routes>

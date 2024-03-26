@@ -47,6 +47,7 @@ const NavBar = () => {
             <ul className="flex-container">
                 <li><NavLink to="/" className={(navData) => (navData.isActive ? "selected" : null)}>{t("navbar_home")}</NavLink></li>
                 <li><NavLink to="/dashboard" className={(navData) => (navData.isActive ? "selected" : null)}>{t("navbar_dashboard")}</NavLink></li>
+                <li><NavLink to="/database" className={(navData) => (navData.isActive ? "selected" : null)}>{t("navbar_database")}</NavLink></li>
                 <li><NavLink to="/library" className={(navData) => (navData.isActive ? "selected" : null)}>{t("navbar_library")}</NavLink></li>
             </ul>
             </center>

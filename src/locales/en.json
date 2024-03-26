@@ -1,5 +1,10 @@
 {
     "navbar_home": "Home",
     "navbar_dashboard": "Dashboard",
-    "navbar_library": "Library"
+    "navbar_database": "Database",
+    "navbar_library": "Library",
+    "adam": "Analysis Dashboard for the Anatomy in the Middle Ages",
+    "btnDiscover": "Discover more",
+    "titleGallery": "Our Gallery",
+    "titleAboutUs": "About us"
 }

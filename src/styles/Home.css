@@ -20,7 +20,11 @@ video {
     object-fit: fill;
 }
 
-.row.home {
+div.home {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    align-items: flex-end;
     width: 100%;
     position: absolute;
     height: 110vh;
@@ -30,10 +34,25 @@ video {
 }
 
 .section {
+    
     align-items: left;
     padding-left: 10%;
     padding-right: 10%;
+    width: 50%;
     color: white;
+}
+
+.mini-section {
+    align-items: left;
+    padding-bottom: 10px;
+    height: 30%;
+    color: white;
+}
+
+div.section.right{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .title.big {

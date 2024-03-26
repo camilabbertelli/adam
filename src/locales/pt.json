@@ -1,5 +1,10 @@
 {
     "navbar_home": "Início",
-    "navbar_dashboard": "Dashboard",
-    "navbar_library": "Biblioteca"
+    "navbar_dashboard": "Painel",
+    "navbar_database": "Database",
+    "navbar_library": "Biblioteca",
+    "adam": "Painel de Análise para a Anatomia na Idade Média",
+    "btnDiscover": "Descubra mais",
+    "titleGallery": "Nossa Galeria",
+    "titleAboutUs": "Sobre nós"
 }
