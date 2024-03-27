@@ -29,7 +29,7 @@
     padding-bottom: 0;
 }
 
-.timeline {
+div.timeline {
     padding-bottom: 10px;
 }
 
@@ -85,6 +85,6 @@ div.image-component {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100%;
-    font-size: small;
+    font-size: 12px;
     text-align: center;
 }

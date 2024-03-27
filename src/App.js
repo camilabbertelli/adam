@@ -10,7 +10,12 @@ import DashboardPage from './pages/DashboardPage';
 import LibraryPage from './pages/LibraryPage';
 import DatabasePage from './pages/DatabasePage';
 
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+import { pageNavigationPlugin } from '@react-pdf-viewer/page-navigation';
+
 function App() {
+  const defaultLayoutPluginInstance = defaultLayoutPlugin();
+  const pageNavigationPluginInstance = pageNavigationPlugin();
   
   return (
     <div className="App">
@@ -22,7 +27,7 @@ function App() {
                           <Route path="/" element={<HomePage/>} />
                           <Route path="/dashboard" element={<DashboardPage/>} />
                           <Route path="/database" element={<DatabasePage/>} />
-                          <Route path="/library" element={<LibraryPage/>} />
+                          <Route path="/library" element={<LibraryPage layout={defaultLayoutPluginInstance}/>} />
                           <Route path="*" element={<NotFoundPage/>}/>
                       </Routes>
                   </div>
