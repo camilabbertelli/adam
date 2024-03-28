@@ -1,14 +1,12 @@
-body{
+body {
+    font-family: 'EB Garamond';
+    font-size: 18px;
     background-color: #FFEFD5;
-    font-family: "EB Garamond";
-    font-size: 1dvw;
-}
-
-
+  }
+  
 .video-background {
     position: relative;
-    top: -0dvh;
-    height: 90dvh;
+    height: calc(100dvh - var(--nav-bar-height));
     width: 100%;
 }
 
@@ -24,7 +22,7 @@ div.home {
     display: flex;
     flex-direction: row;
     align-content: center;
-    align-items: flex-end;
+    align-items: center;
     width: 100%;
     position: absolute;
     height: 110vh;
@@ -122,6 +120,7 @@ button a {
     padding: 50px;
     color: black;
     background-color: #D9AB96;
+    align-items: center;
 }
 
 .aboutUs{

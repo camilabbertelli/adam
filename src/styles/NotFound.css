@@ -1,8 +1,88 @@
+.not-found{
+    background-color: black;
+}
 
-background {
+.not-found-background {
+    position: relative;
+    height: calc(100dvh - var(--nav-bar-height));
+    width: 100%;
+    opacity: 0.2;
+}
+
+.not-found-image {
     margin: 0;
     padding: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100dvh - var(--nav-bar-height));
     object-fit: cover;
+}
+
+.not-found-cover{
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+    background-color: #1c1c1cd7;
+
+    width: 72dvw;
+    height: 60dvh;
+
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    color: white;
+}
+
+.not-found-top{
+    display: grid;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    background-color: #4a1515bd;
+    width: 100%;
+    height: 35%;
+    font-family: "Celtic";
+}
+
+h1.lost {
+  font-size: 80px;  
+}
+
+.not-found-bottom{
+    display: grid;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    width: 100%;
+    height: 65%;
+}
+
+
+.button-lost {
+    font-family: "Celtic";
+    display: inline-block;
+    outline: none;
+    font-size: 25px;
+    border-radius: 500px;
+    transition-property: background-color, border-color, color, box-shadow, filter;
+    transition-duration: .3s;
+    border: none;
+    min-width: 160px;
+    text-align: center;
+    padding: 2% 4%;
+    background-color: #4A1515;
+    color: white;
+}
+
+.button-lost:hover {
+    background-color: #320e0e;
+}
+
+button.button-lost a {
+    text-decoration: none;
+    color: white;
 }

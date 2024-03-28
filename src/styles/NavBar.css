@@ -1,8 +1,13 @@
+:root{
+    --nav-bar-height : 145px;
+}
+
 nav {
     position: sticky;
     text-align: center;
     top: 0;
     width: 100%;
+    height: var(--nav-bar-height);
     background: #4A1515;
     color: white;
     font-family: "Celtic";
@@ -13,20 +18,21 @@ nav ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
-    
 }
 
 nav li {
-    width: 300px;
     display: inline-block;
+    width: 20%;
     padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 nav a {
     text-decoration: none;
     color: #805956;
     font-weight: bold;
-    padding: 10px 100px;
+    padding: 10px 20%;
     font-size: 1.25rem;
 }
 

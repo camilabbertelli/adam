@@ -6,5 +6,11 @@
     "adam": "Analysis Dashboard for the Anatomy in the Middle Ages",
     "btnDiscover": "Discover more",
     "titleGallery": "Our Gallery",
-    "titleAboutUs": "About us"
+    "titleAboutUs": "About us",
+
+
+    "lost": "Lost?",
+    "not-found": "404: Page Not Found!",
+    "not-found-text": "The page you are looking for might be someplace else... or never existed.",
+    "not-found-button": "Go to Home"
 }

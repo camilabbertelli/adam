@@ -6,5 +6,11 @@
     "adam": "Painel de Análise para a Anatomia na Idade Média",
     "btnDiscover": "Descubra mais",
     "titleGallery": "Nossa Galeria",
-    "titleAboutUs": "Sobre nós"
+    "titleAboutUs": "Sobre nós",
+
+
+    "lost": "Perdido?",
+    "not-found": "404: Página não encontrada!",
+    "not-found-text": "A página que você está à procura pode estar em outro local... ou nunca ter existido.",
+    "not-found-button": "Ir para Início"
 }

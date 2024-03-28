@@ -13,6 +13,8 @@ import videoBg from '../../assets/video-background.mp4'
 import doubleArrow from "../../assets/images/doubleArrow.png"
 import logos from "../../assets/images/logos.png"
 
+import codices from '../../assets/codices.js';
+
 import MapChart from './MapChart'
 import TimelineChart from './TimelineChart.js';
 import GalleryChart from './GalleryChart.js';
@@ -42,7 +44,7 @@ const HomePage = () => {
         <div className="video-background">
             <video src={videoBg} autoPlay loop muted/>
         </div>
-        <div className='home align-items-center hidden'>
+        <div className='home hidden'>
             <div className="section">
                 <h1 className='title big'>{t("adam")}</h1>
                 <p>Discover all the lorem ipsum aplium pumuni orieta discotic comisc idope portima lorem ipsum.</p>
@@ -50,10 +52,10 @@ const HomePage = () => {
             </div>
             <div className="section right">
                 <div className='mini-section'>
-                    <MapChart/>
+                    <MapChart codices={codices}/>
                 </div>
                 <div className='mini-section'>
-                    <TimelineChart />
+                    <TimelineChart codices={codices}/>
                 </div>
                     
             </div>
@@ -73,7 +75,7 @@ const HomePage = () => {
             </div>
             </center>
         </div>
-        <div className=' row aboutSection hidden align-items-center'>
+        <div className=' row aboutSection hidden'>
             <div className='col col-7 border-end aboutUs'>
                 <h1 className='title'>{t("titleAboutUs")}</h1>
                 <p>This dashboard website is the product of an interdisciplinary project designed with the purpose of lorem ipsum dolor sit amet,

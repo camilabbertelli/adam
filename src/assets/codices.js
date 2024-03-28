@@ -1,18 +1,23 @@
 const codices = {
     "XI" : [{
         "title": "Vida de Santo Aleixo",
+        "marks": [  { long: -9.142685, lat: 38.736946, city: "Lisbon", country: "Portugal"},
+                    { long: -6.3, lat: 53.3, city: "Dublin", country: "Irland"},
+                    { long: -1.9, lat:52.4, city: "Birmingham", country: "England" }]
     }],
     "XII" : [{
-        "title": "Vida de Santo Aleixo II",
+        "title": "Carta de Bruges",
+        "marks": [  { long: -5.9, lat: 54.6 , city: "Belfast", country: "Northern Ireland"},
+                    { long: 4.9, lat: 52.4 ,city: "Amsterdam", country: "the Netherlands"}]
     },{
-        "title": "Crónicas da Professora Sandra Gama",
+        "title": "Livro de José de Arimateia",
+        "marks": [  { long: -4.5, lat: 48.8 , city: "Brest", country: "France"},
+                    { long: 2.35, lat: 48.8 ,city: "Calais", country: "France"}]
     },],
     "XIV" : [{
-        "title": "Vida de Aleixo",
-    }],"XV" : [{
-        "title": "Vida de Aleixo",
-    },{
-        "title": "Vida de Um Santo",
+        "title": "IV.ª Crónica Breve",
+        "marks": [  { long: 2.9, lat: 51.2 , city: "Oostende", country: "Belgium"},
+                    { long: -8.24, lat: 41.17 ,city: "Penafiel", country: "Portugal"}]
     }]
 }
 

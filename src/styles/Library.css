@@ -1,4 +1,4 @@
 .viewer{
     width: 60%;
-    height: calc(100dvh - 145px);
+    height: calc(100dvh - var(--nav-bar-height));
 }

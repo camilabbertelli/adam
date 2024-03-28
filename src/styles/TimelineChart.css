@@ -77,6 +77,12 @@ div.image-component {
     }
 }
 
+div.image-component.hover{
+    transform: translateY(-5px);
+    box-shadow: none;
+    opacity: 0.9;
+}
+
 .centered {
     position: absolute;
     
