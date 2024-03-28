@@ -14,7 +14,13 @@
 }
 
 .timeline.card-group.card-group-scroll>.card {
-    flex-basis: 25%;
+    flex-basis: 10%;
+}
+
+
+.timeline.card-group{
+    width: 90%;
+    padding: 5%;
 }
 
 .timeline.tick {
@@ -27,27 +33,36 @@
     display: grid;
     justify-content: center;
     padding-bottom: 0;
+    width: max-content;
 }
 
 div.timeline {
+    position: relative;
     padding-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
 }
 
 .timeline.card {
     position: relative;
-    display: grid;
-    background-color: transparent;
     margin-top: 3px;
-    height: 280px;
+    
+    display: grid;
     justify-content: center;
     align-items: center;
     justify-items: center;
     align-content: space-between;
+    
+    width: max-content;
+    height: 280px;
+    
+    background-color: transparent;
     color: white;
-    border: none;
     --mdb-card-box-shadow: 0;
-    border-radius: 0%;
 
+    border: none;
+    border-radius: 0%;
     border-bottom: white;
     border-style: solid;
     border-width: 0 0 5px 0;

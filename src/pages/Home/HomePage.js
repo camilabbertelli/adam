@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 import videoBg from '../../assets/video-background.mp4'
 import doubleArrow from "../../assets/images/doubleArrow.png"
 import logos from "../../assets/images/logos.png"
+import info from "../../assets/images/info-white.png"
 
 import codices from '../../assets/codices.js';
 
@@ -45,16 +46,22 @@ const HomePage = () => {
             <video src={videoBg} autoPlay loop muted/>
         </div>
         <div className='home hidden'>
-            <div className="section">
+            <div className="section left">
                 <h1 className='title big'>{t("adam")}</h1>
                 <p>Discover all the lorem ipsum aplium pumuni orieta discotic comisc idope portima lorem ipsum.</p>
                 <button type="button" className="button-home"><Link to="/dashboard">{t("btnDiscover")}</Link></button>
             </div>
             <div className="section right">
-                <div className='mini-section'>
+                <div className='map-section'>
+                    <div class="titles" id="mapTitle">
+                        <text class="map-title">{t("home-map-title")}</text>
+                        <img id="infoMap" src={info}
+                            style={{"margin-left":5 + "px"}} width="15" height="15"
+                            />
+                    </div>
                     <MapChart codices={codices}/>
                 </div>
-                <div className='mini-section'>
+                <div className='timeline-section'>
                     <TimelineChart codices={codices}/>
                 </div>
                     

@@ -18,13 +18,18 @@ let tooltipCodex;
 const CodicesSec = ({ key, element }) => {
     let content = []
     element.forEach(codex => {
-        codex["century"] = key
+        codex["century"] = key;
+
+        
         content.push(
             <div key={codex.title} id={noSpaces(codex.title)} className="image-component">
                 <img src={spine} className="timeline card-img-top" alt="book" />
                 <div className='centered'>{codex.title}</div>
             </div>
-        )
+
+)
+d3.selectAll(`#${noSpaces(codex.title)}`)
+    .classed("hover", true)
     });
 
     return content
@@ -35,18 +40,14 @@ const Sec = ({codices}) => {
 
     for (const [key, value] of Object.entries(codices)) {
 
-        let w = (value.length + 1) * 50;
-
-        const size = {
-            width: w + "px",
-        };
+        
 
         content.push(
             <div key={key} className="timeline card">
                 <div className='sec-collection'>
                     <CodicesSec key={key} element={value} />
                 </div>
-                <div className="timeline card-body" style={size}>
+                <div className="timeline card-body" >
                     <h5 className="card-title">{key}</h5>
                     <img src={minus} className="timeline tick" width="4px" alt="tick" />
                 </div>
@@ -80,7 +81,7 @@ const TimelineChart = ({codices}) => {
             
             tooltipCodex
                 .style("opacity", "1");
-        
+
             tooltipCodex
                 .html(	
                     `<center><b>${title}</b></center>`)
@@ -92,7 +93,9 @@ const TimelineChart = ({codices}) => {
             tooltipCodex
                 .style("opacity", "0")
             
-            document.getElementById('tooltipCodex').innerHTML = "";
+            let element = document.getElementById('tooltipCodex') 
+            if (element)
+                element.innerHTML = "";
 
             let title = d3.select(this).attr('id')
 
@@ -105,12 +108,12 @@ const TimelineChart = ({codices}) => {
 
         d3.selectAll("#tooltipCodex").remove();
             // create a tooltipMark
-            tooltipCodex = d3.select(".timeline.principal")
-        .append("div")
-        .attr("id", "tooltipCodex")
-        .attr("class", "tooltip shadow rounded")
-        .attr("padding", "1px")
-        .style("opacity", "0")
+        tooltipCodex = d3.select("body")
+            .append("div")
+            .attr("id", "tooltipCodex")
+            .attr("class", "tooltip shadow rounded")
+            .attr("padding", "1px")
+            .style("opacity", "0")
 
         d3.selectAll(`.image-component`)
         .on("mouseover", mouseOver)

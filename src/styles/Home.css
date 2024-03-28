@@ -23,34 +23,60 @@ div.home {
     flex-direction: row;
     align-content: center;
     align-items: center;
+
     width: 100%;
+    height: calc(100dvh - var(--nav-bar-height));
+
     position: absolute;
-    height: 110vh;
-    margin: 0;
-    padding: 0;
-    top: 0px;
+    top: var(--nav-bar-height);
 }
 
 .section {
-    
+    position: relative;
     align-items: left;
-    padding-left: 10%;
-    padding-right: 10%;
     width: 50%;
     color: white;
-}
-
-.mini-section {
-    align-items: left;
-    padding-bottom: 10px;
-    height: 30%;
-    color: white;
-}
-
-div.section.right{
     display: flex;
     flex-direction: column;
+}
+
+.section.left{
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+.section.right{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    height: calc(100dvh - var(--nav-bar-height));
+}
+
+div.map-section{
+    position: relative;
+    display: grid;
+    justify-items: center;
+    width: 100%;
+    height: 50%;
+}
+
+div.timeline-section{
+    position: relative;
+    align-items: left;
+    width: 100%;
+    height: 50%;
+}
+
+#mapTitle{
+    display: flex;
     align-items: center;
+
+}
+
+.map-title{
+    font-family: "Celtic";
+    font-size: large;
 }
 
 .title.big {
@@ -67,7 +93,7 @@ div.section.right{
     transition-property: background-color, border-color, color, box-shadow, filter;
     transition-duration: .3s;
     border: none;
-    min-width: 160px;
+    width: max-content;
     text-align: center;
     padding: 4%;
     color: #000000;
@@ -135,3 +161,18 @@ button a {
 .title{
     font-family: "Celtic";
 }
+
+.tooltip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    float: left;
+    background-color: #ffffff;
+    width: max-content;
+    height: max-content;
+    font-size: 11px;
+    padding: 4px;
+    color: #242424;
+    border: none;
+    box-shadow: 0px 0px 3px 0px #E6E6E6;
+  }

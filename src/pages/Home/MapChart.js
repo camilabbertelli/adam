@@ -6,15 +6,6 @@ import './../../styles/MapChart.css'
 // Geo json files
 import europeData from "./../../assets/maps/europe.json";
 
-const mapRatio = 0.5
-
-const margin = {
-    top: 10,
-    bottom: 10,
-    left: 10,
-    right: 10
-}
-
 function noSpaces(str){
     return (str.replace(".", '')).replace(/\s+/g, '')
 }
@@ -49,7 +40,21 @@ const MapChart = ({codices}) => {
     }
     
     useEffect(() => {
+        let infoMouseOverMap = function (event, d) {
+            tooltipMark
+                .style("opacity", 1);
         
+            tooltipMark.html(`<center><b>Information</b></center>
+                          Hover on a mark for more information.<br>Click on a country to filter the whole dashboard.<br>`)
+                .style("top", event.pageY - 10 + "px")
+                .style("left", event.pageX + 10 + "px")
+        }
+        
+        
+        let infoMouseLeaveMap = function (event, d) {
+            tooltipMark
+                .style("opacity", 0)
+        }
 
         let mouseOver = function (event, d){
             d3.selectAll(`#${noSpaces(d.title)}`)
@@ -73,26 +78,30 @@ const MapChart = ({codices}) => {
             tooltipMark
                 .style("opacity", "0")
             
-            document.getElementById('tooltipMark').innerHTML = "";
+                let element = document.getElementById('tooltipMark') 
+            if (element)
+                element.innerHTML = "";
 
             d3.selectAll(`#${noSpaces(d.title)}`)
                 .classed("hover", false)
         }
     
-        let boundariesWidth = parseInt(d3.select('.section').style('width'))
-
-        var width = boundariesWidth - margin.left - margin.right
-        var height = width * mapRatio
-
+        let box = document.querySelector('.viz');
+        let width = box.offsetWidth;
+        let height = box.offsetHeight;
         
         d3.selectAll("#tooltipMark").remove();
             // create a tooltipMark
-        tooltipMark = d3.select(".map")
+        tooltipMark = d3.select("body")
         .append("div")
         .attr("id", "tooltipMark")
         .attr("class", "tooltip shadow rounded")
         .attr("padding", "1px")
         .style("opacity", "0")
+
+        d3.select("#infoMap")
+            .on("mouseover", infoMouseOverMap)
+            .on("mouseleave", infoMouseLeaveMap)
 
         d3.select(".viz").html("");
 
@@ -148,7 +157,7 @@ const MapChart = ({codices}) => {
         // Apply zoom behavior to the SVG element
         svgInitial.call(zoom);
 
-        svgInitial.call(zoom.transform, d3.zoomIdentity.translate(-width / (2.5), -height).scale(2))
+        svgInitial.call(zoom.transform, d3.zoomIdentity.translate(-width / (1.5), -height/(0.8)).scale(2.5))
 
         // Function to handle the zoom event
         function zoomed(event) {
@@ -172,7 +181,7 @@ const MapChart = ({codices}) => {
             .attr("r", 2)
             .attr("cy", 0)
             .attr("cx", 0)
-            .attr("fill", "#a44316")
+            .attr("fill", "white")
             .attr("stroke", "#54220b")
             .attr("transform", function (d) { return "translate(" + projection([d.long, d.lat]) + ")"; })
             .on("mouseover", mouseOver)
