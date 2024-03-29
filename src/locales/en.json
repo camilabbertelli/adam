@@ -10,6 +10,11 @@
     "home-map-title": "Places present in the medieval narrative",
 
 
+    "library-filter-ancient": "Ancient portuguese",
+    "library-filter-modern": "Modern portuguese",
+    "library-filter-lightsoff": "Lights-off mode",
+
+
     "lost": "Lost?",
     "not-found": "404: Page Not Found!",
     "not-found-text": "The page you are looking for might be someplace else... or never existed.",

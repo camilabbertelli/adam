@@ -1,7 +1,7 @@
+import 'mdb-ui-kit/css/mdb.min.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/js/src/modal'
 
-import 'mdb-ui-kit/css/mdb.min.css';
 import '../../styles/Home.css';
 
 import { useTranslation } from "react-i18next";
