@@ -1,12 +1,14 @@
 const codices = {
     "XI" : [{
         "title": "Vida de Santo Aleixo",
+        "pdf-ancient": "essay.pdf",
         "marks": [  { long: -9.142685, lat: 38.736946, city: "Lisbon", country: "Portugal"},
                     { long: -6.3, lat: 53.3, city: "Dublin", country: "Irland"},
-                    { long: -1.9, lat:52.4, city: "Birmingham", country: "England" }]
+                    { long: -1.9, lat:52.4, city: "Birmingham", country: "England" }],
     }],
     "XII" : [{
         "title": "Carta de Bruges",
+        "pdf-ancient": "ByteBeatJan2024.pdf",
         "marks": [  { long: -5.9, lat: 54.6 , city: "Belfast", country: "Northern Ireland"},
                     { long: 4.9, lat: 52.4 ,city: "Amsterdam", country: "the Netherlands"}]
     },{

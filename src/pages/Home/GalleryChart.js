@@ -11,12 +11,12 @@ const GalleryImage = ({src, title, description}) => {
         <>
         <div className='col'>
             <div className="bg-image hover-overlay" data-mdb-ripple-color="light">
-                <img className="images" alt="medieval-img" src={require(`./../../assets/images/gallery/${src}.png`)}/>
+                <img className="images" alt="medieval-img" src={require(`./../../assets/images/gallery/${src}`)}/>
                 <div className='modal fade' id={title.replace(/\s+/g, '')} tabIndex="-1" aria-hidden="true">
                     <div className='modal-dialog'>
                         <div className='modal-body'>
                             <div className="card">
-                                <img alt="medieval-img" src={require(`./../../assets/images/gallery/${src}.png`)} className='card-img-top d-block w-100'/>
+                                <img alt="medieval-img" src={require(`./../../assets/images/gallery/${src}`)} className='card-img-top d-block w-100'/>
                                 <div className="card-body card-click">
                                     <h4 className="title">{title}</h4>
                                     <p>{description}</p>
