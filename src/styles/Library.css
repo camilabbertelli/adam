@@ -98,6 +98,10 @@ div.library-image-component {
     cursor: pointer;
 }
 
+div.codex-selected{
+    opacity: 1;
+}
+
 div.library-image-component.hover, div.library-image-component:hover{
     box-shadow: none;
     opacity: 0.9;

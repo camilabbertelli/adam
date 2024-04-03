@@ -12,14 +12,17 @@ import { useTranslation } from "react-i18next";
 
 
 import spine from "./../assets/images/spine.png"
-import codices from "./../assets/codices"
+import codicesOriginal from "./../assets/codices"
 
 import * as d3 from "d3"
 
-// Your render function
 
 function noSpaces(str) {
     return (str.replace(".", '')).replace(/\s+/g, '')
+}
+
+function isDictEmpty(d){
+    return (Object.keys(d).length === 0)
 }
 
 
@@ -27,7 +30,7 @@ const LibraryPage = ({ layout }) => {
     const { t } = useTranslation();
 
     const [theme, setTheme] = useState("light")
-    const [genre, setGenre] = useState(null)
+    const [genre, setGenre] = useState("")
 
     const changeSelect = function () {
 
@@ -38,108 +41,81 @@ const LibraryPage = ({ layout }) => {
 
         var selectedValue = selectBox.options[selectBox.selectedIndex].value;
         setGenre(selectedValue)
+
+        for (const [key, c] of Object.entries(allCodices)) {
+            if (c.genre == selectedValue){
+                changeCodex(key)
+            }  
+        }
     }
 
     const changeLightsOff = function () {
-        let element = document.getElementById('lightsoff');
+        d3.selectAll("#view").classed("lightsoff", (theme === "light"))
+        d3.selectAll("#selections").classed("lightsoff-selection", (theme === "light"))
 
-        if (element.checked) {
-
-            d3.selectAll("#view")
-                .classed("lightsoff", true)
-
-            d3.selectAll("#selections")
-                .classed("lightsoff-selection", true)
-
-            d3.selectAll("#codices-view")
-                .classed("lightsoff-codices", true)
-
-            setTheme("dark")
-        }
-        else {
-
-            d3.selectAll("#view")
-                .classed("lightsoff", false)
-
-            d3.selectAll("#selections")
-                .classed("lightsoff-selection", false)
-
-            d3.selectAll("#codices-view")
-                .classed("lightsoff-codices", false)
-
-            setTheme("light")
-        }
+        setTheme((theme === "light") ? "dark" : "light")
     }
 
     const changeCodex = function (id) {
-
-        let element = document.getElementById(id)
-        let beforeElement = document.getElementById(currentCodex)
-
-        if (!element || !beforeElement)
+        
+        if (!currentCodex){
+            setPdf("blank.pdf")
             return
+        }
 
+        let c = allCodices[id]
 
-        console.log(document.getElementById(currentCodex).style.opacity)
-        console.log(document.getElementById(id).style.opacity)
-        document.getElementById(id).style.opacity = 1
-        document.getElementById(currentCodex).style.opacity = 0.7
         setCurrentCodex(id)
+            
+        setAncientDisabled(c["pdf-ancient"] ? false : true)
+        setModernDisabled(c["pdf-modern"] ? false : true)
 
-        allCodices.forEach((c) => {
-            if (noSpaces(c.title) === id) {
-                setAncientDisabled(c["pdf-ancient"] ? false : true)
-                setModernDisabled(c["pdf-modern"] ? false : true)
+        if (isAncientChecked && c["pdf-ancient"]) {
+            setPdf(c["pdf-ancient"])
+            return
+        }
 
-                if (isAncientChecked && c["pdf-ancient"]) {
-                    setPdf(element.dataset.ancientPdf)
-                    return
-                }
+        if (!isAncientChecked && c["pdf-modern"]) {
+            setPdf(c["pdf-modern"])
+            return
+        }
 
-                if (!isAncientChecked && c["pdf-modern"]) {
-                    setPdf(element.dataset.modernPdf)
-                    return
-                }
+        if (isAncientChecked && !c["pdf-ancient"] && c["pdf-modern"]) {
+            setAncientChecked(false)
+            setPdf(c["pdf-modern"])
+            return
+        }
 
-                if (isAncientChecked && !c["pdf-ancient"] && c["pdf-modern"]) {
-                    setAncientChecked(false)
-                    setPdf(element.dataset.modernPdf)
-                    return
-                }
+        if (!isAncientChecked && !c["pdf-modern"] && c["pdf-ancient"]) {
+            setAncientChecked(true)
+            setPdf(c["pdf-ancient"])
+            return
+        }
 
-                if (!isAncientChecked && !c["pdf-modern"] && c["pdf-ancient"]) {
-                    setAncientChecked(true)
-                    setPdf(element.dataset.ancientPdf)
-                    return
-                }
-
-                setPdf("blank.pdf")
-                return
-            }
-        })
+        setPdf("blank.pdf")
+        return
     }
 
-    let allCodices = []
+    let allCodicesAux = {}
+    let allCodices = {}
     let allGenres = []
-    for (const [key, value] of Object.entries(codices)) {
+    for (const [key, value] of Object.entries(codicesOriginal)) {
         value.forEach(codex => {
             if (codex["pdf-ancient"] != null || codex["pdf-modern"] != null) {
                 codex["century"] = key;
-                allCodices.push(codex);
+                allCodicesAux[noSpaces(codex.title)] = codex;
                 allGenres.push(codex.genre);
             }
         })
     }
 
-    function compare(a, b) {
-        if (a.title > b.title) return 1;
-        if (b.title > a.title) return -1;
-
-        return 0;
-    }
-
     if (allGenres) allGenres.sort()
-    if (allCodices) allCodices.sort(compare)
+
+    let sortedkeys = Object.keys(allCodicesAux).sort()
+
+    sortedkeys.forEach((key) => {
+        allCodices[key] = allCodicesAux[key]
+    })
 
     let p = "blank.pdf"
     let id = ""
@@ -147,17 +123,18 @@ const LibraryPage = ({ layout }) => {
     let modern = true
 
 
-    if (allCodices && allCodices[0]) {
-        if (allCodices[0]["pdf-modern"]) {
-            p = allCodices[0]["pdf-modern"]
+    if (!isDictEmpty(allCodices)) {
+        id = Object.keys(allCodices)[0];
+        let firstValue = Object.values(allCodices)[0]; 
+
+        if (firstValue["pdf-modern"]) {
+            p = firstValue["pdf-modern"]
             modern = false
         }
-        if (allCodices[0]["pdf-ancient"]) {
-            p = allCodices[0]["pdf-ancient"]
+        if (firstValue["pdf-ancient"]) {
+            p = firstValue["pdf-ancient"]
             ancient = false
         }
-
-        id = noSpaces(allCodices[0].title)
     }
 
     const [pdf, setPdf] = useState(p)
@@ -172,18 +149,17 @@ const LibraryPage = ({ layout }) => {
     const Codices = ({ genre, codices }) => {
         let content = []
 
-
-        codices.forEach((c) => {
-            if (!genre || genre === c.genre) {
-
-                content.push(
-                    <div data-ancient-pdf={c["pdf-ancient"]} data-modern-pdf={c["pdf-modern"]} key={c.title} id={noSpaces(c.title)} className="library-image-component" onClick={() => changeCodex(noSpaces(c.title))}>
-                        <img src={spine} className="library-card-img-top" alt="book" />
-                        <div className='library-centered'>{c.title}</div>
-                    </div>)
+        for (const [key, c] of Object.entries(codices)) {
+                if (!genre || genre === c.genre) {
+                    
+                    content.push(
+                        <div id={key} data-ancient-pdf={c["pdf-ancient"]} data-modern-pdf={c["pdf-modern"]} key={c.title} className={`library-image-component ` + (currentCodex === key ? "codex-selected" : "")} onClick={() => changeCodex(key)}>
+                            <img id={key} src={spine} className="library-card-img-top" alt="book" />
+                            <div id={key} className='library-centered'>{c.title}</div>
+                        </div>)
+                }
+    
             }
-
-        })
 
         return content
     }
@@ -216,11 +192,11 @@ const LibraryPage = ({ layout }) => {
                     <div className="selection-view">
                         <div id="selections" className="selections">
                             <div className="form-check">
-                                <input className="form-check-input" type="radio" disabled={ancientDisabled} checked={isAncientChecked} onClick={changePdf} />
+                                <input className="form-check-input" type="radio" disabled={ancientDisabled} checked={isAncientChecked} onChange={changePdf} />
                                 <label className="form-check-label">{t("library-filter-ancient")}</label>
                             </div>
                             <div className="form-check">
-                                <input className="form-check-input" type="radio" disabled={modernDisabled} checked={!isAncientChecked} onClick={changePdf} />
+                                <input className="form-check-input" type="radio" disabled={modernDisabled} checked={!isAncientChecked} onChange={changePdf} />
                                 <label className="form-check-label"> {t("library-filter-modern")} </label>
                             </div>
                             <div className="form-check form-switch">
@@ -231,7 +207,7 @@ const LibraryPage = ({ layout }) => {
                     </div>
                     <div id="codices-view" className="codices-view">
                         <h3>{t("library-available-codices")}</h3>
-                        <select id="genreSelect" className="form-select" value={t("library-genre-all")} onChange={changeSelect}>
+                        <select id="genreSelect" className="form-select" value={genre} onChange={changeSelect}>
                             <option value="">{t("library-genre-all")}</option>
                             <SelectGenre genres={allGenres} />
                         </select>
