@@ -90,9 +90,15 @@ div.library-image-component {
 
     width: 75px;
     height: 300px;
+
+    opacity: 0.7;
+    
+    transition: all 0.2s ease-in-out !important;
+
+    cursor: pointer;
 }
 
-div.library-image-component.hover{
+div.library-image-component.hover, div.library-image-component:hover{
     box-shadow: none;
     opacity: 0.9;
 }
@@ -103,12 +109,8 @@ div.library-image-component.hover{
     height: 300px;
     
     transition: all 0.2s ease-in-out !important;
-    
-}
 
-.library-card-img-top:hover{
-    box-shadow: none;
-    opacity: 0.9;
+    cursor: pointer;
 }
 
 .library-centered {
@@ -123,6 +125,8 @@ div.library-image-component.hover{
     width: 80%;
     font-size: 15px;
     text-align: center;
+    
+    cursor: pointer;
 }
 
 .lightsoff-codices{

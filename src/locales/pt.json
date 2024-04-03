@@ -1,7 +1,7 @@
 {
     "navbar_home": "Início",
     "navbar_dashboard": "Painel",
-    "navbar_database": "Database",
+    "navbar_database": "Base de dados",
     "navbar_library": "Biblioteca",
     "adam": "Painel de Análise para a Anatomia na Idade Média",
     "btnDiscover": "Descubra mais",
@@ -14,6 +14,7 @@
     "library-filter-modern": "Português Moderno",
     "library-filter-lightsoff": "Luzes apagadas",
     "library-available-codices": "Códices disponíveis",
+    "library-genre-all": "Todos",
 
 
     "lost": "Perdido?",
