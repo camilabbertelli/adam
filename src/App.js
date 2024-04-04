@@ -11,14 +11,14 @@ import LibraryPage from './pages/LibraryPage';
 import DatabasePage from './pages/DatabasePage';
 
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
-import { pageNavigationPlugin } from '@react-pdf-viewer/page-navigation';
+import ErrorBoundary from './ErrorBoundary';
 
 function App() {
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
-  const pageNavigationPluginInstance = pageNavigationPlugin();
   
   return (
     <div className="App">
+      <ErrorBoundary>
       <BrowserRouter>
             <div className="App">
                 <NavBar/>
@@ -33,6 +33,7 @@ function App() {
                   </div>
             </div>
         </BrowserRouter>
+        </ErrorBoundary>
     </div>
   );
 }

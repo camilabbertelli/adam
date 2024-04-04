@@ -77,6 +77,8 @@ div.timeline-section{
 .map-title{
     font-family: "Celtic";
     font-size: large;
+    margin: 0;
+    vertical-align: middle;
 }
 
 .title.big {
@@ -158,7 +160,7 @@ button a {
     border-right: var(--bs-border-width) var(--bs-border-style) black !important;
 }
 
-.title{
+h1.title{
     font-family: "Celtic";
 }
 

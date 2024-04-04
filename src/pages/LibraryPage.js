@@ -17,6 +17,7 @@ import codicesOriginal from "./../assets/codices"
 import * as d3 from "d3"
 
 
+
 function noSpaces(str) {
     return (str.replace(".", '')).replace(/\s+/g, '')
 }
@@ -43,14 +44,14 @@ const LibraryPage = ({ layout }) => {
         setGenre(selectedValue)
 
         for (const [key, c] of Object.entries(allCodices)) {
-            if (c.genre == selectedValue){
+            if (c.genre === selectedValue){
                 changeCodex(key)
             }  
         }
     }
 
     const changeLightsOff = function () {
-        d3.selectAll("#view").classed("lightsoff", (theme === "light"))
+        d3.selectAll("#library-view").classed("lightsoff", (theme === "light"))
         d3.selectAll("#selections").classed("lightsoff-selection", (theme === "light"))
 
         setTheme((theme === "light") ? "dark" : "light")
@@ -187,7 +188,7 @@ const LibraryPage = ({ layout }) => {
 
     return (
         <>
-            <div id="view" className="view">
+            <div id="library-view" className="library-view">
                 <div className="filter-view">
                     <div className="selection-view">
                         <div id="selections" className="selections">

@@ -32,10 +32,10 @@ const TabChart = () => {
     }
 
     return (
-        <div class="tab">
-            <button id="tabOverview" class="active" style={{"border-radius": "10px 10px 0px 0px"}} onClick={() => changePerspective('Overview')}>Overview</button>
-            <button id="tabPanning" style={{"border-radius": "10px 10px 0px 0px"}} onClick={() => changePerspective('Panning')}>Panning</button>
-            <button id="tabBla" style={{"border-radius": "10px 10px 0px 0px"}} onClick={() => changePerspective('Bla')}>Bla</button>
+        <div className="tab">
+            <button id="tabOverview" className="active" style={{"borderRadius": "10px 10px 0px 0px"}} onClick={() => changePerspective('Overview')}>Overview</button>
+            <button id="tabPanning" style={{"borderRadius": "10px 10px 0px 0px"}} onClick={() => changePerspective('Panning')}>Panning</button>
+            <button id="tabBla" style={{"borderRadius": "10px 10px 0px 0px"}} onClick={() => changePerspective('Bla')}>Bla</button>
         </div>
     )
 }

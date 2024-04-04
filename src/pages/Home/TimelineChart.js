@@ -15,14 +15,14 @@ function noSpaces(str){
 
 let tooltipCodex;
 
-const CodicesSec = ({ key, element }) => {
+const CodicesSec = ({ sec, element }) => {
     let content = []
     element.forEach(codex => {
-        codex["century"] = key;
+        codex["century"] = sec;
 
         
         content.push(
-            <div key={codex.title} id={noSpaces(codex.title)} className="image-component">
+            <div key={noSpaces(codex.title)} id={noSpaces(codex.title)} className="image-component">
                 <img src={spine} className="timeline card-img-top" alt="book" />
                 <div className='centered'>{codex.title}</div>
             </div>

@@ -53,10 +53,10 @@ const HomePage = () => {
             </div>
             <div className="section right">
                 <div className='map-section'>
-                    <div class="titles" id="mapTitle">
-                        <text class="map-title">{t("home-map-title")}</text>
+                    <div className="titles" id="mapTitle">
+                        <p className="map-title">{t("home-map-title")}</p>
                         <img id="infoMap" src={info}
-                            style={{"margin-left":5 + "px"}} width="15" height="15"
+                            style={{"marginLeft":5 + "px"}} width="15" height="15"
                             />
                     </div>
                     <MapChart codices={codices}/>
