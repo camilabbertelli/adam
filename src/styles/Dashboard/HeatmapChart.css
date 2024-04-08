@@ -1,0 +1,12 @@
+.heatmap-area {
+    width: 95%;
+    height: 95%;
+
+    position: relative;
+    top: 50%;
+    left: 30px;
+    transform: translate(0, -50%);
+
+    background-color: white;
+    border-radius: 20px;
+}

@@ -13,11 +13,11 @@ import './styles/NavBar.css';
 
 
 const NavBar = () => {
-    
-    const {t, i18n} = useTranslation();
+
+    const { t, i18n } = useTranslation();
 
     const [styleDropdown, setStyleDropdown] = useState("dropdown-content-hide");
-    
+
     const [styleLanguage_en, setStyleLanguage_en] = useState("flagbutton flagselected");
     const [styleLanguage_pt, setStyleLanguage_pt] = useState("flagbutton");
 
@@ -42,25 +42,25 @@ const NavBar = () => {
     return (
         <nav className="sticky-top">
             <h1 className="title">A.D.A.M</h1>
-            <img alt="ornament" className="ornament" src={ornament}/>
+            <img alt="ornament" className="ornament" src={ornament} />
             <center>
-            <ul className="flex-container">
-                <li><NavLink to="/" className={(navData) => (navData.isActive ? "selected" : null)}>{t("navbar_home")}</NavLink></li>
-                <li><NavLink to="/dashboard" className={(navData) => (navData.isActive ? "selected" : null)}>{t("navbar_dashboard")}</NavLink></li>
-                <li><NavLink to="/database" className={(navData) => (navData.isActive ? "selected" : null)}>{t("navbar_database")}</NavLink></li>
-                <li><NavLink to="/library" className={(navData) => (navData.isActive ? "selected" : null)}>{t("navbar_library")}</NavLink></li>
-            </ul>
+                <ul className="flex-container">
+                    <li><NavLink to="/" className={(navData) => (navData.isActive ? "selected" : null)}>{t("navbar_home")}</NavLink></li>
+                    <li><NavLink to="/dashboard" className={(navData) => (navData.isActive ? "selected" : null)}>{t("navbar_dashboard")}</NavLink></li>
+                    <li><NavLink to="/database" className={(navData) => (navData.isActive ? "selected" : null)}>{t("navbar_database")}</NavLink></li>
+                    <li><NavLink to="/library" className={(navData) => (navData.isActive ? "selected" : null)}>{t("navbar_library")}</NavLink></li>
+                </ul>
             </center>
             <div className="languages">
                 <div className='dropdown'>
                     <button className='dropbtn'><img className="icon-language" src={languages} alt="language selection" onClick={changeStyle} /></button>
                     <div className={styleDropdown}>
                         <button className={styleLanguage_en} onClick={() => changeLng("en")}>
-                            <img className="flag" src={ukflag} alt="language uk" /> 
+                            <img className="flag" src={ukflag} alt="language uk" />
                             <p>English</p>
                         </button>
-                        <button className={styleLanguage_pt} onClick={() => changeLng("pt")}>  
-                            <img className="flag" src={ptflag} alt="language pt"/>
+                        <button className={styleLanguage_pt} onClick={() => changeLng("pt")}>
+                            <img className="flag" src={ptflag} alt="language pt" />
                             <p>Português</p>
                         </button>
                     </div>

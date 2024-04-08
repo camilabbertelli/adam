@@ -1,0 +1,12 @@
+.network-area {
+    width: 94%;
+    height: 90%;
+
+    position: relative;
+    top: 48%;
+    left: 30px;
+    transform: translate(0, -50%);
+
+    background-color: white;
+    border-radius: 20px;
+}

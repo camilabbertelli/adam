@@ -1,0 +1,12 @@
+.imp-people-area {
+    width: 93.5%;
+    height: 95%;
+
+    position: relative;
+    top: 50%;
+    left: 10px;
+    transform: translate(0, -50%);
+
+    background-color: white;
+    border-radius: 20px;
+}

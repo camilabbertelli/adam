@@ -1,5 +1,5 @@
-:root{
-    --nav-bar-height : 145px;
+:root {
+    --nav-bar-height: 145px;
 }
 
 nav {
@@ -72,11 +72,11 @@ nav a:hover {
     float: right;
 }
 
-.dropdown-content-hide{
+.dropdown-content-hide {
     display: none;
 }
 
-.dropdown-content-show{
+.dropdown-content-show {
     display: block;
     font-size: 15px;
     position: absolute;
@@ -89,7 +89,7 @@ nav a:hover {
 }
 
 .dropdown-content-show button {
-    
+
     width: 190px;
     text-align: left;
     color: #805956;
@@ -101,7 +101,7 @@ nav a:hover {
     border-radius: 25px 25px 25px 25px;
 }
 
-button.flagbutton{
+button.flagbutton {
     display: flex;
     flex-direction: row;
     align-content: center;
@@ -118,7 +118,7 @@ button.flagbutton{
 }
 
 
-.flag{
+.flag {
     display: inline-flex;
     width: 30px;
     margin-top: 20px;
@@ -127,11 +127,11 @@ button.flagbutton{
     justify-content: center;
 }
 
-button.flagselected{
+button.flagselected {
     color: white;
 }
 
-.icon-language{
-    width:30px;
+.icon-language {
+    width: 30px;
     object-fit: contain;
 }

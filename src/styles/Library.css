@@ -1,21 +1,21 @@
-.library-view{
+.library-view {
     position: relative;
     display: flex;
     flex-direction: row;
     height: calc(100dvh - var(--nav-bar-height));
 }
 
-.lightsoff{
+.lightsoff {
     color: white;
     background-color: #292929;
 }
 
-.pdf-view{
+.pdf-view {
     width: 65%;
     height: 100%;
 }
 
-.filter-view{
+.library-filter-view {
     width: 35%;
     height: 100%;
 
@@ -26,7 +26,7 @@
     justify-items: center;
 }
 
-.selection-view{
+.selection-view {
     display: grid;
     align-items: center;
     justify-items: center;
@@ -38,7 +38,7 @@
 }
 
 
-.selections{
+.selections {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -53,7 +53,7 @@
     background-color: white;
 }
 
-.lightsoff-selection{
+.lightsoff-selection {
     background-color: #343434;
     color: white;
 }
@@ -63,7 +63,7 @@
 }
 
 
-.codices-view{
+.codices-view {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -71,12 +71,12 @@
     height: calc((100dvh - var(--nav-bar-height)) *0.6)
 }
 
-.form-select{
-    width: 60%;
+.form-select {
+    width: 50%;
     margin-bottom: 10px;
 }
 
-.codices{
+.codices {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -92,17 +92,18 @@ div.library-image-component {
     height: 300px;
 
     opacity: 0.7;
-    
+
     transition: all 0.2s ease-in-out !important;
 
     cursor: pointer;
 }
 
-div.codex-selected{
+div.codex-selected {
     opacity: 1;
 }
 
-div.library-image-component.hover, div.library-image-component:hover{
+div.library-image-component.hover,
+div.library-image-component:hover {
     box-shadow: none;
     opacity: 0.9;
 }
@@ -111,7 +112,7 @@ div.library-image-component.hover, div.library-image-component:hover{
 .library-card-img-top {
     width: 75px;
     height: 300px;
-    
+
     transition: all 0.2s ease-in-out !important;
 
     cursor: pointer;
@@ -119,30 +120,27 @@ div.library-image-component.hover, div.library-image-component:hover{
 
 .library-centered {
     position: absolute;
-    
+
     color: white;
     transform: rotate(90deg);
-    
+
     top: 38%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 80%;
     font-size: 15px;
     text-align: center;
-    
+
     cursor: pointer;
 }
 
-.lightsoff-codices{
+.lightsoff-codices {
     opacity: 0.5;
 }
 
 
-.form-check{
+.form-check {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
-
-
-

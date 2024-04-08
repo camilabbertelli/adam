@@ -1,6 +1,6 @@
 
 import "./../styles/Database.css";
-import React, { Component, useEffect } from "react";
+import React, { Component } from "react";
 import TableFilter from "react-table-filter";
 import "react-table-filter/lib/styles.css";
 
@@ -25,7 +25,7 @@ class Table extends React.Component {
     componentDidMount() {
         d3.csv(csv_data).then(d => {
             this.setState({ data: d })
-            
+
             if (d?.length) {
                 let keys = Object.keys(d[0])
                 this.props.updateKeys(keys)
@@ -37,7 +37,7 @@ class Table extends React.Component {
     _filterUpdated(newData, filtersObject) {
         if (newData.length)
             this.setState({
-                data: newData
+                data: newData,
             });
     }
 
@@ -62,18 +62,19 @@ class Table extends React.Component {
                     >
                         {keys.map(function (key) {
                             if (!checkedKeys || checkedKeys.includes(key))
-                            return (
-                                <th
-                                    scope="col"
-                                    key={key}
-                                    filterkey={key}
-                                    casesensitive={"true"}
-                                    showsearch={"true"}
-                                    className={(key !== "#") ? `cell + ${key}` : `cardinal`}
-                                >
-                                    {key.charAt(0).toUpperCase() + key.slice(1)}
-                                </th>
-                            )
+                                return (
+                                    <th
+                                        scope="col"
+                                        key={key}
+                                        filterkey={key}
+                                        casesensitive={"true"}
+                                        showsearch={"true"}
+                                        className={(key !== "#") ? `cell + ${key}` : `cardinal`}
+                                    >
+                                        {key.charAt(0).toUpperCase() + key.slice(1)}
+                                    </th>
+                                )
+                            return ""
                         })}
 
                     </TableFilter>
@@ -84,7 +85,9 @@ class Table extends React.Component {
                             <tr key={"row_" + index}>
                                 {keys.map(function (key) {
                                     if (!checkedKeys || checkedKeys.includes(key))
-                                    return (<td key={key} className={(key !== "#") ? `cell + ${key}` : `cardinal`}>{item[key]}</td>)
+                                        return (<td key={key} className={(key !== "#") ? `cell + ${key}` : `cardinal`}>{item[key]}</td>)
+
+                                    return ""
                                 })}
                             </tr>
                         );
@@ -99,12 +102,12 @@ const ExcelFilter = (props) => {
 
     const toggleItem = (key) => {
         let temp = [...props.checkedKeys]
-        
-        if (props.checkedKeys.includes(key)){
+
+        if (props.checkedKeys.includes(key)) {
             const index = temp.indexOf(key);
             temp.splice(index, 1);
         } else temp.push(key)
-        
+
         props.updateCheckedKeys(temp)
     }
 
@@ -112,11 +115,11 @@ const ExcelFilter = (props) => {
         return ""
     return (
         <>
-            <img width="20px" alt="reset" src={reset} style={{paddingBottom: 5 + "px", cursor: "pointer"}} onClick={() => props.updateCheckedKeys(props.keys)}/>
+            <img width="20px" alt="reset" src={reset} style={{ paddingBottom: 5 + "px", cursor: "pointer" }} onClick={() => props.updateCheckedKeys(props.keys)} />
             <div className="excel-filter-body">
                 {props.keys.map(function (key) {
                     return (<div key={key} className="form-check">
-                        <input className="form-check-input" type="checkbox" value={key} onChange={() => toggleItem(key)} checked={(props.checkedKeys.includes(key))}/>
+                        <input className="form-check-input" type="checkbox" value={key} onChange={() => toggleItem(key)} checked={(props.checkedKeys.includes(key))} />
                         <label className="form-check-label">
                             {key}
                         </label>
@@ -129,7 +132,7 @@ const ExcelFilter = (props) => {
 }
 
 class DatabasePage extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             keys: [],
@@ -153,12 +156,12 @@ class DatabasePage extends Component {
     render() {
         return (
             <div className="database-view">
-                <div className="excel-filter-view">
+                <div className="database-filter-view">
                     <h3>Content</h3>
-                    <ExcelFilter updateCheckedKeys={this.updateCheckedKeys} keys={this.state.keys} checkedKeys={this.state.checkedKeys}/>
+                    <ExcelFilter updateCheckedKeys={this.updateCheckedKeys} keys={this.state.keys} checkedKeys={this.state.checkedKeys} />
                 </div>
-                <div className="excel-view">
-                    <Table updateKeys={this.updateKeys} checkedKeys={this.state.checkedKeys}/>
+                <div className="database-table-view">
+                    <Table updateKeys={this.updateKeys} checkedKeys={this.state.checkedKeys} />
                     <div id="loader" className="loader"></div>
                 </div>
             </div>)

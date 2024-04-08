@@ -1,20 +1,17 @@
 import React, { useState } from "react";
 
 import 'bootstrap/dist/css/bootstrap.css';
-import "./../styles/Library.css";
+import "./../../styles/Library.css";
 
-import { Viewer, Worker } from '@react-pdf-viewer/core';
 
-import '@react-pdf-viewer/core/lib/styles/index.css';
-import '@react-pdf-viewer/default-layout/lib/styles/index.css';
-import '@react-pdf-viewer/page-navigation/lib/styles/index.css';
 import { useTranslation } from "react-i18next";
 
 
-import spine from "./../assets/images/spine.png"
-import codicesOriginal from "./../assets/codices"
+import spine from "./../../assets/images/spine.png"
+import codicesOriginal from "./../../assets/codices"
 
 import * as d3 from "d3"
+import PdfViewer from "./PdfViewer";
 
 
 
@@ -22,12 +19,12 @@ function noSpaces(str) {
     return (str.replace(".", '')).replace(/\s+/g, '')
 }
 
-function isDictEmpty(d){
+function isDictEmpty(d) {
     return (Object.keys(d).length === 0)
 }
 
 
-const LibraryPage = ({ layout }) => {
+const LibraryPage = () => {
     const { t } = useTranslation();
 
     const [theme, setTheme] = useState("light")
@@ -44,9 +41,9 @@ const LibraryPage = ({ layout }) => {
         setGenre(selectedValue)
 
         for (const [key, c] of Object.entries(allCodices)) {
-            if (c.genre === selectedValue){
+            if (c.genre === selectedValue) {
                 changeCodex(key)
-            }  
+            }
         }
     }
 
@@ -58,8 +55,8 @@ const LibraryPage = ({ layout }) => {
     }
 
     const changeCodex = function (id) {
-        
-        if (!currentCodex){
+
+        if (!currentCodex) {
             setPdf("blank.pdf")
             return
         }
@@ -67,7 +64,7 @@ const LibraryPage = ({ layout }) => {
         let c = allCodices[id]
 
         setCurrentCodex(id)
-            
+
         setAncientDisabled(c["pdf-ancient"] ? false : true)
         setModernDisabled(c["pdf-modern"] ? false : true)
 
@@ -126,7 +123,7 @@ const LibraryPage = ({ layout }) => {
 
     if (!isDictEmpty(allCodices)) {
         id = Object.keys(allCodices)[0];
-        let firstValue = Object.values(allCodices)[0]; 
+        let firstValue = Object.values(allCodices)[0];
 
         if (firstValue["pdf-modern"]) {
             p = firstValue["pdf-modern"]
@@ -151,16 +148,16 @@ const LibraryPage = ({ layout }) => {
         let content = []
 
         for (const [key, c] of Object.entries(codices)) {
-                if (!genre || genre === c.genre) {
-                    
-                    content.push(
-                        <div id={key} data-ancient-pdf={c["pdf-ancient"]} data-modern-pdf={c["pdf-modern"]} key={c.title} className={`library-image-component ` + (currentCodex === key ? "codex-selected" : "")} onClick={() => changeCodex(key)}>
-                            <img id={key} src={spine} className="library-card-img-top" alt="book" />
-                            <div id={key} className='library-centered'>{c.title}</div>
-                        </div>)
-                }
-    
+            if (!genre || genre === c.genre) {
+
+                content.push(
+                    <div id={key} data-ancient-pdf={c["pdf-ancient"]} data-modern-pdf={c["pdf-modern"]} key={c.title} className={`library-image-component ` + (currentCodex === key ? "codex-selected" : "")} onClick={() => changeCodex(key)}>
+                        <img id={key} src={spine} className="library-card-img-top" alt="book" />
+                        <div id={key} className='library-centered'>{c.title}</div>
+                    </div>)
             }
+
+        }
 
         return content
     }
@@ -189,7 +186,7 @@ const LibraryPage = ({ layout }) => {
     return (
         <>
             <div id="library-view" className="library-view">
-                <div className="filter-view">
+                <div className="library-filter-view">
                     <div className="selection-view">
                         <div id="selections" className="selections">
                             <div className="form-check">
@@ -218,9 +215,7 @@ const LibraryPage = ({ layout }) => {
                     </div>
                 </div>
                 <div className="pdf-view">
-                    <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                        <Viewer theme={theme} fileUrl={require(`./../assets/pdf/${pdf}`)} plugins={[layout]} />
-                    </Worker>
+                    <PdfViewer theme={theme} fileUrl={require(`./../../assets/pdf/${pdf}`)} />
                 </div>
             </div>
         </>

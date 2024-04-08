@@ -2,7 +2,7 @@ import 'mdb-ui-kit/css/mdb.min.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/js/src/modal'
 
-import '../../styles/Home.css';
+import '../../styles/Home/Home.css';
 
 import { useTranslation } from "react-i18next";
 
@@ -22,28 +22,28 @@ import GalleryChart from './GalleryChart.js';
 
 const HomePage = () => {
     useEffect(() => {
-    
+
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
-                if (entry.isIntersecting){
+                if (entry.isIntersecting) {
                     entry.target.classList.add("show");
-                } else{
+                } else {
                     entry.target.classList.remove("show");
                 }
             });
         });
-        
+
         const hiddenElements = document.querySelectorAll(".hidden");
         hiddenElements.forEach((el) => observer.observe(el));
-    
+
     });
 
-    const {t} = useTranslation();
+    const { t } = useTranslation();
 
     return (<>
 
         <div className="video-background">
-            <video src={videoBg} autoPlay loop muted/>
+            <video src={videoBg} autoPlay loop muted />
         </div>
         <div className='home hidden'>
             <div className="section left">
@@ -55,16 +55,16 @@ const HomePage = () => {
                 <div className='map-section'>
                     <div className="titles" id="mapTitle">
                         <p className="map-title">{t("home-map-title")}</p>
-                        <img id="infoMap" src={info}
-                            style={{"marginLeft":5 + "px"}} width="15" height="15"
-                            />
+                        <img alt="info" id="infoMap" src={info}
+                            style={{ "marginLeft": 5 + "px" }} width="15" height="15"
+                        />
                     </div>
-                    <MapChart codices={codices}/>
+                    <MapChart codices={codices} />
                 </div>
                 <div className='timeline-section'>
-                    <TimelineChart codices={codices}/>
+                    <TimelineChart codices={codices} />
                 </div>
-                    
+
             </div>
         </div>
         <div className='row doubleArrow hidden scroll-bounce'>
@@ -76,18 +76,18 @@ const HomePage = () => {
         </div>
         <div id='gallery' className=' row gallery hidden align-items-center'>
             <center>
-            <div className='col'>
-                <h1 className='title'>{t("titleGallery")}</h1>
-                <GalleryChart />
-            </div>
+                <div className='col'>
+                    <h1 className='title'>{t("titleGallery")}</h1>
+                    <GalleryChart />
+                </div>
             </center>
         </div>
         <div className=' row aboutSection hidden'>
             <div className='col col-7 border-end aboutUs'>
                 <h1 className='title'>{t("titleAboutUs")}</h1>
                 <p>This dashboard website is the product of an interdisciplinary project designed with the purpose of lorem ipsum dolor sit amet,
-                    consectetur adipiscing elit. Suspendisse ac iaculis augue. Integer sit amet pulvinar lectus. Vestibulum ante ipsum primis in faucibus orci 
-                    luctus et ultrices posuere cubilia curae; Aliquam eu aliquam leo, non pretium elit. Fusce nec tempus mauris. In hac habitasse platea dictumst. 
+                    consectetur adipiscing elit. Suspendisse ac iaculis augue. Integer sit amet pulvinar lectus. Vestibulum ante ipsum primis in faucibus orci
+                    luctus et ultrices posuere cubilia curae; Aliquam eu aliquam leo, non pretium elit. Fusce nec tempus mauris. In hac habitasse platea dictumst.
                     Quisque ut nibh sodales, congue massa eu, pretium ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. </p>
             </div>
             <div className='col col-5'>
@@ -96,7 +96,7 @@ const HomePage = () => {
         </div>
 
 
-        
+
     </>)
 }
 
