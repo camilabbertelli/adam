@@ -10,3 +10,23 @@
     background-color: white;
     border-radius: 20px;
 }
+
+
+.heatmap-area.dashed {
+
+    background-image: repeating-linear-gradient(45deg, #7d7d7d, #7d7d7d 10px, transparent 10px, transparent 20px, #7d7d7d 20px), repeating-linear-gradient(135deg, #7d7d7d, #7d7d7d 10px, transparent 10px, transparent 20px, #7d7d7d 20px), repeating-linear-gradient(225deg, #7d7d7d, #7d7d7d 10px, transparent 10px, transparent 20px, #7d7d7d 20px), repeating-linear-gradient(315deg, #7d7d7d, #7d7d7d 10px, transparent 10px, transparent 20px, #7d7d7d 20px);
+    background-size: 3px calc(100% + 28.28px), calc(100% + 28.28px) 3px, 3px calc(100% + 28.28px), calc(100% + 28.28px) 3px;
+    background-position: 0 0, 0 0, 100% 0, 0 100%;
+    background-repeat: no-repeat;
+    animation: borderAnimation 0.9s infinite linear;
+}
+
+@keyframes borderAnimation {
+    from {
+        background-position: 0 0, -28.28px 0, 100% -28.28px, 0 100%;
+    }
+
+    to {
+        background-position: 0 -28.28px, 0 0, 100% 0, -28.28px 100%;
+    }
+}

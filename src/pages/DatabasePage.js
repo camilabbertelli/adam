@@ -1,6 +1,6 @@
 
 import "./../styles/Database.css";
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 import TableFilter from "react-table-filter";
 import "react-table-filter/lib/styles.css";
 
@@ -37,7 +37,7 @@ class Table extends React.Component {
     _filterUpdated(newData, filtersObject) {
         if (newData.length)
             this.setState({
-                data: newData,
+                data: newData
             });
     }
 
@@ -74,7 +74,6 @@ class Table extends React.Component {
                                         {key.charAt(0).toUpperCase() + key.slice(1)}
                                     </th>
                                 )
-                            return ""
                         })}
 
                     </TableFilter>
@@ -86,8 +85,6 @@ class Table extends React.Component {
                                 {keys.map(function (key) {
                                     if (!checkedKeys || checkedKeys.includes(key))
                                         return (<td key={key} className={(key !== "#") ? `cell + ${key}` : `cardinal`}>{item[key]}</td>)
-
-                                    return ""
                                 })}
                             </tr>
                         );

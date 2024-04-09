@@ -30,6 +30,10 @@
     overflow: auto;
 }
 
+.drag-active {
+    opacity: 0.3;
+}
+
 .dashboard-row1,
 .dashboard-row2 {
     display: flex;

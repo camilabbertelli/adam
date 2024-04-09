@@ -1,5 +1,5 @@
 {
-  "short_name": "A.D.A.M",
+  "short_name": "React App",
   "name": "Create React App Sample",
   "icons": [
     {
@@ -8,9 +8,9 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo512.png",
+      "src": "logo.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "192x192"
     }
   ],
   "start_url": ".",

@@ -17,46 +17,28 @@ import React from 'react';
 import csv_data from "./assets/data.csv"
 import * as d3 from "d3"
 
-class App extends React.Component{
+const App = () => {
 
-	constructor(props){
-		super(props);
-		this.state = {
-            data: []
-        };
-	}
-
-	componentDidMount(){
-		d3.csv(csv_data).then(d => {
-			this.setState({data: d})
-		})
-	}
-
-	render(){
-		let	data = this.state.data
-		if (!data.length) return ""
-
-		return (
-			<div className="App">
-				<ErrorBoundary>
-					<BrowserRouter>
-						<div className="App">
-							<NavBar />
-							<div className='pageBody'>
-								<Routes >
-									<Route path="/" element={<HomePage />} />
-									<Route path="/dashboard" element={<DashboardPage data={data}/>} />
-									<Route path="/database" element={<DatabasePage />} />
-									<Route path="/library" element={<LibraryPage data={data}/>} />
-									<Route path="*" element={<NotFoundPage />} />
-								</Routes>
-							</div>
+	return (
+		<div className="App">
+			{/* <ErrorBoundary> */}
+				<BrowserRouter>
+					<div className="App">
+						<NavBar />
+						<div className='pageBody'>
+							<Routes >
+								<Route path="/" element={<HomePage />} />
+								<Route path="/dashboard" element={<DashboardPage/>} />
+								<Route path="/database" element={<DatabasePage />} />
+								<Route path="/library" element={<LibraryPage/>} />
+								<Route path="*" element={<NotFoundPage />} />
+							</Routes>
 						</div>
-					</BrowserRouter>
-				</ErrorBoundary>
-			</div>
-		);
-	}
+					</div>
+				</BrowserRouter>
+			{/* </ErrorBoundary> */}
+		</div>
+	);
 }
 export default App;
 

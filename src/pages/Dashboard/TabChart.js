@@ -13,8 +13,6 @@ var maleSelected = false
 var femaleSelected = false
 let participants_total = 1
 
-let perspectives = ["Actions", "Body&Soul", "Emotions"]
-
 // class TabContent extends React.Component {
 
 //     constructor(props) {
@@ -224,7 +222,7 @@ let perspectives = ["Actions", "Body&Soul", "Emotions"]
 
 // }
 
-const TabContent = ({ data, perspective }) => {
+const TabContent = ({ perspective }) => {
 
     useEffect(() => {
         //     let globalData = d3.flatRollup(data, v => ({
@@ -456,7 +454,7 @@ const TabContent = ({ data, perspective }) => {
     </>)
 }
 
-const TabChart = ({ data }) => {
+const TabChart = ({ perspectives }) => {
     const [currentPerspective, setCurrentPerspective] = useState(perspectives[0])
 
     const changePerspective = (perspective) => {
@@ -474,7 +472,7 @@ const TabChart = ({ data }) => {
                         )
                     })}
                 </div>
-                {<TabContent data={data} perspective={currentPerspective} />}
+                {<TabContent perspective={currentPerspective} />}
             </div>
         </>
     )
