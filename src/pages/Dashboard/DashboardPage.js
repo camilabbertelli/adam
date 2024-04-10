@@ -1,6 +1,9 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import "./../../styles/Dashboard/Dashboard.css";
 
+import x from "./../../assets/images/x.png"
+import close from "./../../assets/images/close.png"
+
 import TabChart from "./TabChart";
 import HeatmapChart from "./HeatmapChart";
 import ImportantPeopleChart from "./ImportantPeopleChart";
@@ -10,10 +13,10 @@ import { DndContext, DragOverlay, useDraggable } from '@dnd-kit/core';
 
 const DashboardPage = () => {
 
-    let perspectives = ["Actions", "Body&Soul", "Emotions"]
+    let categories = ["Actions", "Body&Soul", "Emotions"]
 
-    const [activeId, setActiveId] = useState(null);
-
+    const [activeCategories, setActiveCategories] = useState([]);
+    const [activeCategory, setActiveCategory] = useState(null)
     const [simpleFilter, setSimpleFilter] = useState(true)
 
 
@@ -27,30 +30,31 @@ const DashboardPage = () => {
 
 
         return (
-            <div ref={setNodeRef} {...listeners} {...attributes}>
+            <div className="category-group" ref={setNodeRef} {...listeners} {...attributes}>
                 {props.children}
             </div>
         );
     }
 
     function handleDragStart(event) {
-        setActiveId(event.active.id);
+        setActiveCategory(event.active.id);
     }
 
-    function handleDragEnd({active, over}) {
-        if (over){
+    function removeCategory(index){
+        let aux = [...activeCategories]
+        aux.splice(index, 1);
+        setActiveCategories(aux)
 
-        }
-        setActiveId(null);
     }
+
     return (<>
 
-        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <DndContext onDragStart={handleDragStart}>
             <div className="dashboard-view">
                 <div className="dashboard-filter-view">
 
 
-                    <div class="inline-flex" role="group">
+                    <div className="inline-flex" role="group">
                         <button type="button" className={"shadow filter-button" + ((simpleFilter) ? " active" : "")} style={{ borderRadius: "20px 0px 0px 20px" }} onClick={() => setSimpleFilter(!simpleFilter)}>
                             Simple filter
                         </button>
@@ -60,15 +64,18 @@ const DashboardPage = () => {
                     </div>
 
                     <br />
-                    <h4>Categories</h4>
+                    <div style={{width: "95%", display:'flex', flexDirection:"column", justifyContent: "center"}}>
+                        <h4>Categories</h4>
+                        <center>
+                        {categories.map((p) => (
+                            <Draggable key={p} id={p}><button className='filter-category shadow'>{p}</button></Draggable>
+                        ))}
+                        </center>
+                    </div>
 
-                    {perspectives.map((p) => (
-                        <Draggable id={p}><button>{p}</button></Draggable>
-                    ))}
-
-                    <DragOverlay dropAnimation={{duration: 500}}>
-                        {activeId ? (
-                            <button>{activeId}</button>
+                    <DragOverlay dropAnimation={{ duration: 500 }}>
+                        {activeCategory ? (
+                            <button className='filter-category shadow' key={activeCategory}>{activeCategory}</button>
                         ) : null}
                     </DragOverlay>
 
@@ -76,17 +83,27 @@ const DashboardPage = () => {
                 <div className="dashboard-graph-view">
                     <div className="dashboard-row1">
                         <div className="dashboard-viz1">
-                            <HeatmapChart activeId={activeId}>Drop here</HeatmapChart>
+                            <HeatmapChart updateActiveCategory={setActiveCategory} updateActiveCategories={setActiveCategories} activeCategories={activeCategories} activeCategory={activeCategory}>
+                                <div className={"category " + (activeCategories.length ? "" : "default")} key={activeCategories.length ? activeCategories[0] : "category1"}>
+                                    {activeCategories.length ? activeCategories[0] : "Category"}
+                                </div>
+                                    {activeCategories.length > 0 && <img className="x" alt="x" src={x} width="20px" height="20px" onClick={() => removeCategory(0)} />}
+                                <img alt="close" style={{margin: "0 50px"}} src={close} width="20px" height="20px" />
+                                <div className={"category " + (activeCategories.length == 2 ? "" : "default")} key={activeCategories.length == 2 ? activeCategories[1] : "category2"}>
+                                    {activeCategories.length == 2 ? activeCategories[1] : "Category"}
+                                </div>
+                                    {activeCategories.length == 2 && <img className="x" alt="x" src={x} width="20px" height="20px" onClick={() => removeCategory(1)}/>}
+                            </HeatmapChart>
                         </div>
-                        <div className={"dashboard-viz2" + ((activeId) ? " drag-active" : "")}>
+                        <div className={"dashboard-viz2" + ((activeCategory) ? " drag-active" : "")}>
                             <ImportantPeopleChart />
                         </div>
                     </div>
                     <div className="dashboard-row2">
-                        <div id="viz3" className={"dashboard-viz3" + ((activeId) ? " drag-active" : "")}>
-                            <TabChart perspectives={perspectives}/>
+                        <div id="viz3" className={"dashboard-viz3" + ((activeCategory) ? " drag-active" : "")}>
+                            <TabChart perspectives={categories} />
                         </div>
-                        <div className={"dashboard-viz4" + ((activeId) ? " drag-active" : "")}>
+                        <div className={"dashboard-viz4" + ((activeCategory) ? " drag-active" : "")}>
                             <NetworkChart />
                         </div>
                     </div>

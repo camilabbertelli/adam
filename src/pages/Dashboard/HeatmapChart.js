@@ -6,20 +6,28 @@ import React from 'react';
 
 
 const HeatmapChart = (props) => {
-  const {isOver, setNodeRef} = useDroppable({
-    id: 'droppable',
-  });
-  const style = {
-    backgroundColor: isOver ? '#baded1' : undefined,
-    opacity: 1
-  };
-  
-  
-  return (
-      <div ref={setNodeRef} style={style} className={"shadow heatmap-area" + ((props.activeId) ?" dashed" : "")}>
-        {props.children}
-      </div>
-  );
+	const { isOver, setNodeRef } = useDroppable({
+		id: 'droppable',
+	});
+
+	const onMouseOver = () => {
+		console.log(props)
+		if (props.activeCategory) {
+			if (props.activeCategories.length < 2 && !props.activeCategories.includes(props.activeCategory)) {
+				let aux = [...props.activeCategories]
+				aux.push(props.activeCategory)
+				props.updateActiveCategories(aux);
+				console.log(aux)
+			}
+		}
+		props.updateActiveCategory(null);
+	}
+
+	return (
+		<div onMouseOver={onMouseOver} ref={setNodeRef} className={"shadow heatmap-area" + ((props.activeCategory) ? " dashed" : "")}>
+			{props.children}
+		</div>
+	);
 }
 
 export default HeatmapChart

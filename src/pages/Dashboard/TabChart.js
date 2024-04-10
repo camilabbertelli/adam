@@ -290,10 +290,9 @@ const TabContent = ({ perspective }) => {
         const svg = d3
             .select("#tab-content")
             .append("svg")
-            .attr("class", "pyramid-test")
+            .attr("className", "pyramid-test")
             .attr("width", width)
             .attr("height", height)
-            .attr("transform", `translate(50px, -50%)`)
             .attr("preserveAspectRatio", "xMinYMin")
             .append("g")
 
@@ -463,12 +462,12 @@ const TabChart = ({ perspectives }) => {
 
     return (
         <>
-            <div class="tab-chart-area">
+            <div className="tab-chart-area">
 
                 <div className="tab-chart-area-tabs">
                     {perspectives.map(function (perspective) {
                         return (
-                            <button id={perspective} className={(currentPerspective === perspective) ? "active" : ""} style={{ "borderRadius": "15px 15px 0px 0px" }} onClick={() => changePerspective(perspective)}>{perspective}</button>
+                            <button key={perspective} id={perspective} className={(currentPerspective === perspective) ? "active" : ""} style={{ "borderRadius": "15px 15px 0px 0px" }} onClick={() => changePerspective(perspective)}>{perspective}</button>
                         )
                     })}
                 </div>
