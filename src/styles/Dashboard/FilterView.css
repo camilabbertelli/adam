@@ -1,0 +1,141 @@
+.dashboard-filter-view {
+    width: 20%;
+    height: 100%;
+
+    background-color: #D9AB96;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2% 25px;
+
+    text-align: left;
+
+    max-height: 100%;
+    overflow: auto;
+}
+
+
+.dashboard-filter-button{
+    background-color: white;
+    color: black;
+
+    padding: 0px 10px;
+
+    border: solid;
+    border-color: #935959;
+    font-size: 20px;
+    
+    &:hover{
+        background-color: rgb(226, 226, 226);
+    }
+}
+
+.dashboard-filter-button.active{
+    background-color: #935959;
+    color: white;
+
+    border-color: #935959;
+}
+
+
+button.dashboard-filter-category{
+    width: 100%;
+    border: solid;
+    border-color: #EAEAEA;
+    background-color: white;
+    padding: 5px 10px;
+}
+
+.category-group:nth-of-type(1) button{
+    border-radius: 20px 20px 0 0;
+}
+
+.category-group:nth-last-of-type(1) button{
+    border-radius: 0 0 20px 20px;
+}
+
+.dashboard-filter-options{
+    background-color: white;
+    color: black;
+
+    padding: 0px 6px;
+
+    border: solid;
+    border-color: #cacaca;
+    font-size: 16px;
+    
+    &:hover{
+        background-color: rgb(226, 226, 226);
+    }
+}
+
+.dashboard-filter-options.active{
+    background-color: #cacaca;
+    border-color: #cacaca;
+}
+
+.dashboard-filter-options:nth-of-type(1){
+    border-radius: 20px 0 0 20px;
+}
+
+.dashboard-filter-options:nth-last-of-type(1){
+    border-radius: 0 20px 20px 0;
+}
+
+.dashboard.form-select {
+    width: 100%;
+    margin-bottom: 10px;
+    border-radius: 20px;
+}
+
+
+.dashboard-codices {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow-x: auto;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+div.dashboard-image-component {
+    position: relative;
+
+    width: 60px;
+    height: 240px;
+
+    opacity: 0.7;
+
+    transition: all 0.2s ease-in-out !important;
+
+    cursor: pointer;
+}
+
+
+.dashboard-card-img-top {
+    width: 60px;
+    height: 240px;
+
+    transition: all 0.2s ease-in-out !important;
+
+    cursor: pointer;
+}
+
+.dashboard-centered {
+    position: absolute;
+
+    color: white;
+    transform: rotate(90deg);
+
+    top: 38%;
+    left: 49%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    font-size: 13px;
+    text-align: center;
+
+    cursor: pointer;
+}

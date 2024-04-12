@@ -30,10 +30,10 @@
 
 .tab-chart-area {
 	width: 95%;
-	height: 95%;
+	height: 90%;
 
-	position: relative;
-	top: 50%;
+    position: relative;
+    top: 47%;
 	left: 30px;
 	transform: translate(0, -50%);
 }
