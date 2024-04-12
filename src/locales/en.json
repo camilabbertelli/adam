@@ -9,13 +9,26 @@
     "titleAboutUs": "About us",
     "home-map-title": "Places present in the medieval narrative",
 
+    "simple-filter": "Simple filter",
+    "advanced-filter": "Advanced filter",
+    "categories-label": "Categories",
+    "category-label": "Category",
+    "category-action": "Actions",
+    "category-body": "Body&Soul",
+    "category-emotion": "Emotions",
+    "intentions-label": "Intentions",
+    "origins-label": "Origins",
+    "explanations-label": "Explanations",
+    "codices-label": "Codices",
+
+    "database-content": "Content",
+    "database-select-all" : "Select all",
 
     "library-filter-ancient": "Ancient portuguese",
     "library-filter-modern": "Modern portuguese",
     "library-filter-lightsoff": "Lights-off mode",
     "library-available-codices": "Available codices",
     "library-genre-all": "All",
-
 
     "lost": "Lost?",
     "not-found": "404: Page Not Found!",

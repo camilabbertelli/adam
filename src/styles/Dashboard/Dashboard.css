@@ -68,7 +68,7 @@
     background-color: white;
     color: black;
 
-    padding: 0px 15px;
+    padding: 0px 10px;
 
     border: solid;
     border-color: #935959;
@@ -91,6 +91,7 @@ button.filter-category{
     width: 100%;
     border: solid;
     border-color: #EAEAEA;
+    background-color: white;
     padding: 5px 10px;
 }
 
@@ -100,4 +101,89 @@ button.filter-category{
 
 .category-group:nth-last-of-type(1) button{
     border-radius: 0 0 20px 20px;
+}
+
+.filter-options{
+    background-color: white;
+    color: black;
+
+    padding: 0px 6px;
+
+    border: solid;
+    border-color: #cacaca;
+    font-size: 16px;
+    
+    &:hover{
+        background-color: rgb(226, 226, 226);
+    }
+}
+
+.filter-options.active{
+    background-color: #cacaca;
+    border-color: #cacaca;
+}
+
+.filter-options:nth-of-type(1){
+    border-radius: 20px 0 0 20px;
+}
+
+.filter-options:nth-last-of-type(1){
+    border-radius: 0 20px 20px 0;
+}
+
+.database.form-select {
+    width: 100%;
+    margin-bottom: 10px;
+    border-radius: 20px;
+}
+
+
+.database-codices {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow-x: auto;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+div.database-image-component {
+    position: relative;
+
+    width: 60px;
+    height: 240px;
+
+    opacity: 0.7;
+
+    transition: all 0.2s ease-in-out !important;
+
+    cursor: pointer;
+}
+
+
+.database-card-img-top {
+    width: 60px;
+    height: 240px;
+
+    transition: all 0.2s ease-in-out !important;
+
+    cursor: pointer;
+}
+
+.database-centered {
+    position: absolute;
+
+    color: white;
+    transform: rotate(90deg);
+
+    top: 38%;
+    left: 49%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    font-size: 13px;
+    text-align: center;
+
+    cursor: pointer;
 }

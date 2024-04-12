@@ -1,6 +1,6 @@
 
 import "./../styles/Database.css";
-import React, { Component, useEffect } from "react";
+import React, { useState } from "react";
 import TableFilter from "react-table-filter";
 import "react-table-filter/lib/styles.css";
 
@@ -10,7 +10,7 @@ import csv_data from "./../assets/data.csv"
 
 import * as d3 from "d3"
 
-import reset from "./../assets/undo.png"
+import { useTranslation } from "react-i18next";
 
 class Table extends React.Component {
 
@@ -110,17 +110,18 @@ const ExcelFilter = (props) => {
 
     if (!props.keys)
         return ""
+
     return (
         <>
-            <img width="20px" alt="reset" src={reset} style={{ paddingBottom: 5 + "px", cursor: "pointer" }} onClick={() => props.updateCheckedKeys(props.keys)} />
-            <div className="excel-filter-body">
+            <div className="excel-filter-body" style={{borderTop: "1.5px solid black", paddingTop: "10px", marginTop:"10px"}}>
                 {props.keys.map(function (key) {
-                    return (<div key={key} className="form-check">
-                        <input className="form-check-input" type="checkbox" value={key} onChange={() => toggleItem(key)} checked={(props.checkedKeys.includes(key))} />
-                        <label className="form-check-label">
-                            {key}
-                        </label>
-                    </div>)
+                    return (
+                        <div key={key} className="form-check">
+                            <input className="form-check-input" type="checkbox" value={key} onChange={() => toggleItem(key)} checked={(props.checkedKeys.includes(key))} />
+                            <label className="form-check-label">
+                                {key}
+                            </label>
+                        </div>)
                 })}
 
             </div>
@@ -128,41 +129,35 @@ const ExcelFilter = (props) => {
     )
 }
 
-class DatabasePage extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            keys: [],
-            checkedKeys: []
-        };
+const DatabasePage = () => {
+
+    const [keys, setKeys] = useState([])
+    const [checkedKeys, setCheckedKeys] = useState([])
+
+    const { t } = useTranslation()
+
+    function updateKeys(newKeys) {
+        setKeys(newKeys)
+        setCheckedKeys(newKeys)
     }
 
-    updateKeys = (newKeys) => {
-        this.setState({
-            keys: [...newKeys],
-            checkedKeys: [...newKeys]
-        })
-    }
-
-    updateCheckedKeys = (newKeys) => {
-        this.setState({
-            checkedKeys: [...newKeys]
-        })
-    }
-
-    render() {
-        return (
-            <div className="database-view">
-                <div className="database-filter-view">
-                    <h3>Content</h3>
-                    <ExcelFilter updateCheckedKeys={this.updateCheckedKeys} keys={this.state.keys} checkedKeys={this.state.checkedKeys} />
+    return (
+        <div className="database-view">
+            <div className="database-filter-view">
+                <h3>{t("database-content")}</h3>
+                <div className="form-check">
+                    <input className="form-check-input" type="checkbox" onChange={() => (setCheckedKeys(checkedKeys === keys ? [] : keys))} checked={checkedKeys === keys} />
+                    <label className="form-check-label">
+                        {t("database-select-all")}
+                    </label>
                 </div>
-                <div className="database-table-view">
-                    <Table updateKeys={this.updateKeys} checkedKeys={this.state.checkedKeys} />
-                    <div id="loader" className="loader"></div>
-                </div>
-            </div>)
-    }
+                <ExcelFilter updateCheckedKeys={setCheckedKeys} keys={keys} checkedKeys={checkedKeys} />
+            </div>
+            <div className="database-table-view">
+                <Table updateKeys={updateKeys} checkedKeys={checkedKeys} />
+                <div id="loader" className="loader"></div>
+            </div>
+        </div>)
 }
 
 export default DatabasePage;

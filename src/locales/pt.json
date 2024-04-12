@@ -1,21 +1,34 @@
 {
     "navbar_home": "Início",
-    "navbar_dashboard": "Painel",
+    "navbar_dashboard": "Dashboard",
     "navbar_database": "Base de dados",
     "navbar_library": "Biblioteca",
-    "adam": "Painel de Análise para a Anatomia na Idade Média",
+    "adam": "Dashboard de Análise para a Anatomia na Idade Média",
     "btnDiscover": "Descubra mais",
     "titleGallery": "Nossa Galeria",
     "titleAboutUs": "Sobre nós",
     "home-map-title": "Lugares descritos na narrativa medieval",
 
+    "simple-filter": "Filtro simples",
+    "advanced-filter": "Filtro avançado",
+    "categories-label": "Categorias",
+    "category-label": "Categoria",
+    "category-action": "Ações",
+    "category-body": "Corpo&Alma",
+    "category-emotion": "Emoções",
+    "intentions-label": "Intenções",
+    "origins-label": "Origens",
+    "explanations-label": "Explicações",
+    "codices-label": "Códices",
+
+    "database-content": "Conteúdo",
+    "database-select-all" : "Selecionar tudo",
 
     "library-filter-ancient": "Português antigo",
     "library-filter-modern": "Português Moderno",
     "library-filter-lightsoff": "Luzes apagadas",
     "library-available-codices": "Códices disponíveis",
     "library-genre-all": "Todos",
-
 
     "lost": "Perdido?",
     "not-found": "404: Página não encontrada!",

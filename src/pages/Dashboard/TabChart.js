@@ -60,7 +60,7 @@ let participants_total = 1
 //     }
 
 //     render() {
-//         let perspective = this.props.perspective
+//         let category = this.props.category
 //         let pyramidData = this.state.data
 
 //         //let box = document.querySelector('.dashboard-viz3');
@@ -213,7 +213,7 @@ let participants_total = 1
 //             <>
 
 //                 <div id="tab-content" className="tab-chart-area-content shadow">
-//                     <p>{perspective}</p>
+//                     <p>{category}</p>
 
 //                 </div>
 //             </>
@@ -222,7 +222,7 @@ let participants_total = 1
 
 // }
 
-const TabContent = ({ perspective }) => {
+const TabContent = ({ category }) => {
 
     useEffect(() => {
         //     let globalData = d3.flatRollup(data, v => ({
@@ -247,8 +247,6 @@ const TabContent = ({ perspective }) => {
 
         //     let actions = d3.group(data, d => d.action)
         //     console.log(actions)
-
-
 
         //     let pyramidData = d3.rollup(globalData, v => ({
         //         participantsAction: () => {
@@ -286,178 +284,21 @@ const TabContent = ({ perspective }) => {
 
         let width = boundaries.width * 0.7;
         let height = boundaries.height * 0.7;
-        d3.select("#tab-content").html("");
-        const svg = d3
-            .select("#tab-content")
-            .append("svg")
-            .attr("className", "pyramid-test")
-            .attr("width", width)
-            .attr("height", height)
-            .attr("preserveAspectRatio", "xMinYMin")
-            .append("g")
-
-        // parse the Data
-        d3.csv("https://raw.githubusercontent.com/GDS-ODSSS/unhcr-dataviz-platform/master/data/distribution/population_pyramid.csv")
-            .then(function (data) {
-
-                // X scale and Axis
-                const xScaleMale = d3.scaleLinear()
-                    .domain([0, d3.max(data, d => +d.male)])
-                    .range([width / 2, 0]);
-                svg
-                    .append("g")
-                    .attr("transform", `translate(0, ${height})`)
-                    .call(d3.axisBottom(xScaleMale).tickSize(0).tickPadding(3).ticks(7, "%"))
-                    .call(function (d) { return d.select(".domain").remove() });
-
-                const xScaleFemale = d3.scaleLinear()
-                    .domain([0, d3.max(data, d => +d.female)])
-                    .range([width / 2, width]);
-                svg
-                    .append("g")
-                    .attr("transform", `translate(0, ${height})`)
-                    .call(d3.axisBottom(xScaleFemale).tickSize(0).tickPadding(3).ticks(7, "%"))
-                    .call(function (d) { return d.select(".domain").remove() });
-
-                // set vertical grid line
-                const GridLineF = function () { return d3.axisBottom().scale(xScaleFemale) };
-                svg
-                    .append("g")
-                    .attr("class", "grid")
-                    .call(GridLineF()
-                        .tickSize(height, 0, 0)
-                        .tickFormat("")
-                        .ticks(7)
-                    );
-                const GridLineM = function () { return d3.axisBottom().scale(xScaleMale) };
-                svg
-                    .append("g")
-                    .attr("class", "grid")
-                    .call(GridLineM()
-                        .tickSize(height, 0, 0)
-                        .tickFormat("")
-                        .ticks(7)
-                    );
-
-                // Y scale and Axis
-                const yScale = d3.scaleBand()
-                    .domain(data.map(d => d.ages))
-                    .range([height, 0])
-                    .padding(.25);
-                svg
-                    .append("g")
-                    .call(d3.axisLeft(yScale).tickSize(0).tickPadding(15))
-                    .call(d => d.select(".domain").remove());
-
-                // create a tooltip
-                const tooltip = d3.select("body")
-                    .append("div")
-                    .attr("class", "tooltip");
-
-                // tooltip events
-                const mouseover = function (d) {
-                    tooltip
-                        .style("opacity", 1)
-                    d3.select(this)
-                        .style("stroke", "#EF4A60")
-                        .style("opacity", .5)
-                };
-                const mousemove1 = function (event, d) {
-
-                    tooltip
-                        .html(`${d.male * 100}%`)
-                        .style("top", event.pageY - 10 + "px")
-                        .style("left", event.pageX + 10 + "px");
-                };
-                const mousemove2 = function (event, d) {
-                    tooltip
-                        .html(`${d.female * 100}%`)
-                        .style("top", event.pageY - 10 + "px")
-                        .style("left", event.pageX + 10 + "px")
-                };
-                const mouseleave = function (d) {
-                    tooltip
-                        .style("opacity", 0)
-                    d3.select(this)
-                        .style("stroke", "none")
-                        .style("opacity", 1)
-                };
-
-                // create male bars
-                svg
-                    .selectAll(".maleBar")
-                    .data(data)
-                    .join("rect")
-                    .attr("class", "barMale")
-                    .attr("x", d => xScaleMale(d.male))
-                    .attr("y", d => yScale(d.ages))
-                    .attr("width", d => width / 2 - xScaleMale(d.male))
-                    .attr("height", yScale.bandwidth())
-                    .style("fill", "#18375F")
-                    .on("mouseover", mouseover)
-                    .on("mousemove", mousemove1)
-                    .on("mouseleave", mouseleave)
-
-                // create female bars
-                svg
-                    .selectAll(".femaleBar")
-                    .data(data)
-                    .join("rect")
-                    .attr("class", "barFemale")
-                    .attr("x", xScaleFemale(0))
-                    .attr("y", d => yScale(d.ages))
-                    .attr("width", d => xScaleFemale(d.female) - xScaleFemale(0))
-                    .attr("height", yScale.bandwidth())
-                    .style("fill", "#0072BC")
-                    .on("mouseover", mouseover)
-                    .on("mousemove", mousemove2)
-                    .on("mouseleave", mouseleave)
-
-
-
-                //set legend
-                svg
-                    .append("rect")
-                    .attr("x", 0)
-                    .attr("y", 0)
-                    .attr("width", 13)
-                    .attr("height", 13)
-                    .style("fill", "#18375F")
-                svg
-                    .append("text")
-                    .attr("class", "legend")
-                    .attr("x", 0 * 0.6 + 15)
-                    .attr("y", -(0 / 5.5))
-                    .text("Male")
-                svg
-                    .append("rect")
-                    .attr("x", 40)
-                    .attr("y", -(0 / 3))
-                    .attr("width", 13)
-                    .attr("height", 13)
-                    .style("fill", "#0072BC")
-                svg
-                    .append("text")
-                    .attr("class", "legend")
-                    .attr("x", 60)
-                    .attr("y", -(0 / 5.5))
-                    .text("Female")
-
-            })
 
     }, [])
 
     return (<>
         <div id="tab-content" className="tab-chart-area-content shadow">
+            {category}
         </div>
     </>)
 }
 
-const TabChart = ({ perspectives }) => {
-    const [currentPerspective, setCurrentPerspective] = useState(perspectives[0])
+const TabChart = ({ categories }) => {
+    const [currentCategory, setCurrentCategory] = useState(categories[0])
 
-    const changePerspective = (perspective) => {
-        setCurrentPerspective(perspective)
+    const changeCategory = (category) => {
+        setCurrentCategory(category)
     }
 
     return (
@@ -465,13 +306,13 @@ const TabChart = ({ perspectives }) => {
             <div className="tab-chart-area">
 
                 <div className="tab-chart-area-tabs">
-                    {perspectives.map(function (perspective) {
+                    {categories.map(function (category) {
                         return (
-                            <button key={perspective} id={perspective} className={(currentPerspective === perspective) ? "active" : ""} style={{ "borderRadius": "15px 15px 0px 0px" }} onClick={() => changePerspective(perspective)}>{perspective}</button>
+                            <button key={category + "-tab"} id={category + "-tab"} className={(currentCategory === category) ? "active" : ""} style={{ "borderRadius": "15px 15px 0px 0px" }} onClick={() => changeCategory(category)}>{category}</button>
                         )
                     })}
                 </div>
-                {<TabContent perspective={currentPerspective} />}
+                {<TabContent category={currentCategory} />}
             </div>
         </>
     )

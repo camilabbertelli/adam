@@ -74,6 +74,7 @@
 .form-select {
     width: 50%;
     margin-bottom: 10px;
+    border-radius: 20px;
 }
 
 .codices {
