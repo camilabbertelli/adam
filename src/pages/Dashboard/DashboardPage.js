@@ -8,9 +8,13 @@ import TabChart from "./TabChart";
 import HeatmapChart from "./HeatmapChart";
 import ImportantPeopleChart from "./ImportantPeopleChart";
 import NetworkChart from './NetworkChart';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DndContext, DragOverlay} from '@dnd-kit/core';
 import { useTranslation } from 'react-i18next';
+
+
+import csv_data from "./../../assets/data.csv"
+import * as d3 from "d3"
 
 import FilterView from './FilterView';
 
@@ -18,12 +22,13 @@ const DashboardPage = () => {
 
     const { t } = useTranslation();
 
+    
     let categories = [t("category-action"), t("category-body"), t("category-emotion")]
-
+    
+    const [data, setData] = useState([])
     const [activeCategories, setActiveCategories] = useState([]);
     const [activeCategory, setActiveCategory] = useState(null)
     
-
     function handleDragStart(event) {
         setActiveCategory(event.active.id);
     }
@@ -58,8 +63,11 @@ const DashboardPage = () => {
         let aux = [...activeCategories]
         aux.splice(index, 1);
         setActiveCategories(aux)
-
     }
+
+    d3.csv(csv_data).then(d => {
+        setData(d)
+    }, []);
 
     return (<>
 
@@ -68,7 +76,7 @@ const DashboardPage = () => {
                 <FilterView categories={categories}/>
                 <DragOverlay dropAnimation={{ duration: 500 }}>
                         {activeCategory ? (
-                            <button className='filter-category shadow' key={activeCategory}>{activeCategory}</button>
+                            <button className='dashboard-filter-category shadow' key={activeCategory}>{activeCategory}</button>
                         ) : null}
                     </DragOverlay>
                 <div className="dashboard-graph-view">
@@ -94,7 +102,7 @@ const DashboardPage = () => {
                     </div>
                     <div className="dashboard-row2">
                         <div id="viz3" className={"dashboard-viz3" + ((activeCategory) ? " drag-active" : "")}>
-                            <TabChart categories={categories} />
+                            <TabChart categories={categories} data={data}/>
                         </div>
                         <div className={"dashboard-viz4" + ((activeCategory) ? " drag-active" : "")}>
                             <NetworkChart />

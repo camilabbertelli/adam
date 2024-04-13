@@ -6,7 +6,7 @@ import React from 'react';
 
 
 const HeatmapChart = (props) => {
-	let { setNodeRef } = useDroppable({
+	const { setNodeRef } = useDroppable({
 		id: 'droppable',
 	});
 

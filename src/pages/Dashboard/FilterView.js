@@ -12,8 +12,8 @@ function noSpaces(str) {
     return (str.replace(".", '')).replace(/\s+/g, '')
 }
 
-const FilterView = ({categories}) => {
-    
+const FilterView = ({ categories }) => {
+
     const { t } = useTranslation();
 
     const [simpleFilter, setSimpleFilter] = useState(true);
@@ -145,102 +145,102 @@ const FilterView = ({categories}) => {
     return (
         <div className="dashboard-filter-view">
 
-                    <div className="inline-flex" role="group">
-                        <button type="button" className={"shadow dashboard-filter-button" + ((simpleFilter) ? " active" : "")} style={{ borderRadius: "20px 0px 0px 20px" }} onClick={changeFilterType}>
-                            {t("simple-filter")}
-                        </button>
-                        <button type="button" className={"shadow dashboard-filter-button" + ((!simpleFilter) ? " active" : "")} style={{ borderRadius: "0px 20px 20px 0px" }} onClick={changeFilterType}>
-                            {t("advanced-filter")}
-                        </button>
-                    </div>
+            <div className="inline-flex" role="group">
+                <button type="button" className={"shadow dashboard-filter-button" + ((simpleFilter) ? " active" : "")} style={{ borderRadius: "20px 0px 0px 20px" }} onClick={changeFilterType}>
+                    {t("simple-filter")}
+                </button>
+                <button type="button" className={"shadow dashboard-filter-button" + ((!simpleFilter) ? " active" : "")} style={{ borderRadius: "0px 20px 20px 0px" }} onClick={changeFilterType}>
+                    {t("advanced-filter")}
+                </button>
+            </div>
 
-                    <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "10px 0" }}>
-                        <h5>{t("categories-label")}</h5>
-                        <center>
-                            {categories.map((p) => (
-                                <Draggable key={p} id={p}><button className='dashboard-filter-category shadow' id={p}>{p}</button></Draggable>
-                            ))}
-                        </center>
-                    </div>
+            <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "10px 0" }}>
+                <h5>{t("categories-label")}</h5>
+                <center>
+                    {categories.map((p) => (
+                        <Draggable key={p} id={p}><button className='dashboard-filter-category shadow' id={p}>{p}</button></Draggable>
+                    ))}
+                </center>
+            </div>
 
-                    <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
-                        <h5>{t("intention-label")}</h5>
-                        <div className="inline-flex" role="group">
-                            {intention.map(function (intention, index) {
-                                return (
-                                    <button type="button" className={"shadow dashboard-filter-options" + ((intentionIndex === index) ? " active" : "")} onClick={() => setIntentionIndex(index)}>
-                                        {intention}
-                                    </button>
-                                )
-                            })}
-                        </div>
-                    </div>
-
-                    <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
-                        <h5>{t("origin-label")}</h5>
-                        <div className="inline-flex" role="group">
-                            {origin.map(function (origin, index) {
-                                return (
-                                    <button type="button" className={"shadow dashboard-filter-options" + ((originIndex === index) ? " active" : "")} onClick={() => setOriginIndex(index)}>
-                                        {origin}
-                                    </button>
-                                )
-                            })}
-                        </div>
-                    </div>
-
-                    <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
-                        <h5>{t("explanation-label")}</h5>
-                        <div className="inline-flex" role="group">
-                            {explanation.map(function (explanation, index) {
-                                return (
-                                    <button type="button" className={"shadow dashboard-filter-options" + ((explanationIndex === index) ? " active" : "")} onClick={() => setExplanationIndex(index)}>
-                                        {explanation}
-                                    </button>
-                                )
-                            })}
-                        </div>
-                    </div>
-
-                    {!simpleFilter && <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
-                        <h5>{t("nature-label")}</h5>
-                        <div className="inline-flex" role="group">
-                            {nature.map(function (nature, index) {
-                                return (
-                                    <button type="button" className={"shadow dashboard-filter-options" + ((natureIndex === index) ? " active" : "")} onClick={() => setNatureIndex(index)}>
-                                        {nature}
-                                    </button>
-                                )
-                            })}
-                        </div>
-                    </div>}
-                    
-                    
-                    {!simpleFilter && <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
-                        <h5>{t("dimension-label")}</h5>
-                        <div className="inline-flex" role="group">
-                            {dimension.map(function (dimension, index) {
-                                return (
-                                    <button type="button" className={"shadow dashboard-filter-options" + ((dimensionIndex === index) ? " active" : "")} onClick={() => setDimensionIndex(index)}>
-                                        {dimension}
-                                    </button>
-                                )
-                            })}
-                        </div>
-                    </div>}
-
-                    <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
-                        <h5>{t("codices-label")}</h5>
-                        <select id="genreSelect" className="dashboard form-select" value={genre} onChange={changeSelect}>
-                            <option value="">{t("library-genre-all")}</option>
-                            <SelectGenre genres={allGenres} />
-                        </select>
-                        <div className="dashboard-codices">
-                            <Codices genre={genre} codices={allCodices} />
-                        </div>
-                    </div>
-
+            <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
+                <h5>{t("intention-label")}</h5>
+                <div className="inline-flex" role="group">
+                    {intention.map(function (intention, index) {
+                        return (
+                            <button key={intention} type="button" className={"shadow dashboard-filter-options" + ((intentionIndex === index) ? " active" : "")} onClick={() => setIntentionIndex(index)}>
+                                {intention}
+                            </button>
+                        )
+                    })}
                 </div>
+            </div>
+
+            <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
+                <h5>{t("origin-label")}</h5>
+                <div className="inline-flex" role="group">
+                    {origin.map(function (origin, index) {
+                        return (
+                            <button key={origin} type="button" className={"shadow dashboard-filter-options" + ((originIndex === index) ? " active" : "")} onClick={() => setOriginIndex(index)}>
+                                {origin}
+                            </button>
+                        )
+                    })}
+                </div>
+            </div>
+
+            <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
+                <h5>{t("explanation-label")}</h5>
+                <div className="inline-flex" role="group">
+                    {explanation.map(function (explanation, index) {
+                        return (
+                            <button key={explanation} type="button" className={"shadow dashboard-filter-options" + ((explanationIndex === index) ? " active" : "")} onClick={() => setExplanationIndex(index)}>
+                                {explanation}
+                            </button>
+                        )
+                    })}
+                </div>
+            </div>
+
+            {!simpleFilter && <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
+                <h5>{t("nature-label")}</h5>
+                <div className="inline-flex" role="group">
+                    {nature.map(function (nature, index) {
+                        return (
+                            <button key={nature} type="button" className={"shadow dashboard-filter-options" + ((natureIndex === index) ? " active" : "")} onClick={() => setNatureIndex(index)}>
+                                {nature}
+                            </button>
+                        )
+                    })}
+                </div>
+            </div>}
+
+
+            {!simpleFilter && <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
+                <h5>{t("dimension-label")}</h5>
+                <div className="inline-flex" role="group">
+                    {dimension.map(function (dimension, index) {
+                        return (
+                            <button key={dimension} type="button" className={"shadow dashboard-filter-options" + ((dimensionIndex === index) ? " active" : "")} onClick={() => setDimensionIndex(index)}>
+                                {dimension}
+                            </button>
+                        )
+                    })}
+                </div>
+            </div>}
+
+            <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
+                <h5>{t("codices-label")}</h5>
+                <select id="genreSelect" className="dashboard form-select" value={genre} onChange={changeSelect}>
+                    <option value="">{t("library-genre-all")}</option>
+                    <SelectGenre genres={allGenres} />
+                </select>
+                <div className="dashboard-codices">
+                    <Codices genre={genre} codices={allCodices} />
+                </div>
+            </div>
+
+        </div>
     )
 }
 
