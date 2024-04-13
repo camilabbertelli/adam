@@ -187,7 +187,7 @@ const MapChart = ({ codices }) => {
             .on("mouseover", mouseOver)
             .on("mouseleave", mouseLeave)
             .on("mousemove", mouseMove)
-    }, [codices]);
+    }, []);
 
     return (
         <>
