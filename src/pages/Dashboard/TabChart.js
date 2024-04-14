@@ -52,54 +52,108 @@ const TabContent = ({ category, data }) => {
                 organs: d3.group(v, d => d[3])
             }), d => d[1])
 
-        let box = document.querySelector('#pyramid-content');
+        let dimensions = [...new Set([...pyramidData.get("Masc.").anatomical_part.keys(),
+        ...pyramidData.get("Fem.").anatomical_part.keys(),
+        ...pyramidData.get("Mult.").anatomical_part.keys(),
+        ...pyramidData.get("N").anatomical_part.keys()])]
+
+
+        let box = document.querySelector('.pyramid-content');
 
         let boundaries = box.getBoundingClientRect()
 
-        let width = boundaries.width * 0.9 - margin.left - margin.right;
-        let height = boundaries.height * 0.9;
-        height = height / 1.4
+        let width = boundaries.width * 0.9;
 
-        d3.select("#pyramid-content").html("");
-        const svg = d3
-            .select("#pyramid-content")
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
+        let barsWidth = width / 3
+
+        let height = boundaries.height * 0.9;
+        let scrollableHeight = dimensions.length * 30
 
         let participants_total = 1
 
-        if (pyramidData.get("Masc.").participants_total + pyramidData.get("Fem.").participants_total !== 0)
-            participants_total = pyramidData.get("Masc.").participants_total + pyramidData.get("Fem.").participants_total
+        d3.select(".pyramid-content").html("");
+        d3.select(".pyramid-axes-content").html("");
+        const svg = d3
+            .select(".pyramid-content")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", scrollableHeight)
+            .append("g")
+            .attr("transform", `translate(${barsWidth},0)`);
 
-        let maxMale = d3.max((pyramidData.get("Masc.").anatomical_part).keys(), d => pyramidData.get("Masc.").anatomical_part.get(d).length / participants_total)
-        let maxFemale = d3.max((pyramidData.get("Fem.").anatomical_part).keys(), d => pyramidData.get("Fem.").anatomical_part.get(d).length / participants_total)
+        d3.selectAll("#tooltipPyramid").remove();
+        
+        tooltipPyramid = d3.select("body")
+            .append("div")
+            .attr("id", "tooltipPyramid")
+            .attr("class", "tooltip shadow rounded")
+            .attr("padding", "1px")
+            .style("opacity", 0);
+
+
+        function getParticipantsTotal() {
+            return pyramidData.get("Masc.").participants_total +
+                pyramidData.get("Fem.").participants_total +
+                pyramidData.get("N").participants_total +
+                pyramidData.get("Mult.").participants_total
+        }
+
+        function getMaleParticipants(d) {
+            let sum = 0
+            if (pyramidData.get("Masc.").anatomical_part.get(d))
+                sum += pyramidData.get("Masc.").anatomical_part.get(d).length
+            if (pyramidData.get("Mult.").anatomical_part.get(d))
+                sum += pyramidData.get("Mult.").anatomical_part.get(d).length
+            if (pyramidData.get("N").anatomical_part.get(d))
+                sum += pyramidData.get("N").anatomical_part.get(d).length
+
+            return sum
+        }
+
+        function getFemaleParticipants(d) {
+            let sum = 0
+            if (pyramidData.get("Fem.").anatomical_part.get(d))
+                sum += pyramidData.get("Fem.").anatomical_part.get(d).length
+            if (pyramidData.get("Mult.").anatomical_part.get(d))
+                sum += pyramidData.get("Mult.").anatomical_part.get(d).length
+            if (pyramidData.get("N").anatomical_part.get(d))
+                sum += pyramidData.get("N").anatomical_part.get(d).length
+
+            return sum
+        }
+
+        if (getParticipantsTotal() !== 0)
+            participants_total = getParticipantsTotal()
+
+        let maxMale = d3.max(dimensions, d => getMaleParticipants(d) / participants_total)
+        let maxFemale = d3.max(dimensions, d => getFemaleParticipants(d) / participants_total)
 
         let maxScale = Math.max(maxMale, maxFemale)
-
 
         let factor = maxScale > 0.1 ? 0.05 : 0.01
 
         // X scale and Axis
         const xScaleMale = d3.scaleLinear()
             .domain([0, ((maxScale + factor) > 1 ? 1 : maxScale + factor)])
-            .range([width / 2, 0]);
+            .range([barsWidth, 0]);
 
-        svg.append("g")
+        let axes = d3
+            .select(".pyramid-axes-content")
+            .append("svg")
+            .attr("width", width)
+            .attr("transform", `translate(${barsWidth},0)`);
+
+        axes.append("g")
             .attr("id", "axismale")
-            .attr("transform", `translate(0, ${height})`)
             .call(d3.axisBottom(xScaleMale).tickSize(0).tickPadding(2).ticks(5, "%").tickFormat(x => { if (x === 0) return 0; else return `${(+(x * 100).toFixed(1))}%` }))
             .call(function (d) { return d.select(".domain").remove() });
 
         const xScaleFemale = d3.scaleLinear()
             .domain([0, ((maxScale + factor) > 1 ? 1 : maxScale + factor)])
-            .range([width / 2, width]);
+            .range([barsWidth, barsWidth * 2]);
 
-        svg.append("g")
+        axes.append("g")
             .attr("id", "axisfemale")
-            .attr("transform", `translate(0, ${height})`)
             .call(d3.axisBottom(xScaleFemale).tickSize(0).tickPadding(2).ticks(5, "%").tickFormat(x => { if (x === 0) return; else return `${(+(x * 100).toFixed(1))}%` }))
             .call(function (d) { return d.select(".domain").remove() });
 
@@ -126,7 +180,7 @@ const TabContent = ({ category, data }) => {
             .attr("id", "gridf")
             .attr("class", "grid")
             .call(GridLineF()
-                .tickSize(height, 0, 0)
+                .tickSize(scrollableHeight, 0, 0)
                 .tickFormat("")
                 .ticks(7)
             );
@@ -135,91 +189,127 @@ const TabContent = ({ category, data }) => {
             .attr("id", "gridm")
             .attr("class", "grid")
             .call(GridLineM()
-                .tickSize(height, 0, 0)
+                .tickSize(scrollableHeight, 0, 0)
                 .tickFormat("")
                 .ticks(7)
             )
 
-        let dimensions = [...new Set([...pyramidData.get("Masc.").anatomical_part.keys(), ...pyramidData.get("Fem.").anatomical_part.keys()])]
 
         // Y scale and Axis
         const yScale = d3.scaleBand()
             .domain(dimensions)
-            .range([height, 0])
+            .range([scrollableHeight, 0])
             .padding(.3);
+
+
+        // tooltipPyramid events
+        const mouseover = function (d) {
+            tooltipPyramid
+                .style("opacity", 1)
+            d3.select(this)
+                .style("stroke-width", 1)
+        };
+
+        const mousemove1 = function (event, d) {
+            tooltipPyramid
+                .html(`<center><b>Male</b></center>
+        Percentage: ${d3.format(".1f")((getMaleParticipants(d) / participants_total) * 100)}%<br>
+        Participation: ${getMaleParticipants(d)}`)
+                .style("top", event.pageY - 10 + "px")
+                .style("left", event.pageX + 10 + "px");
+        };
+
+        const mousemove2 = function (event, d) {
+            tooltipPyramid
+                .html(`<center><b>Female</b></center>
+        Percentage: ${d3.format(".1f")((getFemaleParticipants(d) / participants_total) * 100)}%<br>
+        Participation: ${getFemaleParticipants(d)}`)
+                .style("top", event.pageY - 10 + "px")
+                .style("left", event.pageX + 10 + "px")
+        };
+
+        const mouseleave = function (d) {
+            tooltipPyramid
+                .style("opacity", 0)
+
+            let element = document.getElementById('tooltipPyramid')
+            if (element)
+                element.innerHTML = "";
+
+            d3.select(this)
+                .style("stroke-width", 0)
+        };
 
 
         let g = svg
             .append("g")
-            .attr("height", height)
-            .attr("width", width)
-            .attr("background-color", "red")
-            .attr("overflow-y", "auto")
-            
+
+        // TODO: scrollable
         g.append("g")
-            .call(d3.axisLeft(yScale).tickSize(0).tickPadding(10))
             .attr("class", "pyramid-subcategory-axis")
-            .call(d => d.select(".domain").remove());
-            
+            .attr("width", "200px")
+            .call(d3.axisLeft(yScale).tickSize(0).tickPadding(10))
+            .call(d => d.select(".domain").remove())
+
         // create male bars
         g.selectAll(".maleBar")
-            .data((pyramidData.get("Masc.").anatomical_part).keys())
+            .data(dimensions)
             .join("rect")
             .attr("class", "barMale")
             .attr("y", d => yScale(d))
-            .attr("x", d => xScaleMale(pyramidData.get("Masc.").anatomical_part.get(d).length / participants_total))
-            .attr("width", d => width / 2 - xScaleMale(pyramidData.get("Masc.").anatomical_part.get(d).length / participants_total))
+            .attr("x", d => xScaleMale(getMaleParticipants(d) / participants_total))
+            .attr("width", d => barsWidth - xScaleMale(getMaleParticipants(d) / participants_total))
             .attr("height", yScale.bandwidth())
             .style("fill", "#7BB3B7")
             .style("stroke", "black")
             .style("stroke-width", 0)
-        // .call(d3.drag()
-        // .subject(function(d) { 
-        // 	return {y: yScale(d)}; })
-        //     .on("start", function (d) {
-        //         dragging[d.subject] = yScale(d.subject);
+            // .call(d3.drag()
+            // .subject(function(d) { 
+            // 	return {y: yScale(d)}; })
+            //     .on("start", function (d) {
+            //         dragging[d.subject] = yScale(d.subject);
 
-        //         let sel = d3.select(this);
-        //         sel.moveToFront();
-        //     })
-        //     .on("drag", function (d, item) {
-        //         dragging[item] = Math.min(height, Math.max(0, d.y));
-        //         console.log(dimensions);
-        //         dimensions.sort(function (a, b) { return position(a) - position(b);});
-        //         console.log(dimensions);
-        //         yScale.domain();
-        //         svg.attr("transform", function (d) {
-        //             return "translate(0," + position(d) + ")";
-        //         })
-        //     })
-        //     .on("end", function (d) {
-        //         delete dragging[d];
-        //         transition(d3.select(this)).attr("transform", "translate(0," + yScale(d) + ")");
-        //     })
-        // );
-        // .on("mouseover", mouseover)
-        // .on("mousemove", mousemove1)
-        // .on("mouseleave", mouseleave)
+            //         let sel = d3.select(this);
+            //         sel.moveToFront();
+            //     })
+            //     .on("drag", function (d, item) {
+            //         dragging[item] = Math.min(height, Math.max(0, d.y));
+            //         console.log(dimensions);
+            //         dimensions.sort(function (a, b) { return position(a) - position(b);});
+            //         console.log(dimensions);
+            //         yScale.domain();
+            //         svg.attr("transform", function (d) {
+            //             return "translate(0," + position(d) + ")";
+            //         })
+            //     })
+            //     .on("end", function (d) {
+            //         delete dragging[d];
+            //         transition(d3.select(this)).attr("transform", "translate(0," + yScale(d) + ")");
+            //     })
+            // );
+            .on("mouseover", mouseover)
+            .on("mousemove", mousemove1)
+            .on("mouseleave", mouseleave)
         // .on("click", mouseclickmale)
 
         // create female bars
         g.selectAll(".femaleBar")
-            .data((pyramidData.get("Fem.").anatomical_part).keys())
+            .data(dimensions)
             .join("rect")
             .attr("class", "barFemale")
             .attr("x", xScaleFemale(0))
             .attr("y", d => yScale(d))
-            .attr("width", d => xScaleFemale(pyramidData.get("Fem.").anatomical_part.get(d).length / participants_total) - xScaleFemale(0))
+            .attr("width", d => xScaleFemale(getFemaleParticipants(d) / participants_total) - xScaleFemale(0))
             .attr("height", yScale.bandwidth())
             .style("fill", "#DA9C80")
             .style("stroke", "black")
             .style("stroke-width", 0)
-        // .on("mouseover", mouseover)
-        // .on("mousemove", mousemove2)
-        // .on("mouseleave", mouseleave)
+            .on("mouseover", mouseover)
+            .on("mousemove", mousemove2)
+            .on("mouseleave", mouseleave)
         // .on("click", mouseclickfemale)
 
-        svg
+        axes
             .append("rect")
             .attr("class", "squareMale")
             .attr("x", width / 2 - 100)
@@ -228,13 +318,13 @@ const TabContent = ({ category, data }) => {
             .attr("height", 13)
             .style("fill", "#7BB3B7")
         //.on("click", mouseclickmale)
-        svg
+        axes
             .append("text")
             .attr("class", "legend")
             .attr("x", width / 2 - 80)
             .attr("y", height + margin.top + 17)
             .text("Male")
-        svg
+        axes
             .append("rect")
             .attr("class", "squareFemale")
             .attr("x", width / 2 + 30)
@@ -243,7 +333,7 @@ const TabContent = ({ category, data }) => {
             .attr("height", 13)
             .style("fill", "#DA9C80")
         //.on("click", mouseclickfemale)
-        svg
+        axes
             .append("text")
             .attr("class", "legend")
             .attr("x", width / 2 + 50)
@@ -261,7 +351,9 @@ const TabContent = ({ category, data }) => {
                     style={{ "marginLeft": 5 + "px" }} width="15" height="15"
                 />
             </div>
-            <div id="pyramid-content">
+            <div class="pyramid-content">
+            </div>
+            <div class="pyramid-axes-content">
             </div>
         </div>
     </>)
