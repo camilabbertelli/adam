@@ -10,7 +10,8 @@ function noSpaces(str) {
     return (str.replace(".", '')).replace(/\s+/g, '')
 }
 
-const colorScale = ["#D9AB96", "#D9AB96", "#D9AB96", "#D9AB96"]
+//const colorScale = ["#D9AB96", "#D9AB96", "#D9AB96", "#D9AB96"]
+const colorScale = ["#d8b89a", "#d8b89a", "#d8b89a", "#d8b89a"]
 //const colorScale = ["#D7BBA8", "#A79596", "#B88083", "#BC4B51"];
 
 const MapChart = ({ codices }) => {
