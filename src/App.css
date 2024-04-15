@@ -23,23 +23,23 @@ body {
 
 /* custom scrollbar */
 ::-webkit-scrollbar {
-  width: 15px;
+  width: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
   border-radius: 10px;
-  background-color: #FFEFD5;
+  background-color: #ECECEC;
 }
 
 ::-webkit-scrollbar-thumb {
   -webkit-box-shadow: inset 0 0 6px #be9a974d;
-  background-color: #be9a97;
+  background-color: #B5B5B5;
   border-radius: 20px;
   border: 6px solid transparent;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  -webkit-box-shadow: inset 0 0 6px #8059564d;
-  background-color: #805956;
+  -webkit-box-shadow: inset 0 0 4px #8059564d;
+  background-color: #816563;
 }

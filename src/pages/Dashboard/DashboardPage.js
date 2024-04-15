@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import "./../../styles/Dashboard/Dashboard.css";
 
-import x from "./../../assets/images/x.png"
+import x from "./../../assets/images/dashboard/x.png"
 import close from "./../../assets/images/close.png"
 
 import TabChart from "./TabChart";

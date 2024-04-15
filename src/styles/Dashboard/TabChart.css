@@ -49,8 +49,18 @@
 	border-radius: 0px 20px 20px 20px;
 }
 
+
+#tab-content {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
 #pyramidTitle {
-	height: 12%;
+	max-height: 15%;
+	min-height: 15%;
+	height: 15%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -62,17 +72,15 @@
 	vertical-align: middle;
 }
 
-#tab-content {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-evenly;
-	align-items: center;
+.pyramid-filters{
+	width: 100%;
+	height: 6%;
 }
 
 .pyramid-content {
 	width: 100%;
-	max-height: 70%;
-
+	max-height: 65%;
+	
 	display: grid;
 	align-items: center;
 
@@ -81,7 +89,9 @@
 
 .pyramid-axes-content{
 	display: grid;
-	height: 8%;
+	min-height: 15%;
+	max-height: 15%;
+	height: 15%;
 	width: 100%;
 }
 
@@ -92,7 +102,7 @@
 
 .grid .tick line {
 	stroke: #333333;
-	stroke-width: 0.5px;
+	stroke-width: 0.3px;
 	stroke-opacity: 0.3;
 }
 
