@@ -120,3 +120,57 @@
 	font-family: "EB Garamound";
 	font-size: 15px;
 }
+
+
+.tabchart-dropdown{
+
+	width: 20px;
+	height: 20px;
+}
+
+.tabchart-dropbtn {
+    background-color: transparent;
+    color: white;
+    border: none;
+}
+
+.tabchart-sorting-icon {
+	cursor: "pointer";
+	width: 20px;
+	height: 20px;
+}
+
+.tabchart-dropdown-content-hide {
+    display: none;
+}
+
+.tabchart-dropdown-content-show {
+    display: block;
+    font-size: 15px;
+    position: absolute;
+    left: 0;
+	background-color: transparent;
+    min-width: 190px;
+    z-index: 1;
+}
+
+.tabchart-dropdown-content-show button {
+
+    width: 190px;
+    text-align: left;
+	display: flex;
+
+	align-items: center;
+	align-content: center;
+	padding: 5px;
+	vertical-align: middle;
+    color: #000000;
+    text-decoration: none;
+    background-color: #eeeeee;
+    border: transparent;
+}
+
+
+.tabchart-dropdown-content-show button:hover {
+    background-color: #dadada;
+}

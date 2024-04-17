@@ -14,9 +14,6 @@ import ErrorBoundary from './ErrorBoundary';
 
 import React from 'react';
 
-import csv_data from "./assets/data.csv"
-import * as d3 from "d3"
-
 const App = () => {
 
 	return (
@@ -28,9 +25,9 @@ const App = () => {
 						<div className='pageBody'>
 							<Routes >
 								<Route path="/" element={<HomePage />} />
-								<Route path="/dashboard" element={<DashboardPage/>} />
+								<Route path="/dashboard" element={<DashboardPage />} />
 								<Route path="/database" element={<DatabasePage />} />
-								<Route path="/library" element={<LibraryPage/>} />
+								<Route path="/library" element={<LibraryPage />} />
 								<Route path="*" element={<NotFoundPage />} />
 							</Routes>
 						</div>

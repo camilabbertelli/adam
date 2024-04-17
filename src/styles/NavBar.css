@@ -61,22 +61,22 @@ nav a:hover {
     z-index: inherit;
 }
 
-.dropbtn {
+.navbar-dropbtn {
     background-color: transparent;
     color: white;
     border: none;
 }
 
-.dropdown {
+.navbar-dropdown {
     position: relative;
     float: right;
 }
 
-.dropdown-content-hide {
+.navbar-dropdown-content-hide {
     display: none;
 }
 
-.dropdown-content-show {
+.navbar-dropdown-content-show {
     display: block;
     font-size: 15px;
     position: absolute;
@@ -88,7 +88,7 @@ nav a:hover {
     border-radius: 0px 0px 25px 25px;
 }
 
-.dropdown-content-show button {
+.navbar-dropdown-content-show button {
 
     width: 190px;
     text-align: left;
@@ -101,19 +101,13 @@ nav a:hover {
     border-radius: 25px 25px 25px 25px;
 }
 
-button.flagbutton {
-    display: flex;
-    flex-direction: row;
-    align-content: center;
-    align-items: flex-end;
-}
 
-.dropdown-content-show p {
+.navbar-dropdown-content-show p {
     text-align: right;
 }
 
 
-.dropdown-content-show button:hover {
+.navbar-dropdown-content-show button:hover {
     background-color: #381010;
 }
 
@@ -125,6 +119,14 @@ button.flagbutton {
     margin-right: 20px;
     margin-left: 5px;
     justify-content: center;
+}
+
+
+button.flagbutton {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    align-items: flex-end;
 }
 
 button.flagselected {

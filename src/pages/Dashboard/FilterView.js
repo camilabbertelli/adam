@@ -30,6 +30,28 @@ const FilterView = ({ categories }) => {
     const nature = ["All", "Animal", "Human", "Supernatural"]
     const dimension = ["All", "Body", "Soul", "Transcendental"]
 
+    let allCodicesAux = {}
+    let allCodices = {}
+    let allGenres = []
+    for (const [key, value] of Object.entries(codicesOriginal)) {
+        value.forEach(codex => {
+            codex["century"] = key;
+            allCodicesAux[noSpaces(codex.title)] = codex;
+            allGenres.push(codex.genre);
+        })
+    }
+    
+    if (allGenres) allGenres.sort()
+
+    let sortedkeys = Object.keys(allCodicesAux).sort()
+
+    sortedkeys.forEach((key) => {
+        allCodices[key] = allCodicesAux[key]
+    })
+
+    const [currentCodices, setCurrentCodices] = useState(sortedkeys)
+    const [genre, setGenre] = useState("")
+
     function Draggable(props) {
         const { attributes, listeners, setNodeRef } = useDraggable({
             id: props.id,
@@ -46,7 +68,6 @@ const FilterView = ({ categories }) => {
         );
     }
 
-    const [genre, setGenre] = useState("")
 
     const changeSelect = function () {
 
@@ -88,17 +109,6 @@ const FilterView = ({ categories }) => {
         setCurrentCodices(aux)
     }
 
-    let allCodicesAux = {}
-    let allCodices = {}
-    let allGenres = []
-    for (const [key, value] of Object.entries(codicesOriginal)) {
-        value.forEach(codex => {
-            codex["century"] = key;
-            allCodicesAux[noSpaces(codex.title)] = codex;
-            allGenres.push(codex.genre);
-        })
-    }
-
     const Codices = ({ genre, codices }) => {
         let content = []
 
@@ -125,16 +135,6 @@ const FilterView = ({ categories }) => {
 
         return content
     }
-
-    if (allGenres) allGenres.sort()
-
-    let sortedkeys = Object.keys(allCodicesAux).sort()
-
-    sortedkeys.forEach((key) => {
-        allCodices[key] = allCodicesAux[key]
-    })
-
-    const [currentCodices, setCurrentCodices] = useState(sortedkeys)
 
     const changeFilterType = () => {
         setNatureIndex(0)
@@ -231,7 +231,7 @@ const FilterView = ({ categories }) => {
 
             <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
                 <h5>{t("codices-label")}</h5>
-                <select id="genreSelect" className="dashboard form-select" value={genre} onChange={changeSelect}>
+                <select id="genreSelect" className="dashboard form-select" value={genre} onChange={() => changeSelect()}>
                     <option value="">{t("library-genre-all")}</option>
                     <SelectGenre genres={allGenres} />
                 </select>

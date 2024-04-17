@@ -16,14 +16,14 @@ const NavBar = () => {
 
     const { t, i18n } = useTranslation();
 
-    const [styleDropdown, setStyleDropdown] = useState("dropdown-content-hide");
+    const [styleDropdown, setStyleDropdown] = useState("navbar-dropdown-content-hide");
 
     const [styleLanguage_en, setStyleLanguage_en] = useState("flagbutton flagselected");
     const [styleLanguage_pt, setStyleLanguage_pt] = useState("flagbutton");
 
     const changeStyle = () => {
-        if (styleDropdown !== "dropdown-content-hide") setStyleDropdown("dropdown-content-hide");
-        else setStyleDropdown("dropdown-content-show");
+        if (styleDropdown !== "navbar-dropdown-content-hide") setStyleDropdown("navbar-dropdown-content-hide");
+        else setStyleDropdown("navbar-dropdown-content-show");
     };
 
 
@@ -36,7 +36,7 @@ const NavBar = () => {
         if (lng === "en") setStyleLanguage_en("flagbutton flagselected");
         if (lng === "pt") setStyleLanguage_pt("flagbutton flagselected");
 
-        setStyleDropdown("dropdown-content-hide");
+        setStyleDropdown("navbar-dropdown-content-hide");
     }
 
     return (
@@ -52,8 +52,8 @@ const NavBar = () => {
                 </ul>
             </center>
             <div className="languages">
-                <div className='dropdown'>
-                    <button className='dropbtn'><img className="icon-language" src={languages} alt="language selection" onClick={changeStyle} /></button>
+                <div className='navbar-dropdown'>
+                    <button className='navbar-dropbtn'><img className="icon-language" src={languages} alt="language selection" onClick={changeStyle} /></button>
                     <div className={styleDropdown}>
                         <button className={styleLanguage_en} onClick={() => changeLng("en")}>
                             <img className="flag" src={ukflag} alt="language uk" />

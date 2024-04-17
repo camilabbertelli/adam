@@ -1,6 +1,7 @@
 
 import React, { useEffect } from "react";
 import { useState } from "react"
+import 'bootstrap/dist/css/bootstrap.css';
 import "./../../styles/Dashboard/TabChart.css"
 
 
@@ -53,6 +54,8 @@ const TabContent = ({ category, data }) => {
     ...pyramidData.get("Fem.").anatomical_part.keys(),
     ...pyramidData.get("Mult.").anatomical_part.keys(),
     ...pyramidData.get("N").anatomical_part.keys()])]
+
+    dimensions.sort().reverse()
 
     let participants_total = 1
 
@@ -343,6 +346,42 @@ const TabContent = ({ category, data }) => {
         setChangedTotal(true)
     }
 
+    const [styleDropdown, setStyleDropdown] = useState("tabchart-dropdown-content-hide");
+
+    const changeStyle = () => {
+        if (styleDropdown !== "tabchart-dropdown-content-hide") setStyleDropdown("tabchart-dropdown-content-hide");
+        else setStyleDropdown("tabchart-dropdown-content-show");
+    };
+
+
+    const changeSorting = (sorting) => {
+            // FIXME: pq vc n foi ver o site antes?????
+            //side categories
+        d3.select("#bargraph")
+            .selectAll("rect")
+            .sort((a,b) => d3.ascending(a.population, b.population))
+            .attr("y", (d, i) => i * 20);
+      
+            //malebars
+        d3.select("#bargraph")
+            .selectAll("text")
+            .sort((a,b) => d3.ascending(a.population, b.population))
+            .attr("y", (d, i) => i * 20 + 17);
+
+            // femalebars
+        d3.select("#bargraph")
+            .selectAll("text")
+            .sort((a,b) => d3.ascending(a.population, b.population))
+            .attr("y", (d, i) => i * 20 + 17);
+
+        setStyleDropdown("tabchart-dropdown-content-hide");
+    }
+
+    window.addEventListener('click', function (e) {
+        if (!document.getElementById('tabchart-dropdown').contains(e.target))
+            setStyleDropdown("tabchart-dropdown-content-hide");
+    });
+
     return (<>
         <div id="tab-content" className="tab-chart-area-content shadow">
             <div className="titles" id="pyramidTitle">
@@ -358,10 +397,31 @@ const TabContent = ({ category, data }) => {
                     style={{ "marginRight": "5%", float: "right", cursor: "pointer" }} width="20" height="20"
                     onClick={changeTotalOccurrence}
                 />
-                <img alt="total" src={sorting}
-                    style={{ "marginLeft": "5%", cursor: "pointer" }} width="20" height="20"
-                //onClick={}
-                />
+
+                <div id="tabchart-dropdown" className='tabchart-dropdown'>
+                    <button className='tabchart-dropbtn'>
+                        <img alt="total" src={sorting}
+                            className="tabchart-sorting-icon"
+                            onClick={changeStyle}
+                        /></button>
+                    <div className={styleDropdown + " shadow"}>
+                        <button onClick={() => changeSorting("name_asc")}> Name (ascending) </button>
+                        <button onClick={() => changeSorting("name_desc")}> Name (descending) </button>
+
+                        {!totalOccurrences && <>
+                            <button onClick={() => changeSorting("masc_lh")}> Masc. - Low to High </button>
+                            <button onClick={() => changeSorting("masc_hl")}> Masc. - High to Low </button>
+                            <button onClick={() => changeSorting("fem_lh")}> Fem. - Low to High </button>
+                            <button onClick={() => changeSorting("fem_hl")}> Fem. - High to Low </button>
+                        </>}
+
+                        {totalOccurrences && <>
+                            <button onClick={() => changeSorting("total_lh")}> Total - Low to High </button>
+                            <button onClick={() => changeSorting("total_hl")}> Total - High to Low </button>
+                        </>}
+                    </div>
+                </div>
+
             </div>
             <div className="pyramid-content">
             </div>

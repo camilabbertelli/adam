@@ -8,7 +8,7 @@
     transform: translate(0, -50%);
 
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 
@@ -16,9 +16,19 @@
     border-radius: 20px;
 }
 
-.heatmap-area {
+.heatmap-drag{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    min-height: 15%;
+
     
+    transition: all 0.5s ease-in-out; /* Animation for button */
+
     div.category {
+        transition: all 0.5s ease-in-out; /* Animation for button */
         width: 200px;
         max-width: 200px;
         height: 50px;
@@ -32,7 +42,17 @@
         text-align: center;
     }
 
+    div.category.shrink{
+        transition: all 0.5s ease-in-out; /* Animation for button */
+        max-width: 100px;
+        height: 30px; 
+        font-size: 13px;
+    }
+    
+
     div.category.default {
+        
+        transition: all 0.5s ease-in-out; /* Animation for button */
         background-color: white;
         border: dashed;
         opacity: 0.4;
@@ -40,15 +60,23 @@
 
     .x {
         position: relative;
-        top: -6%;
-        left: -2%;
+        top: -15%;
+        left: -3%;
         cursor: pointer;
     }
 
+    .x.shrink{
+        width: 15px;
+        height: 15px;
+    }
+    
+    
 }
 
-
-
+.shrink{
+    width: 10px;
+    height: 10px;
+}
 
 .heatmap-area.dashed {
 
@@ -67,4 +95,11 @@
     to {
         background-position: 0 -28.28px, 0 0, 100% 0, -28.28px 100%;
     }
+}
+
+#heatmap-chart{
+    width: inherit;
+    height: inherit;
+
+    overflow: auto;
 }
