@@ -15,21 +15,19 @@ const HeatmapChart = (props) => {
 		let globalData = d3.flatRollup(props.data, v => ({
 			participants_total: v.length,
 		}), (d) => d.title, (d) => d.subject_sex, (d) => d.anatomical_part, (d) => d.organs, (d) => d.actions)
-	
 
-		let heatmapKey1 = d3.group(globalData, d=>d[2]).keys()
-		let heatmapKey2 = d3.group(globalData, d=>d[3]).keys()
-		let heatmapData = d3.flatRollup(globalData, v => v.length, d=> d[2], d=> d[3])
 
-		console.log(heatmapKey1)
-		console.log(heatmapKey2)
-		console.log(heatmapData)
+		let heatmapKey1 = d3.group(globalData, d => d[2]).keys()
+		let heatmapKey2 = d3.group(globalData, d => d[3]).keys()
+		let heatmapData = d3.flatRollup(globalData, v => v.length, d => d[2], d => d[3])
 
 		// set the dimensions and margins of the graph
 		const margin = { top: 80, right: 25, bottom: 30, left: 40 },
 			width = 2000 - margin.left - margin.right,
 			height = 450 - margin.top - margin.bottom;
 
+			// TODO: add horizontal legend in overflow, fixed div
+			// 		 add vertical legend in overflow with rest of things
 
 		d3.select("#heatmap-chart").selectAll("svg").remove("")
 		// append the svg object to the body of the page
@@ -54,13 +52,13 @@ const HeatmapChart = (props) => {
 				.padding(0.05);
 			svg.append("g")
 				.style("font-size", 10)
-				.attr("transform", `translate(0, ${height/2})`)
+				.attr("transform", `translate(0, ${height / 2})`)
 				.call(d3.axisBottom(x).tickSize(0))
 				.select(".domain").remove()
 
 			// Build Y scales and axis:
 			const y = d3.scaleBand()
-				.range([height/2, 0])
+				.range([height / 2, 0])
 				.domain(heatmapKey1)
 				.padding(0.05);
 			svg.append("g")
@@ -75,12 +73,12 @@ const HeatmapChart = (props) => {
 
 			d3.selectAll("#tooltipHeatmap").remove();
 
-        let tooltipHeatmap = d3.select("body")
-            .append("div")
-            .attr("id", "tooltipHeatmap")
-            .attr("class", "tooltip shadow rounded")
-            .attr("padding", "1px")
-            .style("opacity", 0);
+			let tooltipHeatmap = d3.select("body")
+				.append("div")
+				.attr("id", "tooltipHeatmap")
+				.attr("class", "tooltip shadow rounded")
+				.attr("padding", "1px")
+				.style("opacity", 0);
 
 			// Three function that change the tooltip when user hover / move / leave a cell
 			const mouseover = function (event, d) {
@@ -103,7 +101,7 @@ const HeatmapChart = (props) => {
 					.style("opacity", 0.8)
 
 				let element = document.getElementById('tooltipHeatmap')
-        		if (element) element.innerHTML = "";
+				if (element) element.innerHTML = "";
 			}
 
 			// add the squares

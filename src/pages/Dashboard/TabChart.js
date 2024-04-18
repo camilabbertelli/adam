@@ -7,7 +7,7 @@ import "./../../styles/Dashboard/TabChart.css"
 
 import info from "./../../assets/images/info-black.png"
 import group from "./../../assets/images/dashboard/group.png"
-import sorting from "./../../assets/images/dashboard/sorting.png"
+import sorting_icon from "./../../assets/images/dashboard/sorting.png"
 
 import * as d3 from "d3";
 
@@ -50,12 +50,12 @@ const TabContent = ({ category, data }) => {
             organs: d3.group(v, d => d[3])
         }), d => d[1])
 
-    let dimensions = [...new Set([...pyramidData.get("Masc.").anatomical_part.keys(),
+    let dimensions_original = [...new Set([...pyramidData.get("Masc.").anatomical_part.keys(),
     ...pyramidData.get("Fem.").anatomical_part.keys(),
     ...pyramidData.get("Mult.").anatomical_part.keys(),
     ...pyramidData.get("N").anatomical_part.keys()])]
 
-    dimensions.sort().reverse()
+    let dimensions = dimensions_original.sort()
 
     let participants_total = 1
 
@@ -105,7 +105,7 @@ const TabContent = ({ category, data }) => {
         let data = getParticipants(type, d)
 
         tooltipPyramid
-            .html(`<center><b>${type}</b></center>
+            .html(`<center><b>${d} - ${type}</b></center>
                     Percentage: ${d3.format(".1f")((data / participants_total) * 100)}%<br>
                     Participation: ${data}`)
             .style("top", event.pageY - 10 + "px")
@@ -120,6 +120,7 @@ const TabContent = ({ category, data }) => {
 
         d3.select(this).style("stroke-width", 0)
     };
+
 
     useEffect(() => {
         let box = document.querySelector('.pyramid-content');
@@ -147,16 +148,16 @@ const TabContent = ({ category, data }) => {
             .attr("width", width)
             .attr("transform", `translate(${barsWidth},0)`);
 
-        // Y scale
-        const yScale = d3.scaleBand()
-            .domain(dimensions)
-            .range([scrollableHeight, 0])
-            .padding(.3);
-
         let maxMale = d3.max(dimensions, d => getParticipants("Masc.", d) / participants_total)
         let maxFemale = d3.max(dimensions, d => getParticipants("Fem.", d) / participants_total)
         let maxScale = (totalOccurrences) ? d3.max(dimensions, d => getParticipants("Total", d) / participants_total) : Math.max(maxMale, maxFemale)
         let factor = maxScale > 0.1 ? 0.05 : 0.01
+
+        // Y scale
+        let yScale = d3.scaleBand()
+            .domain(dimensions)
+            .range([0, scrollableHeight])
+            .padding(.3);
 
         // X scale
         let xScaleMale = d3.scaleLinear()
@@ -312,9 +313,13 @@ const TabContent = ({ category, data }) => {
 
         svg.append("g")
             .attr("class", "pyramid-subcategory-axis")
-            .attr("width", "200px")
-            .call(d3.axisLeft(yScale).tickSize(0).tickPadding(10))
-            .call(d => d.select(".domain").remove())
+            .selectAll("text")
+            .data(dimensions)
+            .join("text")
+            .text((d) => d)
+            .attr("x", 0)
+            .attr("text-anchor", "end")
+            .attr("y", d => yScale(d) + 15);
 
         const GridLineM = function () { return d3.axisBottom().scale(xScaleMale) };
         svg.append("g")
@@ -339,6 +344,7 @@ const TabContent = ({ category, data }) => {
                 );
 
         setChangedTotal(false)
+
     }, [category, totalOccurrences])
 
     const changeTotalOccurrence = () => {
@@ -353,34 +359,93 @@ const TabContent = ({ category, data }) => {
         else setStyleDropdown("tabchart-dropdown-content-show");
     };
 
-
-    const changeSorting = (sorting) => {
-            // FIXME: pq vc n foi ver o site antes?????
-            //side categories
-        d3.select("#bargraph")
-            .selectAll("rect")
-            .sort((a,b) => d3.ascending(a.population, b.population))
-            .attr("y", (d, i) => i * 20);
-      
-            //malebars
-        d3.select("#bargraph")
-            .selectAll("text")
-            .sort((a,b) => d3.ascending(a.population, b.population))
-            .attr("y", (d, i) => i * 20 + 17);
-
-            // femalebars
-        d3.select("#bargraph")
-            .selectAll("text")
-            .sort((a,b) => d3.ascending(a.population, b.population))
-            .attr("y", (d, i) => i * 20 + 17);
-
-        setStyleDropdown("tabchart-dropdown-content-hide");
-    }
-
     window.addEventListener('click', function (e) {
         if (!document.getElementById('tabchart-dropdown').contains(e.target))
             setStyleDropdown("tabchart-dropdown-content-hide");
     });
+
+    const [currentSorting, setCurrentSorting] = useState("name_asc")
+
+    function sort_name_asc(a, b) {
+        if (a < b) return -1;
+        if (a > b) return 1;
+        return 0;
+    }
+
+    function sort_name_desc(a, b) {
+        return -sort_name_asc(a, b);
+    }
+
+    function sort_masc_asc(a, b) {
+        return getParticipants("Masc.", a) - getParticipants("Masc.", b)
+    }
+
+    function sort_masc_desc(a, b) {
+        return -sort_masc_asc(a, b);
+    }
+
+    function sort_fem_asc(a, b) {
+        return getParticipants("Fem.", a) - getParticipants("Fem.", b)
+    }
+
+    function sort_fem_desc(a, b) {
+        return -sort_fem_asc(a, b);
+    }
+
+
+    function sort_total_asc(a, b) {
+        return getParticipants("Total", a) - getParticipants("Total", b)
+    }
+
+    function sort_total_desc(a, b) {
+        return -sort_total_asc(a, b);
+    }
+
+    const changeSorting = (s) => {
+
+        let sorting = sort_name_asc
+
+        if (s === "name_desc")
+            sorting = sort_name_desc
+        else if (s === "masc_asc")
+            sorting = sort_masc_asc
+        else if (s === "masc_desc")
+            sorting = sort_masc_desc
+        else if (s === "fem_asc")
+            sorting = sort_fem_asc
+        else if (s === "fem_desc")
+            sorting = sort_fem_desc
+        else if (s === "total_asc")
+            sorting = sort_total_asc
+        else if (s === "total_desc")
+            sorting = sort_total_desc
+
+        dimensions = [...dimensions_original.sort(sorting)]
+
+        let scrollableHeight = dimensions.length * 30
+        // Y scale
+        let yScale = d3.scaleBand()
+            .domain(dimensions)
+            .range([0, scrollableHeight])
+            .padding(.3);
+
+
+        d3.select(".pyramid-subcategory-axis")
+            .selectAll("text")
+            .sort(sorting)
+            .attr("y", d => yScale(d) + 15);
+
+        d3.selectAll(".barMale")
+            .sort(sorting)
+            .attr("y", d => yScale(d));
+
+        d3.selectAll(".barFemale")
+            .sort(sorting)
+            .attr("y", d => yScale(d));
+
+        setCurrentSorting(s)
+        setStyleDropdown("tabchart-dropdown-content-hide");
+    }
 
     return (<>
         <div id="tab-content" className="tab-chart-area-content shadow">
@@ -399,25 +464,25 @@ const TabContent = ({ category, data }) => {
                 />
 
                 <div id="tabchart-dropdown" className='tabchart-dropdown'>
-                    <button className='tabchart-dropbtn'>
-                        <img alt="total" src={sorting}
+                    <button className='tabchart-dropbtn' onClick={changeStyle}>
+                        <img alt="total" src={sorting_icon}
                             className="tabchart-sorting-icon"
-                            onClick={changeStyle}
+                            
                         /></button>
                     <div className={styleDropdown + " shadow"}>
-                        <button onClick={() => changeSorting("name_asc")}> Name (ascending) </button>
-                        <button onClick={() => changeSorting("name_desc")}> Name (descending) </button>
+                        <button className={currentSorting === "name_asc" ? "sorting-active" : ""} onClick={() => changeSorting("name_asc")}> Name (ascending) </button>
+                        <button className={currentSorting === "name_desc" ? "sorting-active" : ""} onClick={() => changeSorting("name_desc")}> Name (descending) </button>
 
                         {!totalOccurrences && <>
-                            <button onClick={() => changeSorting("masc_lh")}> Masc. - Low to High </button>
-                            <button onClick={() => changeSorting("masc_hl")}> Masc. - High to Low </button>
-                            <button onClick={() => changeSorting("fem_lh")}> Fem. - Low to High </button>
-                            <button onClick={() => changeSorting("fem_hl")}> Fem. - High to Low </button>
+                            <button className={currentSorting === "masc_asc" ? "sorting-active" : ""} onClick={() => changeSorting("masc_asc")}> Masc. - Low to High </button>
+                            <button className={currentSorting === "masc_desc" ? "sorting-active" : ""} onClick={() => changeSorting("masc_desc")}> Masc. - High to Low </button>
+                            <button className={currentSorting === "fem_asc" ? "sorting-active" : ""} onClick={() => changeSorting("fem_asc")}> Fem. - Low to High </button>
+                            <button className={currentSorting === "fem_desc" ? "sorting-active" : ""} onClick={() => changeSorting("fem_desc")}> Fem. - High to Low </button>
                         </>}
 
                         {totalOccurrences && <>
-                            <button onClick={() => changeSorting("total_lh")}> Total - Low to High </button>
-                            <button onClick={() => changeSorting("total_hl")}> Total - High to Low </button>
+                            <button className={currentSorting === "total_asc" ? "sorting-active" : ""} onClick={() => changeSorting("total_asc")}> Total - Low to High </button>
+                            <button className={currentSorting === "total_desc" ? "sorting-active" : ""} onClick={() => changeSorting("total_desc")}> Total - High to Low </button>
                         </>}
                     </div>
                 </div>
