@@ -7,14 +7,13 @@ import "./../../styles/Dashboard/TabChart.css"
 
 import info from "./../../assets/images/info-black.png"
 import group from "./../../assets/images/dashboard/group.png"
+import separate from "./../../assets/images/dashboard/separate.png"
 import sorting_icon from "./../../assets/images/dashboard/sorting.png"
 
 import * as d3 from "d3";
+import { useTranslation } from "react-i18next";
 
 var tooltipPyramid;
-
-var maleSelected = false
-var femaleSelected = false
 
 // Define margin and dimensions for the charts
 const margin = {
@@ -25,6 +24,8 @@ const margin = {
 };
 
 const TabContent = ({ category, data }) => {
+
+    const {t} = useTranslation()
 
     const [totalOccurrences, setTotalOccurrences] = useState(false)
     const [changedTotal, setChangedTotal] = useState(false)
@@ -85,6 +86,26 @@ const TabContent = ({ category, data }) => {
         return sum
     }
 
+    let infoMouseOverPyramid = function (event, d) {
+        tooltipPyramid
+            .style("opacity", 1);
+
+            tooltipPyramid.html(`<center><b>${t("information")}</b></center>
+                      ${t("information-pyramid")}<br>`)
+            .style("top", event.pageY - 10 + "px")
+            .style("left", event.pageX + 10 + "px")
+    }
+
+
+    let infoMouseLeavePyramid = function (event, d) {
+        tooltipPyramid
+            .style("opacity", 0)
+
+        let element = document.getElementById('tooltipPyramid')
+        if (element)
+            element.innerHTML = "";
+    }
+
     // tooltipPyramid events
     const mouseover = function (d) {
         tooltipPyramid.style("opacity", 1)
@@ -92,7 +113,7 @@ const TabContent = ({ category, data }) => {
     };
 
     const mousemove = function (event, d, type) {
-        var previousElement = d3.select(".barMale");
+        var previousElement = d3.select(".barMasc");
         var isTotal = false
 
         if (previousElement) {
@@ -107,7 +128,7 @@ const TabContent = ({ category, data }) => {
         tooltipPyramid
             .html(`<center><b>${d} - ${type}</b></center>
                     Percentage: ${d3.format(".1f")((data / participants_total) * 100)}%<br>
-                    Participation: ${data}`)
+                    Occurrence: ${data}`)
             .style("top", event.pageY - 10 + "px")
             .style("left", event.pageX + 10 + "px");
     }
@@ -140,6 +161,10 @@ const TabContent = ({ category, data }) => {
             .attr("padding", "1px")
             .style("opacity", 0);
 
+        d3.select("#infoPyramid")
+            .on("mouseover", infoMouseOverPyramid)
+            .on("mouseleave", infoMouseLeavePyramid)
+
         d3.select(".pyramid-axes-content").html("");
 
         const axes = d3
@@ -148,9 +173,9 @@ const TabContent = ({ category, data }) => {
             .attr("width", width)
             .attr("transform", `translate(${barsWidth},0)`);
 
-        let maxMale = d3.max(dimensions, d => getParticipants("Masc.", d) / participants_total)
-        let maxFemale = d3.max(dimensions, d => getParticipants("Fem.", d) / participants_total)
-        let maxScale = (totalOccurrences) ? d3.max(dimensions, d => getParticipants("Total", d) / participants_total) : Math.max(maxMale, maxFemale)
+        let maxMasc = d3.max(dimensions, d => getParticipants("Masc.", d) / participants_total)
+        let maxFem = d3.max(dimensions, d => getParticipants("Fem.", d) / participants_total)
+        let maxScale = (totalOccurrences) ? d3.max(dimensions, d => getParticipants("Total", d) / participants_total) : Math.max(maxMasc, maxFem)
         let factor = maxScale > 0.1 ? 0.05 : 0.01
 
         // Y scale
@@ -160,22 +185,22 @@ const TabContent = ({ category, data }) => {
             .padding(.3);
 
         // X scale
-        let xScaleMale = d3.scaleLinear()
+        let xScaleMasc = d3.scaleLinear()
             .domain([0, ((maxScale + factor) > 1 ? 1 : maxScale + factor)])
             .range(totalOccurrences ? [5, barsWidth * 2] : [barsWidth, 0]);
 
-        let xScaleFemale = d3.scaleLinear()
+        let xScaleFem = d3.scaleLinear()
             .domain([0, ((maxScale + factor) > 1 ? 1 : maxScale + factor)])
             .range([barsWidth, barsWidth * 2]);
 
         axes.append("g")
             .attr("id", "axismale")
-            .call(d3.axisBottom(xScaleMale).tickSize(0).tickPadding(2).ticks(5, "%").tickFormat(x => { if (x === 0) return 0; else return `${(+(x * 100).toFixed(1))}%` }))
+            .call(d3.axisBottom(xScaleMasc).tickSize(0).tickPadding(2).ticks(5, "%").tickFormat(x => { if (x === 0) return 0; else return `${(+(x * 100).toFixed(1))}%` }))
             .call(function (d) { return d.select(".domain").remove() });
 
         axes
             .append("rect")
-            .attr("class", "squareMale")
+            .attr("class", "squareMasc")
             .attr("x", (totalOccurrences) ? barsWidth / 2 : 0)
             .attr("y", margin.top)
             .attr("width", 13)
@@ -188,17 +213,17 @@ const TabContent = ({ category, data }) => {
             .attr("class", "legend")
             .attr("x", ((totalOccurrences) ? barsWidth / 2 : 0) + 20)
             .attr("y", margin.top + 12)
-            .text((totalOccurrences) ? "Total" : "Male")
+            .text((totalOccurrences) ? "Total" : "Masc.")
 
         if (!totalOccurrences) {
             axes.append("g")
                 .attr("id", "axisfemale")
-                .call(d3.axisBottom(xScaleFemale).tickSize(0).tickPadding(2).ticks(5, "%").tickFormat(x => { if (x === 0) return; else return `${(+(x * 100).toFixed(1))}%` }))
+                .call(d3.axisBottom(xScaleFem).tickSize(0).tickPadding(2).ticks(5, "%").tickFormat(x => { if (x === 0) return; else return `${(+(x * 100).toFixed(1))}%` }))
                 .call(function (d) { return d.select(".domain").remove() });
 
             axes
                 .append("rect")
-                .attr("class", "squareFemale")
+                .attr("class", "squareFem")
                 .attr("x", width / 2)
                 .attr("y", margin.top)
                 .attr("width", 13)
@@ -211,7 +236,7 @@ const TabContent = ({ category, data }) => {
                 .attr("class", "legend")
                 .attr("x", width / 2 + 20)
                 .attr("y", margin.top + 12)
-                .text("Female")
+                .text("Fem.")
         }
 
         /* svg bars */
@@ -225,16 +250,16 @@ const TabContent = ({ category, data }) => {
 
             svg = d3.select(".pyramid-content").select("svg").select("g")
 
-            const maleBars = svg.selectAll(".barMale")
-            const femaleBars = svg.selectAll(".barFemale")
+            const maleBars = svg.selectAll(".barMasc")
+            const femaleBars = svg.selectAll(".barFem")
 
             if (totalOccurrences) {
                 maleBars
                     .transition()
                     .duration(1000)
-                    .attr("x", d => xScaleMale(0))
+                    .attr("x", d => xScaleMasc(0))
                     .attr("y", d => yScale(d))
-                    .attr("width", d => xScaleMale(getParticipants("Total", d) / participants_total))
+                    .attr("width", d => xScaleMasc(getParticipants("Total", d) / participants_total))
                     .attr("height", yScale.bandwidth())
                     .style("fill", "#935959")
 
@@ -247,20 +272,20 @@ const TabContent = ({ category, data }) => {
                 maleBars
                     .transition()
                     .duration(1000)
-                    .attr("class", "barMale")
-                    .attr("x", d => xScaleMale(getParticipants("Masc.", d) / participants_total))
+                    .attr("class", "barMasc")
+                    .attr("x", d => xScaleMasc(getParticipants("Masc.", d) / participants_total))
                     .attr("y", d => yScale(d))
-                    .attr("width", d => barsWidth - xScaleMale(getParticipants("Masc.", d) / participants_total))
+                    .attr("width", d => barsWidth - xScaleMasc(getParticipants("Masc.", d) / participants_total))
                     .attr("height", yScale.bandwidth())
                     .style("fill", "#7BB3B7")
 
                 femaleBars
                     .transition()
                     .duration(1000)
-                    .attr("class", "barFemale")
-                    .attr("x", xScaleFemale(0))
+                    .attr("class", "barFem")
+                    .attr("x", xScaleFem(0))
                     .attr("y", d => yScale(d))
-                    .attr("width", d => xScaleFemale(getParticipants("Fem.", d) / participants_total) - xScaleFemale(0))
+                    .attr("width", d => xScaleFem(getParticipants("Fem.", d) / participants_total) - xScaleFem(0))
                     .attr("height", yScale.bandwidth())
                     .style("fill", "#DA9C80")
             }
@@ -276,15 +301,15 @@ const TabContent = ({ category, data }) => {
                 .attr("transform", `translate(${barsWidth},0)`);
 
             // create male bars
-            svg.selectAll(".barMale")
+            svg.selectAll(".barMasc")
                 .data(dimensions)
                 .join("rect")
-                .attr("class", "barMale")
-                .attr("x", d => (totalOccurrences) ? xScaleMale(0) : (xScaleMale(getParticipants("Masc.", d) / participants_total)))
+                .attr("class", "barMasc")
+                .attr("x", d => (totalOccurrences) ? xScaleMasc(0) : (xScaleMasc(getParticipants("Masc.", d) / participants_total)))
                 .attr("y", d => yScale(d))
                 .attr("width", d => (totalOccurrences) ?
-                    xScaleMale(getParticipants("Total", d) / participants_total) :
-                    (barsWidth - xScaleMale(getParticipants("Masc.", d) / participants_total)))
+                    xScaleMasc(getParticipants("Total", d) / participants_total) :
+                    (barsWidth - xScaleMasc(getParticipants("Masc.", d) / participants_total)))
                 .attr("height", yScale.bandwidth())
                 .style("fill", (totalOccurrences) ? "#935959" : "#7BB3B7")
                 .style("stroke", "black")
@@ -294,13 +319,13 @@ const TabContent = ({ category, data }) => {
                 .on("mouseleave", mouseleave)
             //.on("click", mouseclickmale)
 
-            svg.selectAll(".barFemale")
+            svg.selectAll(".barFem")
                 .data(dimensions)
                 .join("rect")
-                .attr("class", "barFemale")
-                .attr("x", xScaleFemale(0))
+                .attr("class", "barFem")
+                .attr("x", xScaleFem(0))
                 .attr("y", d => yScale(d))
-                .attr("width", (totalOccurrences) ? 0 : d => xScaleFemale(getParticipants("Fem.", d) / participants_total) - xScaleFemale(0))
+                .attr("width", (totalOccurrences) ? 0 : d => xScaleFem(getParticipants("Fem.", d) / participants_total) - xScaleFem(0))
                 .attr("height", yScale.bandwidth())
                 .style("fill", "#DA9C80")
                 .style("stroke", "black")
@@ -321,7 +346,7 @@ const TabContent = ({ category, data }) => {
             .attr("text-anchor", "end")
             .attr("y", d => yScale(d) + 15);
 
-        const GridLineM = function () { return d3.axisBottom().scale(xScaleMale) };
+        const GridLineM = function () { return d3.axisBottom().scale(xScaleMasc) };
         svg.append("g")
             .attr("id", "gridm")
             .attr("class", "grid")
@@ -332,7 +357,7 @@ const TabContent = ({ category, data }) => {
             )
 
         // set vertical grid line
-        const GridLineF = function () { return d3.axisBottom().scale(xScaleFemale) };
+        const GridLineF = function () { return d3.axisBottom().scale(xScaleFem) };
         if (!totalOccurrences)
             svg.append("g")
                 .attr("id", "gridf")
@@ -360,7 +385,7 @@ const TabContent = ({ category, data }) => {
     };
 
     window.addEventListener('click', function (e) {
-        if (!document.getElementById('tabchart-dropdown').contains(e.target))
+        if (document.getElementById('tabchart-dropdown') && !document.getElementById('tabchart-dropdown').contains(e.target))
             setStyleDropdown("tabchart-dropdown-content-hide");
     });
 
@@ -435,11 +460,11 @@ const TabContent = ({ category, data }) => {
             .sort(sorting)
             .attr("y", d => yScale(d) + 15);
 
-        d3.selectAll(".barMale")
+        d3.selectAll(".barMasc")
             .sort(sorting)
             .attr("y", d => yScale(d));
 
-        d3.selectAll(".barFemale")
+        d3.selectAll(".barFem")
             .sort(sorting)
             .attr("y", d => yScale(d));
 
@@ -450,22 +475,21 @@ const TabContent = ({ category, data }) => {
     return (<>
         <div id="tab-content" className="tab-chart-area-content shadow">
             <div className="titles" id="pyramidTitle">
-                {!totalOccurrences && <h5 className="pyramid-title">How are the different sexes perceived?</h5>}
-                {totalOccurrences && <h5 className="pyramid-title">Total occurrences</h5>}
-                <img alt="info" id="infoMap" src={info}
+                <h5 className="pyramid-title">{(totalOccurrences) ? t("pyramid-total") : t("pyramid-separate")}</h5>
+                <img alt="info" id="infoPyramid" src={info}
                     style={{ "marginLeft": 5 + "px" }} width="15" height="15"
                 />
 
             </div>
             <div className="pyramid-filters">
-                <img alt="total" src={group}
+                <img title={(totalOccurrences)? t("icon-separate") : t("icon-group")} alt="total" src={(totalOccurrences) ? separate : group }
                     style={{ "marginRight": "5%", float: "right", cursor: "pointer" }} width="20" height="20"
                     onClick={changeTotalOccurrence}
                 />
 
                 <div id="tabchart-dropdown" className='tabchart-dropdown'>
                     <button className='tabchart-dropbtn' onClick={changeStyle}>
-                        <img alt="total" src={sorting_icon}
+                        <img title={t("icon-sort")} alt="total" src={sorting_icon}
                             className="tabchart-sorting-icon"
                             
                         /></button>

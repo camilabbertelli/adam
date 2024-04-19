@@ -145,13 +145,15 @@ const DatabasePage = () => {
         <div className="database-view">
             <div className="database-filter-view">
                 <h3>{t("database-content")}</h3>
-                <div className="form-check">
-                    <input className="form-check-input" type="checkbox" onChange={() => (setCheckedKeys(checkedKeys === keys ? [] : keys))} checked={checkedKeys === keys} />
-                    <label className="form-check-label">
-                        {t("database-select-all")}
-                    </label>
+                <div>
+                    <div className="form-check">
+                        <input className="form-check-input" type="checkbox" onChange={() => (setCheckedKeys(checkedKeys === keys ? [] : keys))} checked={checkedKeys === keys} />
+                        <label className="form-check-label">
+                            {t("database-select-all")}
+                        </label>
+                    </div>
+                    <ExcelFilter updateCheckedKeys={setCheckedKeys} keys={keys} checkedKeys={checkedKeys} />
                 </div>
-                <ExcelFilter updateCheckedKeys={setCheckedKeys} keys={keys} checkedKeys={checkedKeys} />
             </div>
             <div className="database-table-view">
                 <Table updateKeys={updateKeys} checkedKeys={checkedKeys} />

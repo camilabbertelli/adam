@@ -1,4 +1,10 @@
 {
+    "information": "Informação",
+    "information-map": "Passe o rato sobre um pin para obter mais informações.",
+    "information-pyramid": "Passe o rato sobre uma barra para obter mais informações. Clique no ícone à direita para alterar os tipos de agrupamento.",
+
+
+
     "navbar_home": "Início",
     "navbar_dashboard": "Dashboard",
     "navbar_database": "Base de dados",
@@ -8,6 +14,9 @@
     "titleGallery": "Nossa Galeria",
     "titleAboutUs": "Sobre nós",
     "home-map-title": "Lugares descritos na narrativa medieval",
+    "icon-language": "Idioma",
+
+
 
     "simple-filter": "Filtro simples",
     "advanced-filter": "Filtro avançado",
@@ -23,14 +32,28 @@
     "dimension-label": "Dimensão",
     "codices-label": "Códices",
 
+    "icon-expand" : "Expandir",
+    "icon-separate": "Separar grupos",
+    "icon-group": "Total",
+    "icon-sort": "Ordenar por",
+    "icon-close": "Remover categoria",
+    "pyramid-separate": "Como os diferentes sexos são percebidos?",
+    "pyramid-total": "Occorências totais",
+
+
+
     "database-content": "Conteúdo",
     "database-select-all" : "Selecionar tudo",
+
+
 
     "library-filter-ancient": "Português antigo",
     "library-filter-modern": "Português Moderno",
     "library-filter-lightsoff": "Luzes apagadas",
     "library-available-codices": "Códices disponíveis",
     "library-genre-all": "Todos",
+
+
 
     "lost": "Perdido?",
     "not-found": "404: Página não encontrada!",

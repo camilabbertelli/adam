@@ -53,7 +53,7 @@ const NavBar = () => {
             </center>
             <div className="languages">
                 <div className='navbar-dropdown'>
-                    <button className='navbar-dropbtn'><img className="icon-language" src={languages} alt="language selection" onClick={changeStyle} /></button>
+                    <button className='navbar-dropbtn'><img title={t("icon-language")} className="icon-language" src={languages} alt="language selection" onClick={changeStyle} /></button>
                     <div className={styleDropdown}>
                         <button className={styleLanguage_en} onClick={() => changeLng("en")}>
                             <img className="flag" src={ukflag} alt="language uk" />

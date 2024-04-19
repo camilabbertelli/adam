@@ -5,86 +5,85 @@ import './../../styles/Home/MapChart.css'
 
 // Geo json files
 import europeData from "./../../assets/maps/europe.json";
+import { useTranslation } from 'react-i18next';
 
 function noSpaces(str) {
     return (str.replace(".", '')).replace(/\s+/g, '')
 }
 
-//const colorScale = ["#D9AB96", "#D9AB96", "#D9AB96", "#D9AB96"]
-const colorScale = ["#d8b89a", "#d8b89a", "#d8b89a", "#d8b89a"]
-//const colorScale = ["#D7BBA8", "#A79596", "#B88083", "#BC4B51"];
+var tooltipMark;
 
 const MapChart = ({ codices }) => {
 
+    const {t} = useTranslation()
 
-    // A random color generator
-    const colorGenerator = () => {
-        return colorScale[Math.floor(Math.random() * 4)]
+    const gatherCodicesMarks = () => {
+        let marks = [];
+
+        for (const [key, value] of Object.entries(codices)) {
+            value.forEach(codex => {
+                codex.marks.forEach(mark => {
+                    mark["title"] = codex.title
+                    mark["century"] = key
+                    marks.push(mark);
+                })
+            })
+        }
+
+        return marks;
+    }
+
+    let infoMouseOverMap = function (event, d) {
+        tooltipMark
+            .style("opacity", 1);
+
+        tooltipMark.html(`<center><b>${t("information")}</b></center>
+                      ${t("information-map")}<br>`)
+            .style("top", event.pageY - 10 + "px")
+            .style("left", event.pageX + 10 + "px")
+    }
+
+
+    let infoMouseLeaveMap = function (event, d) {
+        tooltipMark
+            .style("opacity", 0)
+
+        let element = document.getElementById('tooltipMark')
+        if (element)
+            element.innerHTML = "";
+    }
+
+    let mouseOver = function (event, d) {
+        d3.selectAll(`#${noSpaces(d.title)}`)
+            .classed("hover", true)
+    }
+
+    let mouseMove = function (event, d) {
+        tooltipMark
+            .style("opacity", "1");
+
+        tooltipMark
+            .html(
+                `<center><b>${d.title} </b><br><b>${d.century}</b></center> <br>
+                City: ${d.city} <br>
+                Country: ${d.country} <br>`)
+            .style("top", event.pageY - 10 + "px")
+            .style("left", event.pageX + 10 + "px")
+    }
+
+    let mouseLeave = function (event, d) {
+        tooltipMark
+            .style("opacity", "0")
+
+        let element = document.getElementById('tooltipMark')
+        if (element)
+            element.innerHTML = "";
+
+        d3.selectAll(`#${noSpaces(d.title)}`)
+            .classed("hover", false)
     }
 
     useEffect(() => {
-
-        const gatherCodicesMarks = () => {
-            let marks = [];
-
-            for (const [key, value] of Object.entries(codices)) {
-                value.forEach(codex => {
-                    codex.marks.forEach(mark => {
-                        mark["title"] = codex.title
-                        mark["century"] = key
-                        marks.push(mark);
-                    })
-                })
-            }
-
-            return marks;
-        }
-
-        let infoMouseOverMap = function (event, d) {
-            tooltipMark
-                .style("opacity", 1);
-
-            tooltipMark.html(`<center><b>Information</b></center>
-                          Hover on a mark for more information.<br>Click on a country to filter the whole dashboard.<br>`)
-                .style("top", event.pageY - 10 + "px")
-                .style("left", event.pageX + 10 + "px")
-        }
-
-
-        let infoMouseLeaveMap = function (event, d) {
-            tooltipMark
-                .style("opacity", 0)
-        }
-
-        let mouseOver = function (event, d) {
-            d3.selectAll(`#${noSpaces(d.title)}`)
-                .classed("hover", true)
-        }
-
-        let mouseMove = function (event, d) {
-            tooltipMark
-                .style("opacity", "1");
-
-            tooltipMark
-                .html(
-                    `<center><b>${d.title} </b><br><b>${d.century}</b></center> <br>
-                    City: ${d.city} <br>
-                    Country: ${d.country} <br>`)
-                .style("top", event.pageY - 10 + "px")
-                .style("left", event.pageX + 10 + "px")
-        }
-
-        let mouseLeave = function (event, d) {
-            tooltipMark
-                .style("opacity", "0")
-
-            let element = document.getElementById('tooltipMark')
-            if (element)
-                element.innerHTML = "";
-
-            d3.selectAll(`#${noSpaces(d.title)}`)
-                .classed("hover", false)
-        }
 
         let box = document.querySelector('.viz');
         let width = box.offsetWidth;
@@ -92,7 +91,7 @@ const MapChart = ({ codices }) => {
 
         d3.selectAll("#tooltipMark").remove();
         // create a tooltipMark
-        let tooltipMark = d3.select("body")
+        tooltipMark = d3.select("body")
             .append("div")
             .attr("id", "tooltipMark")
             .attr("class", "tooltip shadow rounded")
@@ -141,7 +140,7 @@ const MapChart = ({ codices }) => {
             .attr("d", pathGenerator)
             .attr("class", "country")
             // Here's an example of what I was saying in my previous comment.
-            .attr("fill", colorGenerator)
+            .attr("fill", "#d8b89a")
             .on("click", handleZoom)
 
         // Create zoom behavior for the map

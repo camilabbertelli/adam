@@ -25,7 +25,8 @@ const DashboardPage = () => {
     let categories = [t("category-action"), t("category-body"), t("category-emotion")]
 
     const [data, setData] = useState([])
-    const [activeCategories, setActiveCategories] = useState([]);
+    //TODO: REMOVE THIS
+    const [activeCategories, setActiveCategories] = useState([t("category-action"), t("category-body")]);
     const [activeCategory, setActiveCategory] = useState(null)
 
     function handleDragStart(event) {
@@ -85,18 +86,18 @@ const DashboardPage = () => {
                     <div className="dashboard-row1">
                         <div className="dashboard-viz1">
                             {data.length > 0 && <HeatmapChart data={data} activeCategories={activeCategories} activeCategory={activeCategory}>
-                                <div className={"heatmap-drag "}>
+                                <div className={"heatmap-drag"} style={{minHeight: ((activeCategories.length !== 2) ? "90%" : "15%")}}>
                                     <div className={"category " + (activeCategories.length ? "" : "default ") + (activeCategories.length === 2 ? " shrink" : "")} key={activeCategories.length ? activeCategories[0] : "category1"}>
                                         {activeCategories.length ? activeCategories[0] : t("category-label")}
                                     </div>
-                                    {activeCategories.length > 0 && <img className={"x " + (activeCategories.length === 2 ? " shrink" : "")} alt="x" src={x} width="20px" height="20px" onClick={() => removeCategory(0)} />}
+                                    {activeCategories.length > 0 && <img title={t("icon-close")} className={"x " + (activeCategories.length === 2 ? " shrink" : "")} alt="x" src={x} width="20px" height="20px" onClick={() => removeCategory(0)} />}
 
                                     <img className={(activeCategories.length === 2 ? " shrink" : "")} alt="close" style={{ margin: "0 50px" }} src={close} width="20px" height="20px" />
 
                                     <div className={"category " + (activeCategories.length === 2 ? "" : "default ") + (activeCategories.length === 2 ? " shrink" : "")} key={activeCategories.length === 2 ? activeCategories[1] : "category2"}>
                                         {activeCategories.length === 2 ? activeCategories[1] : t("category-label")}
                                     </div>
-                                    {activeCategories.length === 2 && <img className={"x " + (activeCategories.length === 2 ? " shrink" : "")} alt="x" src={x} width="20px" height="20px" onClick={() => removeCategory(1)} />}
+                                    {activeCategories.length === 2 && <img title={t("icon-close")} className={"x " + (activeCategories.length === 2 ? " shrink" : "")} alt="x" src={x} width="20px" height="20px" onClick={() => removeCategory(1)} />}
                                 </div>
                             </HeatmapChart>}
                         </div>

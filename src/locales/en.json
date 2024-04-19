@@ -1,4 +1,10 @@
 {
+    "information": "Information",
+    "information-map": "Hover on a mark for more information.",
+    "information-pyramid": "Hover on a bar for more information. <br> Click on the icon on the right to change grouping types.",
+
+
+
     "navbar_home": "Home",
     "navbar_dashboard": "Dashboard",
     "navbar_database": "Database",
@@ -8,7 +14,10 @@
     "titleGallery": "Our Gallery",
     "titleAboutUs": "About us",
     "home-map-title": "Places present in the medieval narrative",
+    "icon-language": "Language",
 
+
+    
     "simple-filter": "Simple filter",
     "advanced-filter": "Advanced filter",
     "categories-label": "Categories",
@@ -23,14 +32,29 @@
     "dimension-label": "Dimension",
     "codices-label": "Codices",
 
+    "icon-expand" : "Expand",
+    "icon-separate": "Separate groups",
+    "icon-group": "Total",
+    "icon-sort": "Sort by",
+    "icon-close": "Remove category",
+    "pyramid-separate": "How are the different sexes perceived?",
+    "pyramid-total": "Total occurrences",
+
+
+
+
     "database-content": "Content",
     "database-select-all" : "Select all",
+
+
 
     "library-filter-ancient": "Ancient portuguese",
     "library-filter-modern": "Modern portuguese",
     "library-filter-lightsoff": "Lights-off mode",
     "library-available-codices": "Available codices",
     "library-genre-all": "All",
+
+
 
     "lost": "Lost?",
     "not-found": "404: Page Not Found!",
