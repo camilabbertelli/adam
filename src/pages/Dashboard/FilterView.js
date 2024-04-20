@@ -40,7 +40,7 @@ const FilterView = ({ categories }) => {
             allGenres.push(codex.genre);
         })
     }
-    
+
     if (allGenres) allGenres.sort()
 
     let sortedkeys = Object.keys(allCodicesAux).sort()
@@ -55,9 +55,6 @@ const FilterView = ({ categories }) => {
     function Draggable(props) {
         const { attributes, listeners, setNodeRef } = useDraggable({
             id: props.id,
-            data: {
-                category: props.id
-            }
         });
 
 
@@ -157,9 +154,10 @@ const FilterView = ({ categories }) => {
             <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "10px 0" }}>
                 <h5>{t("categories-label")}</h5>
                 <center>
-                    {categories.map((p) => (
-                        <Draggable key={p} id={p}><button className='dashboard-filter-category shadow' id={p}>{p}</button></Draggable>
-                    ))}
+                    {Object.keys(categories).map((key) => (
+                        <Draggable key={key} id={key}><button className='dashboard-filter-category shadow' id={key}>{categories[key]}</button></Draggable>
+                    ))
+                }
                 </center>
             </div>
 

@@ -9,18 +9,10 @@
 
     background-color: white;
     border-radius: 20px;
-}
-
-.heatmap-icons{
-    position: absolute;
 
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
-    width: fit-content;
-    height: 10%;
-    width: 100%;
 }
 
 .heatmap-content{
@@ -31,7 +23,7 @@
 
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
 }
 
@@ -40,6 +32,9 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
+
+    position: relative;
+
 
     width: 100%;
     
@@ -118,7 +113,7 @@
 
 #heatmap-chart{
     width: 100%;
-    height: 85%;
+    height: 75%;
 
     display: flex;
     flex-direction: column;
@@ -164,7 +159,8 @@
 
 .heatmap-bottom-sector{
     width: 100%;
-    min-height: 20%;
+    min-height: 30%;
+    max-height: 30%;
 
     display: flex;
     flex-direction: row;

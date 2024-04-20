@@ -21,12 +21,33 @@ const HeatmapChart = (props) => {
 
 	const { t } = useTranslation()
 
+	let infoMouseOverHeatmap = function (event, d) {
+        tooltipHeatmap
+            .style("opacity", 1);
+
+            tooltipHeatmap.html(`<center><b>${t("information")}</b></center>
+                      Information missing<br>`)
+            .style("top", event.pageY - 10 + "px")
+            .style("left", event.pageX + 10 + "px")
+    }
+
+
+    let infoMouseLeaveHeatmap = function (event, d) {
+        tooltipHeatmap
+            .style("opacity", 0)
+
+        let element = document.getElementById('tooltipHeatmap')
+        if (element)
+            element.innerHTML = "";
+    }
+
 	// Three function that change the tooltip when user hover / move / leave a cell
 	const mouseover = function (event, d) {
 		tooltipHeatmap.style("opacity", 1)
 		d3.select(this)
 			.style("stroke", "black")
 	}
+
 	const mousemove = function (event, d) {
 		tooltipHeatmap
 			.html(`<center><b>${d[0]} x ${d[1]}</b></center>
@@ -34,6 +55,7 @@ const HeatmapChart = (props) => {
 			.style("top", event.pageY - 10 + "px")
 			.style("left", event.pageX + 10 + "px");
 	}
+
 	const mouseleave = function (event, d) {
 		tooltipHeatmap.style("opacity", 0)
 		d3.select(this)
@@ -43,19 +65,26 @@ const HeatmapChart = (props) => {
 		if (element) element.innerHTML = "";
 	}
 
-
 	useEffect(() => {
 		if (props.activeCategories.length === 2) {
 			let globalData = d3.flatRollup(props.data, v => ({
 				participants_total: v.length,
-			}), (d) => d.title, (d) => d.subject_sex, (d) => d.anatomical_part, (d) => d.organs, (d) => d.actions)
+			}), (d) => d.title, (d) => d.subject_sex, (d) => d.anatomical_part, (d) => d.organs, (d) => d.action)
 
+			let indexCategories = 2
 
-			let heatmapKey1 = Array.from(d3.group(globalData, d => d[2]).keys())
-			let heatmapKey2 = Array.from(d3.group(globalData, d => d[3]).keys())
-			let heatmapData = d3.flatRollup(globalData, v => v.length, d => d[2], d => d[3])
+			let heatmapD = {}
+			Object.keys(props.categories).map((key, index) => {
+				heatmapD[key] = index
+			})
 
-			
+			let indexKey1 = indexCategories + heatmapD[props.activeCategories[0]]
+			let indexKey2 = indexCategories + heatmapD[props.activeCategories[1]]
+
+			let heatmapKey1 = Array.from(d3.group(globalData, d => d[indexKey1]).keys())
+			let heatmapKey2 = Array.from(d3.group(globalData, d => d[indexKey2]).keys())
+			let heatmapData = d3.flatRollup(globalData, v => v.length, d => d[indexKey1], d => d[indexKey2])
+
 			heatmapKey1.sort()
 			heatmapKey2.sort()
 
@@ -140,6 +169,11 @@ const HeatmapChart = (props) => {
 				.attr("padding", "1px")
 				.style("opacity", 0);
 
+			
+			d3.select("#infoHeatmap")
+				.on("mouseover", infoMouseOverHeatmap)
+				.on("mouseleave", infoMouseLeaveHeatmap)
+
 
 			// add the squares
 			svg.selectAll()
@@ -159,7 +193,7 @@ const HeatmapChart = (props) => {
 				.on("mouseleave", mouseleave)
 
 		}
-	}, [props.activeCategories])
+	}, [props.activeCategories, props.categories])
 
 	function handleGraphScroll(e) {
 		$('.heatmap-left-header').scrollTop($('.heatmap-graph').scrollTop());
@@ -176,16 +210,10 @@ const HeatmapChart = (props) => {
 
 	return (
 		<>
-			<div id="droppable" ref={setNodeRef} className={"shadow heatmap-area" + ((props.activeCategory) ? " dashed" : "")}>
-				<div className='heatmap-icons'>
-					<img alt="info" id="infoPyramid" src={info}
-						style={{ "marginLeft": 10 + "px" }} width="15" height="15"
-					/>
-
-					<img title={t("icon-expand")} alt="info" id="infoPyramid" src={expand}
-						style={{ "marginRight": 10 + "px", float: "right" }} width="15" height="15"
-					/>
-				</div>
+			<div id="droppable" ref={setNodeRef} className={"shadow heatmap-area" + ((props.activeCategory !== null && props.activeCategories.length !== 2) ? " dashed" : "")}>
+				<img alt="info" id="infoHeatmap" src={info}
+						style={{ marginTop: "10px", marginLeft: "10px" }} width="15" height="15"
+				/>
 				<div className='heatmap-content'>
 					{props.children}
 					{props.activeCategories.length === 2 &&
@@ -201,6 +229,9 @@ const HeatmapChart = (props) => {
 
 						</div>}
 				</div>
+				<img title={t("icon-expand")} alt="info" src={expand}
+						style={{ marginTop: "10px", marginRight: "10px", float: "right" }} width="15" height="15"
+				/>
 			</div>
 
 		</>

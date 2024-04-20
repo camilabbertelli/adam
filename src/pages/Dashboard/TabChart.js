@@ -25,6 +25,12 @@ const margin = {
 
 const TabContent = ({ category, data }) => {
 
+    // FIXME: is there a fixme even?
+    // window.addEventListener('click', function (e) {
+    //     if (document.getElementById('tabchart-dropdown') && !document.getElementById('tabchart-dropdown').contains(e.target))
+    //         setStyleDropdown("tabchart-dropdown-content-hide");
+    // });
+
     const {t} = useTranslation()
 
     const [totalOccurrences, setTotalOccurrences] = useState(false)
@@ -384,11 +390,6 @@ const TabContent = ({ category, data }) => {
         else setStyleDropdown("tabchart-dropdown-content-show");
     };
 
-    window.addEventListener('click', function (e) {
-        if (document.getElementById('tabchart-dropdown') && !document.getElementById('tabchart-dropdown').contains(e.target))
-            setStyleDropdown("tabchart-dropdown-content-hide");
-    });
-
     const [currentSorting, setCurrentSorting] = useState("name_asc")
 
     function sort_name_asc(a, b) {
@@ -490,7 +491,7 @@ const TabContent = ({ category, data }) => {
                 <div id="tabchart-dropdown" className='tabchart-dropdown'>
                     <button className='tabchart-dropbtn' onClick={changeStyle}>
                         <img title={t("icon-sort")} alt="total" src={sorting_icon}
-                            className="tabchart-sorting-icon"
+                            style={{ "marginLeft": 5 + "px" }} className="tabchart-sorting-icon"
                             
                         /></button>
                     <div className={styleDropdown + " shadow"}>
