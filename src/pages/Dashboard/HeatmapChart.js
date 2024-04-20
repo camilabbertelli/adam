@@ -2,10 +2,11 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import "./../../styles/Dashboard/HeatmapChart.css";
 import { useDroppable } from '@dnd-kit/core';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import info from "./../../assets/images/info-black.png"
 import expand from "./../../assets/images/dashboard/expand.png"
+import shrink from "./../../assets/images/dashboard/shrink.png"
 
 import * as d3 from "d3";
 import { useTranslation } from 'react-i18next';
@@ -13,6 +14,30 @@ import { useTranslation } from 'react-i18next';
 import $ from 'jquery';
 
 var tooltipHeatmap;
+
+function wrap(text, width) {
+	text.each(function () {
+		var text = d3.select(this),
+			words = text.text().split(/\s+/).reverse(),
+			word,
+			line = [],
+			lineNumber = 0,
+			lineHeight = 1.1, // ems
+			y = text.attr("y"),
+			dy = parseFloat(text.attr("dy")),
+			tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+		while (word = words.pop()) {
+			line.push(word);
+			tspan.text(line.join(" "));
+			if (tspan.node().getComputedTextLength() > width) {
+				line.pop();
+				tspan.text(line.join(" "));
+				line = [word];
+				tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+			}
+		}
+	});
+}
 
 const HeatmapChart = (props) => {
 	const { setNodeRef } = useDroppable({
@@ -22,24 +47,24 @@ const HeatmapChart = (props) => {
 	const { t } = useTranslation()
 
 	let infoMouseOverHeatmap = function (event, d) {
-        tooltipHeatmap
-            .style("opacity", 1);
+		tooltipHeatmap
+			.style("opacity", 1);
 
-            tooltipHeatmap.html(`<center><b>${t("information")}</b></center>
-                      Information missing<br>`)
-            .style("top", event.pageY - 10 + "px")
-            .style("left", event.pageX + 10 + "px")
-    }
+		tooltipHeatmap.html(`<center><b>${t("information")}</b></center>
+                      ${t("information-heatmap")}`)
+			.style("top", event.pageY - 10 + "px")
+			.style("left", event.pageX + 10 + "px")
+	}
 
 
-    let infoMouseLeaveHeatmap = function (event, d) {
-        tooltipHeatmap
-            .style("opacity", 0)
+	let infoMouseLeaveHeatmap = function (event, d) {
+		tooltipHeatmap
+			.style("opacity", 0)
 
-        let element = document.getElementById('tooltipHeatmap')
-        if (element)
-            element.innerHTML = "";
-    }
+		let element = document.getElementById('tooltipHeatmap')
+		if (element)
+			element.innerHTML = "";
+	}
 
 	// Three function that change the tooltip when user hover / move / leave a cell
 	const mouseover = function (event, d) {
@@ -153,6 +178,10 @@ const HeatmapChart = (props) => {
 				.style("font-family", "EB Garamound")
 				.attr("transform", `translate(0, 2)`)
 				.call(d3.axisBottom(x).tickSize(0))
+				.selectAll(".tick text")
+				.call(wrap, x.bandwidth())
+
+			d3.select(".heatmap-bottom-header")
 				.select(".domain").remove()
 
 			// Build color scale
@@ -169,7 +198,7 @@ const HeatmapChart = (props) => {
 				.attr("padding", "1px")
 				.style("opacity", 0);
 
-			
+
 			d3.select("#infoHeatmap")
 				.on("mouseover", infoMouseOverHeatmap)
 				.on("mouseleave", infoMouseLeaveHeatmap)
@@ -208,11 +237,30 @@ const HeatmapChart = (props) => {
 		$('.heatmap-graph').scrollLeft($('.heatmap-bottom-header').scrollLeft());
 	}
 
+
+	const [isExpanded, setIsExpanded] = useState(false)
+
+	function expandHeatmap(){
+		if (props.activeCategories.length !== 2) return
+
+		document.getElementById("overlay").style.display = (!isExpanded)? "block" : "none";
+
+		d3.selectAll(".heatmap-area").classed("heatmap-expand", !isExpanded)
+
+		setIsExpanded(!isExpanded)
+		props.setIsExpanded(!isExpanded)
+	}
+
+	useEffect(() => {
+		setIsExpanded(props.isExpanded)
+		d3.selectAll(".heatmap-area").classed("heatmap-expand", props.isExpanded)
+	}, [props.isExpanded])
+
 	return (
 		<>
 			<div id="droppable" ref={setNodeRef} className={"shadow heatmap-area" + ((props.activeCategory !== null && props.activeCategories.length !== 2) ? " dashed" : "")}>
 				<img alt="info" id="infoHeatmap" src={info}
-						style={{ marginTop: "10px", marginLeft: "10px" }} width="15" height="15"
+					style={{ marginTop: "10px", marginLeft: "10px" }} width="15" height="15"
 				/>
 				<div className='heatmap-content'>
 					{props.children}
@@ -229,8 +277,9 @@ const HeatmapChart = (props) => {
 
 						</div>}
 				</div>
-				<img title={t("icon-expand")} alt="info" src={expand}
-						style={{ marginTop: "10px", marginRight: "10px", float: "right" }} width="15" height="15"
+				<img title={isExpanded? t("icon-shrink") : t("icon-expand")} alt="info" src={isExpanded ? shrink : expand}
+					style={{ marginTop: "10px", marginRight: "10px", float: "right" }} width="15" height="15"
+					onClick={expandHeatmap}
 				/>
 			</div>
 

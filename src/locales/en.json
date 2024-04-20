@@ -2,6 +2,7 @@
     "information": "Information",
     "information-map": "Hover on a mark for more information.",
     "information-pyramid": "Hover on a bar for more information. <br> Click on the icon on the right to change grouping types.",
+    "information-heatmap": "Hover on a cell for more information. <br> Click on it to change to the detailed view.",
 
 
 
@@ -33,6 +34,7 @@
     "codices-label": "Codices",
 
     "icon-expand" : "Expand",
+    "icon-shrink" : "Shrink",
     "icon-separate": "Separate groups",
     "icon-group": "Total",
     "icon-sort": "Sort by",

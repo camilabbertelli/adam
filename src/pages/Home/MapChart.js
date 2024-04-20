@@ -38,7 +38,7 @@ const MapChart = ({ codices }) => {
             .style("opacity", 1);
 
         tooltipMark.html(`<center><b>${t("information")}</b></center>
-                      ${t("information-map")}<br>`)
+                      ${t("information-map")}`)
             .style("top", event.pageY - 10 + "px")
             .style("left", event.pageX + 10 + "px")
     }

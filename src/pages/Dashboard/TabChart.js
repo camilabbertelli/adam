@@ -10,6 +10,9 @@ import group from "./../../assets/images/dashboard/group.png"
 import separate from "./../../assets/images/dashboard/separate.png"
 import sorting_icon from "./../../assets/images/dashboard/sorting.png"
 
+import expand from "./../../assets/images/dashboard/expand.png"
+import shrink from "./../../assets/images/dashboard/shrink.png"
+
 import * as d3 from "d3";
 import { useTranslation } from "react-i18next";
 
@@ -23,26 +26,39 @@ const margin = {
     left: 80,
 };
 
-const TabContent = ({ category, data }) => {
+const TabContent = (props) => {
 
-    // FIXME: is there a fixme even?
-    // window.addEventListener('click', function (e) {
-    //     if (document.getElementById('tabchart-dropdown') && !document.getElementById('tabchart-dropdown').contains(e.target))
-    //         setStyleDropdown("tabchart-dropdown-content-hide");
-    // });
+    const [isExpanded, setIsExpanded] = useState(false)
+
+	function expandTabChart(){
+
+		document.getElementById("overlay").style.display = (!isExpanded)? "block" : "none";
+
+		d3.selectAll(".tab-chart-area").classed("tabchart-expand", !isExpanded)
+
+		setIsExpanded(!isExpanded)
+		props.setIsExpanded(!isExpanded)
+	}
+
+	useEffect(() => {
+		setIsExpanded(props.isExpanded)
+		d3.selectAll(".tab-chart-area").classed("tabchart-expand", props.isExpanded)
+	}, [props.isExpanded])
 
     const {t} = useTranslation()
+
+    const [styleDropdown, setStyleDropdown] = useState(false);
 
     const [totalOccurrences, setTotalOccurrences] = useState(false)
     const [changedTotal, setChangedTotal] = useState(false)
 
-    let globalData = d3.flatRollup(data, v => ({
+    let globalData = d3.flatRollup(props.data, v => ({
         participants_total: v.length,
     }), (d) => d.title, (d) => d.subject_sex, (d) => d.anatomical_part, (d) => d.organs)
 
     let pyramidData = {}
 
-    if (category === "Body&Soul")
+    if (props.category === "Body&Soul")
         pyramidData = d3.rollup(globalData, v => ({
             participants_total: v.length,
             anatomical_part: d3.group(v, d => d[2]),
@@ -50,7 +66,7 @@ const TabContent = ({ category, data }) => {
         }), d => d[1])
 
 
-    if (category === "Emotions")
+    if (props.category === "Emotions")
         pyramidData = d3.rollup(globalData, v => ({
             participants_total: v.length,
             anatomical_part: d3.group(v, d => d[3]),
@@ -97,7 +113,7 @@ const TabContent = ({ category, data }) => {
             .style("opacity", 1);
 
             tooltipPyramid.html(`<center><b>${t("information")}</b></center>
-                      ${t("information-pyramid")}<br>`)
+                      ${t("information-pyramid")}`)
             .style("top", event.pageY - 10 + "px")
             .style("left", event.pageX + 10 + "px")
     }
@@ -376,18 +392,18 @@ const TabContent = ({ category, data }) => {
 
         setChangedTotal(false)
 
-    }, [category, totalOccurrences])
+    }, [props.category, totalOccurrences])
 
     const changeTotalOccurrence = () => {
         setTotalOccurrences(!totalOccurrences)
         setChangedTotal(true)
     }
 
-    const [styleDropdown, setStyleDropdown] = useState("tabchart-dropdown-content-hide");
-
     const changeStyle = () => {
-        if (styleDropdown !== "tabchart-dropdown-content-hide") setStyleDropdown("tabchart-dropdown-content-hide");
-        else setStyleDropdown("tabchart-dropdown-content-show");
+        d3.selectAll("#tabchart-dropdown-icon").classed("tabchart-dropdown-content-show", !styleDropdown)
+        //"tabchart-dropdown-content-hide"
+        
+        setStyleDropdown(!styleDropdown);
     };
 
     const [currentSorting, setCurrentSorting] = useState("name_asc")
@@ -470,7 +486,7 @@ const TabContent = ({ category, data }) => {
             .attr("y", d => yScale(d));
 
         setCurrentSorting(s)
-        setStyleDropdown("tabchart-dropdown-content-hide");
+        setStyleDropdown(false);
     }
 
     return (<>
@@ -483,7 +499,7 @@ const TabContent = ({ category, data }) => {
 
             </div>
             <div className="pyramid-filters">
-                <img title={(totalOccurrences)? t("icon-separate") : t("icon-group")} alt="total" src={(totalOccurrences) ? separate : group }
+            <img title={(totalOccurrences)? t("icon-separate") : t("icon-group")} alt="total" src={(totalOccurrences) ? separate : group }
                     style={{ "marginRight": "5%", float: "right", cursor: "pointer" }} width="20" height="20"
                     onClick={changeTotalOccurrence}
                 />
@@ -494,7 +510,7 @@ const TabContent = ({ category, data }) => {
                             style={{ "marginLeft": 5 + "px" }} className="tabchart-sorting-icon"
                             
                         /></button>
-                    <div className={styleDropdown + " shadow"}>
+                    <div id="tabchart-dropdown-icon" className={"shadow tabchart-dropdown-content-hide"}>
                         <button className={currentSorting === "name_asc" ? "sorting-active" : ""} onClick={() => changeSorting("name_asc")}> Name (ascending) </button>
                         <button className={currentSorting === "name_desc" ? "sorting-active" : ""} onClick={() => changeSorting("name_desc")}> Name (descending) </button>
 
@@ -521,9 +537,15 @@ const TabContent = ({ category, data }) => {
     </>)
 }
 
-const TabChart = ({ categories, data }) => {
-    categories = ["Body&Soul", "Emotions"]
+const TabChart = (props) => {
+    // TODO: change thisss to props
+    let categories = ["Body&Soul", "Emotions"]
     const [currentCategory, setCurrentCategory] = useState(categories[0])
+
+    window.addEventListener('click', function (e) {
+        if (document.getElementById('tabchart-dropdown') && !document.getElementById('tabchart-dropdown').contains(e.target))
+            d3.selectAll("#tabchart-dropdown-icon").classed("tabchart-dropdown-content-show", false)
+    });
 
     return (
         <>
@@ -541,8 +563,8 @@ const TabChart = ({ categories, data }) => {
                         )
                     })}
                 </div>
-                {data.length > 0 && <TabContent category={currentCategory} data={data} />}
-                {data.length === 0 &&
+                {props.data.length > 0 && <TabContent category={currentCategory} data={props.data} isExpanded={props.isExpanded} setIsExpanded={props.setIsExpanded} />}
+                {props.data.length === 0 &&
                     <div id="tab-content" className="tab-chart-area-content shadow" style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
                         No data to show
                     </div>

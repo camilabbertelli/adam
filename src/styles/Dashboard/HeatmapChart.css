@@ -13,12 +13,20 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+
+    z-index: 0;
+    transition: transform 0.5s,          /*  changed property  */
+                z-index 0.5s;
 }
 
+.heatmap-expand{
+    transform: scale(1.5) translate(18%, 0);
+    z-index: 10;        
+}
+
+
 .heatmap-content{
-    position: absolute;
-    
-    width: 100%;
+    width: 94%;
     height: 100%;
 
     display: flex;
@@ -73,7 +81,7 @@
 
     .x {
         position: relative;
-        top: -7%;
+        top: -45%;
         left: -3%;
         cursor: pointer;
     }

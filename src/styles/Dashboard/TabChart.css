@@ -36,7 +36,18 @@
 	top: 47%;
 	left: 30px;
 	transform: translate(0, -50%);
+
+	
+    z-index: 0;
+    transition: transform 0.5s,          /*  changed property  */
+                z-index 0.5s;
 }
+
+.tabchart-expand{
+    transform: scale(1.5) translate(50%, -60%);
+    z-index: 10;        
+}
+
 
 .tab-chart-area-content {
 	width: 100%;

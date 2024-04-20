@@ -2,7 +2,7 @@
     "information": "Informação",
     "information-map": "Passe o rato sobre um pin para obter mais informações.",
     "information-pyramid": "Passe o rato sobre uma barra para obter mais informações. Clique no ícone à direita para alterar os tipos de agrupamento.",
-
+    "information-heatmap": "Passe o mouse sobre uma célula para obter mais informações. <br> Clique na mesma para mudar para a visualização detalhada.",
 
 
     "navbar_home": "Início",
@@ -33,6 +33,7 @@
     "codices-label": "Códices",
 
     "icon-expand" : "Expandir",
+    "icon-shrink" : "Encolher",
     "icon-separate": "Separar grupos",
     "icon-group": "Total",
     "icon-sort": "Ordenar por",

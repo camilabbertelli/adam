@@ -78,23 +78,41 @@ const DashboardPage = () => {
             setData(d)
         }, []);
 
+        document.getElementById("overlay").style.display = "none";
     }, [])
 
-    return (<>
+    const [isHeatmapExpanded, setIsHeatmapExpanded] = useState(false)
+    const [isTabchartExpanded, setIsTabchartExpanded] = useState(false)
+    const [isImpPeopleExpanded, setIsImpPeopleExpanded] = useState(false)
+    const [isNetworkExpanded, setIsNetworkExpanded] = useState(false)
 
+    window.addEventListener('click', function (e) {
+        if (document.getElementById('overlay') && document.getElementById('overlay').contains(e.target)){
+            document.getElementById("overlay").style.display = "none";
+            setIsHeatmapExpanded(false)
+            setIsTabchartExpanded(false)
+            setIsImpPeopleExpanded(false)
+            setIsNetworkExpanded(false)
+        }
+    });
+    return (<>
+        
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <div className="dashboard-view">
-                <FilterView categories={categories} />
+                <div id="overlay">
+                </div>
+                <FilterView categories={categories}/>
                 <DragOverlay dropAnimation={{ duration: 500 }}>
                     {activeCategory ? (
                         <button className='dashboard-filter-category-drag shadow' style={{border: "10px"}} key={activeCategory}>{categories[activeCategory]}</button>
                     ): null}
                 </DragOverlay>
+                
                 <div className="dashboard-graph-view">
                     <div className="dashboard-row1">
                         <div className="dashboard-viz1">
-                            {data.length > 0 && <HeatmapChart data={data} activeCategories={activeCategories} activeCategory={activeCategory} categories={categories}>
-                                <div className={"heatmap-drag"} style={{ minHeight: ((activeCategories.length !== 2) ? "80%" : "15%"), top: ((activeCategories.length !== 2) ? "10%" : "0%") }}>
+                            {data.length > 0 && <HeatmapChart data={data} activeCategories={activeCategories} activeCategory={activeCategory} categories={categories} isExpanded={isHeatmapExpanded} setIsExpanded={setIsHeatmapExpanded}>
+                                <div className={"heatmap-drag"} style={{ minHeight: "15%", top: ((activeCategories.length !== 2) ? "40%" : "0%") }}>
                                     <div className={"category " + (activeCategories.length ? "" : "default ") + (activeCategories.length === 2 ? " shrink" : "")} key={activeCategories.length ? activeCategories[0] : "category1"}>
                                         {activeCategories.length ? categories[activeCategories[0]] : t("category-label")}
                                     </div>
@@ -115,7 +133,7 @@ const DashboardPage = () => {
                     </div>
                     <div className="dashboard-row2">
                         <div id="viz3" className={"dashboard-viz3" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
-                            <TabChart categories={categories} data={data} />
+                            <TabChart categories={categories} data={data} isExpanded={isTabchartExpanded} setIsExpanded={setIsTabchartExpanded}/>
                         </div>
                         <div className={"dashboard-viz4" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
                             <NetworkChart />

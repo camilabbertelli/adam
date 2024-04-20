@@ -140,6 +140,8 @@ const FilterView = ({ categories }) => {
     }
 
     return (
+        <>
+        
         <div className="dashboard-filter-view">
 
             <div className="inline-flex" role="group">
@@ -239,6 +241,7 @@ const FilterView = ({ categories }) => {
             </div>
 
         </div>
+        </>
     )
 }
 
