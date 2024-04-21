@@ -22,7 +22,7 @@ function wrap(text, width) {
 			word,
 			line = [],
 			lineNumber = 0,
-			lineHeight = 1.1, // ems
+			lineHeight = 0.8,
 			y = text.attr("y"),
 			dy = parseFloat(text.attr("dy")),
 			tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
@@ -92,23 +92,13 @@ const HeatmapChart = (props) => {
 
 	useEffect(() => {
 		if (props.activeCategories.length === 2) {
-			let globalData = d3.flatRollup(props.data, v => ({
-				participants_total: v.length,
-			}), (d) => d.title, (d) => d.subject_sex, (d) => d.anatomical_part, (d) => d.organs, (d) => d.action)
 
-			let indexCategories = 2
+			let indexKey1 = props.categories[props.activeCategories[0]].index
+			let indexKey2 = props.categories[props.activeCategories[1]].index
 
-			let heatmapD = {}
-			Object.keys(props.categories).map((key, index) => {
-				heatmapD[key] = index
-			})
-
-			let indexKey1 = indexCategories + heatmapD[props.activeCategories[0]]
-			let indexKey2 = indexCategories + heatmapD[props.activeCategories[1]]
-
-			let heatmapKey1 = Array.from(d3.group(globalData, d => d[indexKey1]).keys())
-			let heatmapKey2 = Array.from(d3.group(globalData, d => d[indexKey2]).keys())
-			let heatmapData = d3.flatRollup(globalData, v => v.length, d => d[indexKey1], d => d[indexKey2])
+			let heatmapKey1 = Array.from(d3.group(props.data, d => d[indexKey1]).keys())
+			let heatmapKey2 = Array.from(d3.group(props.data, d => d[indexKey2]).keys())
+			let heatmapData = d3.flatRollup(props.data, v => v.length, d => d[indexKey1], d => d[indexKey2])
 
 			heatmapKey1.sort()
 			heatmapKey2.sort()
@@ -129,6 +119,8 @@ const HeatmapChart = (props) => {
 			d3.select(".heatmap-graph").selectAll("svg").remove("")
 			d3.select(".heatmap-left-header").selectAll("svg").remove("")
 			d3.select(".heatmap-bottom-header").selectAll("svg").remove("")
+			d3.select(".heatmap-legend").selectAll("svg").remove("")
+
 			// append the svg object to the body of the page
 			const svg = d3.select(".heatmap-graph")
 				.append("svg")
@@ -147,6 +139,56 @@ const HeatmapChart = (props) => {
 				.attr("width", width_bottom)
 				.attr("height", height_bottom)
 				.append("g")
+
+			let colorRange = ["white", "#E4D1D1", "#CEADAD", "#B88989", "#A16666", "#894343", "#712121", "#5D1B1B", "#320404", "black"]
+			let domain = [1, 5, 10, 25, 50, 100, 150, 200, 250, 300]
+			// Build color scale
+			const myColor = d3.scaleThreshold()
+				.range(["none"].concat(colorRange))
+				.domain(domain)
+
+			let box_legend = document.querySelector(".heatmap-legend");
+			let boundaries_legend = box_legend.getBoundingClientRect()
+			let width_legend = boundaries_legend.width
+			let height_legend = boundaries_legend.height;
+
+			const legend = d3
+				.select(".heatmap-legend")
+				.append("svg")
+				.attr("width", width_legend)
+				.attr("height", height_legend)
+
+			legend.append("g")
+				.selectAll(".legendRect")
+				.data(colorRange)
+				.join("rect")
+				.attr("x", 10)
+				.attr("y", (d, i) => i * (height_legend/ (colorRange.length + 1)) + 5)
+				.attr("ry", 5)
+				.attr("width", 10)
+				.attr("height", (height_legend/ (colorRange.length - 1.5)))
+				.style("stroke", "black")
+				.style("stroke-width", 1)
+				.style("fill", d => d)
+
+
+			legend.append("g")
+				.selectAll(".legendText")
+				.data(domain)
+				.join('text')
+				.style("font-size", 14)
+				.style("font-family", "EB Garamound")
+				.attr("y", (d, i) => i * (height_legend/ (colorRange.length + 1)) + 25)
+				.attr("dx", "2em")
+				//.attr("dy", "3em") //place text one line *below* the x,y point
+				.attr("class", "seasonLabels")
+				.text((d, i) => {
+					if (i + 1 < domain.length)
+						return domain[i] + "-" +  domain[i+1];
+					if (i + 1 === domain.length)
+						return ">=" +  domain[i];
+				});
+
 
 
 			// Build X scales and axis:
@@ -184,11 +226,6 @@ const HeatmapChart = (props) => {
 			d3.select(".heatmap-bottom-header")
 				.select(".domain").remove()
 
-			// Build color scale
-			const myColor = d3.scaleSequential()
-				.interpolator(d3.interpolateLab("white", "#712121"))
-				.domain([1, 13])
-
 			d3.selectAll("#tooltipHeatmap").remove();
 
 			tooltipHeatmap = d3.select("body")
@@ -202,7 +239,6 @@ const HeatmapChart = (props) => {
 			d3.select("#infoHeatmap")
 				.on("mouseover", infoMouseOverHeatmap)
 				.on("mouseleave", infoMouseLeaveHeatmap)
-
 
 			// add the squares
 			svg.selectAll()
@@ -240,10 +276,10 @@ const HeatmapChart = (props) => {
 
 	const [isExpanded, setIsExpanded] = useState(false)
 
-	function expandHeatmap(){
+	function expandHeatmap() {
 		if (props.activeCategories.length !== 2) return
 
-		document.getElementById("overlay").style.display = (!isExpanded)? "block" : "none";
+		document.getElementById("overlay").style.display = (!isExpanded) ? "block" : "none";
 
 		d3.selectAll(".heatmap-area").classed("heatmap-expand", !isExpanded)
 
@@ -277,10 +313,16 @@ const HeatmapChart = (props) => {
 
 						</div>}
 				</div>
-				<img title={isExpanded? t("icon-shrink") : t("icon-expand")} alt="info" src={isExpanded ? shrink : expand}
-					style={{ marginTop: "10px", marginRight: "10px", float: "right" }} width="15" height="15"
-					onClick={expandHeatmap}
-				/>
+				<div className='heatmap-right-sector'>
+					<div className='heatmap-expand-icon'>
+						<img title={isExpanded ? t("icon-shrink") : t("icon-expand")} alt="info" src={isExpanded ? shrink : expand}
+							style={{ marginTop: "10px", marginRight: "10px", float: "right" }} width="15px" height="15px"
+							onClick={expandHeatmap}
+						/>
+					</div>
+					{props.activeCategories.length === 2 &&
+					<div className='heatmap-legend'></div>}
+				</div>
 			</div>
 
 		</>

@@ -21,14 +21,23 @@ import FilterView from './FilterView';
 const DashboardPage = () => {
 
     const { t } = useTranslation();
-
+    
     let categories = {
-        "category-action": t("category-action"), 
-        "category-body" : t("category-body"), 
-        "category-emotion" : t("category-emotion")
+        "category-action": {
+            name: t("category-action"), 
+            index: 2
+        }, 
+        "category-body" : {
+            name: t("category-body"),
+            index: 3
+        }, 
+        "category-emotion" : {
+            name: t("category-emotion"),
+            index: 4
+        }
     }
 
-    const [data, setData] = useState([])
+    const [globalData, setGlobalData] = useState([])
     const [activeCategories, setActiveCategories] = useState([Object.keys(categories)[0], Object.keys(categories)[1]]);
     const [activeCategory, setActiveCategory] = useState(null)
 
@@ -75,7 +84,11 @@ const DashboardPage = () => {
 
     useEffect(() => {
         d3.csv(csv_data).then(d => {
-            setData(d)
+            let globalData = d3.flatRollup(d, v => ({
+				participants_total: v.length,
+			}), (d) => d.title, (d) => d.subject_sex, (d) => d.anatomical_part, (d) => d.organs, (d) => d.action)
+
+            setGlobalData(globalData)
         }, []);
 
         document.getElementById("overlay").style.display = "none";
@@ -104,24 +117,24 @@ const DashboardPage = () => {
                 <FilterView categories={categories}/>
                 <DragOverlay dropAnimation={{ duration: 500 }}>
                     {activeCategory ? (
-                        <button className='dashboard-filter-category-drag shadow' style={{border: "10px"}} key={activeCategory}>{categories[activeCategory]}</button>
+                        <button className='dashboard-filter-category-drag shadow' style={{border: "10px"}} key={activeCategory}>{categories[activeCategory].name}</button>
                     ): null}
                 </DragOverlay>
                 
                 <div className="dashboard-graph-view">
                     <div className="dashboard-row1">
                         <div className="dashboard-viz1">
-                            {data.length > 0 && <HeatmapChart data={data} activeCategories={activeCategories} activeCategory={activeCategory} categories={categories} isExpanded={isHeatmapExpanded} setIsExpanded={setIsHeatmapExpanded}>
-                                <div className={"heatmap-drag"} style={{ minHeight: "15%", top: ((activeCategories.length !== 2) ? "40%" : "0%") }}>
+                            {globalData.length > 0 && <HeatmapChart data={globalData} activeCategories={activeCategories} activeCategory={activeCategory} categories={categories} isExpanded={isHeatmapExpanded} setIsExpanded={setIsHeatmapExpanded}>
+                                <div className={"heatmap-drag"} style={{ minHeight: "15%", top: ((activeCategories.length !== 2) ? "40%" : "0%"), left: ((activeCategories.length !== 2) ? "12%" : "0%") }}>
                                     <div className={"category " + (activeCategories.length ? "" : "default ") + (activeCategories.length === 2 ? " shrink" : "")} key={activeCategories.length ? activeCategories[0] : "category1"}>
-                                        {activeCategories.length ? categories[activeCategories[0]] : t("category-label")}
+                                        {activeCategories.length ? categories[activeCategories[0]].name : t("category-label")}
                                     </div>
                                     {activeCategories.length > 0 && <img title={t("icon-close")} className={"x " + (activeCategories.length === 2 ? " shrink" : "")} alt="x" src={x} width="20px" height="20px" onClick={() => removeCategory(0)} />}
 
                                     <img className={(activeCategories.length === 2 ? " shrink" : "")} alt="close" style={{ margin: "0 50px" }} src={close} width="20px" height="20px" />
 
                                     <div className={"category " + (activeCategories.length === 2 ? "" : "default ") + (activeCategories.length === 2 ? " shrink" : "")} key={activeCategories.length === 2 ? activeCategories[1] : "category2"}>
-                                        {activeCategories.length === 2 ? categories[activeCategories[1]] : t("category-label")}
+                                        {activeCategories.length === 2 ? categories[activeCategories[1]].name : t("category-label")}
                                     </div>
                                     {activeCategories.length === 2 && <img title={t("icon-close")} className={"x " + (activeCategories.length === 2 ? " shrink" : "")} alt="x" src={x} width="20px" height="20px" onClick={() => removeCategory(1)} />}
                                 </div>
@@ -133,7 +146,7 @@ const DashboardPage = () => {
                     </div>
                     <div className="dashboard-row2">
                         <div id="viz3" className={"dashboard-viz3" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
-                            <TabChart categories={categories} data={data} isExpanded={isTabchartExpanded} setIsExpanded={setIsTabchartExpanded}/>
+                            <TabChart categories={categories} data={globalData} isExpanded={isTabchartExpanded} setIsExpanded={setIsTabchartExpanded}/>
                         </div>
                         <div className={"dashboard-viz4" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
                             <NetworkChart />

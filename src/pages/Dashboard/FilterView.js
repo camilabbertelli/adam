@@ -17,14 +17,13 @@ const FilterView = ({ categories }) => {
     const { t } = useTranslation();
 
     const [simpleFilter, setSimpleFilter] = useState(true);
-
+    const intention = ["All", "Sacred", "Profane"]
     const [intentionIndex, setIntentionIndex] = useState(0)
     const [originIndex, setOriginIndex] = useState(0)
     const [explanationIndex, setExplanationIndex] = useState(0)
     const [natureIndex, setNatureIndex] = useState(0)
     const [dimensionIndex, setDimensionIndex] = useState(0)
 
-    const intention = ["All", "Sacred", "Profane"]
     const origin = ["All", "Literal", "Symbolic"]
     const explanation = ["All", "Miraculous", "Wonderful", "None"]
     const nature = ["All", "Animal", "Human", "Supernatural"]
@@ -157,7 +156,7 @@ const FilterView = ({ categories }) => {
                 <h5>{t("categories-label")}</h5>
                 <center>
                     {Object.keys(categories).map((key) => (
-                        <Draggable key={key} id={key}><button className='dashboard-filter-category shadow' id={key}>{categories[key]}</button></Draggable>
+                        <Draggable key={key} id={key}><button className='dashboard-filter-category shadow' id={key}>{categories[key].name}</button></Draggable>
                     ))
                 }
                 </center>

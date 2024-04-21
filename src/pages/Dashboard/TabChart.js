@@ -13,6 +13,8 @@ import sorting_icon from "./../../assets/images/dashboard/sorting.png"
 import expand from "./../../assets/images/dashboard/expand.png"
 import shrink from "./../../assets/images/dashboard/shrink.png"
 
+import $ from "jquery"
+
 import * as d3 from "d3";
 import { useTranslation } from "react-i18next";
 
@@ -26,52 +28,74 @@ const margin = {
     left: 80,
 };
 
+let boundaries = null
+let boundaries_bottom = null
+let boundaries_left = null
+
+function wrap(text, width) {
+    text.each(function () {
+        var text = d3.select(this),
+            t = text.text().trim(),
+            words = t.split(/\s+/).reverse(),
+            word,
+            line = [],
+            lineNumber = 0,
+            lineWeight = 1.1,
+            y = text.attr("y"),
+            x = text.attr("x"),
+            tspan = text.text(null).append("tspan").attr("x", x).attr("y", y);
+
+        let numberWords = words.length
+
+        while (word = words.pop()) {
+            line.push(word);
+            tspan.text(line.join(" "));
+            if (tspan.node().getComputedTextLength() > width) {
+                line.pop();
+                tspan.text(line.join(" "));
+                tspan.attr("y", Number(text.attr("y")) - ((numberWords - (++lineNumber* (lineWeight + 0.3))) * 3))
+                line = [word];
+                tspan = text.append("tspan").attr("x", x).attr("y", Number(text.attr("y")) - ((numberWords - (++lineNumber * lineWeight)) * 3) + (8)).text(word);
+            }
+        }
+    });
+}
+
 const TabContent = (props) => {
 
     const [isExpanded, setIsExpanded] = useState(false)
 
-	function expandTabChart(){
+    function expandTabChart() {
 
-		document.getElementById("overlay").style.display = (!isExpanded)? "block" : "none";
+        document.getElementById("overlay").style.display = (!isExpanded) ? "block" : "none";
 
-		d3.selectAll(".tab-chart-area").classed("tabchart-expand", !isExpanded)
+        d3.selectAll(".tab-chart-area").classed("tabchart-expand", !isExpanded)
 
-		setIsExpanded(!isExpanded)
-		props.setIsExpanded(!isExpanded)
-	}
+        setIsExpanded(!isExpanded)
+        props.setIsExpanded(!isExpanded)
+    }
 
-	useEffect(() => {
-		setIsExpanded(props.isExpanded)
-		d3.selectAll(".tab-chart-area").classed("tabchart-expand", props.isExpanded)
-	}, [props.isExpanded])
+    useEffect(() => {
+        setIsExpanded(props.isExpanded)
+        d3.selectAll(".tab-chart-area").classed("tabchart-expand", props.isExpanded)
+    }, [props.isExpanded])
 
-    const {t} = useTranslation()
+    const { t } = useTranslation()
 
     const [styleDropdown, setStyleDropdown] = useState(false);
 
     const [totalOccurrences, setTotalOccurrences] = useState(false)
     const [changedTotal, setChangedTotal] = useState(false)
 
-    let globalData = d3.flatRollup(props.data, v => ({
-        participants_total: v.length,
-    }), (d) => d.title, (d) => d.subject_sex, (d) => d.anatomical_part, (d) => d.organs)
-
     let pyramidData = {}
+    let index = props.categories[props.category].index
 
-    if (props.category === "Body&Soul")
-        pyramidData = d3.rollup(globalData, v => ({
-            participants_total: v.length,
-            anatomical_part: d3.group(v, d => d[2]),
-            organs: d3.group(v, d => d[3])
-        }), d => d[1])
+    pyramidData = d3.rollup(props.data, v => ({
+        participants_total: v.length,
+        anatomical_part: d3.group(v, d => d[index]),
+        organs: d3.group(v, d => d[3])
+    }), d => d[1])
 
-
-    if (props.category === "Emotions")
-        pyramidData = d3.rollup(globalData, v => ({
-            participants_total: v.length,
-            anatomical_part: d3.group(v, d => d[3]),
-            organs: d3.group(v, d => d[3])
-        }), d => d[1])
 
     let dimensions_original = [...new Set([...pyramidData.get("Masc.").anatomical_part.keys(),
     ...pyramidData.get("Fem.").anatomical_part.keys(),
@@ -102,8 +126,8 @@ const TabContent = (props) => {
             if (pyramidData.get("N").anatomical_part.get(d)) sum += pyramidData.get("N").anatomical_part.get(d).length
         } else if (pyramidData.get(type).anatomical_part.get(d)) sum += pyramidData.get(type).anatomical_part.get(d).length
 
-        if (pyramidData.get("Mult.").anatomical_part.get(d)) sum += pyramidData.get("Mult.").anatomical_part.get(d).length
-        if (pyramidData.get("N").anatomical_part.get(d)) sum += pyramidData.get("N").anatomical_part.get(d).length
+        if (pyramidData?.get("Mult.").anatomical_part.get(d)) sum += pyramidData.get("Mult.").anatomical_part.get(d).length
+        if (pyramidData?.get("N").anatomical_part.get(d)) sum += pyramidData.get("N").anatomical_part.get(d).length
 
         return sum
     }
@@ -112,7 +136,7 @@ const TabContent = (props) => {
         tooltipPyramid
             .style("opacity", 1);
 
-            tooltipPyramid.html(`<center><b>${t("information")}</b></center>
+        tooltipPyramid.html(`<center><b>${t("information")}</b></center>
                       ${t("information-pyramid")}`)
             .style("top", event.pageY - 10 + "px")
             .style("left", event.pageX + 10 + "px")
@@ -163,14 +187,27 @@ const TabContent = (props) => {
 
         d3.select(this).style("stroke-width", 0)
     };
-
-
+    
     useEffect(() => {
-        let box = document.querySelector('.pyramid-content');
 
-        let boundaries = box.getBoundingClientRect()
+        setCurrentSorting("name_asc")
+
+        let box_left = document.querySelector(".pyramid-axes-left");
+        if (boundaries_left === null)
+            boundaries_left = box_left.getBoundingClientRect()
+        let width_left = boundaries_left.width
+
+        let box_bottom = document.querySelector(".pyramid-axes-bottom");
+        if (boundaries_bottom === null)
+            boundaries_bottom = box_bottom.getBoundingClientRect()
+        let width_bottom = boundaries_bottom.width * 0.9
+        let height_bottom = boundaries_bottom.height * 0.9;
+
+        let box = document.querySelector('.pyramid-content');
+        if (boundaries === null)
+            boundaries = box.getBoundingClientRect()
         let width = boundaries.width * 0.9;
-        let barsWidth = width / 3
+        let barsWidth = width / 2
 
         let scrollableHeight = dimensions.length * 30
 
@@ -187,13 +224,14 @@ const TabContent = (props) => {
             .on("mouseover", infoMouseOverPyramid)
             .on("mouseleave", infoMouseLeavePyramid)
 
-        d3.select(".pyramid-axes-content").html("");
+        d3.select(".pyramid-axes-left").html("");
+        d3.select(".pyramid-axes-bottom").html("");
 
-        const axes = d3
-            .select(".pyramid-axes-content")
+        const axes_bottom = d3
+            .select(".pyramid-axes-bottom")
             .append("svg")
-            .attr("width", width)
-            .attr("transform", `translate(${barsWidth},0)`);
+            .attr("width", width_bottom + 20)
+            .attr("height", height_bottom)
 
         let maxMasc = d3.max(dimensions, d => getParticipants("Masc.", d) / participants_total)
         let maxFem = d3.max(dimensions, d => getParticipants("Fem.", d) / participants_total)
@@ -215,13 +253,17 @@ const TabContent = (props) => {
             .domain([0, ((maxScale + factor) > 1 ? 1 : maxScale + factor)])
             .range([barsWidth, barsWidth * 2]);
 
-        axes.append("g")
+        axes_bottom.append("g")
+            .attr("transform", `translate(10,0)`)
             .attr("id", "axismale")
             .call(d3.axisBottom(xScaleMasc).tickSize(0).tickPadding(2).ticks(5, "%").tickFormat(x => { if (x === 0) return 0; else return `${(+(x * 100).toFixed(1))}%` }))
             .call(function (d) { return d.select(".domain").remove() });
 
-        axes
-            .append("rect")
+        let bottom_legend = axes_bottom
+            .append("g")
+            .attr("transform", `translate(${barsWidth / 3},0)`)
+
+        bottom_legend.append("rect")
             .attr("class", "squareMasc")
             .attr("x", (totalOccurrences) ? barsWidth / 2 : 0)
             .attr("y", margin.top)
@@ -230,7 +272,7 @@ const TabContent = (props) => {
             .style("fill", (totalOccurrences) ? "#935959" : "#7BB3B7")
         //.on("click", mouseclickmale)
 
-        axes
+        bottom_legend
             .append("text")
             .attr("class", "legend")
             .attr("x", ((totalOccurrences) ? barsWidth / 2 : 0) + 20)
@@ -238,25 +280,26 @@ const TabContent = (props) => {
             .text((totalOccurrences) ? "Total" : "Masc.")
 
         if (!totalOccurrences) {
-            axes.append("g")
+            axes_bottom.append("g")
+                .attr("transform", `translate(10,0)`)
                 .attr("id", "axisfemale")
                 .call(d3.axisBottom(xScaleFem).tickSize(0).tickPadding(2).ticks(5, "%").tickFormat(x => { if (x === 0) return; else return `${(+(x * 100).toFixed(1))}%` }))
                 .call(function (d) { return d.select(".domain").remove() });
 
-            axes
+            bottom_legend
                 .append("rect")
                 .attr("class", "squareFem")
-                .attr("x", width / 2)
+                .attr("x", barsWidth)
                 .attr("y", margin.top)
                 .attr("width", 13)
                 .attr("height", 13)
                 .style("fill", "#DA9C80")
             //.on("click", mouseclickfemale)
 
-            axes
+            bottom_legend
                 .append("text")
                 .attr("class", "legend")
-                .attr("x", width / 2 + 20)
+                .attr("x", barsWidth + 20)
                 .attr("y", margin.top + 12)
                 .text("Fem.")
         }
@@ -279,7 +322,7 @@ const TabContent = (props) => {
                 maleBars
                     .transition()
                     .duration(1000)
-                    .attr("x", d => xScaleMasc(0))
+                    .attr("x", xScaleMasc(0))
                     .attr("y", d => yScale(d))
                     .attr("width", d => xScaleMasc(getParticipants("Total", d) / participants_total))
                     .attr("height", yScale.bandwidth())
@@ -317,10 +360,10 @@ const TabContent = (props) => {
             svg = d3
                 .select(".pyramid-content")
                 .append("svg")
-                .attr("width", width)
+                .attr("width", width + 20)
                 .attr("height", scrollableHeight)
                 .append("g")
-                .attr("transform", `translate(${barsWidth},0)`);
+                .attr("transform", `translate(10,0)`)
 
             // create male bars
             svg.selectAll(".barMasc")
@@ -341,6 +384,18 @@ const TabContent = (props) => {
                 .on("mouseleave", mouseleave)
             //.on("click", mouseclickmale)
 
+            svg.selectAll(".linePyramidHorizontal")
+                .data(dimensions)
+                .join("line")
+                .style("stroke", "#333333")
+                .style("stroke-opacity", 0.2)
+                .style("stroke-width", 0.3)
+                .attr("x1", 0)
+                .attr("y1", d => yScale(d) - (yScale.bandwidth() / 4))
+                .attr("x2", width)
+                .attr("y2", d => yScale(d) - (yScale.bandwidth() / 4))
+
+
             svg.selectAll(".barFem")
                 .data(dimensions)
                 .join("rect")
@@ -358,15 +413,28 @@ const TabContent = (props) => {
             //.on("click", mouseclickfemale)
         }
 
-        svg.append("g")
-            .attr("class", "pyramid-subcategory-axis")
+        const axes_left = d3
+            .select(".pyramid-axes-left")
+            .append("svg")
+            .attr("width", width_left)
+            .attr("height", scrollableHeight)
+
+
+        axes_left.append("g")
+            .attr("class", ".pyramid-subcategory-axis")
             .selectAll("text")
             .data(dimensions)
             .join("text")
             .text((d) => d)
-            .attr("x", 0)
-            .attr("text-anchor", "end")
-            .attr("y", d => yScale(d) + 15);
+            .style("font-size", 14)
+            .style("font-family", "EB Garamound")
+            .attr("direction", "ltr")
+            .attr("x", width_left / 2 + 5)
+            .attr("text-anchor", "middle")
+            .attr("y", d => yScale(d) + 15)
+
+        axes_left.selectAll("text")
+            .call(wrap, width_left)
 
         const GridLineM = function () { return d3.axisBottom().scale(xScaleMasc) };
         svg.append("g")
@@ -402,7 +470,7 @@ const TabContent = (props) => {
     const changeStyle = () => {
         d3.selectAll("#tabchart-dropdown-icon").classed("tabchart-dropdown-content-show", !styleDropdown)
         //"tabchart-dropdown-content-hide"
-        
+
         setStyleDropdown(!styleDropdown);
     };
 
@@ -445,9 +513,10 @@ const TabContent = (props) => {
 
     const changeSorting = (s) => {
 
-        let sorting = sort_name_asc
-
-        if (s === "name_desc")
+        let sorting = ""
+        if (s === "name_asc")
+            sorting = sort_name_desc
+        else if (s === "name_desc")
             sorting = sort_name_desc
         else if (s === "masc_asc")
             sorting = sort_masc_asc
@@ -462,20 +531,45 @@ const TabContent = (props) => {
         else if (s === "total_desc")
             sorting = sort_total_desc
 
-        dimensions = [...dimensions_original.sort(sorting)]
+        if (sorting !== "")
+            dimensions = [...dimensions_original.sort(sorting)]
 
         let scrollableHeight = dimensions.length * 30
+
+        let box_left = document.querySelector(".pyramid-axes-left");
+        let boundaries_left = box_left.getBoundingClientRect()
+        let width_left = boundaries_left.width
+
         // Y scale
         let yScale = d3.scaleBand()
             .domain(dimensions)
             .range([0, scrollableHeight])
             .padding(.3);
 
+        d3.selectAll(".pyramid-axes-left").html("")
+        const axes_left = d3
+            .select(".pyramid-axes-left")
+            .append("svg")
+            .attr("width", width_left)
+            .attr("height", scrollableHeight)
 
-        d3.select(".pyramid-subcategory-axis")
+
+        axes_left.append("g")
+            .attr("class", ".pyramid-subcategory-axis")
             .selectAll("text")
-            .sort(sorting)
-            .attr("y", d => yScale(d) + 15);
+            .data(dimensions)
+            .join("text")
+            .text((d) => d)
+            .style("font-size", 14)
+            .style("font-family", "EB Garamound")
+            .attr("direction", "ltr")
+            .attr("x", width_left / 2 + 5)
+            .attr("text-anchor", "middle")
+            .attr("y", d => yScale(d) + 15)
+
+        axes_left.selectAll("text")
+            .call(wrap, width_left)
+
 
         d3.selectAll(".barMasc")
             .sort(sorting)
@@ -486,7 +580,16 @@ const TabContent = (props) => {
             .attr("y", d => yScale(d));
 
         setCurrentSorting(s)
+        d3.selectAll("#tabchart-dropdown-icon").classed("tabchart-dropdown-content-show", false)
         setStyleDropdown(false);
+    }
+
+    function handleContentScroll(e) {
+        $('.pyramid-axes-left').scrollTop($('.pyramid-content').scrollTop());
+    }
+
+    function handleLeftScroll(e) {
+        $('.pyramid-content').scrollTop($('.pyramid-axes-left').scrollTop());
     }
 
     return (<>
@@ -496,19 +599,21 @@ const TabContent = (props) => {
                 <img alt="info" id="infoPyramid" src={info}
                     style={{ "marginLeft": 5 + "px" }} width="15" height="15"
                 />
-
+                <img title={isExpanded ? t("icon-shrink") : t("icon-expand")} alt="info" src={isExpanded ? shrink : expand}
+                    style={{ position: "absolute", right: 15 }} width="15px" height="15px"
+                    onClick={expandTabChart}
+                />
             </div>
             <div className="pyramid-filters">
-            <img title={(totalOccurrences)? t("icon-separate") : t("icon-group")} alt="total" src={(totalOccurrences) ? separate : group }
+                <img title={(totalOccurrences) ? t("icon-separate") : t("icon-group")} alt="total" src={(totalOccurrences) ? separate : group}
                     style={{ "marginRight": "5%", float: "right", cursor: "pointer" }} width="20" height="20"
                     onClick={changeTotalOccurrence}
                 />
-
                 <div id="tabchart-dropdown" className='tabchart-dropdown'>
                     <button className='tabchart-dropbtn' onClick={changeStyle}>
                         <img title={t("icon-sort")} alt="total" src={sorting_icon}
                             style={{ "marginLeft": 5 + "px" }} className="tabchart-sorting-icon"
-                            
+
                         /></button>
                     <div id="tabchart-dropdown-icon" className={"shadow tabchart-dropdown-content-hide"}>
                         <button className={currentSorting === "name_asc" ? "sorting-active" : ""} onClick={() => changeSorting("name_asc")}> Name (ascending) </button>
@@ -529,18 +634,24 @@ const TabContent = (props) => {
                 </div>
 
             </div>
-            <div className="pyramid-content">
+            <div className="pyramid-top-content">
+                <div onScroll={handleLeftScroll} className="pyramid-axes-left">
+                </div>
+                <div onScroll={handleContentScroll} className="pyramid-content">
+                </div>
             </div>
-            <div className="pyramid-axes-content">
+            <div className="pyramid-bottom-content">
+                <div className="pyramid-empty-space">
+                </div>
+                <div className="pyramid-axes-bottom">
+                </div>
             </div>
         </div>
     </>)
 }
 
 const TabChart = (props) => {
-    // TODO: change thisss to props
-    let categories = ["Body&Soul", "Emotions"]
-    const [currentCategory, setCurrentCategory] = useState(categories[0])
+    const [currentCategory, setCurrentCategory] = useState(Object.keys(props.categories)[0])
 
     window.addEventListener('click', function (e) {
         if (document.getElementById('tabchart-dropdown') && !document.getElementById('tabchart-dropdown').contains(e.target))
@@ -551,19 +662,20 @@ const TabChart = (props) => {
         <>
             <div className="tab-chart-area">
                 <div className="tab-chart-area-tabs">
-                    {categories.map(function (category) {
-                        return (
-                            <button key={category + "-tab"}
-                                id={category + "-tab"}
-                                className={(currentCategory === category) ? "active" : ""}
-                                style={{ "borderRadius": "15px 15px 0px 0px" }}
-                                onClick={() => setCurrentCategory(category)}>
-                                {category}
-                            </button>
-                        )
-                    })}
+                    {Object.keys(props.categories).map(
+                        function (category) {
+                            return (
+                                <button key={category + "-tab"}
+                                    id={category + "-tab"}
+                                    className={(currentCategory === category) ? "active" : ""}
+                                    style={{ "borderRadius": "15px 15px 0px 0px" }}
+                                    onClick={() => setCurrentCategory(category)}>
+                                    {props.categories[category].name}
+                                </button>
+                            )
+                        })}
                 </div>
-                {props.data.length > 0 && <TabContent category={currentCategory} data={props.data} isExpanded={props.isExpanded} setIsExpanded={props.setIsExpanded} />}
+                {props.data.length > 0 && <TabContent categories={props.categories} category={currentCategory} data={props.data} isExpanded={props.isExpanded} setIsExpanded={props.setIsExpanded} />}
                 {props.data.length === 0 &&
                     <div id="tab-content" className="tab-chart-area-content shadow" style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
                         No data to show
