@@ -536,8 +536,6 @@ const TabContent = (props) => {
 
         let scrollableHeight = dimensions.length * 30
 
-        let box_left = document.querySelector(".pyramid-axes-left");
-        let boundaries_left = box_left.getBoundingClientRect()
         let width_left = boundaries_left.width
 
         // Y scale
