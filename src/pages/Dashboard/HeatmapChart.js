@@ -283,15 +283,15 @@ const HeatmapChart = (props) => {
 
 			// add the squares
 			svg.selectAll()
-				.data(heatmapData)
+				.data(heatmapData, d => d[1]+':'+d[2])
 				.join("rect")
-				.attr("x", function (d) { return x(d[1]) })
-				.attr("y", function (d) { return y(d[0]) })
+				.attr("x", d => x(d[1]))
+				.attr("y", d => y(d[0]) )
 				.attr("rx", 4)
 				.attr("ry", 4)
 				.attr("width", x.bandwidth())
 				.attr("height", y.bandwidth())
-				.style("fill", function (d) { return myColor(d[2]) })
+				.style("fill", d => myColor(d[2]))
 				.style("stroke-width", 3)
 				.style("stroke", "#ECECEC")
 				.on("mouseover", mouseover)
@@ -299,7 +299,7 @@ const HeatmapChart = (props) => {
 				.on("mouseleave", mouseleave)
 
 		}
-	}, [props.activeCategories, props.categories])
+	}, [props.activeCategories])
 
 	function handleGraphScroll(e) {
 		$('.heatmap-left-header').scrollTop($('.heatmap-graph').scrollTop());

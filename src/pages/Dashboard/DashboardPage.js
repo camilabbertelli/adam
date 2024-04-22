@@ -37,9 +37,33 @@ const DashboardPage = () => {
         }
     }
 
+    
+    let intention = {
+        "intention-all": {
+            name: t("intention-all"),
+            csv_name: "",
+            index: 5
+        },
+        "intention-sacred":{
+            name: t("intention-sacred"),
+            csv_name: "Sagrado",
+            index: 5
+        },
+        "intention-profane":{
+            name: t("intention-profane"),
+            csv_name: "Profano",
+            index: 5
+        }
+    }
+
+    const [activeIntention, setActiveIntention] = useState(Object.keys(intention)[0])
+
     const [globalData, setGlobalData] = useState([])
+    const [originalGlobalData, setOriginalGlobalData] = useState([])
     const [activeCategories, setActiveCategories] = useState([Object.keys(categories)[0], Object.keys(categories)[1]]);
     const [activeCategory, setActiveCategory] = useState(null)
+
+    const [changedFilter, setChangedFilter] = useState(false)
 
     function handleDragStart(event) {
         setActiveCategory(event.active.id);
@@ -86,9 +110,10 @@ const DashboardPage = () => {
         d3.csv(csv_data).then(d => {
             let globalData = d3.flatRollup(d, v => ({
 				participants_total: v.length,
-			}), (d) => d.title, (d) => d.subject_sex, (d) => d.anatomical_part, (d) => d.organs, (d) => d.action)
+			}), (d) => d.title, (d) => d.subject_sex, (d) => d.anatomical_part, (d) => d.organs, (d) => d.action, (d) => d.intention)
 
-            setGlobalData(globalData)
+            setOriginalGlobalData([...globalData])
+            setGlobalData([...globalData])
         }, []);
 
         document.getElementById("overlay").style.display = "none";
@@ -108,13 +133,28 @@ const DashboardPage = () => {
             setIsNetworkExpanded(false)
         }
     });
+
+    function setFilterIntention(i){
+
+        let filtered = originalGlobalData.filter((d) => {
+            if (i !== Object.keys(intention)[0] && d[intention[i].index] !== intention[i].csv_name)
+                return false;
+    
+            return true;
+        });
+
+        setGlobalData(filtered)
+        setActiveIntention(i)
+        setChangedFilter(true)
+    }
     return (<>
         
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <div className="dashboard-view">
                 <div id="overlay">
                 </div>
-                <FilterView categories={categories}/>
+                <FilterView categories={categories}
+                            intention={intention} activeIntention={activeIntention} setActiveIntention={setFilterIntention}/>
                 <DragOverlay dropAnimation={{ duration: 500 }}>
                     {activeCategory ? (
                         <button className='dashboard-filter-category-drag shadow' style={{border: "10px"}} key={activeCategory}>{categories[activeCategory].name}</button>
@@ -124,8 +164,14 @@ const DashboardPage = () => {
                 <div className="dashboard-graph-view">
                     <div className="dashboard-row1">
                         <div className="dashboard-viz1">
-                            {globalData.length > 0 && <HeatmapChart data={globalData} activeCategories={activeCategories} activeCategory={activeCategory} categories={categories} isExpanded={isHeatmapExpanded} setIsExpanded={setIsHeatmapExpanded}>
-                                <div className={"heatmap-drag"} style={{ minHeight: "15%", top: ((activeCategories.length !== 2) ? "40%" : "0%"), left: ((activeCategories.length !== 2) ? "12%" : "0%") }}>
+                            {globalData.length > 0 && 
+                            <HeatmapChart data={globalData} 
+                            activeCategories={activeCategories} 
+                            activeCategory={activeCategory} 
+                            categories={categories} 
+                            isExpanded={isHeatmapExpanded} 
+                            setIsExpanded={setIsHeatmapExpanded}>
+                                <div className={"heatmap-drag"} style={{ minHeight: "15%", top: ((activeCategories.length !== 2) ? "40%" : "0%"), left: ((activeCategories.length !== 2) ? "7%" : "0%") }}>
                                     <div className={"category " + (activeCategories.length ? "" : "default ") + (activeCategories.length === 2 ? " shrink" : "")} key={activeCategories.length ? activeCategories[0] : "category1"}>
                                         {activeCategories.length ? categories[activeCategories[0]].name : t("category-label")}
                                     </div>
@@ -146,7 +192,12 @@ const DashboardPage = () => {
                     </div>
                     <div className="dashboard-row2">
                         <div id="viz3" className={"dashboard-viz3" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
-                            <TabChart categories={categories} data={globalData} isExpanded={isTabchartExpanded} setIsExpanded={setIsTabchartExpanded}/>
+                            <TabChart categories={categories} 
+                            data={globalData} 
+                            isExpanded={isTabchartExpanded} 
+                            setIsExpanded={setIsTabchartExpanded}
+                            changedFilter={changedFilter}
+                            setChangedFilter={setChangedFilter}/>
                         </div>
                         <div className={"dashboard-viz4" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
                             <NetworkChart />

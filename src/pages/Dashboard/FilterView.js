@@ -12,13 +12,11 @@ function noSpaces(str) {
     return (str.replace(".", '')).replace(/\s+/g, '')
 }
 
-const FilterView = ({ categories }) => {
+const FilterView = (props) => {
 
     const { t } = useTranslation();
 
     const [simpleFilter, setSimpleFilter] = useState(true);
-    const intention = ["All", "Sacred", "Profane"]
-    const [intentionIndex, setIntentionIndex] = useState(0)
     const [originIndex, setOriginIndex] = useState(0)
     const [explanationIndex, setExplanationIndex] = useState(0)
     const [natureIndex, setNatureIndex] = useState(0)
@@ -155,8 +153,8 @@ const FilterView = ({ categories }) => {
             <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "10px 0" }}>
                 <h5>{t("categories-label")}</h5>
                 <center>
-                    {Object.keys(categories).map((key) => (
-                        <Draggable key={key} id={key}><button className='dashboard-filter-category shadow' id={key}>{categories[key].name}</button></Draggable>
+                    {Object.keys(props.categories).map((key) => (
+                        <Draggable key={key} id={key}><button className='dashboard-filter-category shadow' id={key}>{props.categories[key].name}</button></Draggable>
                     ))
                 }
                 </center>
@@ -165,10 +163,10 @@ const FilterView = ({ categories }) => {
             <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
                 <h5>{t("intention-label")}</h5>
                 <div className="inline-flex" role="group">
-                    {intention.map(function (intention, index) {
+                    {Object.keys(props.intention).map((intention) => {
                         return (
-                            <button key={intention} type="button" className={"shadow dashboard-filter-options" + ((intentionIndex === index) ? " active" : "")} onClick={() => setIntentionIndex(index)}>
-                                {intention}
+                            <button key={intention} type="button" className={"shadow dashboard-filter-options" + ((props.activeIntention === intention) ? " active" : "")} onClick={() => props.setActiveIntention(intention)}>
+                                {props.intention[intention].name}
                             </button>
                         )
                     })}

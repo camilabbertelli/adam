@@ -88,51 +88,6 @@ const TabContent = (props) => {
     const [changedTotal, setChangedTotal] = useState(false)
     const [changedSorting, setChangedSorting] = useState(false)
 
-    let pyramidData = {}
-    let index = props.categories[props.category].index
-
-    pyramidData = d3.rollup(props.data, v => ({
-        participants_total: v.length,
-        anatomical_part: d3.group(v, d => d[index]),
-        organs: d3.group(v, d => d[3])
-    }), d => d[1])
-
-
-    let dimensions_original = [...new Set([...pyramidData.get("Masc.").anatomical_part.keys(),
-    ...pyramidData.get("Fem.").anatomical_part.keys(),
-    ...pyramidData.get("Mult.").anatomical_part.keys(),
-    ...pyramidData.get("N").anatomical_part.keys()])]
-
-    let dimensions = dimensions_original.sort()
-
-    let participants_total = 1
-
-    if (getParticipantsTotal() !== 0)
-        participants_total = getParticipantsTotal()
-
-    function getParticipantsTotal() {
-        return pyramidData.get("Masc.").participants_total +
-            pyramidData.get("Fem.").participants_total +
-            pyramidData.get("N").participants_total +
-            pyramidData.get("Mult.").participants_total
-    }
-
-    function getParticipants(type, d) {
-
-        let sum = 0
-        if (type === "Total") {
-            if (pyramidData.get("Masc.").anatomical_part.get(d)) sum += pyramidData.get("Masc.").anatomical_part.get(d).length
-            if (pyramidData.get("Fem.").anatomical_part.get(d)) sum += pyramidData.get("Fem.").anatomical_part.get(d).length
-            if (pyramidData.get("Mult.").anatomical_part.get(d)) sum += pyramidData.get("Mult.").anatomical_part.get(d).length
-            if (pyramidData.get("N").anatomical_part.get(d)) sum += pyramidData.get("N").anatomical_part.get(d).length
-        } else if (pyramidData.get(type).anatomical_part.get(d)) sum += pyramidData.get(type).anatomical_part.get(d).length
-
-        if (pyramidData?.get("Mult.").anatomical_part.get(d)) sum += pyramidData.get("Mult.").anatomical_part.get(d).length
-        if (pyramidData?.get("N").anatomical_part.get(d)) sum += pyramidData.get("N").anatomical_part.get(d).length
-
-        return sum
-    }
-
     let infoMouseOverPyramid = function (event, d) {
         tooltipPyramid
             .style("opacity", 1);
@@ -159,26 +114,7 @@ const TabContent = (props) => {
         d3.select(this).style("stroke-width", 1)
     };
 
-    const mousemove = function (event, d, type) {
-        var previousElement = d3.select(".barMasc");
-        var isTotal = false
 
-        if (previousElement) {
-            var color = d3.rgb(previousElement.style("fill"))
-            isTotal = (color.r === 147 && color.g === 89 && color.b === 89)
-        }
-
-        if (isTotal) type = "Total"
-
-        let data = getParticipants(type, d)
-
-        tooltipPyramid
-            .html(`<center><b>${d} - ${type}</b></center>
-                    Percentage: ${d3.format(".1f")((data / participants_total) * 100)}%<br>
-                    Occurrence: ${data}`)
-            .style("top", event.pageY - 10 + "px")
-            .style("left", event.pageX + 10 + "px");
-    }
 
     const mouseleave = function (d) {
         tooltipPyramid.style("opacity", 0)
@@ -190,28 +126,88 @@ const TabContent = (props) => {
     };
 
     useEffect(() => {
-        let s = props.currentSorting
+        let index = props.categories[props.category].index
+
+        let pyramidData = d3.rollup(props.data, v => ({
+            masc: d3.sum(v, d => ((d[1] === "Masc." || d[1] === "Mult." || d[1] === "N") ? 1 : 0)),
+            fem: d3.sum(v, d => ((d[1] === "Fem." || d[1] === "Mult." || d[1] === "N") ? 1 : 0)),
+            total: d3.sum(v, d => {
+                if (d[1] === "Masc." || d[1] === "Fem.")
+                    return 1
+                if (d[1] === "Mult." || d[1] === "N")
+                    return 2
+
+                return 0
+            })
+        }), d => d[index])
+
+        let participants_total = 0
+
+        for (let [key, value] of pyramidData) 
+            participants_total += value.masc + value.fem
         
+        if (participants_total == 0)
+            participants_total = 1
+
+        let t = d3.max(pyramidData, d=>d[1].masc)
+
+        let maxMasc = d3.max(pyramidData, d=> d[1].masc/participants_total)
+        let maxFem = d3.max(pyramidData, d => d[1].fem/ participants_total)
+        let maxTotal = d3.max(pyramidData, d => d[1].total/ participants_total)
+        let maxScale = (totalOccurrences) ?  maxTotal : Math.max(maxMasc, maxFem)
+
+        let factor = maxScale > 0.1 ? 0.05 : 0.01
+
+        function mousemove (event, d, type) {
+
+            var previousElement = d3.select(".barMasc");
+            var isTotal = false
+
+            if (previousElement) {
+                var color = d3.rgb(previousElement.style("fill"))
+                isTotal = (color.r === 147 && color.g === 89 && color.b === 89)
+            }
+
+            if (isTotal) type = "total"
+
+            let data = d[1][type]
+
+            tooltipPyramid
+                .html(`<center><b>${d[0]} - ${type.charAt(0).toUpperCase() + type.slice(1)}</b></center>
+                        Percentage: ${d3.format(".1f")((data / participants_total) * 100)}%<br>
+                        Occurrence: ${data}`)
+                .style("top", event.pageY - 10 + "px")
+                .style("left", event.pageX + 10 + "px");
+        }
+
+
+        let sort_name_asc = (a, b) => {
+            if (a < b) return -1;
+            if (a > b) return 1;
+            return 0;
+        }
+        let sort_name_desc = (a, b) => -sort_name_asc(a, b);
+        let sort_masc_asc = (a, b) => a[1].masc - b[1].masc;
+        let sort_masc_desc = (a, b) => -sort_masc_asc(a, b);
+        let sort_fem_asc = (a, b) => a[1].fem - b[1].fem;
+        let sort_fem_desc = (a, b) => -sort_fem_asc(a, b);
+        let sort_total_asc = (a, b) => a[1].total - b[1].total;
+        let sort_total_desc = (a, b) => -sort_total_asc(a, b);
+
+        let s = props.currentSorting
+
         let sorting = ""
-        if (s === "name_asc")
-            sorting = sort_name_asc
-        else if (s === "name_desc")
-            sorting = sort_name_desc
-        else if (s === "masc_asc")
-            sorting = sort_masc_asc
-        else if (s === "masc_desc")
-            sorting = sort_masc_desc
-        else if (s === "fem_asc")
-            sorting = sort_fem_asc
-        else if (s === "fem_desc")
-            sorting = sort_fem_desc
-        else if (s === "total_asc")
-            sorting = sort_total_asc
-        else if (s === "total_desc")
-            sorting = sort_total_desc
+        if (s === "name_asc") sorting = sort_name_asc
+        else if (s === "name_desc") sorting = sort_name_desc
+        else if (s === "masc_asc") sorting = sort_masc_asc
+        else if (s === "masc_desc") sorting = sort_masc_desc
+        else if (s === "fem_asc") sorting = sort_fem_asc
+        else if (s === "fem_desc") sorting = sort_fem_desc
+        else if (s === "total_asc") sorting = sort_total_asc
+        else if (s === "total_desc") sorting = sort_total_desc
 
         if (sorting !== "")
-            dimensions = [...dimensions_original.sort(sorting)] 
+            pyramidData = new Map([...pyramidData.entries()].sort(sorting));
 
         let box_left = document.querySelector(".pyramid-axes-left");
         if (pyramid_boundaries_left === null)
@@ -230,7 +226,7 @@ const TabContent = (props) => {
         let width = pyramid_boundaries.width * 0.9;
         let barsWidth = width / 2
 
-        let scrollableHeight = dimensions.length * 30
+        let scrollableHeight = pyramidData.size * 30
 
         d3.selectAll("#tooltipPyramid").remove();
 
@@ -254,14 +250,9 @@ const TabContent = (props) => {
             .attr("width", width_bottom + 20)
             .attr("height", height_bottom)
 
-        let maxMasc = d3.max(dimensions, d => getParticipants("Masc.", d) / participants_total)
-        let maxFem = d3.max(dimensions, d => getParticipants("Fem.", d) / participants_total)
-        let maxScale = (totalOccurrences) ? d3.max(dimensions, d => getParticipants("Total", d) / participants_total) : Math.max(maxMasc, maxFem)
-        let factor = maxScale > 0.1 ? 0.05 : 0.01
-
         // Y scale
         let yScale = d3.scaleBand()
-            .domain(dimensions)
+            .domain(Array.from(pyramidData.keys()))
             .range([0, scrollableHeight])
             .padding(.3);
 
@@ -278,7 +269,7 @@ const TabContent = (props) => {
             .attr("class", "pyramid-bottom-axis")
             .attr("transform", `translate(10,0)`)
             .attr("id", "axismale")
-            .call(d3.axisBottom(xScaleMasc).tickSize(0).tickPadding(2).ticks((factor === 0.01)? 2: 5, "%").tickFormat(x => { if (x === 0) return 0; else return `${(+(x * 100).toFixed(1))}%` }))
+            .call(d3.axisBottom(xScaleMasc).tickSize(0).tickPadding(2).ticks((factor === 0.01) ? 2 : 5, "%").tickFormat(x => { if (x === 0) return 0; else return `${(+(x * 100).toFixed(1))}%` }))
             .call(function (d) { return d.select(".domain").remove() });
 
         let bottom_legend = axes_bottom
@@ -306,7 +297,7 @@ const TabContent = (props) => {
                 .attr("class", "pyramid-bottom-axis")
                 .attr("transform", `translate(10,0)`)
                 .attr("id", "axisfemale")
-                .call(d3.axisBottom(xScaleFem).tickSize(0).tickPadding(2).ticks((factor === 0.01)? 2: 5, "%").tickFormat(x => { if (x === 0) return; else return `${(+(x * 100).toFixed(1))}%` }))
+                .call(d3.axisBottom(xScaleFem).tickSize(0).tickPadding(2).ticks((factor === 0.01) ? 2 : 5, "%").tickFormat(x => { if (x === 0) return; else return `${(+(x * 100).toFixed(1))}%` }))
                 .call(function (d) { return d.select(".domain").remove() });
 
             bottom_legend
@@ -334,7 +325,7 @@ const TabContent = (props) => {
 
         let svg = null
 
-        if (changedTotal || changedSorting) {
+        if (changedTotal || changedSorting || props.changedFilter) {
 
             svg = d3.select(".pyramid-content").select("svg").select("g")
 
@@ -343,37 +334,41 @@ const TabContent = (props) => {
 
             if (totalOccurrences) {
                 maleBars
+                    .data(pyramidData)
                     .transition()
                     .duration(500)
                     .attr("x", xScaleMasc(0))
-                    .attr("y", d => yScale(d))
-                    .attr("width", d => xScaleMasc(getParticipants("Total", d) / participants_total))
+                    .attr("y", d => yScale(d[0]))
+                    .attr("width", d => xScaleMasc(d[1].total / participants_total))
                     .attr("height", yScale.bandwidth())
                     .style("fill", "#935959")
 
                 femaleBars
+                    .data(pyramidData)
                     .transition()
                     .duration(500)
                     .attr("width", 0)
             }
             else {
                 maleBars
+                    .data(pyramidData)
                     .transition()
                     .duration(500)
                     .attr("class", "barMasc")
-                    .attr("x", d => xScaleMasc(getParticipants("Masc.", d) / participants_total))
-                    .attr("y", d => yScale(d))
-                    .attr("width", d => barsWidth - xScaleMasc(getParticipants("Masc.", d) / participants_total))
+                    .attr("x", d => xScaleMasc(d[1].masc/ participants_total))
+                    .attr("y", d => yScale(d[0]))
+                    .attr("width", d => barsWidth - xScaleMasc(d[1].masc / participants_total))
                     .attr("height", yScale.bandwidth())
                     .style("fill", "#7BB3B7")
 
                 femaleBars
+                    .data(pyramidData)
                     .transition()
                     .duration(500)
                     .attr("class", "barFem")
                     .attr("x", xScaleFem(0))
-                    .attr("y", d => yScale(d))
-                    .attr("width", d => xScaleFem(getParticipants("Fem.", d) / participants_total) - xScaleFem(0))
+                    .attr("y", d => yScale(d[0]))
+                    .attr("width", d => xScaleFem(d[1].fem / participants_total) - xScaleFem(0))
                     .attr("height", yScale.bandwidth())
                     .style("fill", "#DA9C80")
             }
@@ -390,48 +385,48 @@ const TabContent = (props) => {
 
             // create male bars
             svg.selectAll(".barMasc")
-                .data(dimensions)
+                .data(pyramidData)
                 .join("rect")
                 .attr("class", "barMasc")
-                .attr("x", d => (totalOccurrences) ? xScaleMasc(0) : (xScaleMasc(getParticipants("Masc.", d) / participants_total)))
-                .attr("y", d => yScale(d))
+                .attr("x", d => (totalOccurrences) ? xScaleMasc(0) : (xScaleMasc(d[1].masc / participants_total)))
+                .attr("y", d => yScale(d[0]))
                 .attr("width", d => (totalOccurrences) ?
-                    xScaleMasc(getParticipants("Total", d) / participants_total) :
-                    (barsWidth - xScaleMasc(getParticipants("Masc.", d) / participants_total)))
+                    xScaleMasc(d[1].total / participants_total) :
+                    (barsWidth - xScaleMasc(d[1].masc / participants_total)))
                 .attr("height", yScale.bandwidth())
                 .style("fill", (totalOccurrences) ? "#935959" : "#7BB3B7")
                 .style("stroke", "black")
                 .style("stroke-width", 0)
                 .on("mouseover", mouseover)
-                .on("mousemove", (event, d) => mousemove(event, d, "Masc."))
+                .on("mousemove", (event, d) => mousemove(event, d, "masc"))
                 .on("mouseleave", mouseleave)
             //.on("click", mouseclickmale)
 
             svg.selectAll(".linePyramidHorizontal")
-                .data(dimensions)
+                .data(pyramidData)
                 .join("line")
                 .style("stroke", "#333333")
                 .style("stroke-opacity", 0.2)
                 .style("stroke-width", 0.3)
                 .attr("x1", 0)
-                .attr("y1", d => yScale(d) - (yScale.bandwidth() / 4))
+                .attr("y1", d => yScale(d[0]) - (yScale.bandwidth() / 4))
                 .attr("x2", width)
-                .attr("y2", d => yScale(d) - (yScale.bandwidth() / 4))
+                .attr("y2", d => yScale(d[0]) - (yScale.bandwidth() / 4))
 
 
             svg.selectAll(".barFem")
-                .data(dimensions)
+                .data(pyramidData)
                 .join("rect")
                 .attr("class", "barFem")
                 .attr("x", xScaleFem(0))
-                .attr("y", d => yScale(d))
-                .attr("width", (totalOccurrences) ? 0 : d => xScaleFem(getParticipants("Fem.", d) / participants_total) - xScaleFem(0))
+                .attr("y", d => yScale(d[0]))
+                .attr("width", (totalOccurrences) ? 0 : d => xScaleFem(d[1].fem / participants_total) - xScaleFem(0))
                 .attr("height", yScale.bandwidth())
                 .style("fill", "#DA9C80")
                 .style("stroke", "black")
                 .style("stroke-width", 0)
                 .on("mouseover", mouseover)
-                .on("mousemove", (event, d) => mousemove(event, d, "Fem."))
+                .on("mousemove", (event, d) => mousemove(event, d, "fem"))
                 .on("mouseleave", mouseleave)
             //.on("click", mouseclickfemale)
         }
@@ -446,15 +441,15 @@ const TabContent = (props) => {
         axes_left.append("g")
             .attr("class", "pyramid-subcategory-axis")
             .selectAll("text")
-            .data(dimensions)
+            .data(pyramidData)
             .join("text")
-            .text((d) => d)
+            .text((d) => d[0])
             .style("font-size", 13)
             .style("font-family", "lato")
             .attr("direction", "ltr")
             .attr("x", width_left / 2 + 5)
             .attr("text-anchor", "middle")
-            .attr("y", d => yScale(d) + 15)
+            .attr("y", d => yScale(d[0]) + 15)
 
         axes_left.selectAll("text")
             .call(wrap, width_left)
@@ -483,8 +478,9 @@ const TabContent = (props) => {
 
         setChangedTotal(false)
         setChangedSorting(false)
+        props.setChangedFilter(false)
 
-    }, [props.category, totalOccurrences, props.currentSorting])
+    }, [props.category, totalOccurrences, props.currentSorting, props.data])
 
     const changeTotalOccurrence = () => {
         setTotalOccurrences(!totalOccurrences)
@@ -498,40 +494,6 @@ const TabContent = (props) => {
         setStyleDropdown(!styleDropdown);
     };
 
-    function sort_name_asc(a, b) {
-        if (a < b) return -1;
-        if (a > b) return 1;
-        return 0;
-    }
-
-    function sort_name_desc(a, b) {
-        return -sort_name_asc(a, b);
-    }
-
-    function sort_masc_asc(a, b) {
-        return getParticipants("Masc.", a) - getParticipants("Masc.", b)
-    }
-
-    function sort_masc_desc(a, b) {
-        return -sort_masc_asc(a, b);
-    }
-
-    function sort_fem_asc(a, b) {
-        return getParticipants("Fem.", a) - getParticipants("Fem.", b)
-    }
-
-    function sort_fem_desc(a, b) {
-        return -sort_fem_asc(a, b);
-    }
-
-
-    function sort_total_asc(a, b) {
-        return getParticipants("Total", a) - getParticipants("Total", b)
-    }
-
-    function sort_total_desc(a, b) {
-        return -sort_total_asc(a, b);
-    }
 
     const changeSorting = (s) => {
         props.setCurrentSorting(s)
@@ -632,14 +594,16 @@ const TabChart = (props) => {
                             )
                         })}
                 </div>
-                {props.data.length > 0 && 
-                    <TabContent categories={props.categories} 
-                    category={currentCategory} 
-                    data={props.data} 
-                    isExpanded={props.isExpanded} 
-                    setIsExpanded={props.setIsExpanded}
-                    currentSorting={currentSorting}
-                    setCurrentSorting={setCurrentSorting} />}
+                {props.data.length > 0 &&
+                    <TabContent categories={props.categories}
+                        category={currentCategory}
+                        data={props.data}
+                        isExpanded={props.isExpanded}
+                        setIsExpanded={props.setIsExpanded}
+                        currentSorting={currentSorting}
+                        setCurrentSorting={setCurrentSorting}
+                        changedFilter={props.changedFilter}
+                        setChangedFilter={props.setChangedFilter} />}
                 {props.data.length === 0 &&
                     <div id="tab-content" className="tab-chart-area-content shadow" style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
                         No data to show

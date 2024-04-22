@@ -33,6 +33,13 @@
     "dimension-label": "Dimension",
     "codices-label": "Codices",
 
+    "intention-all": "All",
+    "intention-sacred": "Sacred",
+    "intention-profane": "Profane",
+
+
+    
+
     "icon-expand" : "Expand",
     "icon-shrink" : "Shrink",
     "icon-separate": "Separate groups",
