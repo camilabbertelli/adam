@@ -28,9 +28,9 @@ const margin = {
     left: 80,
 };
 
-let boundaries = null
-let boundaries_bottom = null
-let boundaries_left = null
+let pyramid_boundaries = null
+let pyramid_boundaries_bottom = null
+let pyramid_boundaries_left = null
 
 function wrap(text, width) {
     text.each(function () {
@@ -53,7 +53,7 @@ function wrap(text, width) {
             if (tspan.node().getComputedTextLength() > width) {
                 line.pop();
                 tspan.text(line.join(" "));
-                tspan.attr("y", Number(text.attr("y")) - ((numberWords - (++lineNumber* (lineWeight + 0.3))) * 3))
+                tspan.attr("y", Number(text.attr("y")) - ((numberWords - (++lineNumber * (lineWeight + 0.3))) * 3))
                 line = [word];
                 tspan = text.append("tspan").attr("x", x).attr("y", Number(text.attr("y")) - ((numberWords - (++lineNumber * lineWeight)) * 3) + (8)).text(word);
             }
@@ -86,6 +86,7 @@ const TabContent = (props) => {
 
     const [totalOccurrences, setTotalOccurrences] = useState(false)
     const [changedTotal, setChangedTotal] = useState(false)
+    const [changedSorting, setChangedSorting] = useState(false)
 
     let pyramidData = {}
     let index = props.categories[props.category].index
@@ -187,26 +188,46 @@ const TabContent = (props) => {
 
         d3.select(this).style("stroke-width", 0)
     };
-    
-    useEffect(() => {
 
-        setCurrentSorting("name_asc")
+    useEffect(() => {
+        let s = props.currentSorting
+        
+        let sorting = ""
+        if (s === "name_asc")
+            sorting = sort_name_asc
+        else if (s === "name_desc")
+            sorting = sort_name_desc
+        else if (s === "masc_asc")
+            sorting = sort_masc_asc
+        else if (s === "masc_desc")
+            sorting = sort_masc_desc
+        else if (s === "fem_asc")
+            sorting = sort_fem_asc
+        else if (s === "fem_desc")
+            sorting = sort_fem_desc
+        else if (s === "total_asc")
+            sorting = sort_total_asc
+        else if (s === "total_desc")
+            sorting = sort_total_desc
+
+        if (sorting !== "")
+            dimensions = [...dimensions_original.sort(sorting)] 
 
         let box_left = document.querySelector(".pyramid-axes-left");
-        if (boundaries_left === null)
-            boundaries_left = box_left.getBoundingClientRect()
-        let width_left = boundaries_left.width
+        if (pyramid_boundaries_left === null)
+            pyramid_boundaries_left = box_left.getBoundingClientRect()
+        let width_left = pyramid_boundaries_left.width
 
         let box_bottom = document.querySelector(".pyramid-axes-bottom");
-        if (boundaries_bottom === null)
-            boundaries_bottom = box_bottom.getBoundingClientRect()
-        let width_bottom = boundaries_bottom.width * 0.9
-        let height_bottom = boundaries_bottom.height * 0.9;
+        if (pyramid_boundaries_bottom === null)
+            pyramid_boundaries_bottom = box_bottom.getBoundingClientRect()
+        let width_bottom = pyramid_boundaries_bottom.width * 0.9
+        let height_bottom = pyramid_boundaries_bottom.height * 0.9;
 
         let box = document.querySelector('.pyramid-content');
-        if (boundaries === null)
-            boundaries = box.getBoundingClientRect()
-        let width = boundaries.width * 0.9;
+        if (pyramid_boundaries === null)
+            pyramid_boundaries = box.getBoundingClientRect()
+        let width = pyramid_boundaries.width * 0.9;
         let barsWidth = width / 2
 
         let scrollableHeight = dimensions.length * 30
@@ -254,9 +275,10 @@ const TabContent = (props) => {
             .range([barsWidth, barsWidth * 2]);
 
         axes_bottom.append("g")
+            .attr("class", "pyramid-bottom-axis")
             .attr("transform", `translate(10,0)`)
             .attr("id", "axismale")
-            .call(d3.axisBottom(xScaleMasc).tickSize(0).tickPadding(2).ticks(5, "%").tickFormat(x => { if (x === 0) return 0; else return `${(+(x * 100).toFixed(1))}%` }))
+            .call(d3.axisBottom(xScaleMasc).tickSize(0).tickPadding(2).ticks((factor === 0.01)? 2: 5, "%").tickFormat(x => { if (x === 0) return 0; else return `${(+(x * 100).toFixed(1))}%` }))
             .call(function (d) { return d.select(".domain").remove() });
 
         let bottom_legend = axes_bottom
@@ -277,13 +299,14 @@ const TabContent = (props) => {
             .attr("class", "legend")
             .attr("x", ((totalOccurrences) ? barsWidth / 2 : 0) + 20)
             .attr("y", margin.top + 12)
-            .text((totalOccurrences) ? "Total" : "Masc.")
+            .text((totalOccurrences) ? "Total" : "Masculine")
 
         if (!totalOccurrences) {
             axes_bottom.append("g")
+                .attr("class", "pyramid-bottom-axis")
                 .attr("transform", `translate(10,0)`)
                 .attr("id", "axisfemale")
-                .call(d3.axisBottom(xScaleFem).tickSize(0).tickPadding(2).ticks(5, "%").tickFormat(x => { if (x === 0) return; else return `${(+(x * 100).toFixed(1))}%` }))
+                .call(d3.axisBottom(xScaleFem).tickSize(0).tickPadding(2).ticks((factor === 0.01)? 2: 5, "%").tickFormat(x => { if (x === 0) return; else return `${(+(x * 100).toFixed(1))}%` }))
                 .call(function (d) { return d.select(".domain").remove() });
 
             bottom_legend
@@ -301,7 +324,7 @@ const TabContent = (props) => {
                 .attr("class", "legend")
                 .attr("x", barsWidth + 20)
                 .attr("y", margin.top + 12)
-                .text("Fem.")
+                .text("Feminine")
         }
 
         /* svg bars */
@@ -311,7 +334,7 @@ const TabContent = (props) => {
 
         let svg = null
 
-        if (changedTotal) {
+        if (changedTotal || changedSorting) {
 
             svg = d3.select(".pyramid-content").select("svg").select("g")
 
@@ -321,7 +344,7 @@ const TabContent = (props) => {
             if (totalOccurrences) {
                 maleBars
                     .transition()
-                    .duration(1000)
+                    .duration(500)
                     .attr("x", xScaleMasc(0))
                     .attr("y", d => yScale(d))
                     .attr("width", d => xScaleMasc(getParticipants("Total", d) / participants_total))
@@ -330,13 +353,13 @@ const TabContent = (props) => {
 
                 femaleBars
                     .transition()
-                    .duration(1000)
+                    .duration(500)
                     .attr("width", 0)
             }
             else {
                 maleBars
                     .transition()
-                    .duration(1000)
+                    .duration(500)
                     .attr("class", "barMasc")
                     .attr("x", d => xScaleMasc(getParticipants("Masc.", d) / participants_total))
                     .attr("y", d => yScale(d))
@@ -346,7 +369,7 @@ const TabContent = (props) => {
 
                 femaleBars
                     .transition()
-                    .duration(1000)
+                    .duration(500)
                     .attr("class", "barFem")
                     .attr("x", xScaleFem(0))
                     .attr("y", d => yScale(d))
@@ -421,13 +444,13 @@ const TabContent = (props) => {
 
 
         axes_left.append("g")
-            .attr("class", ".pyramid-subcategory-axis")
+            .attr("class", "pyramid-subcategory-axis")
             .selectAll("text")
             .data(dimensions)
             .join("text")
             .text((d) => d)
-            .style("font-size", 14)
-            .style("font-family", "EB Garamound")
+            .style("font-size", 13)
+            .style("font-family", "lato")
             .attr("direction", "ltr")
             .attr("x", width_left / 2 + 5)
             .attr("text-anchor", "middle")
@@ -459,8 +482,9 @@ const TabContent = (props) => {
                 );
 
         setChangedTotal(false)
+        setChangedSorting(false)
 
-    }, [props.category, totalOccurrences])
+    }, [props.category, totalOccurrences, props.currentSorting])
 
     const changeTotalOccurrence = () => {
         setTotalOccurrences(!totalOccurrences)
@@ -473,8 +497,6 @@ const TabContent = (props) => {
 
         setStyleDropdown(!styleDropdown);
     };
-
-    const [currentSorting, setCurrentSorting] = useState("name_asc")
 
     function sort_name_asc(a, b) {
         if (a < b) return -1;
@@ -512,74 +534,10 @@ const TabContent = (props) => {
     }
 
     const changeSorting = (s) => {
-
-        let sorting = ""
-        if (s === "name_asc")
-            sorting = sort_name_desc
-        else if (s === "name_desc")
-            sorting = sort_name_desc
-        else if (s === "masc_asc")
-            sorting = sort_masc_asc
-        else if (s === "masc_desc")
-            sorting = sort_masc_desc
-        else if (s === "fem_asc")
-            sorting = sort_fem_asc
-        else if (s === "fem_desc")
-            sorting = sort_fem_desc
-        else if (s === "total_asc")
-            sorting = sort_total_asc
-        else if (s === "total_desc")
-            sorting = sort_total_desc
-
-        if (sorting !== "")
-            dimensions = [...dimensions_original.sort(sorting)]
-
-        let scrollableHeight = dimensions.length * 30
-
-        let width_left = boundaries_left.width
-
-        // Y scale
-        let yScale = d3.scaleBand()
-            .domain(dimensions)
-            .range([0, scrollableHeight])
-            .padding(.3);
-
-        d3.selectAll(".pyramid-axes-left").html("")
-        const axes_left = d3
-            .select(".pyramid-axes-left")
-            .append("svg")
-            .attr("width", width_left)
-            .attr("height", scrollableHeight)
-
-
-        axes_left.append("g")
-            .attr("class", ".pyramid-subcategory-axis")
-            .selectAll("text")
-            .data(dimensions)
-            .join("text")
-            .text((d) => d)
-            .style("font-size", 14)
-            .style("font-family", "EB Garamound")
-            .attr("direction", "ltr")
-            .attr("x", width_left / 2 + 5)
-            .attr("text-anchor", "middle")
-            .attr("y", d => yScale(d) + 15)
-
-        axes_left.selectAll("text")
-            .call(wrap, width_left)
-
-
-        d3.selectAll(".barMasc")
-            .sort(sorting)
-            .attr("y", d => yScale(d));
-
-        d3.selectAll(".barFem")
-            .sort(sorting)
-            .attr("y", d => yScale(d));
-
-        setCurrentSorting(s)
+        props.setCurrentSorting(s)
         d3.selectAll("#tabchart-dropdown-icon").classed("tabchart-dropdown-content-show", false)
         setStyleDropdown(false);
+        setChangedSorting(true);
     }
 
     function handleContentScroll(e) {
@@ -595,16 +553,16 @@ const TabContent = (props) => {
             <div className="titles" id="pyramidTitle">
                 <h5 className="pyramid-title">{(totalOccurrences) ? t("pyramid-total") : t("pyramid-separate")}</h5>
                 <img alt="info" id="infoPyramid" src={info}
-                    style={{ "marginLeft": 5 + "px" }} width="15" height="15"
+                    style={{ marginLeft: "5px", cursor: "pointer" }} width="15" height="15"
                 />
                 <img title={isExpanded ? t("icon-shrink") : t("icon-expand")} alt="info" src={isExpanded ? shrink : expand}
-                    style={{ position: "absolute", right: 15 }} width="15px" height="15px"
+                    style={{ position: "absolute", right: "15px", cursor: "pointer" }} width="15px" height="15px"
                     onClick={expandTabChart}
                 />
             </div>
             <div className="pyramid-filters">
                 <img title={(totalOccurrences) ? t("icon-separate") : t("icon-group")} alt="total" src={(totalOccurrences) ? separate : group}
-                    style={{ "marginRight": "5%", float: "right", cursor: "pointer" }} width="20" height="20"
+                    style={{ marginRight: "5%", float: "right", cursor: "pointer" }} width="20" height="20"
                     onClick={changeTotalOccurrence}
                 />
                 <div id="tabchart-dropdown" className='tabchart-dropdown'>
@@ -614,19 +572,19 @@ const TabContent = (props) => {
 
                         /></button>
                     <div id="tabchart-dropdown-icon" className={"shadow tabchart-dropdown-content-hide"}>
-                        <button className={currentSorting === "name_asc" ? "sorting-active" : ""} onClick={() => changeSorting("name_asc")}> Name (ascending) </button>
-                        <button className={currentSorting === "name_desc" ? "sorting-active" : ""} onClick={() => changeSorting("name_desc")}> Name (descending) </button>
+                        <button className={props.currentSorting === "name_asc" ? "sorting-active" : ""} onClick={() => changeSorting("name_asc")}> Name (ascending) </button>
+                        <button className={props.currentSorting === "name_desc" ? "sorting-active" : ""} onClick={() => changeSorting("name_desc")}> Name (descending) </button>
 
                         {!totalOccurrences && <>
-                            <button className={currentSorting === "masc_asc" ? "sorting-active" : ""} onClick={() => changeSorting("masc_asc")}> Masc. - Low to High </button>
-                            <button className={currentSorting === "masc_desc" ? "sorting-active" : ""} onClick={() => changeSorting("masc_desc")}> Masc. - High to Low </button>
-                            <button className={currentSorting === "fem_asc" ? "sorting-active" : ""} onClick={() => changeSorting("fem_asc")}> Fem. - Low to High </button>
-                            <button className={currentSorting === "fem_desc" ? "sorting-active" : ""} onClick={() => changeSorting("fem_desc")}> Fem. - High to Low </button>
+                            <button className={props.currentSorting === "masc_asc" ? "sorting-active" : ""} onClick={() => changeSorting("masc_asc")}> Masc. - Low to High </button>
+                            <button className={props.currentSorting === "masc_desc" ? "sorting-active" : ""} onClick={() => changeSorting("masc_desc")}> Masc. - High to Low </button>
+                            <button className={props.currentSorting === "fem_asc" ? "sorting-active" : ""} onClick={() => changeSorting("fem_asc")}> Fem. - Low to High </button>
+                            <button className={props.currentSorting === "fem_desc" ? "sorting-active" : ""} onClick={() => changeSorting("fem_desc")}> Fem. - High to Low </button>
                         </>}
 
                         {totalOccurrences && <>
-                            <button className={currentSorting === "total_asc" ? "sorting-active" : ""} onClick={() => changeSorting("total_asc")}> Total - Low to High </button>
-                            <button className={currentSorting === "total_desc" ? "sorting-active" : ""} onClick={() => changeSorting("total_desc")}> Total - High to Low </button>
+                            <button className={props.currentSorting === "total_asc" ? "sorting-active" : ""} onClick={() => changeSorting("total_asc")}> Total - Low to High </button>
+                            <button className={props.currentSorting === "total_desc" ? "sorting-active" : ""} onClick={() => changeSorting("total_desc")}> Total - High to Low </button>
                         </>}
                     </div>
                 </div>
@@ -650,6 +608,7 @@ const TabContent = (props) => {
 
 const TabChart = (props) => {
     const [currentCategory, setCurrentCategory] = useState(Object.keys(props.categories)[0])
+    const [currentSorting, setCurrentSorting] = useState("name_asc")
 
     window.addEventListener('click', function (e) {
         if (document.getElementById('tabchart-dropdown') && !document.getElementById('tabchart-dropdown').contains(e.target))
@@ -673,7 +632,14 @@ const TabChart = (props) => {
                             )
                         })}
                 </div>
-                {props.data.length > 0 && <TabContent categories={props.categories} category={currentCategory} data={props.data} isExpanded={props.isExpanded} setIsExpanded={props.setIsExpanded} />}
+                {props.data.length > 0 && 
+                    <TabContent categories={props.categories} 
+                    category={currentCategory} 
+                    data={props.data} 
+                    isExpanded={props.isExpanded} 
+                    setIsExpanded={props.setIsExpanded}
+                    currentSorting={currentSorting}
+                    setCurrentSorting={setCurrentSorting} />}
                 {props.data.length === 0 &&
                     <div id="tab-content" className="tab-chart-area-content shadow" style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
                         No data to show

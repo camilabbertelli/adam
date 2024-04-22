@@ -36,10 +36,15 @@
 }
 
 .heatmap-right-sector{
-    width: 20%;
+    width: 15%;
     height: 100%;
     display: flex;
     flex-direction: column;
+}
+
+.heatmap-info-icon{
+    width: 5%;
+    height: 100%;
 }
 
 .heatmap-expand-icon{

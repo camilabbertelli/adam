@@ -15,6 +15,40 @@ import $ from 'jquery';
 
 var tooltipHeatmap;
 
+let heatmap_boundaries_bottom = null
+let heatmap_boundaries_left = null
+let heatmap_boundaries_legend = null
+
+
+function wrap_left(text, width) {
+    text.each(function () {
+        var text = d3.select(this),
+            t = text.text().trim(),
+            words = t.split(/\s+/).reverse(),
+            word,
+            line = [],
+            lineNumber = 0,
+            lineWeight = 1.1,
+            y = text.attr("y"),
+            x = text.attr("x"),
+            tspan = text.text(null).append("tspan").attr("x", x).attr("y", y);
+
+        let numberWords = words.length
+
+        while (word = words.pop()) {
+            line.push(word);
+            tspan.text(line.join(" "));
+            if (tspan.node().getComputedTextLength() > width) {
+                line.pop();
+                tspan.text(line.join(" "));
+                tspan.attr("y", Number(text.attr("y")) - ((numberWords - (++lineNumber * (lineWeight + 0.3))) * 3))
+                line = [word];
+                tspan = text.append("tspan").attr("x", x).attr("y", Number(text.attr("y")) - ((numberWords - (++lineNumber * lineWeight)) * 3) + (8)).text(word);
+            }
+        }
+    });
+}
+
 function wrap(text, width) {
 	text.each(function () {
 		var text = d3.select(this),
@@ -104,17 +138,25 @@ const HeatmapChart = (props) => {
 			heatmapKey2.sort()
 
 			let box_left = document.querySelector(".heatmap-left-header");
-			let boundaries_left = box_left.getBoundingClientRect()
-			let width_left = boundaries_left.width * 0.9
+			if (heatmap_boundaries_left === null)
+				heatmap_boundaries_left = box_left.getBoundingClientRect()
+			let width_left = heatmap_boundaries_left.width * 0.9;
 			let height_left = heatmapKey1.length * 40;
 
 			let box_bottom = document.querySelector(".heatmap-bottom-header");
-			let boundaries_bottom = box_bottom.getBoundingClientRect()
-			let width_bottom = heatmapKey2.length * 80
-			let height_bottom = boundaries_bottom.height * 0.9;
+			if (heatmap_boundaries_bottom === null)
+				heatmap_boundaries_bottom = box_bottom.getBoundingClientRect();
+			let width_bottom = heatmapKey2.length * 80;
+			let height_bottom = heatmap_boundaries_bottom.height * 0.9;
 
 			let width_content = width_bottom;
 			let height_content = height_left;
+
+			let box_legend = document.querySelector(".heatmap-legend");
+			if (heatmap_boundaries_legend === null)
+				heatmap_boundaries_legend = box_legend.getBoundingClientRect();
+			let width_legend = heatmap_boundaries_legend.width;
+			let height_legend = heatmap_boundaries_legend.height;
 
 			d3.select(".heatmap-graph").selectAll("svg").remove("")
 			d3.select(".heatmap-left-header").selectAll("svg").remove("")
@@ -140,53 +182,49 @@ const HeatmapChart = (props) => {
 				.attr("height", height_bottom)
 				.append("g")
 
-			let colorRange = ["white", "#E4D1D1", "#CEADAD", "#B88989", "#A16666", "#894343", "#712121", "#5D1B1B", "#320404", "black"]
-			let domain = [1, 5, 10, 25, 50, 100, 150, 200, 250, 300]
+			const svg_legend = d3.select(".heatmap-legend")
+				.append("svg")
+				.attr("width", width_legend)
+				.attr("height", height_legend)
+				.append("g")
+
+			let colorRange = ["white", "#E4D1D1", "#B88989", "#A16666", "#894343", "#712121", "#5D1B1B", "#320404"]
+			let domain = [1, 5, 10, 25, 50, 100, 200, 300]
 			// Build color scale
 			const myColor = d3.scaleThreshold()
 				.range(["none"].concat(colorRange))
 				.domain(domain)
 
-			let box_legend = document.querySelector(".heatmap-legend");
-			let boundaries_legend = box_legend.getBoundingClientRect()
-			let width_legend = boundaries_legend.width
-			let height_legend = boundaries_legend.height;
 
-			const legend = d3
-				.select(".heatmap-legend")
-				.append("svg")
-				.attr("width", width_legend)
-				.attr("height", height_legend)
-
-			legend.append("g")
+			svg_legend.append("g")
 				.selectAll(".legendRect")
 				.data(colorRange)
 				.join("rect")
 				.attr("x", 10)
-				.attr("y", (d, i) => i * (height_legend/ (colorRange.length + 1)) + 5)
+				.attr("y", (d, i) => i * (height_legend / (colorRange.length + 1)) + 5)
 				.attr("ry", 5)
 				.attr("width", 10)
-				.attr("height", (height_legend/ (colorRange.length - 1.5)))
+				.attr("height", (height_legend / (colorRange.length - 1.5)))
 				.style("stroke", "black")
 				.style("stroke-width", 1)
 				.style("fill", d => d)
 
 
-			legend.append("g")
+			svg_legend.append("g")
 				.selectAll(".legendText")
 				.data(domain)
 				.join('text')
 				.style("font-size", 14)
-				.style("font-family", "EB Garamound")
-				.attr("y", (d, i) => i * (height_legend/ (colorRange.length + 1)) + 25)
+				.style("font-family", "lato")
+				.attr("y", (d, i) => i * (height_legend / (colorRange.length + 1)) + 25)
 				.attr("dx", "2em")
 				//.attr("dy", "3em") //place text one line *below* the x,y point
 				.attr("class", "seasonLabels")
 				.text((d, i) => {
 					if (i + 1 < domain.length)
-						return domain[i] + "-" +  domain[i+1];
+						return domain[i] + "-" + domain[i + 1];
 					if (i + 1 === domain.length)
-						return ">=" +  domain[i];
+						return ">=" + domain[i];
 				});
 
 
@@ -209,15 +247,18 @@ const HeatmapChart = (props) => {
 				.join("text")
 				.text((d) => d)
 				.style("font-size", 14)
-				.style("font-family", "EB Garamound")
+				.style("font-family", "lato")
 				.attr("direction", "ltr")
 				.attr("x", width_left)
 				.attr("text-anchor", "end")
 				.attr("y", d => y(d) + 25);
 
+			svg_left_axis.selectAll("text")
+				.call(wrap_left, width_left)
+
 			svg_bottom_axis.append("g")
 				.style("font-size", 14)
-				.style("font-family", "EB Garamound")
+				.style("font-family", "lato")
 				.attr("transform", `translate(0, 2)`)
 				.call(d3.axisBottom(x).tickSize(0))
 				.selectAll(".tick text")
@@ -295,9 +336,11 @@ const HeatmapChart = (props) => {
 	return (
 		<>
 			<div id="droppable" ref={setNodeRef} className={"shadow heatmap-area" + ((props.activeCategory !== null && props.activeCategories.length !== 2) ? " dashed" : "")}>
-				<img alt="info" id="infoHeatmap" src={info}
-					style={{ marginTop: "10px", marginLeft: "10px" }} width="15" height="15"
-				/>
+				<div className='heatmap-info-icon'>
+					<img alt="info" id="infoHeatmap" src={info}
+						style={{ marginTop: "10px", marginLeft: "10px", cursor: "pointer" }} width="15" height="15"
+					/>
+				</div>
 				<div className='heatmap-content'>
 					{props.children}
 					{props.activeCategories.length === 2 &&
@@ -316,12 +359,12 @@ const HeatmapChart = (props) => {
 				<div className='heatmap-right-sector'>
 					<div className='heatmap-expand-icon'>
 						<img title={isExpanded ? t("icon-shrink") : t("icon-expand")} alt="info" src={isExpanded ? shrink : expand}
-							style={{ marginTop: "10px", marginRight: "10px", float: "right" }} width="15px" height="15px"
+							style={{ marginTop: "10px", marginRight: "10px", float: "right", cursor: "pointer" }} width="15px" height="15px"
 							onClick={expandHeatmap}
 						/>
 					</div>
 					{props.activeCategories.length === 2 &&
-					<div className='heatmap-legend'></div>}
+						<div className='heatmap-legend'></div>}
 				</div>
 			</div>
 
