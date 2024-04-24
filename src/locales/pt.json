@@ -37,6 +37,25 @@
     "intention-sacred": "Sagrado",
     "intention-profane": "Profano",
 
+    "origin-all": "Todos",
+    "origin-literal": "Literal",
+    "origin-symbolic": "Symbolic",
+    
+    "explanation-all": "Todos",
+    "explanation-miraculous": "Miraculoso",
+    "explanation-wonderful": "Maravilhoso",
+    "explanation-none": "Nenhum",
+
+    "nature-all": "Todos",
+    "nature-animal": "Animal",
+    "nature-human": "Humana",
+    "nature-supernatural": "Sobrenatural",
+
+    "dimension-all": "Todos",
+    "dimension-body": "Corpo",
+    "dimension-soul": "Alma",
+    "dimension-transcendental": "Transcendental",
+
 
 
     "icon-expand" : "Expandir",

@@ -21,42 +21,138 @@ import FilterView from './FilterView';
 const DashboardPage = () => {
 
     const { t } = useTranslation();
-    
+
     let categories = {
         "category-action": {
-            name: t("category-action"), 
+            name: t("category-action"),
             index: 2
-        }, 
-        "category-body" : {
+        },
+        "category-body": {
             name: t("category-body"),
             index: 3
-        }, 
-        "category-emotion" : {
+        },
+        "category-emotion": {
             name: t("category-emotion"),
             index: 4
         }
     }
 
-    
+
     let intention = {
         "intention-all": {
             name: t("intention-all"),
             csv_name: "",
             index: 5
         },
-        "intention-sacred":{
+        "intention-sacred": {
             name: t("intention-sacred"),
             csv_name: "Sagrado",
             index: 5
         },
-        "intention-profane":{
+        "intention-profane": {
             name: t("intention-profane"),
             csv_name: "Profano",
             index: 5
         }
     }
 
-    const [activeIntention, setActiveIntention] = useState(Object.keys(intention)[0])
+    let origin = {
+        "origin-all": {
+            name: t("intention-all"),
+            csv_name: "",
+            index: 6
+        },
+        "origin-literal": {
+            name: t("origin-literal"),
+            csv_name: "Literal",
+            index: 6
+        },
+        "origin-symbolic": {
+            name: t("origin-symbolic"),
+            csv_name: "Simbólico",
+            index: 6
+        }
+    }
+
+
+    let explanation = {
+        "explanation-all": {
+            name: t("explanation-all"),
+            csv_name: "",
+            index: 7
+        },
+        "explanation-miraculous": {
+            name: t("explanation-miraculous"),
+            csv_name: "Miraculoso",
+            index: 7
+        },
+        "explanation-wonderful": {
+            name: t("explanation-wonderful"),
+            csv_name: "Maravilhoso",
+            index: 7
+        },
+        "explanation-none": {
+            name: t("explanation-none"),
+            csv_name: "Não aplicável",
+            index: 7
+        }
+    }
+    
+    let nature = {
+        "nature-all": {
+            name: t("nature-all"),
+            csv_name: "",
+            index: 8
+        },
+        "nature-animal": {
+            name: t("nature-animal"),
+            csv_name: "Animal",
+            index: 8
+        },
+        "nature-human": {
+            name: t("nature-human"),
+            csv_name: "Humana",
+            index: 8
+        },
+        "nature-supernatural": {
+            name: t("nature-supernatural"),
+            csv_name: "Sobrenatural",
+            index: 8
+        },
+    }
+
+    let dimension = {
+        "dimension-all": {
+            name: t("dimension-all"),
+            csv_name: "",
+            index: 9
+        },
+        "dimension-body": {
+            name: t("dimension-body"),
+            csv_name: "Corpo",
+            index: 9
+        },
+        "dimension-soul": {
+            name: t("dimension-soul"),
+            csv_name: "Alma",
+            index: 9
+        },
+        "dimension-transcendental": {
+            name: t("dimension-transcendental"),
+            csv_name: "Transcendental",
+            index: 9
+        },
+    }
+
+    const [activeFilters, setActiveFilters] = useState(
+        {
+            intention: Object.keys(intention)[0],
+            origin: Object.keys(origin)[0],
+            explanation: Object.keys(explanation)[0],
+
+            nature: Object.keys(nature)[0],
+            dimension: Object.keys(dimension)[0],
+        })
 
     const [globalData, setGlobalData] = useState([])
     const [originalGlobalData, setOriginalGlobalData] = useState([])
@@ -109,8 +205,18 @@ const DashboardPage = () => {
     useEffect(() => {
         d3.csv(csv_data).then(d => {
             let globalData = d3.flatRollup(d, v => ({
-				participants_total: v.length,
-			}), (d) => d.title, (d) => d.subject_sex, (d) => d.anatomical_part, (d) => d.organs, (d) => d.action, (d) => d.intention)
+                participants_total: v.length,
+            }), 
+            d=> d.title,                //0
+            d=> d.subject_sex,          //1
+            d=> d.anatomical_part,      //2
+            d=> d.organs,               //3
+            d=> d.action,               //4
+            d=> d.intention,            //5
+            d=> d.origin,               //6
+            d=> d.explanation,          //7
+            d=> d.nature,               //8 
+            d=> d.dimension)            //9
 
             setOriginalGlobalData([...globalData])
             setGlobalData([...globalData])
@@ -125,7 +231,7 @@ const DashboardPage = () => {
     const [isNetworkExpanded, setIsNetworkExpanded] = useState(false)
 
     window.addEventListener('click', function (e) {
-        if (document.getElementById('overlay') && document.getElementById('overlay').contains(e.target)){
+        if (document.getElementById('overlay') && document.getElementById('overlay').contains(e.target)) {
             document.getElementById("overlay").style.display = "none";
             setIsHeatmapExpanded(false)
             setIsTabchartExpanded(false)
@@ -134,43 +240,61 @@ const DashboardPage = () => {
         }
     });
 
-    function setFilterIntention(i){
+    function setFilters(i, type, advanced) {
+
+        if (advanced){
+
+        }
 
         let filtered = originalGlobalData.filter((d) => {
-            if (i !== Object.keys(intention)[0] && d[intention[i].index] !== intention[i].csv_name)
-                return false;
-    
+            for (const [key, value] of Object.entries(activeFilters)) {
+                let filter = (key === type) ? i : value
+
+                if (filter !== Object.keys(eval(key))[0] && d[eval(key)[filter].index] !== eval(key)[filter].csv_name)
+                    return false;
+            }
+
             return true;
+
         });
 
+        let filters = { ...activeFilters }
+        filters[type] = i
+
         setGlobalData(filtered)
-        setActiveIntention(i)
+        setActiveFilters(filters)
         setChangedFilter(true)
     }
     return (<>
-        
+
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <div className="dashboard-view">
                 <div id="overlay">
                 </div>
                 <FilterView categories={categories}
-                            intention={intention} activeIntention={activeIntention} setActiveIntention={setFilterIntention}/>
+                    intention={intention}
+                    origin={origin}
+                    explanation={explanation}
+                    nature={nature}
+                    dimension={dimension}
+                    activeFilters={activeFilters} setActiveFilters={setFilters} />
                 <DragOverlay dropAnimation={{ duration: 500 }}>
                     {activeCategory ? (
-                        <button className='dashboard-filter-category-drag shadow' style={{border: "10px"}} key={activeCategory}>{categories[activeCategory].name}</button>
-                    ): null}
+                        <button className='dashboard-filter-category-drag shadow' style={{ border: "10px" }} key={activeCategory}>{categories[activeCategory].name}</button>
+                    ) : null}
                 </DragOverlay>
-                
+
                 <div className="dashboard-graph-view">
                     <div className="dashboard-row1">
                         <div className="dashboard-viz1">
-                            {globalData.length > 0 && 
-                            <HeatmapChart data={globalData} 
-                            activeCategories={activeCategories} 
-                            activeCategory={activeCategory} 
-                            categories={categories} 
-                            isExpanded={isHeatmapExpanded} 
-                            setIsExpanded={setIsHeatmapExpanded}>
+                            <HeatmapChart data={globalData}
+                                activeCategories={activeCategories}
+                                activeCategory={activeCategory}
+                                categories={categories}
+                                isExpanded={isHeatmapExpanded}
+                                setIsExpanded={setIsHeatmapExpanded}
+                                changedFilter={changedFilter}
+                                setChangedFilter={setChangedFilter}>
                                 <div className={"heatmap-drag"} style={{ minHeight: "15%", top: ((activeCategories.length !== 2) ? "40%" : "0%"), left: ((activeCategories.length !== 2) ? "7%" : "0%") }}>
                                     <div className={"category " + (activeCategories.length ? "" : "default ") + (activeCategories.length === 2 ? " shrink" : "")} key={activeCategories.length ? activeCategories[0] : "category1"}>
                                         {activeCategories.length ? categories[activeCategories[0]].name : t("category-label")}
@@ -184,7 +308,7 @@ const DashboardPage = () => {
                                     </div>
                                     {activeCategories.length === 2 && <img title={t("icon-close")} className={"x " + (activeCategories.length === 2 ? " shrink" : "")} alt="x" src={x} width="20px" height="20px" onClick={() => removeCategory(1)} />}
                                 </div>
-                            </HeatmapChart>}
+                            </HeatmapChart>
                         </div>
                         <div className={"dashboard-viz2" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
                             <ImportantPeopleChart />
@@ -192,12 +316,12 @@ const DashboardPage = () => {
                     </div>
                     <div className="dashboard-row2">
                         <div id="viz3" className={"dashboard-viz3" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
-                            <TabChart categories={categories} 
-                            data={globalData} 
-                            isExpanded={isTabchartExpanded} 
-                            setIsExpanded={setIsTabchartExpanded}
-                            changedFilter={changedFilter}
-                            setChangedFilter={setChangedFilter}/>
+                            <TabChart categories={categories}
+                                data={globalData}
+                                isExpanded={isTabchartExpanded}
+                                setIsExpanded={setIsTabchartExpanded}
+                                changedFilter={changedFilter}
+                                setChangedFilter={setChangedFilter} />
                         </div>
                         <div className={"dashboard-viz4" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
                             <NetworkChart />

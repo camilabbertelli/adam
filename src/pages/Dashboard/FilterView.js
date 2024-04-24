@@ -17,15 +17,6 @@ const FilterView = (props) => {
     const { t } = useTranslation();
 
     const [simpleFilter, setSimpleFilter] = useState(true);
-    const [originIndex, setOriginIndex] = useState(0)
-    const [explanationIndex, setExplanationIndex] = useState(0)
-    const [natureIndex, setNatureIndex] = useState(0)
-    const [dimensionIndex, setDimensionIndex] = useState(0)
-
-    const origin = ["All", "Literal", "Symbolic"]
-    const explanation = ["All", "Miraculous", "Wonderful", "None"]
-    const nature = ["All", "Animal", "Human", "Supernatural"]
-    const dimension = ["All", "Body", "Soul", "Transcendental"]
 
     let allCodicesAux = {}
     let allCodices = {}
@@ -131,8 +122,7 @@ const FilterView = (props) => {
     }
 
     const changeFilterType = () => {
-        setNatureIndex(0)
-        setDimensionIndex(0)
+        props.setActiveFilters("", "", true)
         setSimpleFilter(!simpleFilter)
     }
 
@@ -165,7 +155,7 @@ const FilterView = (props) => {
                 <div className="inline-flex" role="group">
                     {Object.keys(props.intention).map((intention) => {
                         return (
-                            <button key={intention} type="button" className={"shadow dashboard-filter-options" + ((props.activeIntention === intention) ? " active" : "")} onClick={() => props.setActiveIntention(intention)}>
+                            <button key={intention} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.intention === intention) ? " active" : "")} onClick={() => props.setActiveFilters(intention, "intention")}>
                                 {props.intention[intention].name}
                             </button>
                         )
@@ -176,10 +166,10 @@ const FilterView = (props) => {
             <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
                 <h5>{t("origin-label")}</h5>
                 <div className="inline-flex" role="group">
-                    {origin.map(function (origin, index) {
+                {Object.keys(props.origin).map((origin) => {
                         return (
-                            <button key={origin} type="button" className={"shadow dashboard-filter-options" + ((originIndex === index) ? " active" : "")} onClick={() => setOriginIndex(index)}>
-                                {origin}
+                            <button key={origin} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.origin === origin) ? " active" : "")} onClick={() => props.setActiveFilters(origin, "origin")}>
+                               {props.origin[origin].name}
                             </button>
                         )
                     })}
@@ -189,10 +179,10 @@ const FilterView = (props) => {
             <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
                 <h5>{t("explanation-label")}</h5>
                 <div className="inline-flex" role="group">
-                    {explanation.map(function (explanation, index) {
+                {Object.keys(props.explanation).map((explanation) => {
                         return (
-                            <button key={explanation} type="button" className={"shadow dashboard-filter-options" + ((explanationIndex === index) ? " active" : "")} onClick={() => setExplanationIndex(index)}>
-                                {explanation}
+                            <button key={explanation} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.explanation === explanation) ? " active" : "")} onClick={() => props.setActiveFilters(explanation, "explanation")}>
+                                {props.explanation[explanation].name}
                             </button>
                         )
                     })}
@@ -202,10 +192,10 @@ const FilterView = (props) => {
             {!simpleFilter && <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
                 <h5>{t("nature-label")}</h5>
                 <div className="inline-flex" role="group">
-                    {nature.map(function (nature, index) {
+                {Object.keys(props.nature).map((nature) => {
                         return (
-                            <button key={nature} type="button" className={"shadow dashboard-filter-options" + ((natureIndex === index) ? " active" : "")} onClick={() => setNatureIndex(index)}>
-                                {nature}
+                            <button key={nature} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.nature === nature) ? " active" : "")} onClick={() => props.setActiveFilters(nature, "nature")}>
+                                {props.nature[nature].name}
                             </button>
                         )
                     })}
@@ -216,10 +206,10 @@ const FilterView = (props) => {
             {!simpleFilter && <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
                 <h5>{t("dimension-label")}</h5>
                 <div className="inline-flex" role="group">
-                    {dimension.map(function (dimension, index) {
+                    {Object.keys(props.dimension).map((dimension) => {
                         return (
-                            <button key={dimension} type="button" className={"shadow dashboard-filter-options" + ((dimensionIndex === index) ? " active" : "")} onClick={() => setDimensionIndex(index)}>
-                                {dimension}
+                            <button key={dimension} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.dimension === dimension) ? " active" : "")} onClick={() => props.setActiveFilters(dimension, "dimension")}>
+                                {props.dimension[dimension].name}
                             </button>
                         )
                     })}

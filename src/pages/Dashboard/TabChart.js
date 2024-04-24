@@ -37,7 +37,6 @@ function wrap(text, width) {
         var text = d3.select(this),
             t = text.text().trim(),
             words = t.split(/\s+/).reverse(),
-            word,
             line = [],
             lineNumber = 0,
             lineWeight = 1.1,
@@ -47,7 +46,9 @@ function wrap(text, width) {
 
         let numberWords = words.length
 
-        while (word = words.pop()) {
+        words.forEach((word) => {
+
+            word = words.pop()
             line.push(word);
             tspan.text(line.join(" "));
             if (tspan.node().getComputedTextLength() > width) {
@@ -57,7 +58,7 @@ function wrap(text, width) {
                 line = [word];
                 tspan = text.append("tspan").attr("x", x).attr("y", Number(text.attr("y")) - ((numberWords - (++lineNumber * lineWeight)) * 3) + (8)).text(word);
             }
-        }
+        })
     });
 }
 
@@ -88,42 +89,6 @@ const TabContent = (props) => {
     const [changedTotal, setChangedTotal] = useState(false)
     const [changedSorting, setChangedSorting] = useState(false)
 
-    let infoMouseOverPyramid = function (event, d) {
-        tooltipPyramid
-            .style("opacity", 1);
-
-        tooltipPyramid.html(`<center><b>${t("information")}</b></center>
-                      ${t("information-pyramid")}`)
-            .style("top", event.pageY - 10 + "px")
-            .style("left", event.pageX + 10 + "px")
-    }
-
-
-    let infoMouseLeavePyramid = function (event, d) {
-        tooltipPyramid
-            .style("opacity", 0)
-
-        let element = document.getElementById('tooltipPyramid')
-        if (element)
-            element.innerHTML = "";
-    }
-
-    // tooltipPyramid events
-    const mouseover = function (d) {
-        tooltipPyramid.style("opacity", 1)
-        d3.select(this).style("stroke-width", 1)
-    };
-
-
-
-    const mouseleave = function (d) {
-        tooltipPyramid.style("opacity", 0)
-
-        let element = document.getElementById('tooltipPyramid')
-        if (element) element.innerHTML = "";
-
-        d3.select(this).style("stroke-width", 0)
-    };
 
     useEffect(() => {
         let index = props.categories[props.category].index
@@ -143,22 +108,20 @@ const TabContent = (props) => {
 
         let participants_total = 0
 
-        for (let [key, value] of pyramidData) 
+        for (let [, value] of pyramidData)
             participants_total += value.masc + value.fem
-        
-        if (participants_total == 0)
+
+        if (participants_total === 0)
             participants_total = 1
 
-        let t = d3.max(pyramidData, d=>d[1].masc)
-
-        let maxMasc = d3.max(pyramidData, d=> d[1].masc/participants_total)
-        let maxFem = d3.max(pyramidData, d => d[1].fem/ participants_total)
-        let maxTotal = d3.max(pyramidData, d => d[1].total/ participants_total)
-        let maxScale = (totalOccurrences) ?  maxTotal : Math.max(maxMasc, maxFem)
+        let maxMasc = d3.max(pyramidData, d => d[1].masc / participants_total)
+        let maxFem = d3.max(pyramidData, d => d[1].fem / participants_total)
+        let maxTotal = d3.max(pyramidData, d => d[1].total / participants_total)
+        let maxScale = (totalOccurrences) ? maxTotal : Math.max(maxMasc, maxFem)
 
         let factor = maxScale > 0.1 ? 0.05 : 0.01
 
-        function mousemove (event, d, type) {
+        function mousemove(event, d, type) {
 
             var previousElement = d3.select(".barMasc");
             var isTotal = false
@@ -179,6 +142,41 @@ const TabContent = (props) => {
                 .style("top", event.pageY - 10 + "px")
                 .style("left", event.pageX + 10 + "px");
         }
+
+        // tooltipPyramid events
+        const mouseover = function (d) {
+            tooltipPyramid.style("opacity", 1)
+            d3.select(this).style("stroke-width", 1)
+        };
+
+        const mouseleave = function (d) {
+            tooltipPyramid.style("opacity", 0)
+
+            let element = document.getElementById('tooltipPyramid')
+            if (element) element.innerHTML = "";
+
+            d3.select(this).style("stroke-width", 0)
+        };
+
+        let infoMouseLeavePyramid = function (event, d) {
+            tooltipPyramid
+                .style("opacity", 0)
+
+            let element = document.getElementById('tooltipPyramid')
+            if (element)
+                element.innerHTML = "";
+        }
+
+        let infoMouseOverPyramid = function (event, d) {
+            tooltipPyramid
+                .style("opacity", 1);
+
+            tooltipPyramid.html(`<center><b>${t("information")}</b></center>
+                      ${t("information-pyramid")}`)
+                .style("top", event.pageY - 10 + "px")
+                .style("left", event.pageX + 10 + "px")
+        }
+
 
 
         let sort_name_asc = (a, b) => {
@@ -318,14 +316,18 @@ const TabContent = (props) => {
                 .text("Feminine")
         }
 
-        /* svg bars */
-        d3.selectAll(".pyramid-subcategory-axis").remove()
         d3.select("#gridm").remove()
         d3.select("#gridf").remove()
 
         let svg = null
 
-        if (changedTotal || changedSorting || props.changedFilter) {
+
+        const previousLabels = d3.select(".pyramid-content").select("svg").select("g").selectAll(".barMasc").data().map(d => d[0])
+        const currentLabels = Array.from(pyramidData.keys())
+
+        let sameArrays = previousLabels.sort().join(',') === currentLabels.sort().join(',')
+
+        if (changedTotal || changedSorting || (props.changedFilter && sameArrays)) {
 
             svg = d3.select(".pyramid-content").select("svg").select("g")
 
@@ -355,7 +357,7 @@ const TabContent = (props) => {
                     .transition()
                     .duration(500)
                     .attr("class", "barMasc")
-                    .attr("x", d => xScaleMasc(d[1].masc/ participants_total))
+                    .attr("x", d => xScaleMasc(d[1].masc / participants_total))
                     .attr("y", d => yScale(d[0]))
                     .attr("width", d => barsWidth - xScaleMasc(d[1].masc / participants_total))
                     .attr("height", yScale.bandwidth())
@@ -430,6 +432,10 @@ const TabContent = (props) => {
                 .on("mouseleave", mouseleave)
             //.on("click", mouseclickfemale)
         }
+
+
+        /* svg bars */
+        d3.selectAll(".pyramid-subcategory-axis").remove()
 
         const axes_left = d3
             .select(".pyramid-axes-left")
@@ -607,8 +613,7 @@ const TabChart = (props) => {
                 {props.data.length === 0 &&
                     <div id="tab-content" className="tab-chart-area-content shadow" style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
                         No data to show
-                    </div>
-                }
+                    </div>}
             </div>
         </>
     )

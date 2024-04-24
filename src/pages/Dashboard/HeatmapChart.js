@@ -21,46 +21,45 @@ let heatmap_boundaries_legend = null
 
 
 function wrap_left(text, width) {
-    text.each(function () {
-        var text = d3.select(this),
-            t = text.text().trim(),
-            words = t.split(/\s+/).reverse(),
-            word,
-            line = [],
-            lineNumber = 0,
-            lineWeight = 1.1,
-            y = text.attr("y"),
-            x = text.attr("x"),
-            tspan = text.text(null).append("tspan").attr("x", x).attr("y", y);
+	text.each(function () {
+		var text = d3.select(this),
+			t = text.text().trim(),
+			words = t.split(/\s+/).reverse(),
+			line = [],
+			lineNumber = 0,
+			lineWeight = 1.1,
+			y = text.attr("y"),
+			x = text.attr("x"),
+			tspan = text.text(null).append("tspan").attr("x", x).attr("y", y);
 
-        let numberWords = words.length
+		let numberWords = words.length
 
-        while (word = words.pop()) {
-            line.push(word);
-            tspan.text(line.join(" "));
-            if (tspan.node().getComputedTextLength() > width) {
-                line.pop();
-                tspan.text(line.join(" "));
-                tspan.attr("y", Number(text.attr("y")) - ((numberWords - (++lineNumber * (lineWeight + 0.3))) * 3))
-                line = [word];
-                tspan = text.append("tspan").attr("x", x).attr("y", Number(text.attr("y")) - ((numberWords - (++lineNumber * lineWeight)) * 3) + (8)).text(word);
-            }
-        }
-    });
+		words.forEach((word) => {
+			line.push(word);
+			tspan.text(line.join(" "));
+			if (tspan.node().getComputedTextLength() > width) {
+				line.pop();
+				tspan.text(line.join(" "));
+				tspan.attr("y", Number(text.attr("y")) - ((numberWords - (++lineNumber * (lineWeight + 0.3))) * 3))
+				line = [word];
+				tspan = text.append("tspan").attr("x", x).attr("y", Number(text.attr("y")) - ((numberWords - (++lineNumber * lineWeight)) * 3) + (8)).text(word);
+			}
+		})
+	});
 }
 
 function wrap(text, width) {
 	text.each(function () {
 		var text = d3.select(this),
 			words = text.text().split(/\s+/).reverse(),
-			word,
 			line = [],
 			lineNumber = 0,
 			lineHeight = 0.8,
 			y = text.attr("y"),
 			dy = parseFloat(text.attr("dy")),
 			tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
-		while (word = words.pop()) {
+		words.forEach((word) => {
+
 			line.push(word);
 			tspan.text(line.join(" "));
 			if (tspan.node().getComputedTextLength() > width) {
@@ -69,7 +68,7 @@ function wrap(text, width) {
 				line = [word];
 				tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
 			}
-		}
+		})
 	});
 }
 
@@ -80,51 +79,54 @@ const HeatmapChart = (props) => {
 
 	const { t } = useTranslation()
 
-	let infoMouseOverHeatmap = function (event, d) {
-		tooltipHeatmap
-			.style("opacity", 1);
-
-		tooltipHeatmap.html(`<center><b>${t("information")}</b></center>
-                      ${t("information-heatmap")}`)
-			.style("top", event.pageY - 10 + "px")
-			.style("left", event.pageX + 10 + "px")
-	}
-
-
-	let infoMouseLeaveHeatmap = function (event, d) {
-		tooltipHeatmap
-			.style("opacity", 0)
-
-		let element = document.getElementById('tooltipHeatmap')
-		if (element)
-			element.innerHTML = "";
-	}
-
-	// Three function that change the tooltip when user hover / move / leave a cell
-	const mouseover = function (event, d) {
-		tooltipHeatmap.style("opacity", 1)
-		d3.select(this)
-			.style("stroke", "black")
-	}
-
-	const mousemove = function (event, d) {
-		tooltipHeatmap
-			.html(`<center><b>${d[0]} x ${d[1]}</b></center>
-					Occurrence: ${d[2]}`)
-			.style("top", event.pageY - 10 + "px")
-			.style("left", event.pageX + 10 + "px");
-	}
-
-	const mouseleave = function (event, d) {
-		tooltipHeatmap.style("opacity", 0)
-		d3.select(this)
-			.style("stroke", "#f1f1f1")
-
-		let element = document.getElementById('tooltipHeatmap')
-		if (element) element.innerHTML = "";
-	}
-
 	useEffect(() => {
+		if (props.data.length === 0)
+			return
+
+		let infoMouseOverHeatmap = function (event, d) {
+			tooltipHeatmap
+				.style("opacity", 1);
+
+			tooltipHeatmap.html(`<center><b>${t("information")}</b></center>
+						  ${t("information-heatmap")}`)
+				.style("top", event.pageY - 10 + "px")
+				.style("left", event.pageX + 10 + "px")
+		}
+
+
+		let infoMouseLeaveHeatmap = function (event, d) {
+			tooltipHeatmap
+				.style("opacity", 0)
+
+			let element = document.getElementById('tooltipHeatmap')
+			if (element)
+				element.innerHTML = "";
+		}
+
+		// Three function that change the tooltip when user hover / move / leave a cell
+		const mouseover = function (event, d) {
+			tooltipHeatmap.style("opacity", 1)
+			d3.select(this)
+				.style("stroke", "black")
+		}
+
+		const mousemove = function (event, d) {
+			tooltipHeatmap
+				.html(`<center><b>${d[0]} x ${d[1]}</b></center>
+						Occurrence: ${d[2]}`)
+				.style("top", event.pageY - 10 + "px")
+				.style("left", event.pageX + 10 + "px");
+		}
+
+		const mouseleave = function (event, d) {
+			tooltipHeatmap.style("opacity", 0)
+			d3.select(this)
+				.style("stroke", "#f1f1f1")
+
+			let element = document.getElementById('tooltipHeatmap')
+			if (element) element.innerHTML = "";
+		}
+
 		if (props.activeCategories.length === 2) {
 
 			let indexKey1 = props.categories[props.activeCategories[0]].index
@@ -188,13 +190,45 @@ const HeatmapChart = (props) => {
 				.attr("height", height_legend)
 				.append("g")
 
-			let colorRange = ["white", "#E4D1D1", "#B88989", "#A16666", "#894343", "#712121", "#5D1B1B", "#320404"]
-			let domain = [1, 5, 10, 25, 50, 100, 200, 300]
+			function domainColorsHeatmap() {
+				let colorRange = ["white", "#E4D1D1", "#B88989", "#A16666", "#894343", "#712121", "#5D1B1B", "#320404"]
+				//let domain = [1, 5, 10, 25, 50, 100, 200, 300]
+
+				let unique = [...new Set(heatmapData.map(d => d[2]))];
+				let min = Math.min(...unique)
+				let max = Math.max(...unique)
+
+				const colorScale = d3.scaleQuantile()
+					.domain(unique)
+					.range(colorRange)
+
+				let quantiles = colorScale.quantiles()
+
+				if (min < quantiles[0])
+					quantiles.unshift(min)
+
+				let domain = []
+
+				quantiles.forEach((c) => {
+					let factor = 5
+					if (max <= 10) factor = 2
+					if (c >= 40) factor = 50
+
+					if (c !== min) c = Math.round(c / factor) * factor;
+					if (c < min) c = min
+					if (!domain.includes(c)) domain.push(c)
+				})
+
+				return [domain, max]
+			}
+
+			let [domain, maxValue] = domainColorsHeatmap()
+
+			let colorRange = ["white", "#E4D1D1", "#C49E9E", "#A16666", "#894343", "#712121", "#5D1B1B"].slice(0, domain.length)
 			// Build color scale
 			const myColor = d3.scaleThreshold()
 				.range(["none"].concat(colorRange))
 				.domain(domain)
-
 
 			svg_legend.append("g")
 				.selectAll(".legendRect")
@@ -204,7 +238,7 @@ const HeatmapChart = (props) => {
 				.attr("y", (d, i) => i * (height_legend / (colorRange.length + 1)) + 5)
 				.attr("ry", 5)
 				.attr("width", 10)
-				.attr("height", (height_legend / (colorRange.length - 1.5)))
+				.attr("height", (height_legend / (colorRange.length)) - ((colorRange.length === 1) ? 5: 0))
 				.style("stroke", "black")
 				.style("stroke-width", 1)
 				.style("fill", d => d)
@@ -218,13 +252,19 @@ const HeatmapChart = (props) => {
 				.style("font-family", "lato")
 				.attr("y", (d, i) => i * (height_legend / (colorRange.length + 1)) + 25)
 				.attr("dx", "2em")
-				//.attr("dy", "3em") //place text one line *below* the x,y point
+				.attr("dy", (height_legend / (colorRange.length + 1)) / colorRange.length)
 				.attr("class", "seasonLabels")
 				.text((d, i) => {
-					if (i + 1 < domain.length)
-						return domain[i] + "-" + domain[i + 1];
-					if (i + 1 === domain.length)
-						return ">=" + domain[i];
+					if (i + 1 < domain.length) {
+						if (domain[i] === (domain[i + 1] + 1))
+							return domain[i];
+						return domain[i] + "-" + (domain[i + 1] - 1);
+					}
+					if (i + 1 === domain.length) {
+						if (maxValue > domain[i])
+							return domain[i] + "-" + maxValue;
+						return domain[i];
+					}
 				});
 
 
@@ -283,10 +323,10 @@ const HeatmapChart = (props) => {
 
 			// add the squares
 			svg.selectAll()
-				.data(heatmapData, d => d[1]+':'+d[2])
+				.data(heatmapData, d => d[1] + ':' + d[2])
 				.join("rect")
 				.attr("x", d => x(d[1]))
-				.attr("y", d => y(d[0]) )
+				.attr("y", d => y(d[0]))
 				.attr("rx", 4)
 				.attr("ry", 4)
 				.attr("width", x.bandwidth())
@@ -299,18 +339,20 @@ const HeatmapChart = (props) => {
 				.on("mouseleave", mouseleave)
 
 		}
-	}, [props.activeCategories])
 
-	function handleGraphScroll(e) {
+		props.setChangedFilter(false)
+	}, [props.activeCategories, props.data])
+
+	function handleGraphScroll() {
 		$('.heatmap-left-header').scrollTop($('.heatmap-graph').scrollTop());
 		$('.heatmap-bottom-header').scrollLeft($('.heatmap-graph').scrollLeft());
 	}
 
-	function handleLeftScroll(e) {
+	function handleLeftScroll() {
 		$('.heatmap-graph').scrollTop($('.heatmap-left-header').scrollTop());
 	}
 
-	function handleBottomScroll(e) {
+	function handleBottomScroll() {
 		$('.heatmap-graph').scrollLeft($('.heatmap-bottom-header').scrollLeft());
 	}
 
@@ -335,38 +377,48 @@ const HeatmapChart = (props) => {
 
 	return (
 		<>
-			<div id="droppable" ref={setNodeRef} className={"shadow heatmap-area" + ((props.activeCategory !== null && props.activeCategories.length !== 2) ? " dashed" : "")}>
-				<div className='heatmap-info-icon'>
-					<img alt="info" id="infoHeatmap" src={info}
-						style={{ marginTop: "10px", marginLeft: "10px", cursor: "pointer" }} width="15" height="15"
-					/>
-				</div>
-				<div className='heatmap-content'>
-					{props.children}
-					{props.activeCategories.length === 2 &&
-						<div id="heatmap-chart">
-							<div className='heatmap-top-sector'>
-								<div onScroll={handleLeftScroll} className='heatmap-left-header'></div>
-								<div onScroll={handleGraphScroll} className='heatmap-graph'></div>
-							</div>
-							<div className='heatmap-bottom-sector'>
-								<div className='heatmap-empty-space'></div>
-								<div onScroll={handleBottomScroll} className='heatmap-bottom-header'></div>
-							</div>
+			{props.data.length > 0 &&
+				<>
+					<div id="droppable" ref={setNodeRef} className={"shadow heatmap-area" + ((props.activeCategory !== null && props.activeCategories.length !== 2) ? " dashed" : "")}>
+						<div className='heatmap-info-icon'>
+							<img alt="info" id="infoHeatmap" src={info}
+								style={{ marginTop: "10px", marginLeft: "10px", cursor: "pointer" }} width="15" height="15"
+							/>
+						</div>
 
-						</div>}
-				</div>
-				<div className='heatmap-right-sector'>
-					<div className='heatmap-expand-icon'>
-						<img title={isExpanded ? t("icon-shrink") : t("icon-expand")} alt="info" src={isExpanded ? shrink : expand}
-							style={{ marginTop: "10px", marginRight: "10px", float: "right", cursor: "pointer" }} width="15px" height="15px"
-							onClick={expandHeatmap}
-						/>
+						<div className='heatmap-content'>
+							{props.children}
+							{props.activeCategories.length === 2 &&
+								<div id="heatmap-chart">
+									<div className='heatmap-top-sector'>
+										<div onScroll={handleLeftScroll} className='heatmap-left-header'></div>
+										<div onScroll={handleGraphScroll} className='heatmap-graph'></div>
+									</div>
+									<div className='heatmap-bottom-sector'>
+										<div className='heatmap-empty-space'></div>
+										<div onScroll={handleBottomScroll} className='heatmap-bottom-header'></div>
+									</div>
+
+								</div>}
+						</div>
+						<div className='heatmap-right-sector'>
+							<div className='heatmap-expand-icon'>
+								<img title={isExpanded ? t("icon-shrink") : t("icon-expand")} alt="info" src={isExpanded ? shrink : expand}
+									style={{ marginTop: "10px", marginRight: "10px", float: "right", cursor: "pointer" }} width="15px" height="15px"
+									onClick={expandHeatmap}
+								/>
+							</div>
+							{props.activeCategories.length === 2 &&
+								<div className='heatmap-legend'></div>}
+						</div>
+
 					</div>
-					{props.activeCategories.length === 2 &&
-						<div className='heatmap-legend'></div>}
+				</>}
+			{props.data.length === 0 &&
+				<div id="droppable" ref={setNodeRef} className="shadow heatmap-area" style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+					No data to show
 				</div>
-			</div>
+			}
 
 		</>
 	);

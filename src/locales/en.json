@@ -37,6 +37,24 @@
     "intention-sacred": "Sacred",
     "intention-profane": "Profane",
 
+    "origin-all": "All",
+    "origin-literal": "Literal",
+    "origin-symbolic": "Symbolic",
+    
+    "explanation-all": "All",
+    "explanation-miraculous": "Miraculous",
+    "explanation-wonderful": "Wonderful",
+    "explanation-none": "None",
+
+    "nature-all": "All",
+    "nature-animal": "Animal",
+    "nature-human": "Human",
+    "nature-supernatural": "Supernatural",
+
+    "dimension-all": "All",
+    "dimension-body": "Body",
+    "dimension-soul": "Soul",
+    "dimension-transcendental": "Transcendental",
 
     
 
