@@ -12,6 +12,7 @@ html,
 body {
   max-width: 100dvw;
   overflow: unset;
+  scroll-behavior: smooth ;
 }
 
 .pageBody {

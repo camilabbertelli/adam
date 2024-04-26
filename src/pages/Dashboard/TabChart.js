@@ -59,6 +59,10 @@ function wrap(text, width) {
 	});
 }
 
+function noSpaces(str) {
+    return (str.replace(".", '')).replace(/\s+/g, '')
+}
+
 const TabContent = (props) => {
 
     const [isExpanded, setIsExpanded] = useState(false)
@@ -144,7 +148,7 @@ const TabContent = (props) => {
         // tooltipPyramid events
         const mouseover = function (d) {
             tooltipPyramid.style("opacity", 1)
-            d3.select(this).style("stroke-width", 1)
+            d3.select(this).transition().duration(100).style("stroke-width", 1)
         };
 
         const mouseleave = function (d) {
@@ -153,7 +157,7 @@ const TabContent = (props) => {
             let element = document.getElementById('tooltipPyramid')
             if (element) element.innerHTML = "";
 
-            d3.select(this).style("stroke-width", 0)
+            d3.select(this).transition().duration(100).style("stroke-width", 0)
         };
 
         let infoMouseLeavePyramid = function (event, d) {
@@ -354,7 +358,7 @@ const TabContent = (props) => {
                     .data(pyramidData)
                     .transition()
                     .duration(500)
-                    .attr("class", "barMasc")
+                    .attr("class", d=> `barMasc pyramid-Masc-${noSpaces(d[0])}`)
                     .attr("x", d => xScaleMasc(d[1].masc / participants_total))
                     .attr("y", d => yScale(d[0]))
                     .attr("width", d => barsWidth - xScaleMasc(d[1].masc / participants_total))
@@ -365,7 +369,7 @@ const TabContent = (props) => {
                     .data(pyramidData)
                     .transition()
                     .duration(500)
-                    .attr("class", "barFem")
+                    .attr("class", d=> `barFem pyramid-Fem-${noSpaces(d[0])}`)
                     .attr("x", xScaleFem(0))
                     .attr("y", d => yScale(d[0]))
                     .attr("width", d => xScaleFem(d[1].fem / participants_total) - xScaleFem(0))
@@ -387,7 +391,7 @@ const TabContent = (props) => {
             svg.selectAll(".barMasc")
                 .data(pyramidData)
                 .join("rect")
-                .attr("class", "barMasc")
+                .attr("class", d=> `barMasc pyramid-Masc-${noSpaces(d[0])}`)
                 .attr("x", d => (totalOccurrences) ? xScaleMasc(0) : (xScaleMasc(d[1].masc / participants_total)))
                 .attr("y", d => yScale(d[0]))
                 .attr("width", d => (totalOccurrences) ?
@@ -417,7 +421,7 @@ const TabContent = (props) => {
             svg.selectAll(".barFem")
                 .data(pyramidData)
                 .join("rect")
-                .attr("class", "barFem")
+                .attr("class", d=> `barFem pyramid-Fem-${noSpaces(d[0])}`)
                 .attr("x", xScaleFem(0))
                 .attr("y", d => yScale(d[0]))
                 .attr("width", (totalOccurrences) ? 0 : d => xScaleFem(d[1].fem / participants_total) - xScaleFem(0))
@@ -581,6 +585,11 @@ const TabChart = (props) => {
             d3.selectAll("#tabchart-dropdown-icon").classed("tabchart-dropdown-content-show", false)
     });
 
+    const changeCurrentCategory = (category) => {
+        setCurrentCategory(category)
+        props.setCurrentTabchartCategory(category)
+    }
+
     return (
         <>
             <div className="tab-chart-area">
@@ -592,7 +601,7 @@ const TabChart = (props) => {
                                     id={category + "-tab"}
                                     className={(currentCategory === category) ? "active" : ""}
                                     style={{ "borderRadius": "15px 15px 0px 0px" }}
-                                    onClick={() => setCurrentCategory(category)}>
+                                    onClick={() => changeCurrentCategory(category)}>
                                     {props.categories[category].name}
                                 </button>
                             )

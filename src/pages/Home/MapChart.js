@@ -8,7 +8,11 @@ import europeData from "./../../assets/maps/europe.json";
 import { useTranslation } from 'react-i18next';
 
 function noSpaces(str) {
-    return (str.replace(".", '')).replace(/\s+/g, '')
+    if (str)
+        str = str.replace(".", '')
+    if (str)
+        str = str.replace(/\s+/g, '')
+    return str
 }
 
 var tooltipMark;

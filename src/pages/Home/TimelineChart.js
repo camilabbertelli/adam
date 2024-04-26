@@ -10,7 +10,11 @@ import { useEffect } from 'react';
 import * as d3 from 'd3'
 
 function noSpaces(str) {
-    return (str.replace(".", '')).replace(/\s+/g, '')
+    if (str)
+        str = str.replace(".", '')
+    if (str)
+        str = str.replace(/\s+/g, '')
+    return str
 }
 
 let tooltipCodex;

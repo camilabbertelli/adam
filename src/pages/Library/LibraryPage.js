@@ -16,7 +16,11 @@ import PdfViewer from "./PdfViewer";
 
 
 function noSpaces(str) {
-    return (str.replace(".", '')).replace(/\s+/g, '')
+    if (str)
+        str = str.replace(".", '')
+    if (str)
+        str = str.replace(/\s+/g, '')
+    return str
 }
 
 function isDictEmpty(d) {

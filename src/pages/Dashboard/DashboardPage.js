@@ -169,6 +169,7 @@ const DashboardPage = () => {
             dimension: Object.keys(dimension)[0],
         })
     const [activeCategories, setActiveCategories] = useState([Object.keys(categories)[0], Object.keys(categories)[1]]);
+    const [currentTabchartCategory, setCurrentTabchartCategory] = useState(Object.keys(categories)[0])
     const [activeCategory, setActiveCategory] = useState(null)
     const [activeCodices, setActiveCodices] = useState([])
     const [codices, setCodices] = useState({})
@@ -393,6 +394,7 @@ const DashboardPage = () => {
                             <TabChart categories={categories}
                                 data={globalData}
                                 csvIndexes={csvIndexes}
+                                setCurrentTabchartCategory={setCurrentTabchartCategory}
                                 isExpanded={isTabchartExpanded}
                                 setIsExpanded={setIsTabchartExpanded}
                                 changedFilter={changedFilter}
@@ -410,17 +412,17 @@ const DashboardPage = () => {
                             citations
                         </button>
 
-
-
                         <Drawer backdrop={false} open={isOpen} onClose={handleClose}
                             className='citations-drawer shadow' position='bottom'>
                             <button className="citations-btn" type='button' onClick={() => setIsOpen(false)}>
                                 <img alt="up-arrow" width="20px" height="20px" src={doubleArrow} />
                                 citations
                             </button>
-
                             <Citations
                                 data={globalData}
+                                categories={categories}
+                                activeCategories={activeCategories}
+                                currentTabchartCategory={currentTabchartCategory}
                                 csvIndexes={csvIndexes} />
                         </Drawer>
                     </div>

@@ -72,6 +72,10 @@ function wrap(text, width) {
 	});
 }
 
+function noSpaces(str) {
+    return (str.replace(".", '')).replace(/\s+/g, '')
+}
+
 const HeatmapChart = (props) => {
 	const { setNodeRef } = useDroppable({
 		id: 'droppable',
@@ -106,7 +110,7 @@ const HeatmapChart = (props) => {
 		// Three function that change the tooltip when user hover / move / leave a cell
 		const mouseover = function (event, d) {
 			tooltipHeatmap.style("opacity", 1)
-			d3.select(this)
+			d3.select(this).transition().duration(100)
 				.style("stroke", "black")
 		}
 
@@ -120,8 +124,8 @@ const HeatmapChart = (props) => {
 
 		const mouseleave = function (event, d) {
 			tooltipHeatmap.style("opacity", 0)
-			d3.select(this)
-				.style("stroke", "#f1f1f1")
+			d3.select(this).transition().duration(100)
+				.style("stroke", "#ECECEC")
 
 			let element = document.getElementById('tooltipHeatmap')
 			if (element) element.innerHTML = "";
@@ -323,8 +327,9 @@ const HeatmapChart = (props) => {
 
 			// add the squares
 			svg.selectAll()
-				.data(heatmapData, d => d[1] + ':' + d[2])
+				.data(heatmapData, d => d[0] + ':' + d[1])
 				.join("rect")
+				.attr("class", d=> `heatmap-${noSpaces(d[0])}-${noSpaces(d[1])}`)
 				.attr("x", d => x(d[1]))
 				.attr("y", d => y(d[0]))
 				.attr("rx", 4)
