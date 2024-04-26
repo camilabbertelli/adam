@@ -2,15 +2,9 @@ import { useTranslation } from "react-i18next";
 import { useDraggable } from '@dnd-kit/core';
 
 import "./../../styles/Dashboard/FilterView.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import spine from "./../../assets/images/spine.png"
-import codicesOriginal from "./../../assets/codices"
-
-
-function noSpaces(str) {
-    return (str.replace(".", '')).replace(/\s+/g, '')
-}
 
 const FilterView = (props) => {
 
@@ -18,27 +12,14 @@ const FilterView = (props) => {
 
     const [simpleFilter, setSimpleFilter] = useState(true);
 
-    let allCodicesAux = {}
-    let allCodices = {}
-    let allGenres = []
-    for (const [key, value] of Object.entries(codicesOriginal)) {
-        value.forEach(codex => {
-            codex["century"] = key;
-            allCodicesAux[noSpaces(codex.title)] = codex;
-            allGenres.push(codex.genre);
-        })
-    }
-
-    if (allGenres) allGenres.sort()
-
-    let sortedkeys = Object.keys(allCodicesAux).sort()
-
-    sortedkeys.forEach((key) => {
-        allCodices[key] = allCodicesAux[key]
-    })
-
-    const [currentCodices, setCurrentCodices] = useState(sortedkeys)
+    const [codices, setCodices] = useState({})
+    const [currentCodices, setCurrentCodices] = useState([])
     const [genre, setGenre] = useState("")
+
+    useEffect(() => {
+        setCodices(props.codices)
+        setCurrentCodices(Object.keys(props.codices))
+    }, [props.codices, props.genres])
 
     function Draggable(props) {
         const { attributes, listeners, setNodeRef } = useDraggable({
@@ -64,11 +45,30 @@ const FilterView = (props) => {
         var selectedValue = selectBox.options[selectBox.selectedIndex].value;
         setGenre(selectedValue)
 
-        for (const [key, c] of Object.entries(allCodices)) {
-            if (c.genre === selectedValue) {
-                changeCodex(key)
+        if (selectedValue === "")
+            return
+
+        let newCurrentCodices = []
+
+        currentCodices.forEach((key) => {
+            if (codices[key].genre === selectedValue) {
+                newCurrentCodices.push(key)
+            }
+        })
+
+        if (newCurrentCodices.length === 0){
+            for (const [key, c] of Object.entries(codices)) {
+                if (c.genre === selectedValue) {
+                    newCurrentCodices.push(key)
+                    setCurrentCodices(newCurrentCodices)
+                    props.setCurrentCodices(newCurrentCodices)
+                    return
+                }
             }
         }
+
+        setCurrentCodices(newCurrentCodices)
+        props.setActiveFilters([], [], newCurrentCodices)
     }
 
     const equalsCheck = (a, b) => {
@@ -77,7 +77,7 @@ const FilterView = (props) => {
 
     const changeCodex = function (id) {
 
-        let sortedkeys = Object.keys(allCodices).sort()
+        let sortedkeys = Object.keys(codices).sort()
         let aux = [...currentCodices]
 
         if (equalsCheck(sortedkeys, currentCodices.sort()))
@@ -92,6 +92,7 @@ const FilterView = (props) => {
         }
 
         setCurrentCodices(aux)
+        props.setActiveFilters([], [] ,aux)
     }
 
     const Codices = ({ genre, codices }) => {
@@ -122,7 +123,7 @@ const FilterView = (props) => {
     }
 
     const changeFilterType = () => {
-        props.setActiveFilters("", "", true)
+        props.setActiveFilters(["nature-all", "dimension-all"], ["nature", "dimension"], currentCodices)
         setSimpleFilter(!simpleFilter)
     }
 
@@ -155,7 +156,7 @@ const FilterView = (props) => {
                 <div className="inline-flex" role="group">
                     {Object.keys(props.intention).map((intention) => {
                         return (
-                            <button key={intention} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.intention === intention) ? " active" : "")} onClick={() => props.setActiveFilters(intention, "intention")}>
+                            <button key={intention} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.intention === intention) ? " active" : "")} onClick={() => props.setActiveFilters([intention], ["intention"], currentCodices)}>
                                 {props.intention[intention].name}
                             </button>
                         )
@@ -168,7 +169,7 @@ const FilterView = (props) => {
                 <div className="inline-flex" role="group">
                 {Object.keys(props.origin).map((origin) => {
                         return (
-                            <button key={origin} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.origin === origin) ? " active" : "")} onClick={() => props.setActiveFilters(origin, "origin")}>
+                            <button key={origin} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.origin === origin) ? " active" : "")} onClick={() => props.setActiveFilters([origin], ["origin"], currentCodices)}>
                                {props.origin[origin].name}
                             </button>
                         )
@@ -181,7 +182,7 @@ const FilterView = (props) => {
                 <div className="inline-flex" role="group">
                 {Object.keys(props.explanation).map((explanation) => {
                         return (
-                            <button key={explanation} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.explanation === explanation) ? " active" : "")} onClick={() => props.setActiveFilters(explanation, "explanation")}>
+                            <button key={explanation} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.explanation === explanation) ? " active" : "")} onClick={() => props.setActiveFilters([explanation], ["explanation"], currentCodices)}>
                                 {props.explanation[explanation].name}
                             </button>
                         )
@@ -194,7 +195,7 @@ const FilterView = (props) => {
                 <div className="inline-flex" role="group">
                 {Object.keys(props.nature).map((nature) => {
                         return (
-                            <button key={nature} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.nature === nature) ? " active" : "")} onClick={() => props.setActiveFilters(nature, "nature")}>
+                            <button key={nature} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.nature === nature) ? " active" : "")} onClick={() => props.setActiveFilters([nature], ["nature"], currentCodices)}>
                                 {props.nature[nature].name}
                             </button>
                         )
@@ -208,7 +209,7 @@ const FilterView = (props) => {
                 <div className="inline-flex" role="group">
                     {Object.keys(props.dimension).map((dimension) => {
                         return (
-                            <button key={dimension} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.dimension === dimension) ? " active" : "")} onClick={() => props.setActiveFilters(dimension, "dimension")}>
+                            <button key={dimension} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.dimension === dimension) ? " active" : "")} onClick={() => props.setActiveFilters([dimension], ["dimension"], currentCodices)}>
                                 {props.dimension[dimension].name}
                             </button>
                         )
@@ -220,10 +221,10 @@ const FilterView = (props) => {
                 <h5>{t("codices-label")}</h5>
                 <select id="genreSelect" className="dashboard form-select" value={genre} onChange={() => changeSelect()}>
                     <option value="">{t("library-genre-all")}</option>
-                    <SelectGenre genres={allGenres} />
+                    <SelectGenre genres={props.genres} />
                 </select>
                 <div className="dashboard-codices">
-                    <Codices genre={genre} codices={allCodices} />
+                    <Codices genre={genre} codices={props.codices} />
                 </div>
             </div>
 

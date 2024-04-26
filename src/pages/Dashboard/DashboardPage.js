@@ -1,8 +1,16 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import "./../../styles/Dashboard/Dashboard.css";
 
+// import component 👇
+import Drawer from 'react-modern-drawer'
+
+//import styles 👇
+import 'react-modern-drawer/dist/index.css'
+
+
 import x from "./../../assets/images/dashboard/x.png"
 import close from "./../../assets/images/close.png"
+import doubleArrow from "./../../assets/images/doubleArrow.png"
 
 import TabChart from "./TabChart";
 import HeatmapChart from "./HeatmapChart";
@@ -17,42 +25,52 @@ import csv_data from "./../../assets/data.csv"
 import * as d3 from "d3"
 
 import FilterView from './FilterView';
+import { globalEval } from 'jquery';
+
+
+function noSpaces(str) {
+    if (str)
+        str = str.replace(".", '')
+    if (str)
+        str = str.replace(/\s+/g, '')
+    return str
+}
 
 const DashboardPage = () => {
 
     const { t } = useTranslation();
+    const [csvIndexes, setCsvIndexes] = useState({})
 
     let categories = {
         "category-action": {
             name: t("category-action"),
-            index: 2
+            index: csvIndexes.action
         },
         "category-body": {
             name: t("category-body"),
-            index: 3
+            index: csvIndexes.anatomical_part
         },
         "category-emotion": {
             name: t("category-emotion"),
-            index: 4
+            index: csvIndexes.emotion
         }
     }
-
 
     let intention = {
         "intention-all": {
             name: t("intention-all"),
             csv_name: "",
-            index: 5
+            index: csvIndexes.intention
         },
         "intention-sacred": {
             name: t("intention-sacred"),
             csv_name: "Sagrado",
-            index: 5
+            index: csvIndexes.intention
         },
         "intention-profane": {
             name: t("intention-profane"),
             csv_name: "Profano",
-            index: 5
+            index: csvIndexes.intention
         }
     }
 
@@ -60,64 +78,63 @@ const DashboardPage = () => {
         "origin-all": {
             name: t("intention-all"),
             csv_name: "",
-            index: 6
+            index: csvIndexes.origin
         },
         "origin-literal": {
             name: t("origin-literal"),
             csv_name: "Literal",
-            index: 6
+            index: csvIndexes.origin
         },
         "origin-symbolic": {
             name: t("origin-symbolic"),
             csv_name: "Simbólico",
-            index: 6
+            index: csvIndexes.origin
         }
     }
-
 
     let explanation = {
         "explanation-all": {
             name: t("explanation-all"),
             csv_name: "",
-            index: 7
+            index: csvIndexes.explanation
         },
         "explanation-miraculous": {
             name: t("explanation-miraculous"),
             csv_name: "Miraculoso",
-            index: 7
+            index: csvIndexes.explanation
         },
         "explanation-wonderful": {
             name: t("explanation-wonderful"),
             csv_name: "Maravilhoso",
-            index: 7
+            index: csvIndexes.explanation
         },
         "explanation-none": {
             name: t("explanation-none"),
             csv_name: "Não aplicável",
-            index: 7
+            index: csvIndexes.explanation
         }
     }
-    
+
     let nature = {
         "nature-all": {
             name: t("nature-all"),
             csv_name: "",
-            index: 8
+            index: csvIndexes.nature
         },
         "nature-animal": {
             name: t("nature-animal"),
             csv_name: "Animal",
-            index: 8
+            index: csvIndexes.nature
         },
         "nature-human": {
             name: t("nature-human"),
             csv_name: "Humana",
-            index: 8
+            index: csvIndexes.nature
         },
         "nature-supernatural": {
             name: t("nature-supernatural"),
             csv_name: "Sobrenatural",
-            index: 8
+            index: csvIndexes.nature
         },
     }
 
@@ -125,22 +142,22 @@ const DashboardPage = () => {
         "dimension-all": {
             name: t("dimension-all"),
             csv_name: "",
-            index: 9
+            index: csvIndexes.dimension
         },
         "dimension-body": {
             name: t("dimension-body"),
             csv_name: "Corpo",
-            index: 9
+            index: csvIndexes.dimension
         },
         "dimension-soul": {
             name: t("dimension-soul"),
             csv_name: "Alma",
-            index: 9
+            index: csvIndexes.dimension
         },
         "dimension-transcendental": {
             name: t("dimension-transcendental"),
             csv_name: "Transcendental",
-            index: 9
+            index: csvIndexes.dimension
         },
     }
 
@@ -158,6 +175,8 @@ const DashboardPage = () => {
     const [originalGlobalData, setOriginalGlobalData] = useState([])
     const [activeCategories, setActiveCategories] = useState([Object.keys(categories)[0], Object.keys(categories)[1]]);
     const [activeCategory, setActiveCategory] = useState(null)
+    const [codices, setCodices] = useState({})
+    const [genres, setGenres] = useState([])
 
     const [changedFilter, setChangedFilter] = useState(false)
 
@@ -204,22 +223,68 @@ const DashboardPage = () => {
 
     useEffect(() => {
         d3.csv(csv_data).then(d => {
-            let globalData = d3.flatRollup(d, v => ({
-                participants_total: v.length,
-            }), 
-            d=> d.title,                //0
-            d=> d.subject_sex,          //1
-            d=> d.anatomical_part,      //2
-            d=> d.organs,               //3
-            d=> d.action,               //4
-            d=> d.intention,            //5
-            d=> d.origin,               //6
-            d=> d.explanation,          //7
-            d=> d.nature,               //8 
-            d=> d.dimension)            //9
+            let globalData = d3.flatRollup(d, v => v.length,
+                d => d["#"],
+                d => d.font_type,
+                d => d.genre,
+                d => d.title,
+                d => d.description,
+                d => d.subject_name,
+                d => d.subject_number,
+                d => d.subject_sex,
+                d => d.subject_qualities,
+                d => d.action,
+                d => d.nature,
+                d => d.dimension,
+                d => d.anatomical_part,
+                d => d.organs,
+                d => d.intention,
+                d => d.time,
+                d => d.place,
+                d => d.how,
+                d => d.with_name,
+                d => d.with_sex,
+                d => d.with_qualities,
+                d => d.about_name,
+                d => d.about_sex,
+                d => d.about_qualities,
+                d => d.action_motive,
+                d => d.object,
+                d => d.origin,
+                d => d.explanation,
+                d => d.PP,
+                d => d.observation)
 
             setOriginalGlobalData([...globalData])
             setGlobalData([...globalData])
+
+            let keys = Object.keys(d[0])
+            let indexes = {}
+            keys.forEach((key, index) => {
+                indexes[key] = index
+            })
+
+            setCsvIndexes(indexes)
+
+            let codicesGenres = d3.flatGroup(globalData, d => d[indexes.genre], d => d[indexes.title]).map(entry => [entry[0], entry[1]])
+
+            let allCodicesAux = {}
+            codicesGenres.forEach(entry => {
+                allCodicesAux[noSpaces(entry[1])] = {
+                    title: entry[1],
+                    genre: entry[0]
+                }
+            })
+
+            let sortedkeys = Object.keys(allCodicesAux).sort()
+            let allCodices = {}
+            sortedkeys.forEach((key) => {
+                allCodices[key] = allCodicesAux[key]
+            })
+
+            setCodices({ ...allCodices })
+            setGenres([...new Set(codicesGenres.map((entry) => entry[0]))].sort())
+
         }, []);
 
         document.getElementById("overlay").style.display = "none";
@@ -240,15 +305,13 @@ const DashboardPage = () => {
         }
     });
 
-    function setFilters(i, type, advanced) {
-
-        if (advanced){
-
-        }
-
+    function setFilters(newFilters, types, codicesFilter) {
         let filtered = originalGlobalData.filter((d) => {
+            if (!codicesFilter.includes(noSpaces(d[csvIndexes.title])))
+                return false;
+
             for (const [key, value] of Object.entries(activeFilters)) {
-                let filter = (key === type) ? i : value
+                let filter = (types.includes(key)) ? newFilters[types.indexOf(key)] : value
 
                 if (filter !== Object.keys(eval(key))[0] && d[eval(key)[filter].index] !== eval(key)[filter].csv_name)
                     return false;
@@ -259,12 +322,20 @@ const DashboardPage = () => {
         });
 
         let filters = { ...activeFilters }
-        filters[type] = i
+        types.forEach((type, index) => {
+            filters[type] = newFilters[index]
+        });
 
         setGlobalData(filtered)
         setActiveFilters(filters)
         setChangedFilter(true)
     }
+
+    const [isOpen, setIsOpen] = useState(false)
+    const toggleDrawer = () => {
+        setIsOpen((prevState) => !prevState)
+    }
+
     return (<>
 
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
@@ -277,6 +348,8 @@ const DashboardPage = () => {
                     explanation={explanation}
                     nature={nature}
                     dimension={dimension}
+                    codices={codices}
+                    genres={genres}
                     activeFilters={activeFilters} setActiveFilters={setFilters} />
                 <DragOverlay dropAnimation={{ duration: 500 }}>
                     {activeCategory ? (
@@ -318,6 +391,7 @@ const DashboardPage = () => {
                         <div id="viz3" className={"dashboard-viz3" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
                             <TabChart categories={categories}
                                 data={globalData}
+                                csvIndexes={csvIndexes}
                                 isExpanded={isTabchartExpanded}
                                 setIsExpanded={setIsTabchartExpanded}
                                 changedFilter={changedFilter}
@@ -326,9 +400,16 @@ const DashboardPage = () => {
                         <div className={"dashboard-viz4" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
                             <NetworkChart />
                         </div>
-                    </div>
 
-                    {/* <div id="loader" className="loader"></div> */}
+                    </div>
+                    <div className='dashboard-row3'>
+
+                        <button className="citations-btn" onClick={toggleDrawer}>
+                            <img alt="up-arrow" width="20px" height="20px" style={{ transform: "rotate(180deg)" }} src={doubleArrow} />
+                            citations
+                        </button>
+                        {/* TODO:  drawing missing */}
+                    </div>
                 </div>
             </div>
         </DndContext>

@@ -21,30 +21,29 @@ let heatmap_boundaries_legend = null
 
 
 function wrap_left(text, width) {
+
 	text.each(function () {
 		var text = d3.select(this),
-			t = text.text().trim(),
-			words = t.split(/\s+/).reverse(),
+			words = text.text().split(/\s+/),
 			line = [],
-			lineNumber = 0,
-			lineWeight = 1.1,
 			y = text.attr("y"),
 			x = text.attr("x"),
 			tspan = text.text(null).append("tspan").attr("x", x).attr("y", y);
 
-		let numberWords = words.length
-
 		words.forEach((word) => {
-			line.push(word);
-			tspan.text(line.join(" "));
-			if (tspan.node().getComputedTextLength() > width) {
-				line.pop();
+			if (word !== "") {
+				line.push(word);
 				tspan.text(line.join(" "));
-				tspan.attr("y", Number(text.attr("y")) - ((numberWords - (++lineNumber * (lineWeight + 0.3))) * 3))
-				line = [word];
-				tspan = text.append("tspan").attr("x", x).attr("y", Number(text.attr("y")) - ((numberWords - (++lineNumber * lineWeight)) * 3) + (8)).text(word);
+				if (tspan.node().getComputedTextLength() > width) {
+					line.pop();
+					tspan.text(line.join(" "));
+					line = [word];
+					tspan.attr("y", Number(tspan.attr("y")) - 10)
+					tspan = text.append("tspan").attr("x", x).attr("y", Number(tspan.attr("y")) + 20).text(word);
+				}
 			}
 		})
+		tspan.attr("y", Number(tspan.attr("y")) - 10)
 	});
 }
 
@@ -52,14 +51,15 @@ function wrap(text, width) {
 	text.each(function () {
 		var text = d3.select(this),
 			words = text.text().split(/\s+/).reverse(),
+			word,
 			line = [],
 			lineNumber = 0,
 			lineHeight = 0.8,
 			y = text.attr("y"),
 			dy = parseFloat(text.attr("dy")),
 			tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
-		words.forEach((word) => {
 
+		while (word = words.pop()) {
 			line.push(word);
 			tspan.text(line.join(" "));
 			if (tspan.node().getComputedTextLength() > width) {
@@ -68,7 +68,7 @@ function wrap(text, width) {
 				line = [word];
 				tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
 			}
-		})
+		}
 	});
 }
 
@@ -238,7 +238,7 @@ const HeatmapChart = (props) => {
 				.attr("y", (d, i) => i * (height_legend / (colorRange.length + 1)) + 5)
 				.attr("ry", 5)
 				.attr("width", 10)
-				.attr("height", (height_legend / (colorRange.length)) - ((colorRange.length === 1) ? 5: 0))
+				.attr("height", (height_legend / (colorRange.length)) - ((colorRange.length === 1) ? 5 : 0))
 				.style("stroke", "black")
 				.style("stroke-width", 1)
 				.style("fill", d => d)
@@ -380,7 +380,7 @@ const HeatmapChart = (props) => {
 			{props.data.length > 0 &&
 				<>
 					<div id="droppable" ref={setNodeRef} className={"shadow heatmap-area" + ((props.activeCategory !== null && props.activeCategories.length !== 2) ? " dashed" : "")}>
-						<div className='heatmap-info-icon'>
+						<div className='heatmap-left-sector'>
 							<img alt="info" id="infoHeatmap" src={info}
 								style={{ marginTop: "10px", marginLeft: "10px", cursor: "pointer" }} width="15" height="15"
 							/>

@@ -33,33 +33,30 @@ let pyramid_boundaries_bottom = null
 let pyramid_boundaries_left = null
 
 function wrap(text, width) {
-    text.each(function () {
-        var text = d3.select(this),
-            t = text.text().trim(),
-            words = t.split(/\s+/).reverse(),
-            line = [],
-            lineNumber = 0,
-            lineWeight = 1.1,
-            y = text.attr("y"),
-            x = text.attr("x"),
-            tspan = text.text(null).append("tspan").attr("x", x).attr("y", y);
+    
+	text.each(function () {
+		var text = d3.select(this),
+			words = text.text().split(/\s+/),
+			line = [],
+			y = text.attr("y"),
+			x = text.attr("x"),
+			tspan = text.text(null).append("tspan").attr("x", x).attr("y", y);
 
-        let numberWords = words.length
-
-        words.forEach((word) => {
-
-            word = words.pop()
-            line.push(word);
-            tspan.text(line.join(" "));
-            if (tspan.node().getComputedTextLength() > width) {
-                line.pop();
-                tspan.text(line.join(" "));
-                tspan.attr("y", Number(text.attr("y")) - ((numberWords - (++lineNumber * (lineWeight + 0.3))) * 3))
-                line = [word];
-                tspan = text.append("tspan").attr("x", x).attr("y", Number(text.attr("y")) - ((numberWords - (++lineNumber * lineWeight)) * 3) + (8)).text(word);
-            }
-        })
-    });
+		words.forEach((word) => {
+			if (word !== "") {
+				line.push(word);
+				tspan.text(line.join(" "));
+				if (tspan.node().getComputedTextLength() > width) {
+					line.pop();
+					tspan.text(line.join(" "));
+					line = [word];
+					tspan.attr("y", Number(tspan.attr("y")) - 8)
+					tspan = text.append("tspan").attr("x", x).attr("y", Number(tspan.attr("y")) + 16).text(word);
+				}
+			}
+		})
+		tspan.attr("y", Number(tspan.attr("y")) - 8)
+	});
 }
 
 const TabContent = (props) => {
@@ -92,14 +89,15 @@ const TabContent = (props) => {
 
     useEffect(() => {
         let index = props.categories[props.category].index
+        let sexIndex = props.csvIndexes.subject_sex
 
         let pyramidData = d3.rollup(props.data, v => ({
-            masc: d3.sum(v, d => ((d[1] === "Masc." || d[1] === "Mult." || d[1] === "N") ? 1 : 0)),
-            fem: d3.sum(v, d => ((d[1] === "Fem." || d[1] === "Mult." || d[1] === "N") ? 1 : 0)),
+            masc: d3.sum(v, d => ((d[sexIndex] === "Masc." || d[sexIndex] === "Mult." || d[sexIndex] === "N") ? 1 : 0)),
+            fem: d3.sum(v, d => ((d[sexIndex] === "Fem." || d[sexIndex] === "Mult." || d[sexIndex] === "N") ? 1 : 0)),
             total: d3.sum(v, d => {
-                if (d[1] === "Masc." || d[1] === "Fem.")
+                if (d[sexIndex] === "Masc." || d[sexIndex] === "Fem.")
                     return 1
-                if (d[1] === "Mult." || d[1] === "N")
+                if (d[sexIndex] === "Mult." || d[sexIndex] === "N")
                     return 2
 
                 return 0
@@ -603,6 +601,7 @@ const TabChart = (props) => {
                 {props.data.length > 0 &&
                     <TabContent categories={props.categories}
                         category={currentCategory}
+                        csvIndexes={props.csvIndexes}
                         data={props.data}
                         isExpanded={props.isExpanded}
                         setIsExpanded={props.setIsExpanded}
