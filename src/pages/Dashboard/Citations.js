@@ -14,7 +14,9 @@ function noSpaces(str) {
 }
 
 const Citations = (props) => {
-    const toggleCitation = (id, index) => {
+    const toggleCitation = (id) => {
+        let index = id-1
+
         let state = !d3.select(`[id="${id}"]`).classed("citations-sub-none")
         d3.select(`[id="${id}"]`).classed("citations-sub-none", state)
         d3.select(`[id="citation-arrow-${id}"]`).style("transform", state ? "none" : "rotate(90deg)")
@@ -27,7 +29,6 @@ const Citations = (props) => {
 
 			let heatmapKey1 = noSpaces(props.data[index][indexKey1])
 			let heatmapKey2 = noSpaces(props.data[index][indexKey2])
-
 
             let selectionHeatmap = d3.select(`.heatmap-${heatmapKey1}-${heatmapKey2}`);
             let elementHeatmap = selectionHeatmap.node();
@@ -105,9 +106,9 @@ const Citations = (props) => {
             {props.data.length !== 0 &&
                 <>
                     <div className='citations-content' id='citations-content'>
-                        {pagination.currentData && pagination.currentData.map(((entry, index) => (
+                        {pagination.currentData && pagination.currentData.map(((entry) => (
                             <div className='citations-dropdown' key={`div-${entry[props.csvIndexes["#"]]}`}>
-                                <button className='citations-dropbtn' key={`btn-${entry[props.csvIndexes["#"]]}`} onClick={() => toggleCitation(entry[props.csvIndexes["#"]], index)}>
+                                <button className='citations-dropbtn' key={`btn-${entry[props.csvIndexes["#"]]}`} onClick={() => toggleCitation(entry[props.csvIndexes["#"]])}>
                                     <ArrowForwardIosIcon id={`citation-arrow-${entry[props.csvIndexes["#"]]}`} style={{ width: "15px", marginRight: "5px" }} />
                                     {entry[props.csvIndexes.description]}
                                 </button>

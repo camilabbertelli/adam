@@ -60,6 +60,7 @@ function wrap(text, width) {
 }
 
 function noSpaces(str) {
+    str = str.replace(/[&\/\\#,+()$~%.'":*?<>{};]/g, '');
     return (str.replace(".", '')).replace(/\s+/g, '')
 }
 

@@ -73,7 +73,8 @@ function wrap(text, width) {
 }
 
 function noSpaces(str) {
-    return (str.replace(".", '')).replace(/\s+/g, '')
+    str = (str.replace(".", '')).replace(/\s+/g, '')
+	return str.replace(/[&\/\\#,+()$~%.'":*?<>{};]/g, '');
 }
 
 const HeatmapChart = (props) => {
