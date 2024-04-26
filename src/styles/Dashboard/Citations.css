@@ -1,0 +1,74 @@
+.citations-dropbtn {
+    font-style: italic;
+    border: none;
+    text-align: left;
+}
+
+.citations-sub-content {
+    font-size: 15px;
+}
+
+.citations-sub-content.citations-sub-none {
+    display: none;
+}
+
+.citations-table {
+    border: 2px solid #F2E3CB;
+    border-collapse: collapse;
+}
+
+/* .item must be first */
+.item {
+    align-items: center;
+    color: #000000;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-evenly;
+    font-size: 14px;
+    justify-content: center;
+}
+
+.disabled-page {
+    color: #808e9b;
+}
+
+.active {
+    border-bottom: solid 1px #4A1515;
+    color: #4A1515;
+}
+
+.next {
+    height: 40px;
+    position: absolute;
+    right: 0;
+    width: 10%;
+}
+
+.pagination {
+    align-items: center;
+    background-color: transparent;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly !important;
+    height: 60px;
+    justify-content: center;
+    list-style-type: none;
+    position: relative;
+    width: 100%;
+}
+
+.pagination-page {
+    font-weight: 700;
+}
+
+.previous {
+    font-size: 4px;
+    height: 40px;
+    left: 0;
+    position: absolute;
+    width: 10%;
+}
+
+.MuiSvgIcon-root{
+    fill: #4A1515 !important;
+}

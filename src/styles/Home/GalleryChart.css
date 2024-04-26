@@ -65,9 +65,8 @@ h4.title {
 }
 
 .card-click {
-    background-color: #FFEFD5;
+    background-color: #FFEFD5 !important;
     text-align: left;
-    padding: 5%;
 }
 
 @media(prefers-reduced-motion) {

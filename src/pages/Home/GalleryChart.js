@@ -6,6 +6,8 @@ import '../../styles/Home/GalleryChart.css';
 
 import gallery from './../../assets/gallery.js';
 
+import { Card } from 'flowbite-react';
+
 const GalleryImage = ({ src, title, description }) => {
     return (
         <>
@@ -15,13 +17,12 @@ const GalleryImage = ({ src, title, description }) => {
                     <div className='modal fade' id={title.replace(/\s+/g, '')} tabIndex="-1" aria-hidden="true">
                         <div className='modal-dialog'>
                             <div className='modal-body'>
-                                <div className="card">
-                                    <img alt="medieval-img" src={require(`./../../assets/images/gallery/${src}`)} className='card-img-top d-block w-100' />
-                                    <div className="card-body card-click">
-                                        <h4 className="title">{title}</h4>
-                                        <p>{description}</p>
-                                    </div>
-                                </div>
+                                <Card
+                                    className="max-w-bg card-click" imgAlt='medieval-img'
+                                    imgSrc={require(`./../../assets/images/gallery/${src}`)}>
+                                    <h4 className="title">{title}</h4>
+                                    <p>{description}</p>
+                                </Card>
                             </div>
                         </div>
                     </div>

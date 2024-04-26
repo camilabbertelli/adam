@@ -1,14 +1,9 @@
 import * as React from 'react';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 
-import { Button, Position, PrimaryButton, Tooltip, Viewer, Worker } from '@react-pdf-viewer/core';
-import {
-    highlightPlugin,
-    MessageIcon,
-} from '@react-pdf-viewer/highlight';
+import { Viewer, Worker } from '@react-pdf-viewer/core';
 
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
-import { color } from 'd3';
 
 
 const PdfViewer = ({ fileUrl, theme }) => {
@@ -32,12 +27,7 @@ const PdfViewer = ({ fileUrl, theme }) => {
         renderToolbar,
         sidebarTabs: (defaultTabs) => [
             defaultTabs[0],
-        ],
-        toolbarPlugin: {
-            searchPlugin: {
-                keyword: ["denny"]
-            }
-        }
+        ]
     });
     
     const { renderDefaultToolbar } = defaultLayoutPluginInstance.toolbarPluginInstance;

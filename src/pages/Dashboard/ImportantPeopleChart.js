@@ -6,7 +6,7 @@ const ImportantPeopleChart = () => {
     return (
         <>
         <div className="imp-people-area shadow">
-
+            
         </div>
         </>
     )

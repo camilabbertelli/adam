@@ -123,7 +123,7 @@ const FilterView = (props) => {
     }
 
     const changeFilterType = () => {
-        props.setActiveFilters(["nature-all", "dimension-all"], ["nature", "dimension"], currentCodices)
+        props.setActiveFilters(["nature-all", "dimension-all"], ["nature", "dimension"])
         setSimpleFilter(!simpleFilter)
     }
 
@@ -156,7 +156,7 @@ const FilterView = (props) => {
                 <div className="inline-flex" role="group">
                     {Object.keys(props.intention).map((intention) => {
                         return (
-                            <button key={intention} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.intention === intention) ? " active" : "")} onClick={() => props.setActiveFilters([intention], ["intention"], currentCodices)}>
+                            <button key={intention} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.intention === intention) ? " active" : "")} onClick={() => props.setActiveFilters([intention], ["intention"])}>
                                 {props.intention[intention].name}
                             </button>
                         )
@@ -169,7 +169,7 @@ const FilterView = (props) => {
                 <div className="inline-flex" role="group">
                 {Object.keys(props.origin).map((origin) => {
                         return (
-                            <button key={origin} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.origin === origin) ? " active" : "")} onClick={() => props.setActiveFilters([origin], ["origin"], currentCodices)}>
+                            <button key={origin} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.origin === origin) ? " active" : "")} onClick={() => props.setActiveFilters([origin], ["origin"])}>
                                {props.origin[origin].name}
                             </button>
                         )
@@ -182,7 +182,7 @@ const FilterView = (props) => {
                 <div className="inline-flex" role="group">
                 {Object.keys(props.explanation).map((explanation) => {
                         return (
-                            <button key={explanation} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.explanation === explanation) ? " active" : "")} onClick={() => props.setActiveFilters([explanation], ["explanation"], currentCodices)}>
+                            <button key={explanation} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.explanation === explanation) ? " active" : "")} onClick={() => props.setActiveFilters([explanation], ["explanation"])}>
                                 {props.explanation[explanation].name}
                             </button>
                         )
@@ -195,7 +195,7 @@ const FilterView = (props) => {
                 <div className="inline-flex" role="group">
                 {Object.keys(props.nature).map((nature) => {
                         return (
-                            <button key={nature} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.nature === nature) ? " active" : "")} onClick={() => props.setActiveFilters([nature], ["nature"], currentCodices)}>
+                            <button key={nature} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.nature === nature) ? " active" : "")} onClick={() => props.setActiveFilters([nature], ["nature"])}>
                                 {props.nature[nature].name}
                             </button>
                         )
@@ -209,7 +209,7 @@ const FilterView = (props) => {
                 <div className="inline-flex" role="group">
                     {Object.keys(props.dimension).map((dimension) => {
                         return (
-                            <button key={dimension} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.dimension === dimension) ? " active" : "")} onClick={() => props.setActiveFilters([dimension], ["dimension"], currentCodices)}>
+                            <button key={dimension} type="button" className={"shadow dashboard-filter-options" + ((props.activeFilters.dimension === dimension) ? " active" : "")} onClick={() => props.setActiveFilters([dimension], ["dimension"])}>
                                 {props.dimension[dimension].name}
                             </button>
                         )

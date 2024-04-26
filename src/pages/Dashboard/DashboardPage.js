@@ -1,12 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import "./../../styles/Dashboard/Dashboard.css";
 
-// import component 👇
-import Drawer from 'react-modern-drawer'
-
-//import styles 👇
-import 'react-modern-drawer/dist/index.css'
-
+import { Drawer } from 'flowbite-react';
 
 import x from "./../../assets/images/dashboard/x.png"
 import close from "./../../assets/images/close.png"
@@ -25,7 +20,7 @@ import csv_data from "./../../assets/data.csv"
 import * as d3 from "d3"
 
 import FilterView from './FilterView';
-import { globalEval } from 'jquery';
+import Citations from './Citations';
 
 
 function noSpaces(str) {
@@ -161,6 +156,9 @@ const DashboardPage = () => {
         },
     }
 
+    const [globalData, setGlobalData] = useState([])
+    const [originalGlobalData, setOriginalGlobalData] = useState([])
+
     const [activeFilters, setActiveFilters] = useState(
         {
             intention: Object.keys(intention)[0],
@@ -170,11 +168,9 @@ const DashboardPage = () => {
             nature: Object.keys(nature)[0],
             dimension: Object.keys(dimension)[0],
         })
-
-    const [globalData, setGlobalData] = useState([])
-    const [originalGlobalData, setOriginalGlobalData] = useState([])
     const [activeCategories, setActiveCategories] = useState([Object.keys(categories)[0], Object.keys(categories)[1]]);
     const [activeCategory, setActiveCategory] = useState(null)
+    const [activeCodices, setActiveCodices] = useState([])
     const [codices, setCodices] = useState({})
     const [genres, setGenres] = useState([])
 
@@ -283,6 +279,7 @@ const DashboardPage = () => {
             })
 
             setCodices({ ...allCodices })
+            setActiveCodices([...sortedkeys])
             setGenres([...new Set(codicesGenres.map((entry) => entry[0]))].sort())
 
         }, []);
@@ -307,7 +304,11 @@ const DashboardPage = () => {
 
     function setFilters(newFilters, types, codicesFilter) {
         let filtered = originalGlobalData.filter((d) => {
-            if (!codicesFilter.includes(noSpaces(d[csvIndexes.title])))
+            if (codicesFilter) {
+                if (!codicesFilter.includes(noSpaces(d[csvIndexes.title])))
+                    return false;
+            }
+            else if (!activeCodices.includes(noSpaces(d[csvIndexes.title])))
                 return false;
 
             for (const [key, value] of Object.entries(activeFilters)) {
@@ -328,13 +329,13 @@ const DashboardPage = () => {
 
         setGlobalData(filtered)
         setActiveFilters(filters)
+        if (codicesFilter)
+            setActiveCodices(codicesFilter)
         setChangedFilter(true)
     }
 
-    const [isOpen, setIsOpen] = useState(false)
-    const toggleDrawer = () => {
-        setIsOpen((prevState) => !prevState)
-    }
+    const [isOpen, setIsOpen] = useState(false);
+    const handleClose = () => setIsOpen(false);
 
     return (<>
 
@@ -404,11 +405,24 @@ const DashboardPage = () => {
                     </div>
                     <div className='dashboard-row3'>
 
-                        <button className="citations-btn" onClick={toggleDrawer}>
+                        <button className="citations-btn" type='button' onClick={() => setIsOpen(!isOpen)}>
                             <img alt="up-arrow" width="20px" height="20px" style={{ transform: "rotate(180deg)" }} src={doubleArrow} />
                             citations
                         </button>
-                        {/* TODO:  drawing missing */}
+
+
+
+                        <Drawer backdrop={false} open={isOpen} onClose={handleClose}
+                            className='citations-drawer shadow' position='bottom'>
+                            <button className="citations-btn" type='button' onClick={() => setIsOpen(false)}>
+                                <img alt="up-arrow" width="20px" height="20px" src={doubleArrow} />
+                                citations
+                            </button>
+
+                            <Citations
+                                data={globalData}
+                                csvIndexes={csvIndexes} />
+                        </Drawer>
                     </div>
                 </div>
             </div>
