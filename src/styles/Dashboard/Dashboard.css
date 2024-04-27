@@ -40,12 +40,12 @@
 }
 
 .dashboard-viz1 {
-    width: 65%;
+    width: 55%;
     height: calc((100dvh - var(--nav-bar-height)) * 0.5);
 }
 
 .dashboard-viz2 {
-    width: 35%;
+    width: 45%;
     height: calc((100dvh - var(--nav-bar-height)) * 0.5);
 }
 

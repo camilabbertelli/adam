@@ -69,7 +69,7 @@
 
 
     "imp-label": "Important people",
-
+    "imp-no-selection-label" : "Select a person",
 
     "database-content": "Content",
     "database-select-all" : "Select all",

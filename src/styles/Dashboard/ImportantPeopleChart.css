@@ -5,7 +5,7 @@
     position: relative;
     top: 50%;
     left: 10px;
-    transform: translate(0, -50%);
+    transform: translate(-0%, -50%);
 
     display: flex;
     flex-direction: row;
@@ -19,26 +19,43 @@
 }
 
 .imp-expand{
-    transform: scale(1.5) translate(-70%, 0%);
+    transform: scale(1.5) translate(-45%, 0%);
     z-index: 10;        
 }
 
 .imp-left-section{
-    width: 30%;
+    width: 25%;
     height: 100%;
-    background-color: #EAEAEA;
+    background-color: #e4dad2;
     border-radius: 20px 0px 0px 20px;
 
     overflow: auto;
+    
+    direction: rtl;
+}
+
+.imp-left-btn{
+    direction: ltr;
+    text-align: left;
+    padding: 1% 5%;
+    width: 100%;
+    border: solid 0.5px #c9c0b8;
+    font-size: medium;
+}
+
+.selected-imp{
+    background-color: #dbc4b1;
+    border: solid 1px #b8a18e;
 }
 
 .imp-right-section{
-    width: 70%;
+    width: 75%;
     height: 100%;
 
     display: flex;
     flex-direction: column;
     align-items: center;
+
 }
 
 .imp-top-section{
@@ -66,4 +83,94 @@ h5.imp-top-title{
 .imp-bottom-section{
     width: 100%;
     height: 85%;
+
+    display: flex;
+    flex-direction: column;
 }
+
+
+.imp-selected-people{
+    width: 100%;
+    height: 15%;
+    display: flex;
+    flex-direction: row;
+}
+
+.imp-empty-space{
+    width: 28%;
+    height: 100%;
+    border-right: 1px solid #dddddd;
+}
+
+.imp-selected-names{
+    width: 36%;
+    height: 100%;
+    padding: 1%;
+    position: relative;
+}
+
+.imp-x{
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+}
+
+.imp-selected-section{
+    width: 100%;
+    height: 85%;
+
+    display: flex;
+    flex-direction: row;
+}
+
+
+/* .imp-labels-content{
+    width: 28%;
+    height: 100%;
+    border-right: 1px solid #dddddd;
+}
+
+
+.imp-selected-content{
+    width: 72%;
+    height: 100%;
+} */
+
+
+.default-selection{
+    width: 100%;
+    height: 90%;
+
+    font-size: small;
+
+    border: dashed;
+    border-radius: 50px;
+    background-color: #dbc4b1;
+    border: solid 1px #b8a18e;
+    text-align: center;
+
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.no-selection{
+    width: 100%;
+    height: 100%;
+
+    border: dashed;
+    border-radius: 50px;
+
+    display: flex;
+    background-color: white;
+    border: dashed;
+
+    opacity: 0.4;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    cursor: auto;
+}
+
