@@ -19,6 +19,8 @@ function noSpaces(str) {
 
 const ImportantPeopleChart = (props) => {
 
+    let tooltipImp;
+
     const { t } = useTranslation()
     const [isExpanded, setIsExpanded] = useState(false)
 
@@ -90,6 +92,90 @@ const ImportantPeopleChart = (props) => {
         setSelectedImp(aux)
     }
 
+    useEffect(() => {
+
+        let mouseOver = function (event, d) {
+            tooltipImp
+                .style("opacity", "1");
+        }
+
+        let mouseMove = function (event, d) {
+            let component = d3.select(this).node()
+            let componentId = component.id
+            let [person, key] = componentId.split("|")
+
+            if (person === "undefined"){
+                tooltipImp
+                .style("opacity", "0")
+                return
+            }
+
+            let componentData = component.getAttribute("data-dict")
+            componentData = JSON.parse(componentData)
+
+            let content = ""
+
+            Object.keys(componentData).sort().map((i) => {
+                content = content.concat(`<span>${i}:${componentData[i]}<br/></span>`)
+            })
+
+            tooltipImp
+                .html(
+                    `<b>Person: </b>${impPeople[person].name}<br/>
+                     <b>Field: </b>${key} <br/><br/>
+                    ${content}`)
+                .style("top", event.pageY - 10 + "px")
+                .style("left", event.pageX + 10 + "px")
+        }
+
+        let mouseLeave = function (event, d) {
+            tooltipImp
+                .style("opacity", "0")
+
+            let element = document.getElementById('tooltipImp')
+            if (element)
+                element.innerHTML = "";
+        }
+
+        let infoMouseOverImp = function (event, d) {
+			tooltipImp
+				.style("opacity", 1);
+
+			tooltipImp.html(`<center><b>${t("information")}</b></center>
+						  ${t("information-imp")}`)
+				.style("top", event.pageY - 10 + "px")
+				.style("left", event.pageX + 10 + "px")
+		}
+
+
+		let infoMouseLeaveImp = function (event, d) {
+			tooltipImp
+				.style("opacity", 0)
+
+			let element = document.getElementById('tooltipImp')
+			if (element)
+				element.innerHTML = "";
+		}
+
+        d3.selectAll("#tooltipImp").remove();
+        // create a tooltipImp
+        tooltipImp = d3.select("body")
+            .append("div")
+            .attr("id", "tooltipImp")
+            .attr("class", "tooltip shadow rounded")
+            .attr("padding", "1px")
+            .style("opacity", "0")
+
+        d3.select("#infoImp")
+            .on("mouseover", infoMouseOverImp)
+            .on("mouseleave", infoMouseLeaveImp)
+
+        d3.selectAll(`.imp-td`)
+            .on("mouseover", mouseOver)
+            .on("mouseleave", mouseLeave)
+            .on("mousemove", mouseMove)
+    }, [props.data, impPeople]);
+
     return (
         <>
             <div className="imp-people-area shadow">
@@ -160,26 +246,29 @@ const ImportantPeopleChart = (props) => {
                                                 let selectArray1 = []
                                                 let selectArray2 = []
 
+                                                let selectDict1 = {}
+                                                let selectDict2 = {}
+
                                                 if (selectedImp.length > 0) {
                                                     impPeople[selectedImp[0]].entries.forEach((entry) => {
-                                                        selectArray1.push(entry[index])
+                                                        selectDict1[entry[index]] = (selectDict1[entry[index]] === undefined ? 1 : selectDict1[entry[index]] + 1)
                                                     })
 
-                                                    selectArray1 = [...new Set(selectArray1)].sort()
+                                                    selectArray1 = [...new Set(Object.keys(selectDict1))].sort()
                                                 }
 
                                                 if (selectedImp.length === 2) {
                                                     impPeople[selectedImp[1]].entries.forEach((entry) => {
-                                                        selectArray2.push(entry[index])
+                                                        selectDict2[entry[index]] = (selectDict2[entry[index]] === undefined ? 1 : selectDict2[entry[index]] + 1)
                                                     })
 
-                                                    selectArray2 = [...new Set(selectArray2)].sort()
+                                                    selectArray2 = [...new Set(Object.keys(selectDict2))].sort()
                                                 }
 
                                                 return (
                                                     <tr className="imp-table" key={`tr-${key}`}>
                                                         <th className="imp-th">{key}</th>
-                                                        <td className="imp-td" style={{ borderRight: "1px solid #dddddd" }}>
+                                                        <td data-dict={JSON.stringify({...selectDict1})} className="imp-td" id={`${selectedImp[0]}|${key}`} style={{ borderRight: "1px solid #dddddd" }}>
                                                             {selectArray1.map(function (text, i) {
                                                                 if (text === "")
                                                                     return ""
@@ -197,7 +286,7 @@ const ImportantPeopleChart = (props) => {
                                                             })}
                                                             {selectArray1.length === 0 && "-"}
                                                         </td>
-                                                        <td className="imp-td">
+                                                        <td data-dict={JSON.stringify({...selectDict2})} className="imp-td" id={`${selectedImp[1]}|${key}`}>
                                                             {selectArray2.map(function (text, i) {
                                                                 if (text === "")
                                                                     return ""

@@ -368,7 +368,7 @@ const DashboardPage = () => {
                                 setIsExpanded={setIsHeatmapExpanded}
                                 changedFilter={changedFilter}
                                 setChangedFilter={setChangedFilter}>
-                                <div className={"heatmap-drag"} style={{ minHeight: "15%", top: ((activeCategories.length !== 2) ? "40%" : "0%"), left: ((activeCategories.length !== 2) ? "7%" : "0%") }}>
+                                <div className={"heatmap-drag"} style={{ minHeight: "15%", top: ((activeCategories.length !== 2) ? "40%" : "0%"), left: "7%" }}>
                                     <div className={"category " + (activeCategories.length ? "" : "default ") + (activeCategories.length === 2 ? " shrink" : "")} key={activeCategories.length ? activeCategories[0] : "category1"}>
                                         {activeCategories.length ? categories[activeCategories[0]].name : t("category-label")}
                                     </div>

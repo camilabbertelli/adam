@@ -76,13 +76,14 @@ const TimelineChart = ({ codices }) => {
                 .duration(200)
                 .attr("opacity", 1)
                 .attr("r", 2.5)
+            
+            tooltipCodex
+                .style("opacity", "1");
+
         }
 
         let mouseMove = function (event, d) {
             let title = d3.select(this).attr('id')
-
-            tooltipCodex
-                .style("opacity", "1");
 
             tooltipCodex
                 .html(
