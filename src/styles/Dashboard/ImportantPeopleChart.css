@@ -7,6 +7,63 @@
     left: 10px;
     transform: translate(0, -50%);
 
+    display: flex;
+    flex-direction: row;
+
     background-color: white;
     border-radius: 20px;
+
+    z-index: 0;
+    transition: transform 0.5s,          /*  changed property  */
+                z-index 0.5s;
+}
+
+.imp-expand{
+    transform: scale(1.5) translate(-70%, 0%);
+    z-index: 10;        
+}
+
+.imp-left-section{
+    width: 30%;
+    height: 100%;
+    background-color: #EAEAEA;
+    border-radius: 20px 0px 0px 20px;
+
+    overflow: auto;
+}
+
+.imp-right-section{
+    width: 70%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.imp-top-section{
+    display: grid;
+    width: 100%;
+    height: 15%;
+    grid-template-columns: 90% 10%;
+    align-items: center;
+}
+
+.imp-title{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+h5.imp-top-title{
+    margin: 0;
+    vertical-align: middle;
+}
+
+.imp-bottom-section{
+    width: 100%;
+    height: 85%;
 }

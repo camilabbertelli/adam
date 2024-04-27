@@ -8,6 +8,7 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import * as d3 from "d3"
 import ReactPaginate from "react-paginate";
 import "react-paginate/theme/basic/react-paginate.css"
+import { useTranslation } from "react-i18next";
 
 function noSpaces(str) {
     return (str.replace(".", '')).replace(/\s+/g, '')
@@ -97,11 +98,13 @@ const Citations = (props) => {
         setPagination({ ...pagination, offset })
     }
 
+    const {t} = useTranslation()
+
     return (
         <>
             {props.data.length === 0 &&
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "250px" }}>
-                    No data to show
+                    {t("no-data-to-show")}
                 </div>}
             {props.data.length !== 0 &&
                 <>

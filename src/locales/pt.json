@@ -4,6 +4,8 @@
     "information-pyramid": "Passe o rato sobre uma barra para obter mais informações. Clique no ícone à direita para alterar os tipos de agrupamento.",
     "information-heatmap": "Passe o mouse sobre uma célula para obter mais informações. <br> Clique na mesma para mudar para a visualização detalhada.",
 
+    
+    "no-data-to-show": "Nenhum dado para mostrar",
 
     "navbar_home": "Início",
     "navbar_dashboard": "Dashboard",
@@ -55,6 +57,11 @@
     "dimension-body": "Corpo",
     "dimension-soul": "Alma",
     "dimension-transcendental": "Transcendental",
+
+    "citations-label": "citações",
+
+
+    "imp-label": "Pessoas importantes",
 
 
 

@@ -422,7 +422,7 @@ const HeatmapChart = (props) => {
 				</>}
 			{props.data.length === 0 &&
 				<div id="droppable" ref={setNodeRef} className="shadow heatmap-area" style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
-					No data to show
+					{t("no-data-to-show")}
 				</div>
 			}
 

@@ -591,6 +591,8 @@ const TabChart = (props) => {
         props.setCurrentTabchartCategory(category)
     }
 
+    const {t} = useTranslation()
+
     return (
         <>
             <div className="tab-chart-area">
@@ -621,7 +623,7 @@ const TabChart = (props) => {
                         setChangedFilter={props.setChangedFilter} />}
                 {props.data.length === 0 &&
                     <div id="tab-content" className="tab-chart-area-content shadow" style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
-                        No data to show
+                        {t("no-data-to-show")}
                     </div>}
             </div>
         </>

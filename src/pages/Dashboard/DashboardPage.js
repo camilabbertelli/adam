@@ -33,7 +33,7 @@ function noSpaces(str) {
 
 const DashboardPage = () => {
 
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     const [csvIndexes, setCsvIndexes] = useState({})
 
     let categories = {
@@ -386,7 +386,11 @@ const DashboardPage = () => {
                             </HeatmapChart>
                         </div>
                         <div className={"dashboard-viz2" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
-                            <ImportantPeopleChart />
+                            <ImportantPeopleChart 
+                            data={globalData}
+                            csvIndexes={csvIndexes}
+                            isExpanded={isImpPeopleExpanded}
+                            setIsExpanded={setIsImpPeopleExpanded}/>
                         </div>
                     </div>
                     <div className="dashboard-row2">
@@ -409,14 +413,14 @@ const DashboardPage = () => {
 
                         <button className="citations-btn" type='button' onClick={() => setIsOpen(!isOpen)}>
                             <img alt="up-arrow" width="20px" height="20px" style={{ transform: "rotate(180deg)" }} src={doubleArrow} />
-                            citations
+                            {t("citations-label")}
                         </button>
 
                         <Drawer backdrop={false} open={isOpen} onClose={handleClose}
                             className='citations-drawer shadow' position='bottom'>
                             <button className="citations-btn" type='button' onClick={() => setIsOpen(false)}>
                                 <img alt="up-arrow" width="20px" height="20px" src={doubleArrow} />
-                                citations
+                                {t("citations-label")}
                             </button>
                             <Citations
                                 data={globalData}

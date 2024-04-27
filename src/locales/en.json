@@ -4,7 +4,7 @@
     "information-pyramid": "Hover on a bar for more information. <br> Click on the icon on the right to change grouping types.",
     "information-heatmap": "Hover on a cell for more information. <br> Click on it to change to the detailed view.",
 
-
+    "no-data-to-show": "No data to show",
 
     "navbar_home": "Home",
     "navbar_dashboard": "Dashboard",
@@ -56,7 +56,7 @@
     "dimension-soul": "Soul",
     "dimension-transcendental": "Transcendental",
 
-    
+    "citations-label": "citations",
 
     "icon-expand" : "Expand",
     "icon-shrink" : "Shrink",
@@ -68,6 +68,7 @@
     "pyramid-total": "Total occurrences",
 
 
+    "imp-label": "Important people",
 
 
     "database-content": "Content",
