@@ -25,9 +25,7 @@ import Citations from './Citations';
 
 function noSpaces(str) {
     if (str)
-        str = str.replace(".", '')
-    if (str)
-        str = str.replace(/\s+/g, '')
+        str = str.replace(/[\s+&\/\\#,+()$~%.'":*?<>{};]/g, '');
     return str
 }
 

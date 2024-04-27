@@ -17,9 +17,7 @@ import PdfViewer from "./PdfViewer";
 
 function noSpaces(str) {
     if (str)
-        str = str.replace(".", '')
-    if (str)
-        str = str.replace(/\s+/g, '')
+        str = str.replace(/[\s+&\/\\#,+()$~%.'":*?<>{};]/g, '');
     return str
 }
 

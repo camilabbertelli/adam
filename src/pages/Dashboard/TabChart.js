@@ -60,8 +60,9 @@ function wrap(text, width) {
 }
 
 function noSpaces(str) {
-    str = str.replace(/[&\/\\#,+()$~%.'":*?<>{};]/g, '');
-    return (str.replace(".", '')).replace(/\s+/g, '')
+    if (str)
+        str = str.replace(/[\s+&\/\\#,+()$~%.'":*?<>{};]/g, '');
+    return str
 }
 
 const TabContent = (props) => {

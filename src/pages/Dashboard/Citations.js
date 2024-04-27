@@ -11,7 +11,9 @@ import "react-paginate/theme/basic/react-paginate.css"
 import { useTranslation } from "react-i18next";
 
 function noSpaces(str) {
-    return (str.replace(".", '')).replace(/\s+/g, '')
+    if (str)
+        str = str.replace(/[\s+&\/\\#,+()$~%.'":*?<>{};]/g, '');
+    return str
 }
 
 const Citations = (props) => {
@@ -72,6 +74,21 @@ const Citations = (props) => {
                     if (selectionPyramid) selectionPyramid.transition().duration(500).style("stroke-width", "0")
                 }, 2000);
             });
+
+            // imp people
+			let impKey = noSpaces(props.data[index][props.csvIndexes.subject_name])
+
+            let selectionImp = d3.select(`#imp-${impKey}`);
+            let elementImp = selectionImp.node();
+            
+            if (elementImp){
+                elementImp.scrollIntoView({block: "center"});
+                selectionImp.transition().duration(500).style("border", "solid 0.5px black")
+            }
+
+            setTimeout(() => {
+                if (selectionImp) selectionImp.transition().duration(500).style("border", "solid 0.5px #c9c0b8")
+            }, 2000);
         }
     }
 

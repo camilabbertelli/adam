@@ -13,9 +13,7 @@ import * as d3 from "d3"
 
 function noSpaces(str) {
     if (str)
-        str = str.replace(".", '')
-    if (str)
-        str = str.replace(/\s+/g, '')
+        str = str.replace(/[\s+&\/\\#,+()$~%.'":*?<>{};]/g, '');
     return str
 }
 
@@ -59,9 +57,14 @@ const ImportantPeopleChart = (props) => {
         let imp = {}
         sortedkeys.forEach((key) => {
             if (key !== "")
-            imp[key] = impAux[key]
+                imp[key] = impAux[key]
         })
 
+        let aux = [...selectedImp]
+        if (selectedImp.length > 0 && !sortedkeys.includes(selectedImp[0])) aux.splice(0, 1)
+        if (selectedImp.length === 2 && !sortedkeys.includes(selectedImp[1])) aux.splice(aux.indexOf(selectedImp[1]), 1)
+
+        setSelectedImp(aux)
         setImpPeople(imp)
     }, [props.data])
 
@@ -97,7 +100,8 @@ const ImportantPeopleChart = (props) => {
                                 let entry = impPeople[key]
                                 return (
                                     <button
-                                        key={key} id={key}
+                                        key={key}
+                                        id={`imp-${noSpaces(key)}`}
                                         className={"imp-left-btn " + ((selectedImp.includes(key)) ? "selected-imp" : "")}
                                         onClick={() => changeSelected(key)}>
                                         {entry.name}
@@ -121,12 +125,16 @@ const ImportantPeopleChart = (props) => {
                             <div className='imp-bottom-section'>
                                 <div className='imp-selected-people'>
                                     <div className='imp-empty-space'></div>
-                                    <div className='imp-selected-names' style={{borderRight: "1px solid #dddddd"}}>
+                                    <div className='imp-selected-names'>
+
                                         <div title={selectedImp.length > 0 ? impPeople[selectedImp[0]].name : t("imp-no-selection-label")}
                                             className={"default-selection " + (selectedImp.length ? "" : "no-selection")}
                                             key={selectedImp.length ? selectedImp[0] : "selected1"}
                                             onClick={() => removeSelectedImp(0)}>
-                                            {selectedImp.length > 0 ? impPeople[selectedImp[0]].name : t("imp-no-selection-label")}
+
+                                            <span style={{ width: "calc(100%)", display: "inline-block", verticalAlign: "middle", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                                {selectedImp.length > 0 ? impPeople[selectedImp[0]].name : t("imp-no-selection-label")}
+                                            </span>
                                         </div>
                                         {selectedImp.length > 0 && <img title={t("icon-close")} className={"imp-x"} alt="x" src={x} width="15px" height="15px" onClick={() => removeSelectedImp(0)} />}
                                     </div>
@@ -135,13 +143,83 @@ const ImportantPeopleChart = (props) => {
                                             className={"default-selection " + (selectedImp.length === 2 ? "" : "no-selection")}
                                             key={selectedImp.length === 2 ? selectedImp[1] : "selected2"}
                                             onClick={() => removeSelectedImp(0)}>
-                                            {selectedImp.length === 2 ? impPeople[selectedImp[1]].name : t("imp-no-selection-label")}
+                                            <span style={{ width: "calc(100%)", display: "inline-block", verticalAlign: "middle", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                                {selectedImp.length === 2 ? impPeople[selectedImp[1]].name : t("imp-no-selection-label")}
+                                            </span>
                                         </div>
                                         {selectedImp.length === 2 && <img title={t("icon-close")} className={"imp-x"} alt="x" src={x} width="15px" height="15px" onClick={() => removeSelectedImp(1)} />}
                                     </div>
                                 </div>
                                 <div className='imp-selected-section'>
-                                    
+                                    <table width={"100%"} key={`table-imp`}>
+                                        <tbody key={`tbody-imp`}>
+                                            {Object.keys(props.csvIndexes).map((key, index) => {
+                                                if (key === "#" || key === "description" || key === "subject_name")
+                                                    return ""
+
+                                                let selectArray1 = []
+                                                let selectArray2 = []
+
+                                                if (selectedImp.length > 0) {
+                                                    impPeople[selectedImp[0]].entries.forEach((entry) => {
+                                                        selectArray1.push(entry[index])
+                                                    })
+
+                                                    selectArray1 = [...new Set(selectArray1)].sort()
+                                                }
+
+                                                if (selectedImp.length === 2) {
+                                                    impPeople[selectedImp[1]].entries.forEach((entry) => {
+                                                        selectArray2.push(entry[index])
+                                                    })
+
+                                                    selectArray2 = [...new Set(selectArray2)].sort()
+                                                }
+
+                                                return (
+                                                    <tr className="imp-table" key={`tr-${key}`}>
+                                                        <th className="imp-th">{key}</th>
+                                                        <td className="imp-td" style={{ borderRight: "1px solid #dddddd" }}>
+                                                            {selectArray1.map(function (text, i) {
+                                                                if (text === "")
+                                                                    return ""
+
+                                                                if (selectArray2.includes(text)) {
+                                                                    if ((selectArray1.length - 1) === i)
+                                                                        return (<span className='imp-same-content'>{text} </span>)
+                                                                    return (<span><span className='imp-same-content'>{text}</span> | </span>)
+                                                                }
+
+                                                                if ((selectArray1.length - 1) === i)
+                                                                    return (`${text}`)
+
+                                                                return (`${text} | `)
+                                                            })}
+                                                            {selectArray1.length === 0 && "-"}
+                                                        </td>
+                                                        <td className="imp-td">
+                                                            {selectArray2.map(function (text, i) {
+                                                                if (text === "")
+                                                                    return ""
+
+                                                                if (selectArray1.includes(text)) {
+                                                                    if ((selectArray2.length - 1) === i)
+                                                                        return (<span className='imp-same-content'>{text}</span>)
+                                                                    return (<span><span className='imp-same-content'>{text}</span> | </span>)
+                                                                }
+
+                                                                if ((selectArray2.length - 1) === i)
+                                                                    return (`${text}`)
+                                                                
+                                                                return (`${text} | `)
+                                                            })}
+                                                            {selectArray2.length === 0 && "-"}
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })}
+                                        </tbody>
+                                    </table>
                                 </div>
 
                             </div>

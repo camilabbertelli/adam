@@ -32,6 +32,7 @@
     overflow: auto;
     
     direction: rtl;
+    font-family: lato;
 }
 
 .imp-left-btn{
@@ -39,13 +40,13 @@
     text-align: left;
     padding: 1% 5%;
     width: 100%;
+    background-color: #e4dad2;
     border: solid 0.5px #c9c0b8;
-    font-size: medium;
+    font-size: 14.5px;
 }
 
 .selected-imp{
     background-color: #dbc4b1;
-    border: solid 1px #b8a18e;
 }
 
 .imp-right-section{
@@ -86,20 +87,34 @@ h5.imp-top-title{
 
     display: flex;
     flex-direction: column;
+    align-items: center;
+    
+    font-family: lato;
 }
 
 
 .imp-selected-people{
-    width: 100%;
+    width: calc(100%);
     height: 15%;
     display: flex;
     flex-direction: row;
+    scrollbar-gutter: stable;
+    overflow-y: scroll;
+
+}
+
+.imp-selected-people::-webkit-scrollbar{
+    background-color: transparent;
+}
+
+.imp-selected-people::-webkit-scrollbar-track{
+    background-color: transparent;
+    box-shadow: none;
 }
 
 .imp-empty-space{
     width: 28%;
     height: 100%;
-    border-right: 1px solid #dddddd;
 }
 
 .imp-selected-names{
@@ -117,54 +132,42 @@ h5.imp-top-title{
 }
 
 .imp-selected-section{
-    width: 100%;
+    width: calc(100%);
     height: 85%;
 
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    scrollbar-gutter: stable;
+    overflow-y: overlay;
 }
-
-
-/* .imp-labels-content{
-    width: 28%;
-    height: 100%;
-    border-right: 1px solid #dddddd;
-}
-
-
-.imp-selected-content{
-    width: 72%;
-    height: 100%;
-} */
 
 
 .default-selection{
-    width: 100%;
-    height: 90%;
+    width: calc(100%);
+    height: calc(90%);
 
     font-size: small;
 
     border: dashed;
     border-radius: 50px;
-    background-color: #dbc4b1;
-    border: solid 1px #b8a18e;
+    border: 1px solid #b1a9a3;
     text-align: center;
 
-    display: flex;
-    align-items: center;
+    padding: 1% 3%;
+
     cursor: pointer;
+    line-height: calc(250%);
 }
 
 .no-selection{
     width: 100%;
     height: 100%;
 
-    border: dashed;
+    border: 1.5px dashed ;
     border-radius: 50px;
 
     display: flex;
     background-color: white;
-    border: dashed;
 
     opacity: 0.4;
     justify-content: center;
@@ -174,3 +177,25 @@ h5.imp-top-title{
     cursor: auto;
 }
 
+
+.imp-th{
+    width: 28%;
+    padding: 1%;
+    text-overflow: clip;
+    font-size:smaller;
+    border-right:1px solid #dddddd;
+    border-bottom:1px solid #dddddd;
+    font-weight: normal;
+}
+
+.imp-td{
+    width: 36%;
+    font-size:small;
+    text-align: center;
+    border-bottom:1px solid #dddddd;
+}
+
+.imp-same-content{
+    color: #507A7D;
+    background-color: #f1eeee;
+}
