@@ -121,8 +121,8 @@ const ImportantPeopleChart = (props) => {
 
             tooltipImp
                 .html(
-                    `<b>Person: </b>${impPeople[person].name}<br/>
-                     <b>Field: </b>${key} <br/><br/>
+                    `<b>${t("imp-tooltip-person")}: </b>${impPeople[person].name}<br/>
+                     <b>${t("imp-tooltip-field")}: </b>${key} <br/><br/>
                     ${content}`)
                 .style("top", event.pageY - 10 + "px")
                 .style("left", event.pageX + 10 + "px")
@@ -182,18 +182,21 @@ const ImportantPeopleChart = (props) => {
                 {props.data.length > 0 &&
                     <>
                         <div className='imp-left-section'>
+                            <div className='imp-left-section-inside'>
+
                             {Object.keys(impPeople).map(function (key) {
                                 let entry = impPeople[key]
                                 return (
                                     <button
                                         key={key}
                                         id={`imp-${noSpaces(key)}`}
-                                        className={"imp-left-btn " + ((selectedImp.includes(key)) ? "selected-imp" : "")}
+                                        className={"imp-left-btn" + ((selectedImp.includes(key)) ? " selected-imp" : "")}
                                         onClick={() => changeSelected(key)}>
                                         {entry.name}
                                     </button>
                                 )
                             })}
+                            </div>
                         </div>
                         <div className='imp-right-section'>
                             <div className='imp-top-section'>

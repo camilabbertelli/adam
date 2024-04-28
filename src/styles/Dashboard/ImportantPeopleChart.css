@@ -29,20 +29,37 @@
     background-color: #e4dad2;
     border-radius: 20px 0px 0px 20px;
 
-    overflow: auto;
-    
-    direction: rtl;
     font-family: lato;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.imp-left-section-inside{
+    width: 100%;
+    height: 85%;
+    overflow: auto;
+    direction: rtl;
 }
 
 .imp-left-btn{
     direction: ltr;
     text-align: left;
-    padding: 1% 5%;
+    padding: 2% 5%;
     width: 100%;
     background-color: #e4dad2;
-    border: solid 0.5px #c9c0b8;
+    border-top: solid 0.5px #c9c0b8;
+    border-bottom: solid 0.5px #c9c0b8;
     font-size: 14.5px;
+}
+
+.imp-left-btn:nth-child(1){
+    border-top: none;
+}
+
+.imp-left-btn:nth-last-child(1){
+    border-bottom: none;
 }
 
 .selected-imp{

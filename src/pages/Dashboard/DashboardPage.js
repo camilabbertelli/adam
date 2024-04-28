@@ -403,7 +403,11 @@ const DashboardPage = () => {
                                 setChangedFilter={setChangedFilter} />
                         </div>
                         <div className={"dashboard-viz4" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
-                            <NetworkChart />
+                            <NetworkChart 
+                            data={globalData}
+                            csvIndexes={csvIndexes}
+                            isExpanded={isNetworkExpanded}
+                            setIsExpanded={setIsNetworkExpanded}/>
                         </div>
 
                     </div>
