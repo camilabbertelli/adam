@@ -114,10 +114,8 @@ const HeatmapChart = (props) => {
 			tooltipHeatmap.style("opacity", 1)
 			d3.select(this).transition().duration(100)
 				.style("stroke", "black")
-		}
 
-		const mousemove = function (event, d) {
-			tooltipHeatmap
+				tooltipHeatmap
 				.html(`<center><b>${d[0]} x ${d[1]}</b></center>
 						Occurrence: ${d[2]}`)
 				.style("top", event.pageY - 10 + "px")
@@ -342,7 +340,6 @@ const HeatmapChart = (props) => {
 				.style("stroke-width", 3)
 				.style("stroke", "#ECECEC")
 				.on("mouseover", mouseover)
-				.on("mousemove", mousemove)
 				.on("mouseleave", mouseleave)
 
 		}

@@ -83,6 +83,9 @@
         align-items: center;
 
         text-align: center;
+
+        user-select: none;
+        cursor: pointer;
     }
 
     div.category.shrink{

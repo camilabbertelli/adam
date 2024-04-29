@@ -125,7 +125,10 @@ const TabContent = (props) => {
 
         let factor = maxScale > 0.1 ? 0.05 : 0.01
 
-        function mousemove(event, d, type) {
+        // tooltipPyramid events
+        const mouseover = function (event, d, type) {
+            tooltipPyramid.style("opacity", 1)
+            d3.select(this).transition().duration(100).style("stroke-width", 1)
 
             var previousElement = d3.select(".barMasc");
             var isTotal = false
@@ -145,12 +148,6 @@ const TabContent = (props) => {
                         Occurrence: ${data}`)
                 .style("top", event.pageY - 10 + "px")
                 .style("left", event.pageX + 10 + "px");
-        }
-
-        // tooltipPyramid events
-        const mouseover = function (d) {
-            tooltipPyramid.style("opacity", 1)
-            d3.select(this).transition().duration(100).style("stroke-width", 1)
         };
 
         const mouseleave = function (d) {
@@ -403,8 +400,7 @@ const TabContent = (props) => {
                 .style("fill", (totalOccurrences) ? "#935959" : "#7BB3B7")
                 .style("stroke", "black")
                 .style("stroke-width", 0)
-                .on("mouseover", mouseover)
-                .on("mousemove", (event, d) => mousemove(event, d, "masc"))
+                .on("mouseover", (event, d) => mouseover(event, d, "masc"))
                 .on("mouseleave", mouseleave)
             //.on("click", mouseclickmale)
 
@@ -431,8 +427,7 @@ const TabContent = (props) => {
                 .style("fill", "#DA9C80")
                 .style("stroke", "black")
                 .style("stroke-width", 0)
-                .on("mouseover", mouseover)
-                .on("mousemove", (event, d) => mousemove(event, d, "fem"))
+                .on("mouseover", (event, d) => mouseover(event, d, "fem"))
                 .on("mouseleave", mouseleave)
             //.on("click", mouseclickfemale)
         }

@@ -55,12 +55,10 @@ const MapChart = ({ codices }) => {
             element.innerHTML = "";
     }
 
-    let mouseOver = function (event, d) {
+    let mouseover = function (event, d) {
         d3.selectAll(`#${noSpaces(d.title)}`)
             .classed("hover", true)
-    }
 
-    let mouseMove = function (event, d) {
         tooltipMark
             .style("opacity", "1");
 
@@ -73,7 +71,7 @@ const MapChart = ({ codices }) => {
             .style("left", event.pageX + 10 + "px")
     }
 
-    let mouseLeave = function (event, d) {
+    let mouseleave = function (event, d) {
         tooltipMark
             .style("opacity", "0")
 
@@ -186,9 +184,8 @@ const MapChart = ({ codices }) => {
             .attr("fill", "white")
             .attr("stroke", "#54220b")
             .attr("transform", function (d) { return "translate(" + projection([d.long, d.lat]) + ")"; })
-            .on("mouseover", mouseOver)
-            .on("mouseleave", mouseLeave)
-            .on("mousemove", mouseMove)
+            .on("mouseover", mouseover)
+            .on("mouseleave", mouseleave)
     }, []);
 
     return (

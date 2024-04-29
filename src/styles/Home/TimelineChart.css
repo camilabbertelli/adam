@@ -107,4 +107,6 @@ div.image-component.hover {
     width: 100%;
     font-size: 12px;
     text-align: center;
+
+    user-select: none;
 }

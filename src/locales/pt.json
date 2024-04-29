@@ -7,6 +7,10 @@
     "information-network": "Passe o rato sobre uma conexão ou célula para obter mais informações.",
     "imp-tooltip-person": "Pessoa",
     "imp-tooltip-field": "Campo",
+    "network-tooltip-person": "Pessoa",
+    "network-tooltip-groups": "Grupo(s)",
+    "network-tooltip-sex": "Sexo",
+    "network-tooltip-qualities": "Qualidades",
 
     "no-data-to-show": "Nenhum dado para mostrar",
 

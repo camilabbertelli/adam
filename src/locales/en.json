@@ -7,6 +7,10 @@
     "information-network": "Hover over the connections or cells for more information.",
     "imp-tooltip-person": "Person",
     "imp-tooltip-field": "Field",
+    "network-tooltip-person": "Person",
+    "network-tooltip-groups": "Group(s)",
+    "network-tooltip-sex": "Sex",
+    "network-tooltip-qualities": "Qualities",
 
 
     "no-data-to-show": "No data to show",

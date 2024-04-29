@@ -83,3 +83,7 @@ td.cardinal {
         transform: rotate(360deg);
     }
 }
+
+.search-input{
+    color: black;
+}

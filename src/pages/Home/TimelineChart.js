@@ -63,7 +63,7 @@ const Sec = ({ codices }) => {
 const TimelineChart = ({ codices }) => {
     useEffect(() => {
 
-        let mouseOver = function (event, d) {
+        let mouseover = function (event, d) {
             let title = d3.select(this).attr('id')
 
             d3.selectAll(`.mark`)
@@ -80,11 +80,6 @@ const TimelineChart = ({ codices }) => {
             tooltipCodex
                 .style("opacity", "1");
 
-        }
-
-        let mouseMove = function (event, d) {
-            let title = d3.select(this).attr('id')
-
             tooltipCodex
                 .html(
                     `<center><b>${title}</b></center>`)
@@ -92,7 +87,7 @@ const TimelineChart = ({ codices }) => {
                 .style("left", event.pageX + 10 + "px")
         }
 
-        let mouseLeave = function (event, d) {
+        let mouseleave = function (event, d) {
             tooltipCodex
                 .style("opacity", "0")
 
@@ -117,9 +112,8 @@ const TimelineChart = ({ codices }) => {
             .style("opacity", "0")
 
         d3.selectAll(`.image-component`)
-            .on("mouseover", mouseOver)
-            .on("mouseleave", mouseLeave)
-            .on("mousemove", mouseMove)
+            .on("mouseover", mouseover)
+            .on("mouseleave", mouseleave)
     }, []);
 
     return (

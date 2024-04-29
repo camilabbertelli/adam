@@ -94,41 +94,51 @@ const ImportantPeopleChart = (props) => {
 
     useEffect(() => {
 
-        let mouseOver = function (event, d) {
+        let mouseover = function (event, d) {
             tooltipImp
                 .style("opacity", "1");
-        }
 
-        let mouseMove = function (event, d) {
-            let component = d3.select(this).node()
-            let componentId = component.id
-            let [person, key] = componentId.split("|")
-
-            if (person === "undefined"){
+                let component = d3.select(this).node()
+                let componentId = component.id
+                let [person, key] = componentId.split("|")
+    
+                if (person === "undefined"){
+                    tooltipImp
+                    .style("opacity", "0")
+                    return
+                }
+    
+                let componentData = component.getAttribute("data-dict")
+                componentData = JSON.parse(componentData)
+    
+                let content = ""
+    
+                Object.keys(componentData).sort().map((i) => {
+                    content = content.concat(`<span>${i}:${componentData[i]}<br/></span>`)
+                })
+    
                 tooltipImp
-                .style("opacity", "0")
-                return
-            }
+                    .html(
+                        `<b>${t("imp-tooltip-person")}: </b>${impPeople[person].name}<br/>
+                         <b>${t("imp-tooltip-field")}: </b>${key} <br/><br/>
+                        ${content}`)
+                    .style("top", event.pageY - 10 + "px")
+                    .style("left", event.pageX + 10 + "px")
 
-            let componentData = component.getAttribute("data-dict")
-            componentData = JSON.parse(componentData)
-
-            let content = ""
-
-            Object.keys(componentData).sort().map((i) => {
-                content = content.concat(`<span>${i}:${componentData[i]}<br/></span>`)
-            })
-
-            tooltipImp
-                .html(
-                    `<b>${t("imp-tooltip-person")}: </b>${impPeople[person].name}<br/>
-                     <b>${t("imp-tooltip-field")}: </b>${key} <br/><br/>
-                    ${content}`)
-                .style("top", event.pageY - 10 + "px")
-                .style("left", event.pageX + 10 + "px")
+                let tooltip_rect = tooltipImp.node().getBoundingClientRect();
+                if (tooltip_rect.x + tooltip_rect.width > window.innerWidth){
+                    tooltipImp.style("left", event.pageX - 20 - tooltip_rect.width + "px")
+                    tooltipImp.style("top", event.pageY + 10 + "px")
+                }
+                
+                tooltip_rect = tooltipImp.node().getBoundingClientRect();
+                if (tooltip_rect.y + tooltip_rect.height > window.innerHeight){
+                    tooltipImp.style("left", tooltip_rect.left - 10 - tooltip_rect.width + "px")
+                    tooltipImp.style("top", event.pageY + 20 - tooltip_rect.height + "px")
+                }
         }
 
-        let mouseLeave = function (event, d) {
+        let mouseleave = function (event, d) {
             tooltipImp
                 .style("opacity", "0")
 
@@ -171,9 +181,8 @@ const ImportantPeopleChart = (props) => {
             .on("mouseleave", infoMouseLeaveImp)
 
         d3.selectAll(`.imp-td`)
-            .on("mouseover", mouseOver)
-            .on("mouseleave", mouseLeave)
-            .on("mousemove", mouseMove)
+            .on("mouseover", mouseover)
+            .on("mouseleave", mouseleave)
     }, [props.data, impPeople]);
 
     return (
