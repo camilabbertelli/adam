@@ -13,7 +13,7 @@
     "network-tooltip-qualities": "Qualidades",
     "network-tooltip-source": "Fonte",
     "network-tooltip-target": "Destino",
-    "network-tooltip-value": "Valor",
+    "network-tooltip-value": "Quantidade",
     "network-tooltip-type": "Tipo",
     "network-tooltip-citation": "Citação",
 
@@ -80,7 +80,8 @@
     "network-label": "Rede de relacionamentos",
     "network-about-who": "Sobre quem",
     "network-with-who": "Com quem",
-
+    "network-tooltip-about": "Sobre",
+    "network-tooltip-with": "Com",
 
     "icon-expand" : "Expandir",
     "icon-shrink" : "Encolher",

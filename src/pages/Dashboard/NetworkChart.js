@@ -91,20 +91,18 @@ const NetworkChart = (props) => {
                 
                 return (l.source.person === d.target.person && l.target.person === d.source.person) || (l.source.person === d.source.person && l.target.person === d.target.person && l.type != d.type)
             })
-            if (d.source.person === "Deus" && d.target.person === "Galaz")
-            console.log(aux)
             let after = ""
             aux.forEach(str => 
                 after += `<br/><b>${t("network-tooltip-source")}: </b>${str.source.person}<br/>
                             <b>${t("network-tooltip-target")}: </b>${str.target.person}<br/>
-                            <b>${t("network-tooltip-type")}: </b><i>${str.type}</i><br/>
+                            <b>${t("network-tooltip-type")}: </b><i>${str.type === "with" ? t("network-tooltip-with") : t("network-tooltip-about")}</i><br/>
                             <b>${t("network-tooltip-value")}: </b><i>${str.value}</i><br/>
                             <b>${t("network-tooltip-citation")}: </b> ${str.citations.join(" | ")}<br/>`)
 
             tooltipNetwork
                 .html(`<b>${t("network-tooltip-source")}: </b>${d.source.person}<br/>
                        <b>${t("network-tooltip-target")}: </b>${d.target.person}<br/>
-                       <b>${t("network-tooltip-type")}: </b><i>${d.type}</i><br/>
+                       <b>${t("network-tooltip-type")}: </b><i>${d.type === "with" ? t("network-tooltip-with") : t("network-tooltip-about")}</i><br/>
                        <b>${t("network-tooltip-value")}: </b><i>${d.value}</i><br/>
                        <b>${t("network-tooltip-citation")}: </b> ${d.citations.join(" | ")}<br/>${after}`)
                 .style("top", event.pageY - 10 + "px")
@@ -446,8 +444,6 @@ const NetworkChart = (props) => {
                 aux.splice(index, 1)
 
             setSelectedNodes(aux)
-
-            console.log(aux)
         }
 
         function ticked() {
@@ -540,12 +536,12 @@ const NetworkChart = (props) => {
 
                     <div className='shadow network-legend'>
                         <div id="about" className={'network-legend-items' + (typeClick === "about" ? " network-about-selected" : "")}
-                            onClick={() => setTypeClick(typeClick === "about" ? "" : "about")} >
+                            onClick={() => setTypeClick(typeClick === "" ? ("about") : "")} >
                             <hr className='legend-about-who' />
                             <p style={{ lineHeight: "200%" }}>{t("network-about-who")}</p>
                         </div>
                         <div id="with" className={'network-legend-items' + (typeClick === "with" ? " network-with-selected" : "")}
-                            onClick={() => setTypeClick(typeClick === "with" ? "" : "with")}>
+                            onClick={() => setTypeClick(typeClick === "" ? ("with") : "")}>
                             <hr className='legend-with-who' />
                             <p style={{ lineHeight: "200%" }}>{t("network-with-who")}</p>
                         </div>

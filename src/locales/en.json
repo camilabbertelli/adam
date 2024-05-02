@@ -13,7 +13,7 @@
     "network-tooltip-qualities": "Qualities",
     "network-tooltip-source": "Source",
     "network-tooltip-target": "Target",
-    "network-tooltip-value": "Value",
+    "network-tooltip-value": "Amount",
     "network-tooltip-type": "Type",
     "network-tooltip-citation": "Citation",
 
@@ -89,7 +89,8 @@
     "network-label": "Relationship network",
     "network-about-who": "About who",
     "network-with-who": "With who",
-
+    "network-tooltip-about": "About",
+    "network-tooltip-with": "With",
 
     "database-content": "Content",
     "database-select-all" : "Select all",
