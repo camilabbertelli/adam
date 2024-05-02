@@ -1,16 +1,21 @@
 {
     "information": "Information",
     "information-map": "Hover on a mark for more information.",
-    "information-pyramid": "Hover on a bar for more information. <br> Click on the icon on the right to change grouping types.",
-    "information-heatmap": "Hover on a cell for more information. <br> Click on it to change to the detailed view.",
+    "information-pyramid": "Hover on a bar for more information. <br>Click on the icon on the right to change grouping types.",
+    "information-heatmap": "Hover on a cell for more information. <br>Click on it to change to the detailed view.",
     "information-imp": "Hover on a cell for more information. Choose two people to compare their characteristics.",
-    "information-network": "Hover over the connections or cells for more information.",
+    "information-network": "Hover over the connections or cells for more information.<br/><b>Attention:</b> Zoom out to see all connections.",
     "imp-tooltip-person": "Person",
     "imp-tooltip-field": "Field",
     "network-tooltip-person": "Person",
     "network-tooltip-groups": "Group(s)",
     "network-tooltip-sex": "Sex",
     "network-tooltip-qualities": "Qualities",
+    "network-tooltip-source": "Source",
+    "network-tooltip-target": "Target",
+    "network-tooltip-value": "Value",
+    "network-tooltip-type": "Type",
+    "network-tooltip-citation": "Citation",
 
 
     "no-data-to-show": "No data to show",
@@ -79,6 +84,7 @@
 
     "imp-label": "Important people",
     "imp-no-selection-label" : "Select a person",
+    "search-imp-placeholder": "Search people",
 
     "network-label": "Relationship network",
     "network-about-who": "About who",

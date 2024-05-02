@@ -25,7 +25,7 @@ const ImportantPeopleChart = (props) => {
     const [isExpanded, setIsExpanded] = useState(false)
 
     const [impPeople, setImpPeople] = useState([])
-
+    const [searchedPeople, setSearchedPeople] = useState([])
     const [selectedImp, setSelectedImp] = useState([])
 
     function expandImp() {
@@ -61,6 +61,7 @@ const ImportantPeopleChart = (props) => {
             if (key !== "")
                 imp[key] = impAux[key]
         })
+        sortedkeys.filter(key => key !== "")
 
         let aux = [...selectedImp]
         if (selectedImp.length > 0 && !sortedkeys.includes(selectedImp[0])) aux.splice(0, 1)
@@ -68,6 +69,7 @@ const ImportantPeopleChart = (props) => {
 
         setSelectedImp(aux)
         setImpPeople(imp)
+        setSearchedPeople(Array.from(Object.keys(imp)))
     }, [props.data])
 
     function removeSelectedImp(index) {
@@ -77,7 +79,6 @@ const ImportantPeopleChart = (props) => {
     }
 
     function changeSelected(key) {
-        let entry = impPeople[key]
 
         let aux = [...selectedImp]
 
@@ -114,7 +115,7 @@ const ImportantPeopleChart = (props) => {
                 let content = ""
     
                 Object.keys(componentData).sort().map((i) => {
-                    content = content.concat(`<span>${i}:${componentData[i]}<br/></span>`)
+                    content = content.concat(`<span>${i}: ${componentData[i]}<br/></span>`)
                 })
     
                 tooltipImp
@@ -185,15 +186,35 @@ const ImportantPeopleChart = (props) => {
             .on("mouseleave", mouseleave)
     }, [props.data, impPeople]);
 
+    function changeSearchInput(){
+        let element = document.getElementById('imp-search-bar')
+        let search = element.value
+
+        if (search === ""){
+            setSearchedPeople(Array.from(Object.keys(impPeople)))
+            return
+        }
+
+        let searchedKeys = []
+
+        Array.from(Object.keys(impPeople)).forEach(key => {
+            let entry = impPeople[key]
+            if (entry.name.toLowerCase().includes(search.toLowerCase()))
+                searchedKeys.push(key)
+        })
+
+        setSearchedPeople(searchedKeys)
+    }
+
     return (
         <>
             <div className="imp-people-area shadow">
                 {props.data.length > 0 &&
                     <>
                         <div className='imp-left-section'>
+                            <input id="imp-search-bar" type='text' className='imp-search-bar' placeholder={t("search-imp-placeholder")} text="" onChange={() => changeSearchInput()}/>
                             <div className='imp-left-section-inside'>
-
-                            {Object.keys(impPeople).map(function (key) {
+                            {Array.from(searchedPeople).map(key => {
                                 let entry = impPeople[key]
                                 return (
                                     <button

@@ -123,7 +123,8 @@ const FilterView = (props) => {
     }
 
     const changeFilterType = () => {
-        props.setActiveFilters(["nature-all", "dimension-all"], ["nature", "dimension"])
+        if (props.activeFilters.nature !== "nature-all" || props.activeFilters.dimension !== "dimension-all")
+            props.setActiveFilters(["nature-all", "dimension-all"], ["nature", "dimension"])
         setSimpleFilter(!simpleFilter)
     }
 

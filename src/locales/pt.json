@@ -1,16 +1,21 @@
 {
     "information": "Informação",
     "information-map": "Passe o rato sobre um pin para obter mais informações.",
-    "information-pyramid": "Passe o rato sobre uma barra para obter mais informações. Clique no ícone à direita para alterar os tipos de agrupamento.",
-    "information-heatmap": "Passe o mouse sobre uma célula para obter mais informações. <br> Clique na mesma para mudar para a visualização detalhada.",
+    "information-pyramid": "Passe o rato sobre uma barra para obter mais informações. <br/>Clique no ícone à direita para alterar os tipos de agrupamento.",
+    "information-heatmap": "Passe o mouse sobre uma célula para obter mais informações. <br/>Clique na mesma para mudar para a visualização detalhada.",
     "information-imp": "Passe o mouse sobre uma célula para obter mais informações. Escolha duas pessoas para comparar suas características.",
-    "information-network": "Passe o rato sobre uma conexão ou célula para obter mais informações.",
+    "information-network": "Passe o rato sobre uma conexão ou célula para obter mais informações. <br/><b>Atenção:</b> Afaste para ver todas as conexões.",
     "imp-tooltip-person": "Pessoa",
     "imp-tooltip-field": "Campo",
     "network-tooltip-person": "Pessoa",
     "network-tooltip-groups": "Grupo(s)",
     "network-tooltip-sex": "Sexo",
     "network-tooltip-qualities": "Qualidades",
+    "network-tooltip-source": "Fonte",
+    "network-tooltip-target": "Destino",
+    "network-tooltip-value": "Valor",
+    "network-tooltip-type": "Tipo",
+    "network-tooltip-citation": "Citação",
 
     "no-data-to-show": "Nenhum dado para mostrar",
 
@@ -70,6 +75,7 @@
 
     "imp-label": "Pessoas importantes",
     "imp-no-selection-label" : "Selecione uma pessoa",
+    "search-imp-placeholder": "Procurar pessoas",
 
     "network-label": "Rede de relacionamentos",
     "network-about-who": "Sobre quem",

@@ -14,16 +14,17 @@
     border-radius: 20px;
 
     z-index: 0;
-    transition: transform 0.5s,          /*  changed property  */
-                z-index 0.5s;
+    transition: transform 0.5s,
+        /*  changed property  */
+        z-index 0.5s;
 }
 
-.imp-expand{
+.imp-expand {
     transform: scale(1.5) translate(-45%, 0%);
-    z-index: 10;        
+    z-index: 10;
 }
 
-.imp-left-section{
+.imp-left-section {
     width: 25%;
     height: 100%;
     background-color: #e4dad2;
@@ -36,14 +37,23 @@
     justify-content: center;
 }
 
-.imp-left-section-inside{
+.imp-search-bar {
     width: 100%;
-    height: 85%;
+    height: 10%;
+    border-style: none;
+    font-size: 13px;
+    border-radius: 20px 0 0 0;
+    background-color: #f1f1f1;
+}
+
+.imp-left-section-inside {
+    width: 100%;
+    height: 90%;
     overflow: auto;
     direction: rtl;
 }
 
-.imp-left-btn{
+.imp-left-btn {
     direction: ltr;
     text-align: left;
     padding: 2% 5%;
@@ -54,19 +64,19 @@
     font-size: 14.5px;
 }
 
-.imp-left-btn:nth-child(1){
+.imp-left-btn:nth-child(1) {
     border-top: none;
 }
 
-.imp-left-btn:nth-last-child(1){
+.imp-left-btn:nth-last-child(1) {
     border-bottom: none;
 }
 
-.selected-imp{
+.selected-imp {
     background-color: #dbc4b1;
 }
 
-.imp-right-section{
+.imp-right-section {
     width: 75%;
     height: 100%;
 
@@ -76,7 +86,7 @@
 
 }
 
-.imp-top-section{
+.imp-top-section {
     display: grid;
     width: 100%;
     height: 15%;
@@ -84,7 +94,7 @@
     align-items: center;
 }
 
-.imp-title{
+.imp-title {
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -93,24 +103,24 @@
     justify-content: center;
 }
 
-h5.imp-top-title{
+h5.imp-top-title {
     margin: 0;
     vertical-align: middle;
 }
 
-.imp-bottom-section{
+.imp-bottom-section {
     width: 100%;
     height: 85%;
 
     display: flex;
     flex-direction: column;
     align-items: center;
-    
+
     font-family: lato;
 }
 
 
-.imp-selected-people{
+.imp-selected-people {
     width: calc(100%);
     height: 15%;
     display: flex;
@@ -120,35 +130,35 @@ h5.imp-top-title{
 
 }
 
-.imp-selected-people::-webkit-scrollbar{
+.imp-selected-people::-webkit-scrollbar {
     background-color: transparent;
 }
 
-.imp-selected-people::-webkit-scrollbar-track{
+.imp-selected-people::-webkit-scrollbar-track {
     background-color: transparent;
     box-shadow: none;
 }
 
-.imp-empty-space{
+.imp-empty-space {
     width: 28%;
     height: 100%;
 }
 
-.imp-selected-names{
+.imp-selected-names {
     width: 36%;
     height: 100%;
     padding: 1%;
     position: relative;
 }
 
-.imp-x{
+.imp-x {
     position: absolute;
     right: 0;
     top: 0;
     cursor: pointer;
 }
 
-.imp-selected-section{
+.imp-selected-section {
     width: calc(100%);
     height: 85%;
 
@@ -159,7 +169,7 @@ h5.imp-top-title{
 }
 
 
-.default-selection{
+.default-selection {
     width: calc(100%);
     height: calc(90%);
 
@@ -176,11 +186,11 @@ h5.imp-top-title{
     line-height: calc(250%);
 }
 
-.no-selection{
+.no-selection {
     width: 100%;
     height: 100%;
 
-    border: 1.5px dashed ;
+    border: 1.5px dashed;
     border-radius: 50px;
 
     display: flex;
@@ -195,24 +205,24 @@ h5.imp-top-title{
 }
 
 
-.imp-th{
+.imp-th {
     width: 28%;
     padding: 1%;
     text-overflow: clip;
-    font-size:smaller;
-    border-right:1px solid #dddddd;
-    border-bottom:1px solid #dddddd;
+    font-size: smaller;
+    border-right: 1px solid #dddddd;
+    border-bottom: 1px solid #dddddd;
     font-weight: normal;
 }
 
-.imp-td{
+.imp-td {
     width: 36%;
-    font-size:small;
+    font-size: small;
     text-align: center;
-    border-bottom:1px solid #dddddd;
+    border-bottom: 1px solid #dddddd;
 }
 
-.imp-same-content{
+.imp-same-content {
     color: #507A7D;
     background-color: #f1eeee;
 }
