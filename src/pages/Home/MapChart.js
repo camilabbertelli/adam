@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 function noSpaces(str) {
     if (str)
-        str = str.replace(/[\s+&\/\\#,+()$~%.'":*?<>{};]/g, '');
+        str = str.replace(/[\s+&/\\#,+()$~%.'":*?<>{};]/g, '');
     return str
 }
 

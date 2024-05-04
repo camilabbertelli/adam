@@ -25,9 +25,11 @@ import Citations from './Citations';
 
 function noSpaces(str) {
     if (str)
-        str = str.replace(/[\s+&\/\\#,+()$~%.'":*?<>{};]/g, '');
+        str = str.replace(/[\s+&/\\#,+()$~%.'":*?<>{};]/g, '');
     return str
 }
+
+let colorCodices = null
 
 const DashboardPage = () => {
 
@@ -277,6 +279,7 @@ const DashboardPage = () => {
                 allCodices[key] = allCodicesAux[key]
             })
 
+            colorCodices = d3.scaleOrdinal(Object.keys(allCodices), ["#cc8b86", "#9FB9BA", "#C5C5B3", "#B89283", "#FFD18C", "#7587AA"]);
             setCodices({ ...allCodices })
             setActiveCodices([...sortedkeys])
             setGenres([...new Set(codicesGenres.map((entry) => entry[0]))].sort())
@@ -290,6 +293,8 @@ const DashboardPage = () => {
     const [isTabchartExpanded, setIsTabchartExpanded] = useState(false)
     const [isImpPeopleExpanded, setIsImpPeopleExpanded] = useState(false)
     const [isNetworkExpanded, setIsNetworkExpanded] = useState(false)
+
+    const [networkData, setNetworkData] = useState([])
 
     window.addEventListener('click', function (e) {
         if (document.getElementById('overlay') && document.getElementById('overlay').contains(e.target)) {
@@ -336,6 +341,7 @@ const DashboardPage = () => {
     const [isOpen, setIsOpen] = useState(false);
     const handleClose = () => setIsOpen(false);
 
+
     return (<>
 
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
@@ -349,6 +355,7 @@ const DashboardPage = () => {
                     nature={nature}
                     dimension={dimension}
                     codices={codices}
+                    colorCodices={colorCodices}
                     genres={genres}
                     activeFilters={activeFilters} setActiveFilters={setFilters} />
                 <DragOverlay dropAnimation={{ duration: 500 }}>
@@ -386,6 +393,7 @@ const DashboardPage = () => {
                         <div className={"dashboard-viz2" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
                             <ImportantPeopleChart 
                             data={globalData}
+                            networkData={networkData}
                             csvIndexes={csvIndexes}
                             isExpanded={isImpPeopleExpanded}
                             setIsExpanded={setIsImpPeopleExpanded}/>
@@ -405,7 +413,8 @@ const DashboardPage = () => {
                         <div className={"dashboard-viz4" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
                             <NetworkChart 
                             data={globalData}
-                            codices={codices}
+                            setNetworkData={setNetworkData}
+                            colorCodices={colorCodices}
                             csvIndexes={csvIndexes}
                             isExpanded={isNetworkExpanded}
                             setIsExpanded={setIsNetworkExpanded}/>

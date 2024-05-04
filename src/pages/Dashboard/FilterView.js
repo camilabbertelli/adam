@@ -104,7 +104,8 @@ const FilterView = (props) => {
                 content.push(
                     <div id={key} key={c.title} className={`dashboard-image-component ` + (currentCodices.includes(key) ? "codex-selected" : "")} onClick={() => changeCodex(key)}>
                         <img id={key} src={spine} className="dashboard-card-img-top" alt="book" />
-                        <div id={key} className='dashboard-centered'>{c.title}</div>
+                        <div id={key} className='dashboard-codex-title'>{c.title}</div>
+                        <div id={key} className='dashboard-codex-color' style={{backgroundColor: props.colorCodices(c.title)}}></div>
                     </div>)
             }
 

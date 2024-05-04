@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 
 function noSpaces(str) {
     if (str)
-        str = str.replace(/[\s+&\/\\#,+()$~%.'":*?<>{};]/g, '');
+        str = str.replace(/[\s+&/\\#,+()$~%.'":*?<>{};]/g, '');
     return str
 }
 
@@ -112,8 +112,17 @@ const Citations = (props) => {
         offset: 0,
         numberPerPage: 10,
         pageCount: 0,
-        currentData: []
+        currentData: [],
     });
+
+    useEffect(() => {
+        setPagination((prevState) => ({
+            ...prevState,
+            offset: 0,
+            pageCount: props.data.length / prevState.numberPerPage,
+            currentData: props.data.slice(0, pagination.numberPerPage),
+        }))
+    }, [props.data])
 
     useEffect(() => {
         setPagination((prevState) => ({
@@ -121,7 +130,7 @@ const Citations = (props) => {
             pageCount: props.data.length / prevState.numberPerPage,
             currentData: props.data.slice(pagination.offset, pagination.offset + pagination.numberPerPage)
         }))
-    }, [pagination.numberPerPage, pagination.offset, props.data])
+    }, [pagination.numberPerPage, pagination.offset])
 
     const handlePageClick = event => {
 
@@ -192,6 +201,7 @@ const Citations = (props) => {
                             previousClassName={"item previous"}
                             previousLabel={<ArrowBackIosIcon style={{ width: 15 }} />}
                             renderOnZeroPageCount={null}
+                            forcePage={pagination.offset/pagination.numberPerPage}
                         />
                     </div>
                 </>

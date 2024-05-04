@@ -13,7 +13,7 @@ import * as d3 from "d3"
 
 function noSpaces(str) {
     if (str)
-        str = str.replace(/[\s+&\/\\#,+()$~%.'":*?<>{};]/g, '');
+        str = str.replace(/[\s+&/\\#,+()$~%.'":*?<>{};]/g, '');
     return str
 }
 

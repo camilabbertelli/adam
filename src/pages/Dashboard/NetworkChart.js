@@ -9,15 +9,15 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import * as d3 from "d3"
+import d3ForceLimit from "d3-force-limit"
 
 function noSpaces(str) {
     if (str)
-        str = str.replace(/[\s+&\/\\#,+()$~%.'":*?<>{};]/g, '');
+        str = str.replace(/[\s+&/\\#,+()$~%.'":*?<>{};]/g, '');
     return str
 }
 
 let network_boundaries = null;
-let colorNode = null;
 
 const NetworkChart = (props) => {
     let tooltipNetwork;
@@ -87,12 +87,12 @@ const NetworkChart = (props) => {
             tooltipNetwork
                 .style("opacity", "1");
 
-            let aux = links.filter(l => {
-                
-                return (l.source.person === d.target.person && l.target.person === d.source.person) || (l.source.person === d.source.person && l.target.person === d.target.person && l.type != d.type)
-            })
+            let aux = links.filter(l => (
+                l.source.person === d.target.person &&
+                l.target.person === d.source.person) ||
+                (l.source.person === d.source.person && l.target.person === d.target.person && l.type !== d.type))
             let after = ""
-            aux.forEach(str => 
+            aux.forEach(str =>
                 after += `<br/><b>${t("network-tooltip-source")}: </b>${str.source.person}<br/>
                             <b>${t("network-tooltip-target")}: </b>${str.target.person}<br/>
                             <b>${t("network-tooltip-type")}: </b><i>${str.type === "with" ? t("network-tooltip-with") : t("network-tooltip-about")}</i><br/>
@@ -247,13 +247,13 @@ const NetworkChart = (props) => {
         }))
 
 
-        let with_links = d3.flatRollup(props.data, v => v.length, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.subject_number], d=> d[props.csvIndexes.description]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4]]])
+        let with_links = d3.flatRollup(props.data, v => v.length, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.description]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4]]])
 
         with_links = with_links.filter(entry => {
             return (entry[2] === "Individual" && entry[0] !== "Não aplicável" && entry[1] !== "Não aplicável")
         }).flatMap(d => [[d[0], d[1], d[3], d[4]]])
 
-        with_links = d3.flatGroup(with_links, d=> d[0], d=> d[1])
+        with_links = d3.flatGroup(with_links, d => d[0], d => d[1])
 
         with_links = with_links.map((entry, index) => ({
             id: index,
@@ -264,13 +264,13 @@ const NetworkChart = (props) => {
             citations: [...new Set(entry[2].flatMap(d => d[2]))]
         }))
 
-        let about_links = d3.flatRollup(props.data, v => v.length, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.about_name], d => d[props.csvIndexes.subject_number], d=> d[props.csvIndexes.description]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4], d[5]]])
+        let about_links = d3.flatRollup(props.data, v => v.length, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.about_name], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.description]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4], d[5]]])
 
         about_links = about_links.filter(entry => {
             return (entry[3] === "Individual" && entry[0] !== "Não aplicável" && entry[2] !== "Não aplicável")
         }).flatMap(d => [[d[0], d[2], d[4], d[5]]])
 
-        about_links = d3.flatGroup(about_links, d=> d[0], d=> d[1])
+        about_links = d3.flatGroup(about_links, d => d[0], d => d[1])
 
         about_links = about_links.map((entry, index) => ({
             id: index,
@@ -286,11 +286,10 @@ const NetworkChart = (props) => {
 
         // Compute values.
 
-        if (colorNode === null) colorNode = d3.scaleOrdinal(Object.keys(props.codices), ["#cc8b86", "#9FB9BA", "#C5C5B3", "#B89283", "#FFD18C", "#7587AA"]);
 
         // Replace the input nodes and links with mutable objects for the simulation.
         let nodes = d3.map(nodesOriginal, d => ({ person: d.person, multipleGroups: d.multipleGroups, groups: d.groups, sex: d.sex, qualities: d.qualities }));
-        let links = d3.map(linksOriginal, (d, i) => ({ id: i, source: d.source, target: d.target, value: d.value, type: d.type, with_id: d["with_id"], citations: d.citations  }));
+        let links = d3.map(linksOriginal, (d, i) => ({ id: i, source: d.source, target: d.target, value: d.value, type: d.type, with_id: d["with_id"], citations: d.citations }));
 
         if (typeClick)
             links = links.filter(entry => entry.type === typeClick)
@@ -300,31 +299,29 @@ const NetworkChart = (props) => {
             links = links.filter(entry => {
                 let pass = false
                 selectedNodes.forEach(d => {
-                    if (entry.source === d.person || entry.target === d.person) 
-                    pass = true
-                })
-
-                return pass
-            })
-
-            nodes = nodes.filter(entry => {
-                let pass = false
-                links.forEach(l => {
-                    if (entry.person === l.source || entry.person === l.target)
+                    if (entry.source === d.person || entry.target === d.person)
                         pass = true
                 })
-
-                if (links.length === 0)
-                    selectedNodes.forEach(d => {
-                        if (entry.person === d.person) 
-                        pass = true
-                    })
 
                 return pass
             })
         }
 
+        nodes = nodes.filter(entry => {
+            let pass = false
+            links.forEach(l => {
+                if (entry.person === l.source || entry.person === l.target)
+                    pass = true
+            })
 
+            if (links.length === 0)
+                selectedNodes.forEach(d => {
+                    if (entry.person === d.person)
+                        pass = true
+                })
+
+            return pass
+        })
 
         // Construct the scales.
 
@@ -340,7 +337,15 @@ const NetworkChart = (props) => {
             .force("link", forceLink)
             .force("charge", forceNode)
             .force("center", d3.forceCenter())
+            .force("limit", d3ForceLimit()
+                .x0(-width * 2)
+                .x1(width * 2)
+                .y0(-height * 2)
+                .y1(height * 2)
+                .cushionWidth(width / 3)
+                .cushionStrength(50))
             .on("tick", ticked)
+            .on("end", end)
 
         d3.select(".network-graph").selectAll("svg").remove("")
 
@@ -353,21 +358,31 @@ const NetworkChart = (props) => {
             .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
         const svg = svgInitial.append("g");
+
+        let minZoomX = -width * 2
+        let maxZoomX = width * 2
+        let minZoomY = -height * 2
+        let maxZoomY = height * 2
         // Create zoom behavior for the map
         const zoom = d3
             .zoom()
-            .scaleExtent([0, 20])
+            .translateExtent([
+                [minZoomX, minZoomY],
+                [maxZoomX, maxZoomY],
+            ])
+            .scaleExtent([0.25, 5])
             .on("zoom", zoomed);
 
         // Apply zoom behavior to the SVG element
         svgInitial.call(zoom);
+        svgInitial.call(zoom.transform, d3.zoomIdentity.translate(0, 0).scale(0.25))
 
         // Function to handle the zoom event
         function zoomed(event) {
             svg.attr("transform", event.transform);
         }
         // about / with
-        let colorLine = d3.scaleOrdinal(["about", "with"], ["#D49669", "#383838"])
+        let colorLine = d3.scaleOrdinal(["about", "with"], ["#DC7327", "#383838"])
 
         // Per-type markers, as they don't inherit styles.
         svg.append("defs").selectAll("marker")
@@ -412,9 +427,9 @@ const NetworkChart = (props) => {
             .attr("cursor", "pointer")
             .attr("stroke", d => {
                 let index = selectedNodes.findIndex(({ person }) => person === d.person)
-                return (index !== -1) ? "#C62727":(d.multipleGroups ? "black" : "white")
+                return (index !== -1) ? "#C62727" : (d.multipleGroups ? "black" : "white")
             })
-            .attr("fill", d => d.multipleGroups ? "white" : colorNode(d.groups[0]))
+            .attr("fill", d => d.multipleGroups ? "white" : props.colorCodices(d.groups[0]))
             .attr("r", 15)
             .on("mouseover", nodemouseover)
             .on("mouseleave", nodemouseleave)
@@ -444,6 +459,29 @@ const NetworkChart = (props) => {
                 aux.splice(index, 1)
 
             setSelectedNodes(aux)
+            props.setNetworkData(aux)
+        }
+
+        function end() {
+            minZoomX = minZoomY = maxZoomX = maxZoomY = 0
+
+            nodes.forEach(d => {
+                if (d.x && d.y){
+                    minZoomX = d.x < minZoomX ? d.x : minZoomX
+                    maxZoomX = d.x > maxZoomX ? d.x : maxZoomX
+                    minZoomY = d.y < minZoomY ? d.y : minZoomY
+                    maxZoomY = d.y > maxZoomY ? d.y : maxZoomY
+                }
+            })
+
+            let scaleX = (width) / ((maxZoomX + Math.abs(minZoomX) + 30)) 
+            let scaleY =  (height) / ((maxZoomY + Math.abs(minZoomY) + 30))
+
+            let scale = Math.min(scaleX, scaleY)
+            scale = scale < 0.25 ? 0.25 : scale 
+            scale = scale > 1 ? 1 : scale
+
+            svgInitial.call(zoom.transform, d3.zoomIdentity.translate(0, 0).scale(scale))
         }
 
         function ticked() {
@@ -467,7 +505,6 @@ const NetworkChart = (props) => {
             node
                 .attr("cx", d => d.x)
                 .attr("cy", d => d.y);
-
 
             text
                 .attr("x", d => d.x)
@@ -508,7 +545,7 @@ const NetworkChart = (props) => {
                 .on("end", dragended);
         }
 
-    }, [props.data, props.codices, typeClick, selectedNodes]);
+    }, [props.data, typeClick, selectedNodes]);
 
     return (
         <>
@@ -532,6 +569,10 @@ const NetworkChart = (props) => {
                             <div className=''>
                                 {t("no-data-to-show")}
                             </div>}
+                    </div>
+                    <div id="minimapWrapper" style={{ position: "absolute", bottom: 0, left: 0, margin: "5px", border: "1px solid #ddd", overflow: "hidden", backgroundColor: "#FFF", zIndex: 9 }} class="minimapWrapperIdle">
+                        <img id="minimapImage" class="minimapImage" />
+                        <div id="minimapRadar" class="minimapRadar"></div>
                     </div>
 
                     <div className='shadow network-legend'>
