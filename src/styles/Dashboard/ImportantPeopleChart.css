@@ -64,16 +64,14 @@
     font-size: 14.5px;
 }
 
-.imp-left-btn:nth-child(1) {
-    border-top: none;
-}
-
-.imp-left-btn:nth-last-child(1) {
-    border-bottom: none;
-}
 
 .selected-imp {
     background-color: #dbc4b1;
+}
+
+.network-selected-imp{
+    border-color: #C62727;
+    border-width: 2px;
 }
 
 .imp-right-section {

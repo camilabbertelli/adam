@@ -294,7 +294,9 @@ const DashboardPage = () => {
     const [isImpPeopleExpanded, setIsImpPeopleExpanded] = useState(false)
     const [isNetworkExpanded, setIsNetworkExpanded] = useState(false)
 
-    const [networkData, setNetworkData] = useState([])
+    const [networkData, setNetworkData] = useState({selected: [], people:[]})
+    const [impData, setImpData] = useState([])
+    const [pyramidData, setPyramidData] = useState("")
 
     window.addEventListener('click', function (e) {
         if (document.getElementById('overlay') && document.getElementById('overlay').contains(e.target)) {
@@ -393,7 +395,7 @@ const DashboardPage = () => {
                         <div className={"dashboard-viz2" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
                             <ImportantPeopleChart 
                             data={globalData}
-                            networkData={networkData}
+                            setImpData={setImpData} networkData={networkData} pyramidData={pyramidData}
                             csvIndexes={csvIndexes}
                             isExpanded={isImpPeopleExpanded}
                             setIsExpanded={setIsImpPeopleExpanded}/>
@@ -403,17 +405,16 @@ const DashboardPage = () => {
                         <div id="viz3" className={"dashboard-viz3" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
                             <TabChart categories={categories}
                                 data={globalData}
+                                setPyramidData={setPyramidData} networkData={networkData}
                                 csvIndexes={csvIndexes}
                                 setCurrentTabchartCategory={setCurrentTabchartCategory}
-                                isExpanded={isTabchartExpanded}
-                                setIsExpanded={setIsTabchartExpanded}
-                                changedFilter={changedFilter}
-                                setChangedFilter={setChangedFilter} />
+                                isExpanded={isTabchartExpanded} setIsExpanded={setIsTabchartExpanded}
+                                changedFilter={changedFilter} setChangedFilter={setChangedFilter} />
                         </div>
                         <div className={"dashboard-viz4" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
                             <NetworkChart 
                             data={globalData}
-                            setNetworkData={setNetworkData}
+                            setNetworkData={setNetworkData} impData={impData} pyramidData={pyramidData}
                             colorCodices={colorCodices}
                             csvIndexes={csvIndexes}
                             isExpanded={isNetworkExpanded}

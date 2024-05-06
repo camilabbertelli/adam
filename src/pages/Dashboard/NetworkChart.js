@@ -42,6 +42,7 @@ const NetworkChart = (props) => {
     const [typeClick, setTypeClick] = useState("")
     const [selectedNodes, setSelectedNodes] = useState([])
 
+
     useEffect(() => {
 
         if (props.data.length === 0)
@@ -292,18 +293,60 @@ const NetworkChart = (props) => {
         let links = d3.map(linksOriginal, (d, i) => ({ id: i, source: d.source, target: d.target, value: d.value, type: d.type, with_id: d["with_id"], citations: d.citations }));
 
         if (typeClick)
-            links = links.filter(entry => entry.type === typeClick)
+            links = links.filter(l => l.type === typeClick)
 
         if (selectedNodes.length) {
-
-            links = links.filter(entry => {
+            links = links.filter(l => {
                 let pass = false
                 selectedNodes.forEach(d => {
-                    if (entry.source === d.person || entry.target === d.person)
+                    if (l.source === d.person || l.target === d.person || d.person === l.source.person || d.person === l.target.person)
                         pass = true
                 })
 
                 return pass
+            })
+        }
+
+        nodes = nodes.filter(n => {
+            let pass = false
+            links.forEach(l => {
+                if (n.person === l.source || n.person === l.target || n.person === l.source.person || n.person === l.target.person)
+                    pass = true
+            })
+
+            return pass
+        })
+
+        props.setNetworkData({selected: selectedNodes.map(d=>d.person), people: nodes.map(d=>d.person)})
+
+        if (props.impData.length) {
+            links = links.filter(entry => {
+                let pass = false
+                props.impData.forEach(key => {
+                    if (noSpaces(entry.source) === key || noSpaces(entry.target) === key)
+                        pass = true
+                })
+
+                return pass
+            })
+        }
+
+        if (props.pyramidData){
+            let sexes = ["Mult.", "N", props.pyramidData]
+
+            nodes = nodes.filter(n => {
+                let pass = false
+                n.sex.forEach(s=> {
+                    if (sexes.includes(s))
+                        pass = true
+                })
+
+                return pass
+            })
+
+            let nodesPerson = nodes.flatMap(d=>d.person)
+            links = links.filter(l => {
+                return nodesPerson.includes(l.source) && nodesPerson.includes(l.target)
             })
         }
 
@@ -315,14 +358,14 @@ const NetworkChart = (props) => {
             })
 
             if (links.length === 0)
-                selectedNodes.forEach(d => {
-                    if (entry.person === d.person)
+                props.impData.forEach(key => {
+                    if (noSpaces(entry.person) === key)
                         pass = true
                 })
 
             return pass
         })
-
+        
         // Construct the scales.
 
         // Construct the forces.
@@ -345,7 +388,6 @@ const NetworkChart = (props) => {
                 .cushionWidth(width / 3)
                 .cushionStrength(50))
             .on("tick", ticked)
-            .on("end", end)
 
         d3.select(".network-graph").selectAll("svg").remove("")
 
@@ -363,6 +405,10 @@ const NetworkChart = (props) => {
         let maxZoomX = width * 2
         let minZoomY = -height * 2
         let maxZoomY = height * 2
+
+
+        
+        let automaticZoom = true
         // Create zoom behavior for the map
         const zoom = d3
             .zoom()
@@ -375,11 +421,12 @@ const NetworkChart = (props) => {
 
         // Apply zoom behavior to the SVG element
         svgInitial.call(zoom);
-        svgInitial.call(zoom.transform, d3.zoomIdentity.translate(0, 0).scale(0.25))
+
 
         // Function to handle the zoom event
         function zoomed(event) {
             svg.attr("transform", event.transform);
+            automaticZoom = false
         }
         // about / with
         let colorLine = d3.scaleOrdinal(["about", "with"], ["#DC7327", "#383838"])
@@ -451,6 +498,7 @@ const NetworkChart = (props) => {
             .call(drag(simulation))
 
         function nodeclick(event, d) {
+
             let aux = [...selectedNodes]
             let index = aux.findIndex(({ person }) => person === d.person)
             if (index === -1)
@@ -459,29 +507,6 @@ const NetworkChart = (props) => {
                 aux.splice(index, 1)
 
             setSelectedNodes(aux)
-            props.setNetworkData(aux)
-        }
-
-        function end() {
-            minZoomX = minZoomY = maxZoomX = maxZoomY = 0
-
-            nodes.forEach(d => {
-                if (d.x && d.y){
-                    minZoomX = d.x < minZoomX ? d.x : minZoomX
-                    maxZoomX = d.x > maxZoomX ? d.x : maxZoomX
-                    minZoomY = d.y < minZoomY ? d.y : minZoomY
-                    maxZoomY = d.y > maxZoomY ? d.y : maxZoomY
-                }
-            })
-
-            let scaleX = (width) / ((maxZoomX + Math.abs(minZoomX) + 30)) 
-            let scaleY =  (height) / ((maxZoomY + Math.abs(minZoomY) + 30))
-
-            let scale = Math.min(scaleX, scaleY)
-            scale = scale < 0.25 ? 0.25 : scale 
-            scale = scale > 1 ? 1 : scale
-
-            svgInitial.call(zoom.transform, d3.zoomIdentity.translate(0, 0).scale(scale))
         }
 
         function ticked() {
@@ -513,6 +538,33 @@ const NetworkChart = (props) => {
                     let finalText = d.person.slice(0, 6)
                     return (finalText + (finalText !== d.person ? "..." : ""))
                 })
+
+            
+            if (automaticZoom){
+                minZoomX = minZoomY = maxZoomX = maxZoomY = 0
+    
+                nodes.forEach(d => {
+                    if (d.x && d.y){
+                        minZoomX = d.x < minZoomX ? d.x : minZoomX
+                        maxZoomX = d.x > maxZoomX ? d.x : maxZoomX
+                        minZoomY = d.y < minZoomY ? d.y : minZoomY
+                        maxZoomY = d.y > maxZoomY ? d.y : maxZoomY
+                    }
+                })
+    
+                let scaleX = (width) / ((maxZoomX + Math.abs(minZoomX) + 30)) 
+                let scaleY =  (height) / ((maxZoomY + Math.abs(minZoomY) + 30))
+    
+                let scale = Math.min(scaleX, scaleY)
+
+                scale = Math.floor(scale / 0.05) * 0.05;
+                
+                scale = scale < 0.25 ? 0.25 : scale 
+                scale = scale > 2 ? 2 : scale
+
+                svgInitial.call(zoom.transform, d3.zoomIdentity.scale(scale))
+                automaticZoom = true                
+            }
         }
 
         function drag(simulation) {
@@ -545,7 +597,7 @@ const NetworkChart = (props) => {
                 .on("end", dragended);
         }
 
-    }, [props.data, typeClick, selectedNodes]);
+    }, [props.data, typeClick, selectedNodes, props.impData, props.pyramidData]);
 
     return (
         <>
@@ -570,10 +622,10 @@ const NetworkChart = (props) => {
                                 {t("no-data-to-show")}
                             </div>}
                     </div>
-                    <div id="minimapWrapper" style={{ position: "absolute", bottom: 0, left: 0, margin: "5px", border: "1px solid #ddd", overflow: "hidden", backgroundColor: "#FFF", zIndex: 9 }} class="minimapWrapperIdle">
-                        <img id="minimapImage" class="minimapImage" />
-                        <div id="minimapRadar" class="minimapRadar"></div>
-                    </div>
+                    {/* <div id="minimapWrapper" style={{ position: "absolute", bottom: 0, left: 0, margin: "5px", border: "1px solid #ddd", overflow: "hidden", backgroundColor: "#FFF", zIndex: 9 }} className="minimapWrapperIdle">
+                        <img id="minimapImage" className="minimapImage" />
+                        <div id="minimapRadar" className="minimapRadar"></div>
+                    </div> */}
 
                     <div className='shadow network-legend'>
                         <div id="about" className={'network-legend-items' + (typeClick === "about" ? " network-about-selected" : "")}

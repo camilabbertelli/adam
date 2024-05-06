@@ -89,9 +89,11 @@
     "icon-group": "Total",
     "icon-sort": "Ordenar por",
     "icon-close": "Remover categoria",
+
     "pyramid-separate": "Como os diferentes sexos são percebidos?",
     "pyramid-total": "Occorências totais",
-
+    "pyramid-masculine": "Masculino",
+    "pyramid-feminine": "Feminino",
 
 
     "database-content": "Conteúdo",

@@ -43,22 +43,29 @@ const ImportantPeopleChart = (props) => {
     }, [props.isExpanded])
 
     useEffect(() => {
+
         let impData = d3.flatGroup(props.data, d => d[props.csvIndexes.subject_name])
 
         let impAux = {}
         impData.forEach(entry => {
-            if (entry !== "")
+            if (!props.networkData.people.length || props.networkData.people.includes(entry[0])){
                 impAux[noSpaces(entry[0])] = {
                     name: entry[0],
-                    entries: entry[1]
+                    entries: entry[1].filter(e => {
+                        let sex = e[props.csvIndexes.subject_sex]
+                        let sexes = ["Mult.", "N", props.pyramidData]
+                        if (!props.pyramidData)
+                            return true
+                        return sexes.includes(sex)
+                    })
                 }
+            }
         })
-
 
         let sortedkeys = Object.keys(impAux).sort()
         let imp = {}
         sortedkeys.forEach((key) => {
-            if (key !== "")
+            if (key !== "" && impAux[key].entries.length)
                 imp[key] = impAux[key]
         })
         sortedkeys.filter(key => key !== "")
@@ -70,12 +77,14 @@ const ImportantPeopleChart = (props) => {
         setSelectedImp(aux)
         setImpPeople(imp)
         setSearchedPeople(Array.from(Object.keys(imp)))
-    }, [props.data])
+    }, [props.data, props.networkData, props.pyramidData])
 
     function removeSelectedImp(index) {
         let aux = [...selectedImp]
         aux.splice(index, 1)
         setSelectedImp(aux)
+        
+        props.setImpData(aux)
     }
 
     function changeSelected(key) {
@@ -91,6 +100,8 @@ const ImportantPeopleChart = (props) => {
         }
 
         setSelectedImp(aux)
+
+        props.setImpData(aux)
     }
 
     useEffect(() => {
@@ -220,7 +231,7 @@ const ImportantPeopleChart = (props) => {
                                     <button
                                         key={key}
                                         id={`imp-${noSpaces(key)}`}
-                                        className={"imp-left-btn" + ((selectedImp.includes(key)) ? " selected-imp" : "")}
+                                        className={"imp-left-btn" + ((selectedImp.includes(key)) ? " selected-imp" : "") + ((props.networkData.selected.includes(entry.name)) ? " network-selected-imp" : "")}
                                         onClick={() => changeSelected(key)}>
                                         {entry.name}
                                     </button>
