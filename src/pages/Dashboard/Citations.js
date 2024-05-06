@@ -17,6 +17,9 @@ function noSpaces(str) {
 }
 
 const Citations = (props) => {
+
+    const [data, setData] = useState([])
+
     const toggleCitation = (id) => {
         let index = id - 1
 
@@ -30,8 +33,8 @@ const Citations = (props) => {
             let indexKey1 = props.categories[props.activeCategories[0]].index
             let indexKey2 = props.categories[props.activeCategories[1]].index
 
-            let heatmapKey1 = noSpaces(props.data[index][indexKey1])
-            let heatmapKey2 = noSpaces(props.data[index][indexKey2])
+            let heatmapKey1 = noSpaces(data[index][indexKey1])
+            let heatmapKey2 = noSpaces(data[index][indexKey2])
 
             let selectionHeatmap = d3.select(`.heatmap-${heatmapKey1}-${heatmapKey2}`);
             let elementHeatmap = selectionHeatmap.node();
@@ -49,7 +52,7 @@ const Citations = (props) => {
 
             // pyramid
             let pyramidSex = []
-            let pyramidOriginalSex = props.data[index][props.csvIndexes.subject_sex]
+            let pyramidOriginalSex = data[index][props.csvIndexes.subject_sex]
 
             if (pyramidOriginalSex === "Mult." || pyramidOriginalSex === "N") {
                 pyramidSex.push("Fem")
@@ -59,7 +62,7 @@ const Citations = (props) => {
             else if (pyramidOriginalSex === "Masc.")
                 pyramidSex.push("Masc")
 
-            let pyramidKey = noSpaces(props.data[index][indexPyramid])
+            let pyramidKey = noSpaces(data[index][indexPyramid])
 
             pyramidSex.forEach(p => {
                 let selectionPyramid = d3.selectAll(`.pyramid-${p}-${pyramidKey}`);
@@ -76,7 +79,7 @@ const Citations = (props) => {
             });
 
             // imp people
-            let impKey = noSpaces(props.data[index][props.csvIndexes.subject_name])
+            let impKey = noSpaces(data[index][props.csvIndexes.subject_name])
 
             let selectionImp = d3.select(`#imp-${impKey}`);
             let elementImp = selectionImp.node();
@@ -91,7 +94,7 @@ const Citations = (props) => {
             }, 2000);
 
             // network
-            let networkKey = noSpaces(props.data[index][props.csvIndexes.subject_name])
+            let networkKey = noSpaces(data[index][props.csvIndexes.subject_name])
 
             let selectionNetwork = d3.select(`#network-${networkKey}`);
             let elementNetwork = selectionNetwork.node();
@@ -108,27 +111,46 @@ const Citations = (props) => {
     }
 
     const [pagination, setPagination] = useState({
-        data: props.data,
         offset: 0,
+        data: [],
         numberPerPage: 10,
         pageCount: 0,
         currentData: [],
     });
 
     useEffect(() => {
+
+        let aux = props.data.filter(entry => {
+            let networkFilter = true
+            let pyramidFilter = true
+            let sexes = ["Mult.", "N", props.pyramidData]
+
+            if (props.networkData.people.length)
+                networkFilter = props.networkData.people.includes(entry[props.csvIndexes.subject_name]) || 
+                                props.networkData.people.includes(entry[props.csvIndexes.with_name])
+                                props.networkData.people.includes(entry[props.csvIndexes.about_name])
+
+            if (props.pyramidData)
+                pyramidFilter = sexes.includes(entry[props.csvIndexes.subject_sex])
+
+            return networkFilter && pyramidFilter
+        })
+
+        setData(aux)
+
         setPagination((prevState) => ({
             ...prevState,
-            offset: 0,
-            pageCount: props.data.length / prevState.numberPerPage,
-            currentData: props.data.slice(0, pagination.numberPerPage),
+            data: aux,
+            pageCount: aux.length / prevState.numberPerPage,
+            currentData: aux.slice(0, pagination.numberPerPage),
         }))
-    }, [props.data])
+    }, [props.data, props.pyramidData, props.networkData])
 
     useEffect(() => {
         setPagination((prevState) => ({
             ...prevState,
-            pageCount: props.data.length / prevState.numberPerPage,
-            currentData: props.data.slice(pagination.offset, pagination.offset + pagination.numberPerPage)
+            pageCount: data.length / prevState.numberPerPage,
+            currentData: data.slice(pagination.offset, pagination.offset + pagination.numberPerPage)
         }))
     }, [pagination.numberPerPage, pagination.offset])
 
@@ -143,11 +165,11 @@ const Citations = (props) => {
 
     return (
         <>
-            {props.data.length === 0 &&
+            {data.length === 0 &&
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "250px" }}>
                     {t("no-data-to-show")}
                 </div>}
-            {props.data.length !== 0 &&
+            {data.length !== 0 &&
                 <>
                     <div className='citations-content' id='citations-content'>
                         {pagination.currentData && pagination.currentData.map(((entry) => (

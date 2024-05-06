@@ -45,9 +45,6 @@ const NetworkChart = (props) => {
 
     useEffect(() => {
 
-        if (props.data.length === 0)
-            return
-
         let nodemouseover = function (event, d) {
             tooltipNetwork
                 .style("opacity", "1");
@@ -203,6 +200,13 @@ const NetworkChart = (props) => {
         if (network_boundaries === null)
             network_boundaries = box.getBoundingClientRect()
 
+
+
+        d3.select(".network-graph").selectAll("svg").remove("")
+
+        if (props.data.length === 0)
+            return
+
         let width = network_boundaries.width;
         let height = network_boundaries.height;
 
@@ -212,7 +216,7 @@ const NetworkChart = (props) => {
         let about_nodes = d3.flatGroup(props.data, d => d[props.csvIndexes.about_name], d => d[props.csvIndexes.title], d => d[props.csvIndexes.about_sex], d => d[props.csvIndexes.about_qualities]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4]]])
 
         subject_nodes = subject_nodes.filter(entry => {
-            return (entry[2] === "Individual")
+            return true//(entry[2] === "Individual")
         }).flatMap(d => [[d[0], d[1], d[3], d[4]]])
 
         let concat_arrays = [...new Set([...subject_nodes, ...with_nodes, ...about_nodes])]
@@ -251,7 +255,7 @@ const NetworkChart = (props) => {
         let with_links = d3.flatRollup(props.data, v => v.length, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.description]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4]]])
 
         with_links = with_links.filter(entry => {
-            return (entry[2] === "Individual" && entry[0] !== "Não aplicável" && entry[1] !== "Não aplicável")
+            return (entry[0] !== "Não aplicável" && entry[1] !== "Não aplicável") // entry[2] === "Individual"
         }).flatMap(d => [[d[0], d[1], d[3], d[4]]])
 
         with_links = d3.flatGroup(with_links, d => d[0], d => d[1])
@@ -268,7 +272,7 @@ const NetworkChart = (props) => {
         let about_links = d3.flatRollup(props.data, v => v.length, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.about_name], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.description]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4], d[5]]])
 
         about_links = about_links.filter(entry => {
-            return (entry[3] === "Individual" && entry[0] !== "Não aplicável" && entry[2] !== "Não aplicável")
+            return (entry[0] !== "Não aplicável" && entry[2] !== "Não aplicável") // entry[3] === "Individual"
         }).flatMap(d => [[d[0], d[2], d[4], d[5]]])
 
         about_links = d3.flatGroup(about_links, d => d[0], d => d[1])
@@ -295,48 +299,31 @@ const NetworkChart = (props) => {
         if (typeClick)
             links = links.filter(l => l.type === typeClick)
 
+        let linksNetwork = []
         if (selectedNodes.length) {
-            links = links.filter(l => {
-                let pass = false
-                selectedNodes.forEach(d => {
-                    if (l.source === d.person || l.target === d.person || d.person === l.source.person || d.person === l.target.person)
-                        pass = true
-                })
-
-                return pass
+            linksNetwork = links.filter(l => {
+                return selectedNodes.includes(l.source) || selectedNodes.includes(l.target)
             })
         }
 
-        nodes = nodes.filter(n => {
+        let nodesNetwork = nodes.filter(n => {
             let pass = false
-            links.forEach(l => {
-                if (n.person === l.source || n.person === l.target || n.person === l.source.person || n.person === l.target.person)
+            linksNetwork.forEach(l => {
+                if (n.person === l.source || n.person === l.target)
                     pass = true
             })
 
             return pass
         })
 
-        props.setNetworkData({selected: selectedNodes.map(d=>d.person), people: nodes.map(d=>d.person)})
+        props.setNetworkData({ selected: selectedNodes, people: nodesNetwork.map(d => d.person) })
 
-        if (props.impData.length) {
-            links = links.filter(entry => {
-                let pass = false
-                props.impData.forEach(key => {
-                    if (noSpaces(entry.source) === key || noSpaces(entry.target) === key)
-                        pass = true
-                })
-
-                return pass
-            })
-        }
-
-        if (props.pyramidData){
+        if (props.pyramidData) {
             let sexes = ["Mult.", "N", props.pyramidData]
 
             nodes = nodes.filter(n => {
                 let pass = false
-                n.sex.forEach(s=> {
+                n.sex.forEach(s => {
                     if (sexes.includes(s))
                         pass = true
                 })
@@ -344,28 +331,36 @@ const NetworkChart = (props) => {
                 return pass
             })
 
-            let nodesPerson = nodes.flatMap(d=>d.person)
+            let nodesPerson = nodes.flatMap(d => d.person)
             links = links.filter(l => {
                 return nodesPerson.includes(l.source) && nodesPerson.includes(l.target)
             })
         }
+        
+        if (selectedNodes.length || props.impData.length) {
+            links = links.filter(l => {
+                return props.impData.includes(noSpaces(l.source)) || props.impData.includes(noSpaces(l.target)) 
+                || selectedNodes.includes(l.source) || selectedNodes.includes(l.target)
+            })
+        }
 
-        nodes = nodes.filter(entry => {
+        nodes = nodes.filter(n => {
             let pass = false
             links.forEach(l => {
-                if (entry.person === l.source || entry.person === l.target)
+                if (n.person === l.source || n.person === l.target)
                     pass = true
             })
 
             if (links.length === 0)
                 props.impData.forEach(key => {
-                    if (noSpaces(entry.person) === key)
+                    if (noSpaces(n.person) === key)
                         pass = true
                 })
 
             return pass
         })
-        
+
+
         // Construct the scales.
 
         // Construct the forces.
@@ -389,8 +384,6 @@ const NetworkChart = (props) => {
                 .cushionStrength(50))
             .on("tick", ticked)
 
-        d3.select(".network-graph").selectAll("svg").remove("")
-
         const svgInitial = d3
             .select(".network-graph")
             .append("svg")
@@ -407,7 +400,7 @@ const NetworkChart = (props) => {
         let maxZoomY = height * 2
 
 
-        
+
         let automaticZoom = true
         // Create zoom behavior for the map
         const zoom = d3
@@ -467,15 +460,9 @@ const NetworkChart = (props) => {
             .join("circle")
             .attr("id", d => `network-${noSpaces(d.person)}`)
             .attr("stroke-opacity", 1)
-            .attr("stroke-width", d => {
-                let index = selectedNodes.findIndex(({ person }) => person === d.person)
-                return (index !== -1) ? 4 : 1.5
-            })
+            .attr("stroke-width", d => selectedNodes.includes(d.person) ? 4 : 1.5)
             .attr("cursor", "pointer")
-            .attr("stroke", d => {
-                let index = selectedNodes.findIndex(({ person }) => person === d.person)
-                return (index !== -1) ? "#C62727" : (d.multipleGroups ? "black" : "white")
-            })
+            .attr("stroke", d => selectedNodes.includes(d.person) ? "#C62727" : (d.multipleGroups ? "black" : "white"))
             .attr("fill", d => d.multipleGroups ? "white" : props.colorCodices(d.groups[0]))
             .attr("r", 15)
             .on("mouseover", nodemouseover)
@@ -498,11 +485,10 @@ const NetworkChart = (props) => {
             .call(drag(simulation))
 
         function nodeclick(event, d) {
-
             let aux = [...selectedNodes]
-            let index = aux.findIndex(({ person }) => person === d.person)
-            if (index === -1)
-                aux.push({ ...d })
+            let index = -1
+            if (index = !aux.includes(d.person))
+                aux.push(d.person)
             else
                 aux.splice(index, 1)
 
@@ -539,31 +525,31 @@ const NetworkChart = (props) => {
                     return (finalText + (finalText !== d.person ? "..." : ""))
                 })
 
-            
-            if (automaticZoom){
+
+            if (automaticZoom) {
                 minZoomX = minZoomY = maxZoomX = maxZoomY = 0
-    
+
                 nodes.forEach(d => {
-                    if (d.x && d.y){
+                    if (d.x && d.y) {
                         minZoomX = d.x < minZoomX ? d.x : minZoomX
                         maxZoomX = d.x > maxZoomX ? d.x : maxZoomX
                         minZoomY = d.y < minZoomY ? d.y : minZoomY
                         maxZoomY = d.y > maxZoomY ? d.y : maxZoomY
                     }
                 })
-    
-                let scaleX = (width) / ((maxZoomX + Math.abs(minZoomX) + 30)) 
-                let scaleY =  (height) / ((maxZoomY + Math.abs(minZoomY) + 30))
-    
+
+                let scaleX = (width) / ((maxZoomX + Math.abs(minZoomX) + 30))
+                let scaleY = (height) / ((maxZoomY + Math.abs(minZoomY) + 30))
+
                 let scale = Math.min(scaleX, scaleY)
 
                 scale = Math.floor(scale / 0.05) * 0.05;
-                
-                scale = scale < 0.25 ? 0.25 : scale 
+
+                scale = scale < 0.25 ? 0.25 : scale
                 scale = scale > 2 ? 2 : scale
 
                 svgInitial.call(zoom.transform, d3.zoomIdentity.scale(scale))
-                automaticZoom = true                
+                automaticZoom = true
             }
         }
 
@@ -618,8 +604,8 @@ const NetworkChart = (props) => {
                 <div className='network-bottom-section'>
                     <div className='network-graph'>
                         {props.data.length === 0 &&
-                            <div className=''>
-                                {t("no-data-to-show")}
+                            <div className='' style={{width: "100%",height: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                                    {t("no-data-to-show")}
                             </div>}
                     </div>
                     {/* <div id="minimapWrapper" style={{ position: "absolute", bottom: 0, left: 0, margin: "5px", border: "1px solid #ddd", overflow: "hidden", backgroundColor: "#FFF", zIndex: 9 }} className="minimapWrapperIdle">

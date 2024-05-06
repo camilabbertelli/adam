@@ -84,9 +84,29 @@ const HeatmapChart = (props) => {
 	});
 
 	const { t } = useTranslation()
+	const [data, setData] = useState([])
 
 	useEffect(() => {
-		if (props.data.length === 0)
+
+		let dataInitial = props.data.filter(entry => {
+            let networkFilter = true
+            let pyramidFilter = true
+            let sexes = ["Mult.", "N", props.pyramidData]
+
+            if (props.networkData.people.length)
+                networkFilter = props.networkData.people.includes(entry[props.csvIndexes.subject_name]) || 
+                                props.networkData.people.includes(entry[props.csvIndexes.with_name])
+                                props.networkData.people.includes(entry[props.csvIndexes.about_name])
+
+            if (props.pyramidData)
+                pyramidFilter = sexes.includes(entry[props.csvIndexes.subject_sex])
+
+            return networkFilter && pyramidFilter
+        })
+
+        setData(dataInitial)
+
+		if (dataInitial.length === 0)
 			return
 
 		let infoMouseOverHeatmap = function (event, d) {
@@ -136,9 +156,9 @@ const HeatmapChart = (props) => {
 			let indexKey1 = props.categories[props.activeCategories[0]].index
 			let indexKey2 = props.categories[props.activeCategories[1]].index
 
-			let heatmapKey1 = Array.from(d3.group(props.data, d => d[indexKey1]).keys())
-			let heatmapKey2 = Array.from(d3.group(props.data, d => d[indexKey2]).keys())
-			let heatmapData = d3.flatRollup(props.data, v => v.length, d => d[indexKey1], d => d[indexKey2])
+			let heatmapKey1 = Array.from(d3.group(dataInitial, d => d[indexKey1]).keys())
+			let heatmapKey2 = Array.from(d3.group(dataInitial, d => d[indexKey2]).keys())
+			let heatmapData = d3.flatRollup(dataInitial, v => v.length, d => d[indexKey1], d => d[indexKey2])
 
 			heatmapKey1.sort()
 			heatmapKey2.sort()
@@ -345,7 +365,7 @@ const HeatmapChart = (props) => {
 		}
 
 		props.setChangedFilter(false)
-	}, [props.activeCategories, props.data])
+	}, [props.activeCategories, props.data, props.networkData, props.pyramidData])
 
 	function handleGraphScroll() {
 		$('.heatmap-left-header').scrollTop($('.heatmap-graph').scrollTop());

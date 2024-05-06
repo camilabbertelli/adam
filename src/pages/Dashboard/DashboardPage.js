@@ -370,6 +370,8 @@ const DashboardPage = () => {
                     <div className="dashboard-row1">
                         <div className="dashboard-viz1">
                             <HeatmapChart data={globalData}
+                                networkData={networkData} pyramidData={pyramidData} impData={impData}
+                                csvIndexes={csvIndexes}
                                 activeCategories={activeCategories}
                                 activeCategory={activeCategory}
                                 categories={categories}
@@ -437,6 +439,7 @@ const DashboardPage = () => {
                             </button>
                             <Citations
                                 data={globalData}
+                                networkData={networkData} pyramidData={pyramidData} impData={impData}
                                 categories={categories}
                                 activeCategories={activeCategories}
                                 currentTabchartCategory={currentTabchartCategory}
