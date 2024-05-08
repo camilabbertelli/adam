@@ -36,18 +36,22 @@ const DashboardPage = () => {
     const {t} = useTranslation();
     const [csvIndexes, setCsvIndexes] = useState({})
 
+    // FIXME: a lot to fix regarding csv columns
     let categories = {
         "category-action": {
             name: t("category-action"),
-            index: csvIndexes.action
+            index: csvIndexes.action,
+            indexSubcategory: csvIndexes.subject_sex,
         },
         "category-body": {
             name: t("category-body"),
-            index: csvIndexes.anatomical_part
+            index: csvIndexes.anatomical_part,
+            indexSubcategory: csvIndexes.organs,
         },
         "category-emotion": {
             name: t("category-emotion"),
-            index: csvIndexes.emotion
+            index: csvIndexes.subject_name,
+            indexSubcategory: csvIndexes.organs,
         }
     }
 
@@ -296,6 +300,7 @@ const DashboardPage = () => {
 
     const [networkData, setNetworkData] = useState({selected: [], people:[]})
     const [pyramidData, setPyramidData] = useState("")
+    const [heatmapData, setHeatmapData] = useState([])
 
     window.addEventListener('click', function (e) {
         if (document.getElementById('overlay') && document.getElementById('overlay').contains(e.target)) {
@@ -369,7 +374,7 @@ const DashboardPage = () => {
                     <div className="dashboard-row1">
                         <div className="dashboard-viz1">
                             <HeatmapChart data={globalData}
-                                networkData={networkData} pyramidData={pyramidData}
+                                setHeatmapData={setHeatmapData} networkData={networkData} pyramidData={pyramidData}
                                 csvIndexes={csvIndexes}
                                 activeCategories={activeCategories}
                                 activeCategory={activeCategory}
@@ -396,7 +401,7 @@ const DashboardPage = () => {
                         <div className={"dashboard-viz2" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
                             <ImportantPeopleChart 
                             data={globalData}
-                            networkData={networkData} pyramidData={pyramidData}
+                            networkData={networkData} pyramidData={pyramidData} heatmapData={heatmapData}
                             csvIndexes={csvIndexes}
                             isExpanded={isImpPeopleExpanded}
                             setIsExpanded={setIsImpPeopleExpanded}/>
@@ -406,7 +411,7 @@ const DashboardPage = () => {
                         <div id="viz3" className={"dashboard-viz3" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
                             <TabChart categories={categories}
                                 data={globalData}
-                                setPyramidData={setPyramidData} networkData={networkData}
+                                setPyramidData={setPyramidData} networkData={networkData} heatmapData={heatmapData}
                                 csvIndexes={csvIndexes}
                                 setCurrentTabchartCategory={setCurrentTabchartCategory}
                                 isExpanded={isTabchartExpanded} setIsExpanded={setIsTabchartExpanded}
@@ -415,7 +420,7 @@ const DashboardPage = () => {
                         <div className={"dashboard-viz4" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
                             <NetworkChart 
                             data={globalData}
-                            setNetworkData={setNetworkData} pyramidData={pyramidData}
+                            setNetworkData={setNetworkData} pyramidData={pyramidData} heatmapData={heatmapData}
                             colorCodices={colorCodices}
                             csvIndexes={csvIndexes}
                             isExpanded={isNetworkExpanded}
@@ -438,7 +443,7 @@ const DashboardPage = () => {
                             </button>
                             <Citations
                                 data={globalData}
-                                networkData={networkData} pyramidData={pyramidData}
+                                networkData={networkData} pyramidData={pyramidData} heatmapData={heatmapData}
                                 categories={categories}
                                 activeCategories={activeCategories}
                                 currentTabchartCategory={currentTabchartCategory}

@@ -41,10 +41,157 @@ const NetworkChart = (props) => {
 
     const [typeClick, setTypeClick] = useState("")
     const [selectedNodes, setSelectedNodes] = useState([])
+    const [data, setData] = useState([])
+    const [nodesGlobal, setNodesGlobal] = useState([])
+    const [linksGlobal, setLinksGlobal] = useState([])
+    
 
+    useEffect(() => {
+        let aux = props.data.filter(entry => {
+            let pyramidFilter = true
+			let heatmapFilter = true
+			let sexes = ["Mult.", "N", props.pyramidData]
+
+			if (props.pyramidData)
+				pyramidFilter = sexes.includes(entry[props.csvIndexes.subject_sex]) && 
+                                sexes.includes(entry[props.csvIndexes.with_sex]) && 
+                                sexes.includes(entry[props.csvIndexes.about_sex])
+
+			if (Object.keys(props.heatmapData).length)
+				heatmapFilter = entry[props.heatmapData.searchKey1] === props.heatmapData.key1 && 
+								entry[props.heatmapData.searchKey2] === props.heatmapData.key2
+
+			return pyramidFilter && heatmapFilter
+        })
+
+        d3.select(".network-graph").selectAll("svg").remove("")
+
+        if (aux.length === 0)
+            return 
+
+        let subject_nodes = d3.flatGroup(aux, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.title], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.subject_sex], d => d[props.csvIndexes.subject_qualities]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4]]])
+        let with_nodes = d3.flatGroup(aux, d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.title], d => d[props.csvIndexes.with_sex], d => d[props.csvIndexes.with_qualities]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4]]])
+        let about_nodes = d3.flatGroup(aux, d => d[props.csvIndexes.about_name], d => d[props.csvIndexes.title], d => d[props.csvIndexes.about_sex], d => d[props.csvIndexes.about_qualities]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4]]])
+
+        subject_nodes = subject_nodes.filter(entry => {
+            return true//(entry[2] === "Individual")
+        }).flatMap(d => [[d[0], d[1], d[3], d[4]]])
+
+        let concat_arrays = [...new Set([...subject_nodes, ...with_nodes, ...about_nodes])]
+
+        concat_arrays = d3.flatGroup(concat_arrays, d => d[0], d => d[1]).flatMap(d => [[d[0], d[1], d[2]]])
+
+        concat_arrays = concat_arrays.filter(entry => {
+            return (entry[0] !== "Não aplicável")
+        })
+
+        let nodesOriginal = concat_arrays.map(entry => {
+            return ({
+                person: entry[0],
+                group: entry[1],
+                sex: [...new Set(entry[2].flatMap(d => [d[2]]))],
+                qualities: [...new Set(entry[2].flatMap(d => [d[3]]))].filter(entry => entry !== "Não aplicável"),
+            })
+        })
+
+        nodesOriginal = d3.flatRollup(nodesOriginal, v => {
+            let dict = {
+                multipleGroups: v.length !== 1,
+                groups: v.flatMap(d => [d.group]),
+                sex: [...new Set(v.flatMap(d => d.sex))],
+                qualities: [...new Set(v.flatMap(d => d.qualities))]
+            }
+            return dict
+        }, d => d.person)
+
+        nodesOriginal = nodesOriginal.map(entry => ({
+            person: entry[0],
+            ...entry[1]
+        }))
+
+
+        let with_links = d3.flatRollup(aux, v => v.length, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.description]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4]]])
+
+        with_links = with_links.filter(entry => {
+            return (entry[0] !== "Não aplicável" && entry[1] !== "Não aplicável") // entry[2] === "Individual"
+        }).flatMap(d => [[d[0], d[1], d[3], d[4]]])
+
+        with_links = d3.flatGroup(with_links, d => d[0], d => d[1])
+
+        with_links = with_links.map((entry, index) => ({
+            id: index,
+            source: entry[0],
+            target: entry[1],
+            value: entry[2].length,
+            type: "with",
+            citations: [...new Set(entry[2].flatMap(d => d[2]))]
+        }))
+
+        let about_links = d3.flatRollup(aux, v => v.length, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.about_name], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.description]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4], d[5]]])
+
+        about_links = about_links.filter(entry => {
+            return (entry[0] !== "Não aplicável" && entry[2] !== "Não aplicável") // entry[3] === "Individual"
+        }).flatMap(d => [[d[0], d[2], d[4], d[5]]])
+
+        about_links = d3.flatGroup(about_links, d => d[0], d => d[1])
+
+        about_links = about_links.map((entry, index) => ({
+            id: index,
+            source: entry[0],
+            target: entry[1],
+            value: entry[2].length,
+            type: "about",
+            with_id: with_links.findIndex(({ source, target }) => (source === entry[0] && target === entry[1])),
+            citations: [...new Set(entry[2].flatMap(d => d[2]))]
+        }))
+
+        let linksOriginal = [...new Set([...with_links, ...about_links])]
+
+        // Compute values.
+
+        // Replace the input nodes and links with mutable objects for the simulation.
+        setNodesGlobal(d3.map(nodesOriginal, d => ({ person: d.person, multipleGroups: d.multipleGroups, groups: d.groups, sex: d.sex, qualities: d.qualities })));
+        setLinksGlobal(d3.map(linksOriginal, (d, i) => ({ id: i, source: d.source, target: d.target, value: d.value, type: d.type, with_id: d["with_id"], citations: d.citations })));
+
+        setData(aux)
+    }, [props.data, props.pyramidData, props.heatmapData])
+
+    const [nodeClickCheck, setNodeClickCheck] = useState(false)
 
     useEffect(() => {
 
+        let links = [...linksGlobal]
+        let nodes = [...nodesGlobal]
+
+        if (typeClick)
+            links = links.filter(l => l.type === typeClick)
+
+        if (selectedNodes.length) {
+            links = links.filter(l => {
+                return selectedNodes.includes(l.source) || selectedNodes.includes(l.target) ||
+                        selectedNodes.includes(l.source.person) || selectedNodes.includes(l.target.person)
+            })
+        }
+
+        nodes = nodes.filter(n => {
+            let passLinks = false
+            links.forEach(l => {
+                if (n.person === l.source || n.person === l.target || 
+                    n.person === l.source.person || n.person === l.target.person)
+                    passLinks = true
+            })
+
+            if (links.length === 0)
+                passLinks = selectedNodes.includes(n.person)
+
+            return passLinks
+        })
+
+        if (nodeClickCheck){
+            props.setNetworkData({ selected: selectedNodes, people: nodes.map(d => d.person)})
+            setNodeClickCheck(false)
+        }
+        
         let nodemouseover = function (event, d) {
             tooltipNetwork
                 .style("opacity", "1");
@@ -155,6 +302,9 @@ const NetworkChart = (props) => {
                 element.innerHTML = "";
         }
 
+        
+        d3.select(".network-graph").selectAll("svg").remove("")
+
         d3.selectAll("#tooltipNetwork").remove();
         // create a tooltipNetwork
         tooltipNetwork = d3.select("body")
@@ -200,140 +350,8 @@ const NetworkChart = (props) => {
         if (network_boundaries === null)
             network_boundaries = box.getBoundingClientRect()
 
-
-
-        d3.select(".network-graph").selectAll("svg").remove("")
-
-        if (props.data.length === 0)
-            return
-
         let width = network_boundaries.width;
         let height = network_boundaries.height;
-
-
-        let subject_nodes = d3.flatGroup(props.data, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.title], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.subject_sex], d => d[props.csvIndexes.subject_qualities]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4]]])
-        let with_nodes = d3.flatGroup(props.data, d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.title], d => d[props.csvIndexes.with_sex], d => d[props.csvIndexes.with_qualities]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4]]])
-        let about_nodes = d3.flatGroup(props.data, d => d[props.csvIndexes.about_name], d => d[props.csvIndexes.title], d => d[props.csvIndexes.about_sex], d => d[props.csvIndexes.about_qualities]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4]]])
-
-        subject_nodes = subject_nodes.filter(entry => {
-            return true//(entry[2] === "Individual")
-        }).flatMap(d => [[d[0], d[1], d[3], d[4]]])
-
-        let concat_arrays = [...new Set([...subject_nodes, ...with_nodes, ...about_nodes])]
-
-        concat_arrays = d3.flatGroup(concat_arrays, d => d[0], d => d[1]).flatMap(d => [[d[0], d[1], d[2]]])
-
-        concat_arrays = concat_arrays.filter(entry => {
-            return (entry[0] !== "Não aplicável")
-        })
-
-        let nodesOriginal = concat_arrays.map(entry => {
-            return ({
-                person: entry[0],
-                group: entry[1],
-                sex: [...new Set(entry[2].flatMap(d => [d[2]]))],
-                qualities: [...new Set(entry[2].flatMap(d => [d[3]]))].filter(entry => entry !== "Não aplicável"),
-            })
-        })
-
-        nodesOriginal = d3.flatRollup(nodesOriginal, v => {
-            let dict = {
-                multipleGroups: v.length !== 1,
-                groups: v.flatMap(d => [d.group]),
-                sex: [...new Set(v.flatMap(d => d.sex))],
-                qualities: [...new Set(v.flatMap(d => d.qualities))]
-            }
-            return dict
-        }, d => d.person)
-
-        nodesOriginal = nodesOriginal.map(entry => ({
-            person: entry[0],
-            ...entry[1]
-        }))
-
-
-        let with_links = d3.flatRollup(props.data, v => v.length, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.description]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4]]])
-
-        with_links = with_links.filter(entry => {
-            return (entry[0] !== "Não aplicável" && entry[1] !== "Não aplicável") // entry[2] === "Individual"
-        }).flatMap(d => [[d[0], d[1], d[3], d[4]]])
-
-        with_links = d3.flatGroup(with_links, d => d[0], d => d[1])
-
-        with_links = with_links.map((entry, index) => ({
-            id: index,
-            source: entry[0],
-            target: entry[1],
-            value: entry[2].length,
-            type: "with",
-            citations: [...new Set(entry[2].flatMap(d => d[2]))]
-        }))
-
-        let about_links = d3.flatRollup(props.data, v => v.length, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.about_name], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.description]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4], d[5]]])
-
-        about_links = about_links.filter(entry => {
-            return (entry[0] !== "Não aplicável" && entry[2] !== "Não aplicável") // entry[3] === "Individual"
-        }).flatMap(d => [[d[0], d[2], d[4], d[5]]])
-
-        about_links = d3.flatGroup(about_links, d => d[0], d => d[1])
-
-        about_links = about_links.map((entry, index) => ({
-            id: index,
-            source: entry[0],
-            target: entry[1],
-            value: entry[2].length,
-            type: "about",
-            with_id: with_links.findIndex(({ source, target }) => (source === entry[0] && target === entry[1])),
-            citations: [...new Set(entry[2].flatMap(d => d[2]))]
-        }))
-
-        let linksOriginal = [...new Set([...with_links, ...about_links])]
-
-        // Compute values.
-
-
-        // Replace the input nodes and links with mutable objects for the simulation.
-        let nodes = d3.map(nodesOriginal, d => ({ person: d.person, multipleGroups: d.multipleGroups, groups: d.groups, sex: d.sex, qualities: d.qualities }));
-        let links = d3.map(linksOriginal, (d, i) => ({ id: i, source: d.source, target: d.target, value: d.value, type: d.type, with_id: d["with_id"], citations: d.citations }));
-
-        if (typeClick)
-            links = links.filter(l => l.type === typeClick)
-
-        if (selectedNodes.length) {
-            links = links.filter(l => {
-                return selectedNodes.includes(l.source) || selectedNodes.includes(l.target)
-            })
-        }
-
-        let sexes = ["Mult.", "N", props.pyramidData]
-
-        nodes = nodes.filter(n => {
-            let passLinks = false
-            links.forEach(l => {
-                if (n.person === l.source || n.person === l.target)
-                    passLinks = true
-            })
-
-            let passSex = false
-            n.sex.forEach(s => {
-                if (sexes.includes(s))
-                    passSex = true
-            })
-
-            if (!props.pyramidData)
-                passSex = true
-
-            return passLinks && passSex
-        })
-
-        let nodesPerson = nodes.flatMap(d => d.person)
-        links = links.filter(l => {
-            return nodesPerson.includes(l.source) && nodesPerson.includes(l.target)
-        })
-
-        props.setNetworkData({ selected: selectedNodes, people: nodes.map(d => d.person) })
-
-        // Construct the scales.
 
         // Construct the forces.
         let forceNode = d3.forceManyBody();
@@ -370,8 +388,6 @@ const NetworkChart = (props) => {
         let maxZoomX = width * 2
         let minZoomY = -height * 2
         let maxZoomY = height * 2
-
-
 
         let automaticZoom = true
         // Create zoom behavior for the map
@@ -455,17 +471,6 @@ const NetworkChart = (props) => {
             .on("click", nodeclick)
             .text(d => d.person)
             .call(drag(simulation))
-
-        function nodeclick(event, d) {
-            let aux = [...selectedNodes]
-            let index = -1
-            if (index = !aux.includes(d.person))
-                aux.push(d.person)
-            else
-                aux.splice(index, 1)
-
-            setSelectedNodes(aux)
-        }
 
         function ticked() {
 
@@ -555,7 +560,19 @@ const NetworkChart = (props) => {
                 .on("end", dragended);
         }
 
-    }, [props.data, typeClick, selectedNodes, props.pyramidData]);
+    }, [data, typeClick, selectedNodes, nodeClickCheck])
+
+    function nodeclick(event, d) {
+        let aux = [...selectedNodes]
+        let index = -1
+        if (index = !aux.includes(d.person))
+            aux.push(d.person)
+        else
+            aux.splice(index, 1)
+
+        setSelectedNodes(aux)
+        setNodeClickCheck(true)
+    }
 
     return (
         <>
@@ -575,15 +592,11 @@ const NetworkChart = (props) => {
                 </div>
                 <div className='network-bottom-section'>
                     <div className='network-graph'>
-                        {props.data.length === 0 &&
+                        {data.length === 0 &&
                             <div className='' style={{width: "100%",height: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
                                     {t("no-data-to-show")}
                             </div>}
                     </div>
-                    {/* <div id="minimapWrapper" style={{ position: "absolute", bottom: 0, left: 0, margin: "5px", border: "1px solid #ddd", overflow: "hidden", backgroundColor: "#FFF", zIndex: 9 }} className="minimapWrapperIdle">
-                        <img id="minimapImage" className="minimapImage" />
-                        <div id="minimapRadar" className="minimapRadar"></div>
-                    </div> */}
 
                     <div className='shadow network-legend'>
                         <div id="about" className={'network-legend-items' + (typeClick === "about" ? " network-about-selected" : "")}

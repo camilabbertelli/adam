@@ -28,6 +28,8 @@ const ImportantPeopleChart = (props) => {
     const [searchedPeople, setSearchedPeople] = useState([])
     const [selectedImp, setSelectedImp] = useState([])
 
+    const [data, setData] = useState([])
+
     function expandImp() {
         document.getElementById("overlay").style.display = (!isExpanded) ? "block" : "none";
 
@@ -59,21 +61,32 @@ const ImportantPeopleChart = (props) => {
 
     useEffect(() => {
 
-        let impData = d3.flatGroup(props.data, d => d[props.csvIndexes.subject_name])
+        let dataInitial = props.data.filter(entry => {
+			let networkFilter = true
+			let pyramidFilter = true
+			let detailsFilter = true
+			let sexes = ["Mult.", "N", props.pyramidData]
+
+			if (props.networkData.people.length)
+				networkFilter = (props.networkData.people.includes(entry[props.csvIndexes.subject_name]))
+
+			if (props.pyramidData)
+				pyramidFilter = sexes.includes(entry[props.csvIndexes.subject_sex])
+
+			if (Object.keys(props.heatmapData).length)
+				detailsFilter = entry[props.heatmapData.searchKey1] === props.heatmapData.key1 && 
+								entry[props.heatmapData.searchKey2] === props.heatmapData.key2
+
+			return networkFilter && pyramidFilter && detailsFilter
+		})
+
+        let impData = d3.flatGroup(dataInitial, d => d[props.csvIndexes.subject_name])
 
         let impAux = {}
         impData.forEach(entry => {
-            if (!props.networkData.people.length || props.networkData.people.includes(entry[0])){
-                impAux[noSpaces(entry[0])] = {
-                    name: entry[0],
-                    entries: entry[1].filter(e => {
-                        let sex = e[props.csvIndexes.subject_sex]
-                        let sexes = ["Mult.", "N", props.pyramidData]
-                        if (!props.pyramidData)
-                            return true
-                        return sexes.includes(sex)
-                    })
-                }
+            impAux[noSpaces(entry[0])] = {
+                name: entry[0],
+                entries: entry[1]
             }
         })
 
@@ -90,9 +103,10 @@ const ImportantPeopleChart = (props) => {
         if (selectedImp.length === 2 && !sortedkeys.includes(selectedImp[1])) aux.splice(aux.indexOf(selectedImp[1]), 1)
 
         setSelectedImp(aux)
+        setData(dataInitial)
         setImpPeople(imp)
         setSearchedPeople(Array.from(Object.keys(imp)))
-    }, [props.data, props.networkData, props.pyramidData])
+    }, [props.data, props.networkData, props.pyramidData, props.heatmapData])
 
     function removeSelectedImp(index) {
         let aux = [...selectedImp]
@@ -210,7 +224,7 @@ const ImportantPeopleChart = (props) => {
         d3.selectAll(`.imp-td`)
             .on("mouseover", mouseover)
             .on("mouseleave", mouseleave)
-    }, [props.data, impPeople]);
+    }, [impPeople]);
 
     function changeSearchInput(){
         let element = document.getElementById('imp-search-bar')
@@ -235,7 +249,7 @@ const ImportantPeopleChart = (props) => {
     return (
         <>
             <div className="imp-people-area shadow">
-                {props.data.length > 0 &&
+                {data.length > 0 &&
                     <>
                         <div className='imp-left-section'>
                             <input id="imp-search-bar" type='text' className='imp-search-bar' placeholder={t("search-imp-placeholder")} text="" onChange={() => changeSearchInput()}/>
@@ -373,7 +387,7 @@ const ImportantPeopleChart = (props) => {
                             </div>
                         </div>
                     </>}
-                {props.data.length === 0 && <>
+                {data.length === 0 && <>
                     <div style={{ display: 'flex', flexDirection: "column", justifyContent: "center", alignItems: "center", width: "100%", height: "100%" }}>
 
                         <div style={{ display: 'flex', flexDirection: "row", justifyContent: "center", width: "100%", height: "15%" }}>

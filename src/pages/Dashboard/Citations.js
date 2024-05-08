@@ -20,21 +20,25 @@ const Citations = (props) => {
 
     const [data, setData] = useState([])
 
-    const toggleCitation = (id) => {
-        let index = id - 1
+    const toggleCitation = (entry) => {
 
+        let id = entry[props.csvIndexes["#"]]
         let state = !d3.select(`[id="${id}"]`).classed("citations-sub-none")
         d3.select(`[id="${id}"]`).classed("citations-sub-none", state)
         d3.select(`[id="citation-arrow-${id}"]`).style("transform", state ? "none" : "rotate(90deg)")
 
         if (!state) {
 
-            // heatmap
             let indexKey1 = props.categories[props.activeCategories[0]].index
             let indexKey2 = props.categories[props.activeCategories[1]].index
-
-            let heatmapKey1 = noSpaces(data[index][indexKey1])
-            let heatmapKey2 = noSpaces(data[index][indexKey2])
+            // heatmap
+            if (props.heatmapData.length !== 0){
+                indexKey1 = props.categories[props.activeCategories[0]].indexSubcategory
+                indexKey2 = props.categories[props.activeCategories[1]].indexSubcategory    
+            }
+            
+            let heatmapKey1 = noSpaces(entry[indexKey1])
+            let heatmapKey2 = noSpaces(entry[indexKey2])
 
             let selectionHeatmap = d3.select(`.heatmap-${heatmapKey1}-${heatmapKey2}`);
             let elementHeatmap = selectionHeatmap.node();
@@ -52,7 +56,7 @@ const Citations = (props) => {
 
             // pyramid
             let pyramidSex = []
-            let pyramidOriginalSex = data[index][props.csvIndexes.subject_sex]
+            let pyramidOriginalSex = entry[props.csvIndexes.subject_sex]
 
             if (pyramidOriginalSex === "Mult." || pyramidOriginalSex === "N") {
                 pyramidSex.push("Fem")
@@ -62,7 +66,7 @@ const Citations = (props) => {
             else if (pyramidOriginalSex === "Masc.")
                 pyramidSex.push("Masc")
 
-            let pyramidKey = noSpaces(data[index][indexPyramid])
+            let pyramidKey = noSpaces(entry[indexPyramid])
 
             pyramidSex.forEach(p => {
                 let selectionPyramid = d3.selectAll(`.pyramid-${p}-${pyramidKey}`);
@@ -79,7 +83,7 @@ const Citations = (props) => {
             });
 
             // imp people
-            let impKey = noSpaces(data[index][props.csvIndexes.subject_name])
+            let impKey = noSpaces(entry[props.csvIndexes.subject_name])
 
             let selectionImp = d3.select(`#imp-${impKey}`);
             let elementImp = selectionImp.node();
@@ -94,7 +98,7 @@ const Citations = (props) => {
             }, 2000);
 
             // network
-            let networkKey = noSpaces(data[index][props.csvIndexes.subject_name])
+            let networkKey = noSpaces(entry[props.csvIndexes.subject_name])
 
             let selectionNetwork = d3.select(`#network-${networkKey}`);
             let elementNetwork = selectionNetwork.node();
@@ -123,9 +127,10 @@ const Citations = (props) => {
         let aux = props.data.filter(entry => {
             let networkFilter = true
             let pyramidFilter = true
+			let detailsFilter = true
             let sexes = ["Mult.", "N", props.pyramidData]
 
-            if (props.networkData.people.length)
+            if (props.networkData.selected.length)
                 networkFilter = props.networkData.people.includes(entry[props.csvIndexes.subject_name]) || 
                                 props.networkData.people.includes(entry[props.csvIndexes.with_name])
                                 props.networkData.people.includes(entry[props.csvIndexes.about_name])
@@ -133,7 +138,11 @@ const Citations = (props) => {
             if (props.pyramidData)
                 pyramidFilter = sexes.includes(entry[props.csvIndexes.subject_sex])
 
-            return networkFilter && pyramidFilter
+            if (Object.keys(props.heatmapData).length)
+				detailsFilter = entry[props.heatmapData.searchKey1] === props.heatmapData.key1 && 
+								entry[props.heatmapData.searchKey2] === props.heatmapData.key2
+
+			return networkFilter && pyramidFilter && detailsFilter
         })
 
         setData(aux)
@@ -144,7 +153,7 @@ const Citations = (props) => {
             pageCount: aux.length / prevState.numberPerPage,
             currentData: aux.slice(0, pagination.numberPerPage),
         }))
-    }, [props.data, props.pyramidData, props.networkData])
+    }, [props.data, props.pyramidData, props.networkData, props.heatmapData])
 
     useEffect(() => {
         setPagination((prevState) => ({
@@ -152,7 +161,7 @@ const Citations = (props) => {
             pageCount: data.length / prevState.numberPerPage,
             currentData: data.slice(pagination.offset, pagination.offset + pagination.numberPerPage)
         }))
-    }, [pagination.numberPerPage, pagination.offset])
+    }, [data, pagination.numberPerPage, pagination.offset])
 
     const handlePageClick = event => {
 
@@ -174,7 +183,7 @@ const Citations = (props) => {
                     <div className='citations-content' id='citations-content'>
                         {pagination.currentData && pagination.currentData.map(((entry) => (
                             <div className='citations-dropdown' key={`div-${entry[props.csvIndexes["#"]]}`}>
-                                <button className='citations-dropbtn' key={`btn-${entry[props.csvIndexes["#"]]}`} onClick={() => toggleCitation(entry[props.csvIndexes["#"]])}>
+                                <button className='citations-dropbtn' key={`btn-${entry[props.csvIndexes["#"]]}`} onClick={() => toggleCitation(entry)}>
                                     <ArrowForwardIosIcon id={`citation-arrow-${entry[props.csvIndexes["#"]]}`} style={{ width: "15px", marginRight: "5px" }} />
                                     {entry[props.csvIndexes.description]}
                                 </button>

@@ -32,31 +32,69 @@ let pyramid_boundaries = null
 let pyramid_boundaries_bottom = null
 let pyramid_boundaries_left = null
 
+// function wrap(text, width) {
+
+//     text.each(function () {
+//         var text = d3.select(this),
+//             words = text.text().split(/\s+/),
+//             line = [],
+//             y = text.attr("y"),
+//             x = text.attr("x"),
+//             tspan = text.text(null).append("tspan").attr("x", x).attr("y", y);
+
+//         words.forEach((word) => {
+//             if (word !== "") {
+//                 line.push(word);
+//                 tspan.text(line.join(" "));
+//                 if (tspan.node().getComputedTextLength() > width) {
+//                     line.pop();
+//                     tspan.text(line.join(" "));
+//                     line = [word];
+//                     tspan.attr("y", Number(tspan.attr("y")) - 8)
+//                     tspan = text.append("tspan").attr("x", x).attr("y", Number(tspan.attr("y")) + 16).text(word);
+//                 }
+//             }
+//         })
+//         tspan.attr("y", Number(tspan.attr("y")) - 8)
+//     });
+// }
+
+
 function wrap(text, width) {
+	text.each(function () {
+		var text = d3.select(this),
+			words = text.text().split(/\s+/),
+			line = [],
+			y = text.attr("y"),
+			x = text.attr("x"),
+			tspan = text.text(null).append("tspan").attr("x", x).attr("y", y);
 
-    text.each(function () {
-        var text = d3.select(this),
-            words = text.text().split(/\s+/),
-            line = [],
-            y = text.attr("y"),
-            x = text.attr("x"),
-            tspan = text.text(null).append("tspan").attr("x", x).attr("y", y);
 
-        words.forEach((word) => {
-            if (word !== "") {
-                line.push(word);
-                tspan.text(line.join(" "));
-                if (tspan.node().getComputedTextLength() > width) {
-                    line.pop();
-                    tspan.text(line.join(" "));
-                    line = [word];
-                    tspan.attr("y", Number(tspan.attr("y")) - 8)
-                    tspan = text.append("tspan").attr("x", x).attr("y", Number(tspan.attr("y")) + 16).text(word);
-                }
-            }
-        })
-        tspan.attr("y", Number(tspan.attr("y")) - 8)
-    });
+		let breakLine = false
+
+		words.forEach(word => {
+			if (word !== "" && !breakLine) {
+				line.push(word);
+				tspan.text(line.join(" "));
+				if (tspan.node().getComputedTextLength() > width) {
+					breakLine = true
+					line.pop();
+					tspan.text(line.join(" "));
+					line = [word + "..."];
+					if (words.length === 1)
+						tspan = text.append("tspan").attr("x", x).attr("y", Number(tspan.attr("y"))).text(word.substring(0, Math.floor((word.length / 1.5))) + "...");
+					else {
+						tspan.attr("y", Number(tspan.attr("y")) - 5)
+						tspan = text.append("tspan").attr("x", x).attr("y", Number(tspan.attr("y")) + 10).text(word);
+						if (tspan.node().getComputedTextLength() > width) {
+							tspan.text(word.substring(0, Math.floor((word.length / 2))) + "...")
+						}
+					}
+				}
+			}
+		})
+
+	});
 }
 
 function noSpaces(str) {
@@ -640,17 +678,29 @@ const TabChart = (props) => {
         let withIndex = props.csvIndexes.with_name
         let aboutIndex = props.csvIndexes.about_name
 
-        if (props.networkData.people.length) {
-            setData(props.data.filter(entry => {
-                return props.networkData.people.includes(entry[subjectIndex]) ||
-                    props.networkData.people.includes(entry[withIndex]) ||
-                    props.networkData.people.includes(entry[aboutIndex])
-            }))
-            props.setChangedFilter(true)
-        }
-        else
-            setData(props.data)
-    }, [props.networkData, props.data])
+        setData(props.data.filter(entry => {
+            let heatmapFilter = true
+            let networkFilter = true
+
+            if (Object.keys(props.heatmapData).length)
+                heatmapFilter = entry[props.heatmapData.searchKey1] === props.heatmapData.key1 && 
+                                entry[props.heatmapData.searchKey2] === props.heatmapData.key2
+
+
+            if (props.networkData.selected.length)
+                networkFilter = ((props.networkData.people.includes(entry[subjectIndex]) &&
+                    props.networkData.people.includes(entry[withIndex])) ||
+                    (props.networkData.people.includes(entry[subjectIndex]) &&
+                    props.networkData.people.includes(entry[aboutIndex]))) ||
+                    props.networkData.people.includes(entry[subjectIndex])
+
+            return heatmapFilter && networkFilter 
+                
+        }))
+        
+        props.setChangedFilter(true)
+        
+    }, [props.networkData, props.data, props.heatmapData])
 
     return (
         <>
