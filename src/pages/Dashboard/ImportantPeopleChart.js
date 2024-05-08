@@ -37,6 +37,21 @@ const ImportantPeopleChart = (props) => {
         props.setIsExpanded(!isExpanded)
     }
 
+    function highlightNode(networkKey){
+
+        let selectionNetwork = d3.select(`#network-${networkKey}`);
+        let elementNetwork = selectionNetwork.node();
+
+        if (elementNetwork) {
+            elementNetwork.scrollIntoView({ block: "center" });
+            selectionNetwork.transition().duration(500).attr("r", 100)
+        }
+
+        setTimeout(() => {
+            selectionNetwork.transition().duration(500).attr("r", 15)
+        }, 2000);
+    }
+
     useEffect(() => {
         setIsExpanded(props.isExpanded)
         d3.selectAll(".imp-people-area").classed("imp-expand", props.isExpanded)
@@ -84,7 +99,6 @@ const ImportantPeopleChart = (props) => {
         aux.splice(index, 1)
         setSelectedImp(aux)
         
-        props.setImpData(aux)
     }
 
     function changeSelected(key) {
@@ -101,7 +115,8 @@ const ImportantPeopleChart = (props) => {
 
         setSelectedImp(aux)
 
-        props.setImpData(aux)
+        if (aux.length)
+            highlightNode(aux[aux.length - 1])
     }
 
     useEffect(() => {

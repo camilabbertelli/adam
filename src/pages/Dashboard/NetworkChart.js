@@ -299,67 +299,39 @@ const NetworkChart = (props) => {
         if (typeClick)
             links = links.filter(l => l.type === typeClick)
 
-        let linksNetwork = []
         if (selectedNodes.length) {
-            linksNetwork = links.filter(l => {
+            links = links.filter(l => {
                 return selectedNodes.includes(l.source) || selectedNodes.includes(l.target)
             })
         }
 
-        let nodesNetwork = nodes.filter(n => {
-            let pass = false
-            linksNetwork.forEach(l => {
-                if (n.person === l.source || n.person === l.target)
-                    pass = true
-            })
-
-            return pass
-        })
-
-        props.setNetworkData({ selected: selectedNodes, people: nodesNetwork.map(d => d.person) })
-
-        if (props.pyramidData) {
-            let sexes = ["Mult.", "N", props.pyramidData]
-
-            nodes = nodes.filter(n => {
-                let pass = false
-                n.sex.forEach(s => {
-                    if (sexes.includes(s))
-                        pass = true
-                })
-
-                return pass
-            })
-
-            let nodesPerson = nodes.flatMap(d => d.person)
-            links = links.filter(l => {
-                return nodesPerson.includes(l.source) && nodesPerson.includes(l.target)
-            })
-        }
-        
-        if (selectedNodes.length || props.impData.length) {
-            links = links.filter(l => {
-                return props.impData.includes(noSpaces(l.source)) || props.impData.includes(noSpaces(l.target)) 
-                || selectedNodes.includes(l.source) || selectedNodes.includes(l.target)
-            })
-        }
+        let sexes = ["Mult.", "N", props.pyramidData]
 
         nodes = nodes.filter(n => {
-            let pass = false
+            let passLinks = false
             links.forEach(l => {
                 if (n.person === l.source || n.person === l.target)
-                    pass = true
+                    passLinks = true
             })
 
-            if (links.length === 0)
-                props.impData.forEach(key => {
-                    if (noSpaces(n.person) === key)
-                        pass = true
-                })
+            let passSex = false
+            n.sex.forEach(s => {
+                if (sexes.includes(s))
+                    passSex = true
+            })
 
-            return pass
+            if (!props.pyramidData)
+                passSex = true
+
+            return passLinks && passSex
         })
 
+        let nodesPerson = nodes.flatMap(d => d.person)
+        links = links.filter(l => {
+            return nodesPerson.includes(l.source) && nodesPerson.includes(l.target)
+        })
+
+        props.setNetworkData({ selected: selectedNodes, people: nodes.map(d => d.person) })
 
         // Construct the scales.
 
@@ -583,7 +555,7 @@ const NetworkChart = (props) => {
                 .on("end", dragended);
         }
 
-    }, [props.data, typeClick, selectedNodes, props.impData, props.pyramidData]);
+    }, [props.data, typeClick, selectedNodes, props.pyramidData]);
 
     return (
         <>

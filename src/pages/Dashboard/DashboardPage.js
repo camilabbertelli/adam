@@ -295,7 +295,6 @@ const DashboardPage = () => {
     const [isNetworkExpanded, setIsNetworkExpanded] = useState(false)
 
     const [networkData, setNetworkData] = useState({selected: [], people:[]})
-    const [impData, setImpData] = useState([])
     const [pyramidData, setPyramidData] = useState("")
 
     window.addEventListener('click', function (e) {
@@ -370,7 +369,7 @@ const DashboardPage = () => {
                     <div className="dashboard-row1">
                         <div className="dashboard-viz1">
                             <HeatmapChart data={globalData}
-                                networkData={networkData} pyramidData={pyramidData} impData={impData}
+                                networkData={networkData} pyramidData={pyramidData}
                                 csvIndexes={csvIndexes}
                                 activeCategories={activeCategories}
                                 activeCategory={activeCategory}
@@ -397,7 +396,7 @@ const DashboardPage = () => {
                         <div className={"dashboard-viz2" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
                             <ImportantPeopleChart 
                             data={globalData}
-                            setImpData={setImpData} networkData={networkData} pyramidData={pyramidData}
+                            networkData={networkData} pyramidData={pyramidData}
                             csvIndexes={csvIndexes}
                             isExpanded={isImpPeopleExpanded}
                             setIsExpanded={setIsImpPeopleExpanded}/>
@@ -416,7 +415,7 @@ const DashboardPage = () => {
                         <div className={"dashboard-viz4" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
                             <NetworkChart 
                             data={globalData}
-                            setNetworkData={setNetworkData} impData={impData} pyramidData={pyramidData}
+                            setNetworkData={setNetworkData} pyramidData={pyramidData}
                             colorCodices={colorCodices}
                             csvIndexes={csvIndexes}
                             isExpanded={isNetworkExpanded}
@@ -439,7 +438,7 @@ const DashboardPage = () => {
                             </button>
                             <Citations
                                 data={globalData}
-                                networkData={networkData} pyramidData={pyramidData} impData={impData}
+                                networkData={networkData} pyramidData={pyramidData}
                                 categories={categories}
                                 activeCategories={activeCategories}
                                 currentTabchartCategory={currentTabchartCategory}
