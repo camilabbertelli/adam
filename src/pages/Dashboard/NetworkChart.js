@@ -147,8 +147,6 @@ const NetworkChart = (props) => {
 
         let linksOriginal = [...new Set([...with_links, ...about_links])]
 
-        // Compute values.
-
         // Replace the input nodes and links with mutable objects for the simulation.
         setNodesGlobal(d3.map(nodesOriginal, d => ({ person: d.person, multipleGroups: d.multipleGroups, groups: d.groups, sex: d.sex, qualities: d.qualities })));
         setLinksGlobal(d3.map(linksOriginal, (d, i) => ({ id: i, source: d.source, target: d.target, value: d.value, type: d.type, with_id: d["with_id"], citations: d.citations })));
@@ -601,13 +599,13 @@ const NetworkChart = (props) => {
                     <div className='shadow network-legend'>
                         <div id="about" className={'network-legend-items' + (typeClick === "about" ? " network-about-selected" : "")}
                             onClick={() => setTypeClick(typeClick === "" ? ("about") : "")} >
-                            <hr className='legend-about-who' />
-                            <p style={{ lineHeight: "200%" }}>{t("network-about-who")}</p>
+                            <hr className='legend-about-whom' />
+                            <p style={{ lineHeight: "200%" }}>{t("network-about-whom")}</p>
                         </div>
                         <div id="with" className={'network-legend-items' + (typeClick === "with" ? " network-with-selected" : "")}
                             onClick={() => setTypeClick(typeClick === "" ? ("with") : "")}>
-                            <hr className='legend-with-who' />
-                            <p style={{ lineHeight: "200%" }}>{t("network-with-who")}</p>
+                            <hr className='legend-with-whom' />
+                            <p style={{ lineHeight: "200%" }}>{t("network-with-whom")}</p>
                         </div>
                     </div>
                 </div>

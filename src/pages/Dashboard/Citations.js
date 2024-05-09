@@ -32,7 +32,7 @@ const Citations = (props) => {
             let indexKey1 = props.categories[props.activeCategories[0]].index
             let indexKey2 = props.categories[props.activeCategories[1]].index
             // heatmap
-            if (props.heatmapData.length !== 0){
+            if (Object.keys(props.heatmapData).length !== 0){
                 indexKey1 = props.categories[props.activeCategories[0]].indexSubcategory
                 indexKey2 = props.categories[props.activeCategories[1]].indexSubcategory    
             }

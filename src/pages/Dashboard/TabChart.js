@@ -333,7 +333,8 @@ const TabContent = (props) => {
 
         bottom_legend
             .append("text")
-            .attr("class", "legend")
+			.style("font-family", "lato")
+            .style("font-size", "smaller")
             .attr("x", ((totalOccurrences) ? barsWidth / 2 : 0) + 20)
             .attr("y", margin.top + 12)
             .style("opacity", selectedSex !== "Fem." ? 1 : 0.5)
@@ -368,7 +369,8 @@ const TabContent = (props) => {
 
             bottom_legend
                 .append("text")
-                .attr("class", "legend")
+                .style("font-family", "lato")
+                .style("font-size", "smaller")
                 .attr("x", barsWidth + 20)
                 .attr("y", margin.top + 12)
                 .style("opacity", selectedSex !== "Masc." ? 1 : 0.5)
@@ -531,12 +533,13 @@ const TabContent = (props) => {
             .style("font-size", 13)
             .style("font-family", "lato")
             .attr("direction", "ltr")
-            .attr("x", width_left / 2 + 5)
-            .attr("text-anchor", "middle")
+            .attr("x", 5)
+            .attr("text-anchor", "start")
             .attr("y", d => yScale(d[0]) + 15)
 
         axes_left.selectAll("text")
             .call(wrap, width_left)
+			.append("svg:title").text(d=>d[0]);
 
         const GridLineM = function () { return d3.axisBottom().scale(xScaleMasc) };
         svg.append("g")

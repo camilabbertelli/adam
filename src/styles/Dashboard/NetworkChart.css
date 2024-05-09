@@ -17,7 +17,7 @@
 }
 
 .network-expand {
-    transform: scale(1.7) translate(-25%, -70%);
+    transform: scale(1.7) translate(-21%, -65%);
     z-index: 10;
 }
 
@@ -53,14 +53,14 @@ h5.network-top-title {
     position: absolute;
     right: 0;
     bottom: 0;
-    width: 16%;
+    width: 18%;
     height: 20%;
     display: flex;
     flex-direction: column;
     background-color: white;
     border-radius: 20px !important;
 
-    opacity: 0.5;
+    opacity: 0.8;
     &:hover {
         opacity: 1;
     }
@@ -85,7 +85,7 @@ h5.network-top-title {
     }
 }
 
-.legend-about-who {
+.legend-about-whom {
     width: 20%;
     border-top: 3px dashed #DC7327;
     margin-right: 10px;
@@ -93,7 +93,7 @@ h5.network-top-title {
     opacity: 1;
 }
 
-.legend-with-who {
+.legend-with-whom {
     width: 20%;
     border-top: 3px solid #383838;
     margin-right: 10px;
@@ -127,24 +127,4 @@ h5.network-top-title {
 .network-with-selected {
     background-color: #b9b9b9;
     border-radius: 0 0 20px 20px;
-}
-
-
-.minimapRadar {
-    position: absolute;
-    background-color: rgba(16, 84, 154, 0.26);
-}
-
-.minimapImage {
-    position: absolute;
-}
-
-.minimapWrapperIdle {
-    opacity: 0.2;
-    transition: opacity 0.5s;
-}
-
-.minimapWrapperMove {
-    opacity: 0.95;
-    transition: opacity 0.5s;
 }

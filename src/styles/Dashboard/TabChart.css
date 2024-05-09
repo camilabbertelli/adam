@@ -44,7 +44,7 @@
 }
 
 .tabchart-expand{
-    transform: scale(1.5) translate(50%, -60%);
+    transform: scale(2) translate(40%, -50%);
     z-index: 10;        
 }
 
@@ -161,8 +161,6 @@
 	stroke-width: 0.3px;
 	stroke-opacity: 0.3;
 }
-
-
 
 .tabchart-dropdown{
 

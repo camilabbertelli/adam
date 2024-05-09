@@ -20,14 +20,8 @@
 }
 
 .heatmap-expand{
-    transform: scale(1.5) translate(18%, 0);
+    transform: scale(1.8) translate(22%, 0);
     z-index: 10;        
-}
-
-
-.heatmap-left-sector{
-    width: 3%;
-    height: 100%;
 }
 
 .heatmap-content{
@@ -41,7 +35,7 @@
 }
 
 .heatmap-right-sector{
-    width: 12%;
+    width: 15%;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -117,6 +111,10 @@
         top: -25%;
         left: -2%;
     }
+    .x.big{
+        top: -6%;
+        left: -3%;
+    }
     
 }
 
@@ -171,13 +169,12 @@
 }
 
 .heatmap-left-header{
-    width: 15%;
+    width: 20%;
     height: 100%;
 
     overflow-x: hidden;
     overflow-y: auto;
     padding-right: 1%;
-
 
     border-right: 2px solid #4A1515;
 
@@ -222,6 +219,6 @@
 
 
 .heatmap-empty-space{
-    width: 15%;
+    width: 20%;
     height: 100%;
 }

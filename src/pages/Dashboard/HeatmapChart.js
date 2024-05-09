@@ -26,7 +26,7 @@ function wrap(text, width) {
 			words = text.text().split(/\s+/),
 			line = [],
 			y = text.attr("y"),
-			x = text.attr("x"),
+			x = 25,
 			tspan = text.text(null).append("tspan").attr("x", x).attr("y", y);
 
 
@@ -48,82 +48,52 @@ function wrap(text, width) {
 						tspan = text.append("tspan").attr("x", x).attr("y", Number(tspan.attr("y")) + 16).text(word);
 						if (tspan.node().getComputedTextLength() > width) {
 							tspan.text(word.substring(0, Math.floor((word.length / 2))) + "...")
+							tspan.attr("y", Number(tspan.attr("y")) - 16)
 						}
 					}
 				}
 			}
 		})
-
-		// words.forEach((word) => {
-		// 	if (word !== "" && !breakLine) {
-		// 		line.push(word);
-		// 		tspan.text(line.join(" "));
-		// 		if (tspan.node().getComputedTextLength() > width) {
-		// 				breakLine = true
-		// 				line.pop();
-		// 				tspan.text(line.join(" "));
-		// 				line = [word + "..."];
-		// 				tspan.attr("y", Number(tspan.attr("y")) - 10)
-		// 				tspan = text.append("tspan").attr("x", x).attr("y", Number(tspan.attr("y")) + 20).text(word.substring(0, Math.floor(word.length/3)) + "...");
-
-		// 		}
-		// 	}
-		// })
-
 	});
 }
 
-// function wrap_(text, width) {
 
-// 	text.each(function () {
-// 		var text = d3.select(this),
-// 			words = text.text().split(/\s+/),
-// 			line = [],
-// 			y = text.attr("y"),
-// 			x = text.attr("x"),
-// 			tspan = text.text(null).append("tspan").attr("x", x).attr("y", y);
+function wrap_bottom(text, width) {
+	text.each(function () {
+		var text = d3.select(this),
+			words = text.text().split(/\s+/),
+			line = [],
+			y = text.attr("y"),
+			tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y);
 
-// 		words.forEach((word) => {
-// 			if (word !== "") {
-// 				line.push(word);
-// 				tspan.text(line.join(" "));
-// 				if (tspan.node().getComputedTextLength() > width) {
-// 					line.pop();
-// 					tspan.text(line.join(" "));
-// 					line = [word];
-// 					tspan.attr("y", Number(tspan.attr("y")) - 10)
-// 					tspan = text.append("tspan").attr("x", x).attr("y", Number(tspan.attr("y")) + 20).text(word);
-// 				}
-// 			}
-// 		})
-// 		tspan.attr("y", Number(tspan.attr("y")) - 10)
-// 	});
-// }
 
-// function wrap(text, width) {
-// 	text.each(function () {
-// 		var text = d3.select(this),
-// 			words = text.text().split(/\s+/).reverse(),
-// 			word,
-// 			line = [],
-// 			lineNumber = 0,
-// 			lineHeight = 0.8,
-// 			y = text.attr("y"),
-// 			dy = parseFloat(text.attr("dy")),
-// 			tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+		let breakLine = false
 
-// 		while (word = words.pop()) {
-// 			line.push(word);
-// 			tspan.text(line.join(" "));
-// 			if (tspan.node().getComputedTextLength() > width) {
-// 				line.pop();
-// 				tspan.text(line.join(" "));
-// 				line = [word];
-// 				tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
-// 			}
-// 		}
-// 	});
-// }
+		words.forEach(word => {
+			if (word !== "" && !breakLine) {
+				line.push(word);
+				tspan.text(line.join(" "));
+				if (tspan.node().getComputedTextLength() > width) {
+					breakLine = true
+					line.pop();
+					tspan.text(line.join(" "));
+					line = [word + "..."];
+					if (words.length === 1)
+						tspan = text.append("tspan").attr("x", 0).attr("y", Number(tspan.attr("y"))).text(word.substring(0, Math.floor((word.length / 1.5))) + "...");
+					else {
+						tspan.attr("y", Number(tspan.attr("y")))
+						tspan = text.append("tspan").attr("x", 0).attr("y", Number(tspan.attr("y")) + 20).text(word);
+						if (tspan.node().getComputedTextLength() > width) {
+							tspan.text(word.substring(0, Math.floor((word.length / 2))) + "...")
+							tspan.attr("y", Number(tspan.attr("y")) - 20)
+						}
+					}
+				}
+			}
+		})
+	});
+}
+
 
 function noSpaces(str) {
 	if (str)
@@ -149,7 +119,7 @@ const HeatmapChart = (props) => {
 		if (props.activeCategories.length === 2) {
 
 			if (prevActiveCategories.current.length !== props.activeCategories.length
-				|| (prevCategories.current[props.activeCategories[0]] && prevCategories.current[props.activeCategories[1]] && prevCategories.current[props.activeCategories[0]].index !== props.categories[props.activeCategories[0]].index)
+			|| (prevCategories.current[props.activeCategories[0]] && prevCategories.current[props.activeCategories[1]] && prevCategories.current[props.activeCategories[0]].index !== props.categories[props.activeCategories[0]].index)
 			) {
 				setIndexKey1(props.categories[props.activeCategories[0]].index)
 				setIndexKey2(props.categories[props.activeCategories[1]].index)
@@ -279,7 +249,7 @@ const HeatmapChart = (props) => {
 		let box_left = document.querySelector(".heatmap-left-header");
 		if (heatmap_boundaries_left === null)
 			heatmap_boundaries_left = box_left.getBoundingClientRect()
-		let width_left = heatmap_boundaries_left.width * 0.9;
+		let width_left = heatmap_boundaries_left.width * 1;
 		let height_left = heatmapKey1.length * 40;
 
 		let box_bottom = document.querySelector(".heatmap-bottom-header");
@@ -324,7 +294,6 @@ const HeatmapChart = (props) => {
 
 		function domainColorsHeatmap() {
 			let colorRange = ["white", "#E4D1D1", "#B88989", "#A16666", "#894343", "#712121", "#5D1B1B", "#320404"]
-			//let domain = [1, 5, 10, 25, 50, 100, 200, 300]
 
 			let unique = [...new Set(heatmapData.map(d => d[2]))];
 			let min = Math.min(...unique)
@@ -356,7 +325,7 @@ const HeatmapChart = (props) => {
 
 		let [domain, maxValue] = domainColorsHeatmap()
 
-		let colorRange = ["white", "#E4D1D1", "#C49E9E", "#A16666", "#894343", "#712121", "#5D1B1B"].slice(0, domain.length)
+		let colorRange = ["white", "#E4D1D1", "#B88989", "#A16666", "#894343", "#712121", "#5D1B1B", "#320404"].slice(0, domain.length)
 		// Build color scale
 		const myColor = d3.scaleThreshold()
 			.range(["none"].concat(colorRange))
@@ -421,12 +390,12 @@ const HeatmapChart = (props) => {
 			.style("font-size", 14)
 			.style("font-family", "lato")
 			.attr("direction", "ltr")
-			.attr("x", 10)
 			.attr("text-anchor", "start")
-			.attr("y", d => y(d) + 25);
+			.attr("y", d => y(d) + 25)
 
 		svg_left_axis.selectAll("text")
-			.call(wrap, width_left)
+			.call(wrap, width_left - 20)
+			.append("svg:title").text(d=>d);
 
 		svg_bottom_axis.append("g")
 			.style("font-size", 14)
@@ -434,7 +403,8 @@ const HeatmapChart = (props) => {
 			.attr("transform", `translate(0, 2)`)
 			.call(d3.axisBottom(x).tickSize(0))
 			.selectAll(".tick text")
-			.call(wrap, x.bandwidth())
+			.call(wrap_bottom, x.bandwidth())
+			.append("svg:title").text(d=>d);
 
 		d3.select(".heatmap-bottom-header")
 			.select(".domain").remove()
@@ -509,14 +479,13 @@ const HeatmapChart = (props) => {
 			{props.data.length > 0 &&
 				<>
 					<div id="droppable" ref={setNodeRef} className={"shadow heatmap-area" + ((props.activeCategory !== null && props.activeCategories.length !== 2) ? " dashed" : "")}>
-						<div className='heatmap-left-sector'>
-							<img alt="info" id="infoHeatmap" src={info}
-								style={{ marginTop: "10px", marginLeft: "10px", cursor: "pointer" }} width="15" height="15"
-							/>
-						</div>
-
 						<div className='heatmap-content'>
-							{props.children}
+							<div style={{display: "flex", marginLeft: "20%", width:"100%", height: (props.activeCategories.length === 2? "15%" : "100%")}}>
+								<img alt="info" id="infoHeatmap" src={info}
+									style={{ position: "absolute", left: "0", marginTop: "10px", marginLeft: "10px", cursor: "pointer" }} width="15" height="15"
+								/>
+								{props.children}
+							</div>
 							{props.activeCategories.length === 2 && <>
 								<div id="heatmap-chart">
 									<div className="heatmap-details-sector">
