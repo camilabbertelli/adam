@@ -32,34 +32,6 @@ let pyramid_boundaries = null
 let pyramid_boundaries_bottom = null
 let pyramid_boundaries_left = null
 
-// function wrap(text, width) {
-
-//     text.each(function () {
-//         var text = d3.select(this),
-//             words = text.text().split(/\s+/),
-//             line = [],
-//             y = text.attr("y"),
-//             x = text.attr("x"),
-//             tspan = text.text(null).append("tspan").attr("x", x).attr("y", y);
-
-//         words.forEach((word) => {
-//             if (word !== "") {
-//                 line.push(word);
-//                 tspan.text(line.join(" "));
-//                 if (tspan.node().getComputedTextLength() > width) {
-//                     line.pop();
-//                     tspan.text(line.join(" "));
-//                     line = [word];
-//                     tspan.attr("y", Number(tspan.attr("y")) - 8)
-//                     tspan = text.append("tspan").attr("x", x).attr("y", Number(tspan.attr("y")) + 16).text(word);
-//                 }
-//             }
-//         })
-//         tspan.attr("y", Number(tspan.attr("y")) - 8)
-//     });
-// }
-
-
 function wrap(text, width) {
 	text.each(function () {
 		var text = d3.select(this),
@@ -129,7 +101,14 @@ const TabContent = (props) => {
     const [totalOccurrences, setTotalOccurrences] = useState(false)
     const [changedTotal, setChangedTotal] = useState(false)
     const [changedSorting, setChangedSorting] = useState(false)
-    const [selectedSex, setSelectedSex] = useState("")
+    const [selectedSex, setSelectedSex] = useState({sex:"", category:"", categoryIndex:""})
+
+    useEffect(() => {
+        if (!(selectedSex.sex === "" && selectedSex.category === "")){
+            setSelectedSex({sex:"", category:"", categoryIndex:""})
+            props.setPyramidData({sex:"", category:"", categoryIndex:""})
+        }
+    }, [props.category])
 
     useEffect(() => {
         let index = props.categories[props.category].index
@@ -162,6 +141,16 @@ const TabContent = (props) => {
         let maxScale = (totalOccurrences) ? maxTotal : Math.max(maxMasc, maxFem)
 
         let factor = maxScale > 0.1 ? 0.05 : 0.01
+
+        const mouseclick = function (event, d, type){
+            if (!totalOccurrences) {
+                let s = (selectedSex.sex === type && selectedSex.category === d[0]) ? "" : type
+                let c = (selectedSex.sex === type && selectedSex.category === d[0]) ? "" : d[0]
+
+                setSelectedSex({sex:s, category: c, categoryIndex: index})
+                props.setPyramidData({sex:s, category: c, categoryIndex: index})
+            }
+        }
 
         // tooltipPyramid events
         const mouseover = function (event, d, type) {
@@ -321,13 +310,12 @@ const TabContent = (props) => {
             .attr("height", 13)
             .attr("cursor", "pointer")
             .style("fill", (totalOccurrences) ? "#935959" : "#7BB3B7")
-            .style("opacity", selectedSex !== "Fem." ? 1 : 0.5)
+            .style("opacity", selectedSex.sex !== "Fem." ? 1 : 0.5)
             .on("click", () => {
                 if (!totalOccurrences) {
-                    let sex = (selectedSex === "") ? "Masc." : ""
-
-                    setSelectedSex(sex)
-                    props.setPyramidData(sex)
+                    let s = (selectedSex.sex === "") ? "Masc." : ""
+                    setSelectedSex({sex:s, category: "", categoryIndex: ""})
+                    props.setPyramidData({sex:s, category: "", categoryIndex: ""})
                 }
             })
 
@@ -337,7 +325,7 @@ const TabContent = (props) => {
             .style("font-size", "smaller")
             .attr("x", ((totalOccurrences) ? barsWidth / 2 : 0) + 20)
             .attr("y", margin.top + 12)
-            .style("opacity", selectedSex !== "Fem." ? 1 : 0.5)
+            .style("opacity", selectedSex.sex !== "Fem." ? 1 : 0.5)
             .text((totalOccurrences) ? "Total" : t("pyramid-masculine"))
 
         if (!totalOccurrences) {
@@ -357,13 +345,13 @@ const TabContent = (props) => {
                 .attr("height", 13)
                 .attr("cursor", "pointer")
                 .style("fill", "#DA9C80")
-                .style("opacity", selectedSex !== "Masc." ? 1 : 0.5)
+                .style("opacity", selectedSex.sex !== "Masc." ? 1 : 0.5)
                 .on("click", () => {
                     if (!totalOccurrences) {
-                        let sex = (selectedSex === "") ? "Fem." : ""
+                        let s = (selectedSex.sex === "") ? "Fem." : ""
 
-                        setSelectedSex(sex)
-                        props.setPyramidData(sex)
+                        setSelectedSex({sex:s, category: "", categoryIndex: ""})
+                        props.setPyramidData({sex:s, category: "", categoryIndex: ""})
                     }
                 })
 
@@ -373,7 +361,7 @@ const TabContent = (props) => {
                 .style("font-size", "smaller")
                 .attr("x", barsWidth + 20)
                 .attr("y", margin.top + 12)
-                .style("opacity", selectedSex !== "Masc." ? 1 : 0.5)
+                .style("opacity", selectedSex.sex !== "Masc." ? 1 : 0.5)
                 .text(t("pyramid-feminine"))
         }
 
@@ -405,7 +393,7 @@ const TabContent = (props) => {
                     .attr("width", d => xScaleMasc(d[1].total / participants_total))
                     .attr("height", yScale.bandwidth())
                     .style("fill", "#935959")
-                    .style("opacity", selectedSex !== "Fem." ? 1 : 0.5)
+                    .style("opacity", 1)
 
                 femaleBars
                     .data(pyramidData)
@@ -424,7 +412,15 @@ const TabContent = (props) => {
                     .attr("width", d => barsWidth - xScaleMasc(d[1].masc / participants_total))
                     .attr("height", yScale.bandwidth())
                     .style("fill", "#7BB3B7")
-                    .style("opacity", selectedSex !== "Fem." ? 1 : 0.5)
+                    .style("opacity", d=>{
+                        
+                        if (selectedSex.sex === "Fem.")
+                            return 0.5
+                        if (selectedSex.category === "" || selectedSex.category === d[0])
+                            return 1
+                        
+                        return 0.5
+                    })
 
                 femaleBars
                     .data(pyramidData)
@@ -436,7 +432,15 @@ const TabContent = (props) => {
                     .attr("width", d => xScaleFem(d[1].fem / participants_total) - xScaleFem(0))
                     .attr("height", yScale.bandwidth())
                     .style("fill", "#DA9C80")
-                    .style("opacity", selectedSex !== "Masc." ? 1 : 0.5)
+                    .style("opacity", d=>{
+                        
+                        if (selectedSex.sex === "Masc.")
+                            return 0.5
+                        if (selectedSex.category === "" || selectedSex.category === d[0])
+                            return 1
+                        
+                        return 0.5
+                    })
             }
         } else {
 
@@ -462,19 +466,20 @@ const TabContent = (props) => {
                     (barsWidth - xScaleMasc(d[1].masc / participants_total)))
                 .attr("height", yScale.bandwidth())
                 .style("fill", (totalOccurrences) ? "#935959" : "#7BB3B7")
-                .style("opacity", selectedSex !== "Fem." ? 1 : 0.5)
+                .style("opacity", d=>{
+                        
+                    if (selectedSex.sex === "Fem.")
+                        return 0.5
+                    if (selectedSex.category === "" || selectedSex.category === d[0])
+                        return 1
+                    
+                    return 0.5
+                })
                 .style("stroke", "black")
                 .style("stroke-width", 0)
                 .on("mouseover", (event, d) => mouseover(event, d, "masc"))
                 .on("mouseleave", mouseleave)
-                .on("click", () => {
-                    if (!totalOccurrences) {
-                        let sex = (selectedSex === "") ? "Masc." : ""
-
-                        setSelectedSex(sex)
-                        props.setPyramidData(sex)
-                    }
-                })
+                .on("click", (event, d) => mouseclick(event, d, "Masc."))
 
             svg.selectAll(".linePyramidHorizontal")
                 .data(pyramidData)
@@ -498,19 +503,21 @@ const TabContent = (props) => {
                 .attr("width", (totalOccurrences) ? 0 : d => xScaleFem(d[1].fem / participants_total) - xScaleFem(0))
                 .attr("height", yScale.bandwidth())
                 .style("fill", "#DA9C80")
-                .style("opacity", selectedSex !== "Masc." ? 1 : 0.5)
+                .style("opacity", d=>{
+                        
+                    if (selectedSex.sex === "Masc.")
+                        return 0.5
+                    
+                    if (selectedSex.category === "" || selectedSex.category === d[0])
+                        return 1
+                    
+                    return 0.5
+                })
                 .style("stroke", "black")
                 .style("stroke-width", 0)
                 .on("mouseover", (event, d) => mouseover(event, d, "fem"))
                 .on("mouseleave", mouseleave)
-                .on("click", () => {
-                    if (!totalOccurrences) {
-                        let sex = (selectedSex === "") ? "Fem." : ""
-
-                        setSelectedSex(sex)
-                        props.setPyramidData(sex)
-                    }
-                })
+                .on("click", (event, d) => mouseclick(event, d, "Fem."))
         }
 
 
@@ -571,9 +578,9 @@ const TabContent = (props) => {
 
     const changeTotalOccurrence = () => {
         setTotalOccurrences(!totalOccurrences)
-        if (selectedSex !== "") {
-            setSelectedSex("")
-            props.setPyramidData("")
+        if (selectedSex.sex !== "") {
+            setSelectedSex({sex:"", category:"", categoryIndex:""})
+            props.setPyramidData({sex:"", category:"", categoryIndex:""})
         }
         setChangedTotal(true)
     }

@@ -41,7 +41,12 @@ const DashboardPage = () => {
         "category-action": {
             name: t("category-action"),
             index: csvIndexes.action,
-            indexSubcategory: csvIndexes.subject_sex,
+            indexSubcategory: csvIndexes.action,
+        },
+        "category-action-motives": {
+            name: t("category-motives"),
+            index: csvIndexes.action_motive,
+            indexSubcategory: csvIndexes.action_motive,
         },
         "category-body": {
             name: t("category-body"),

@@ -85,7 +85,6 @@ function wrap_bottom(text, width) {
 						tspan = text.append("tspan").attr("x", 0).attr("y", Number(tspan.attr("y")) + 20).text(word);
 						if (tspan.node().getComputedTextLength() > width) {
 							tspan.text(word.substring(0, Math.floor((word.length / 2))) + "...")
-							tspan.attr("y", Number(tspan.attr("y")) - 20)
 						}
 					}
 				}
@@ -135,15 +134,18 @@ const HeatmapChart = (props) => {
 			let networkFilter = true
 			let pyramidFilter = true
 			let detailsFilter = true
-			let sexes = ["Mult.", "N", props.pyramidData]
+			let sexes = ["Mult.", "N", props.pyramidData.sex]
 
 			if (props.networkData.selected.length)
 				networkFilter = props.networkData.people.includes(entry[props.csvIndexes.subject_name]) ||
 					props.networkData.people.includes(entry[props.csvIndexes.with_name])
 			props.networkData.people.includes(entry[props.csvIndexes.about_name])
 
-			if (props.pyramidData)
-				pyramidFilter = sexes.includes(entry[props.csvIndexes.subject_sex])
+			if (props.pyramidData.sex)
+                pyramidFilter = sexes.includes(entry[props.csvIndexes.subject_sex])
+
+            if (props.pyramidData.category)
+                pyramidFilter = pyramidFilter && entry[props.pyramidData.categoryIndex] === props.pyramidData.category
 
 			if (Object.keys(details).length)
 				detailsFilter = entry[details.searchKey1] === details.key1 &&

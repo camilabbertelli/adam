@@ -128,15 +128,18 @@ const Citations = (props) => {
             let networkFilter = true
             let pyramidFilter = true
 			let detailsFilter = true
-            let sexes = ["Mult.", "N", props.pyramidData]
+            let sexes = ["Mult.", "N", props.pyramidData.sex]
 
             if (props.networkData.selected.length)
                 networkFilter = props.networkData.people.includes(entry[props.csvIndexes.subject_name]) || 
                                 props.networkData.people.includes(entry[props.csvIndexes.with_name])
                                 props.networkData.people.includes(entry[props.csvIndexes.about_name])
 
-            if (props.pyramidData)
+            if (props.pyramidData.sex)
                 pyramidFilter = sexes.includes(entry[props.csvIndexes.subject_sex])
+
+            if (props.pyramidData.category)
+                pyramidFilter = pyramidFilter && entry[props.pyramidData.categoryIndex] === props.pyramidData.category
 
             if (Object.keys(props.heatmapData).length)
 				detailsFilter = entry[props.heatmapData.searchKey1] === props.heatmapData.key1 && 
