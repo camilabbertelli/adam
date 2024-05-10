@@ -218,7 +218,7 @@ const HeatmapChart = (props) => {
 				.style("stroke", "black")
 
 			tooltipHeatmap
-				.html(`<center><b>${d[0]} x ${d[1]}</b></center>
+				.html(`<center><b>${d[0] ? d[0] : "--"} x ${d[1] ? d[1] : "--"}</b></center>
 						Occurrence: ${d[2]}`)
 				.style("top", event.pageY - 10 + "px")
 				.style("left", event.pageX + 10 + "px");
@@ -241,8 +241,8 @@ const HeatmapChart = (props) => {
 		if (!data.length || !indexKey1 || !indexKey2)
 			return
 
-		let heatmapKey1 = Array.from(d3.group(data, d => d[indexKey1]).keys())
-		let heatmapKey2 = Array.from(d3.group(data, d => d[indexKey2]).keys())
+		let heatmapKey1 = Array.from(d3.group(data, d => d[indexKey1]).keys()).map(d => d ? d : "--")
+		let heatmapKey2 = Array.from(d3.group(data, d => d[indexKey2]).keys()).map(d => d ? d : "--")
 		let heatmapData = d3.flatRollup(data, v => v.length, d => d[indexKey1], d => d[indexKey2])
 
 		heatmapKey1.sort()

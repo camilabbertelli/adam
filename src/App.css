@@ -1,46 +1,94 @@
 @font-face {
-  font-family: 'Celtic';
-  src: local('Celtic'), url(./assets/fonts/celtic.TTF) format('truetype');
+	font-family: 'Celtic';
+	src: local('Celtic'), url(./assets/fonts/celtic.TTF) format('truetype');
 }
 
 @font-face {
-  font-family: 'EB Garamond';
-  src: local('EB Garamond'), url(./assets/fonts/EBGaramond-Medium.ttf) format('truetype');
+	font-family: 'EB Garamond';
+	src: local('EB Garamond'), url(./assets/fonts/EBGaramond-Medium.ttf) format('truetype');
 }
 
 html,
 body {
-  max-width: 100dvw;
-  overflow: unset;
-  scroll-behavior: smooth ;
+	max-width: 100dvw;
+	overflow: unset;
+	scroll-behavior: smooth;
 }
 
 .pageBody {
-  scroll-behavior: smooth;
-  max-width: 100%;
-  overflow-x: hidden;
-  color: black;
+	scroll-behavior: smooth;
+	max-width: 100%;
+	overflow-x: hidden;
+	color: black;
 }
 
 /* custom scrollbar */
 ::-webkit-scrollbar {
-  width: 12px;
+	width: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
-  background-color: #ECECEC;
+	-webkit-box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
+	border-radius: 10px;
+	background-color: #ECECEC;
 }
 
 ::-webkit-scrollbar-thumb {
-  -webkit-box-shadow: inset 0 0 6px #be9a974d;
-  background-color: #B5B5B5;
-  border-radius: 20px;
-  border: 6px solid transparent;
+	-webkit-box-shadow: inset 0 0 6px #be9a974d;
+	background-color: #B5B5B5;
+	border-radius: 20px;
+	border: 6px solid transparent;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  -webkit-box-shadow: inset 0 0 4px #8059564d;
-  background-color: #816563;
+	-webkit-box-shadow: inset 0 0 4px #8059564d;
+	background-color: #816563;
+}
+
+
+.mobile-warning {
+    background: linear-gradient(134deg, #4a1515, #010a26);
+
+	width: 100vw;
+	height: 100vh;
+
+    background-size: 400% 400%;
+
+    -webkit-animation: backgroundanimation 7s ease infinite;
+    -moz-animation: backgroundanimation 7s ease infinite;
+    -o-animation: backgroundanimation 7s ease infinite;
+    animation: backgroundanimation 7s ease infinite;
+
+	color: white;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.mobile-warning-title{
+	position: absolute;
+	top:10%;
+}
+
+@-webkit-keyframes backgroundanimation {
+    0%{background-position:0% 48%}
+    50%{background-position:100% 53%}
+    100%{background-position:0% 48%}
+}
+@-moz-keyframes backgroundanimation {
+    0%{background-position:0% 48%}
+    50%{background-position:100% 53%}
+    100%{background-position:0% 48%}
+}
+@-o-keyframes backgroundanimation {
+    0%{background-position:0% 48%}
+    50%{background-position:100% 53%}
+    100%{background-position:0% 48%}
+}
+@keyframes backgroundanimation {
+    0%{background-position:0% 48%}
+    50%{background-position:100% 53%}
+    100%{background-position:0% 48%}
 }

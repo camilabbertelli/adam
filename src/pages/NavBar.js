@@ -4,12 +4,12 @@ import React, { useState } from "react";
 
 import { useTranslation } from "react-i18next";
 
-import languages from "./assets/images/languages.png"
-import ptflag from "./assets/images/portugal.png"
-import ukflag from "./assets/images/united-kingdom.png"
+import languages from "./../assets/images/languages.png"
+import ptflag from "./../assets/images/portugal.png"
+import ukflag from "./../assets/images/united-kingdom.png"
 
-import ornament from "./assets/images/navbar-ornament.png"
-import './styles/NavBar.css';
+import ornament from "./../assets/images/navbar-ornament.png"
+import './../styles/NavBar.css';
 
 
 const NavBar = () => {

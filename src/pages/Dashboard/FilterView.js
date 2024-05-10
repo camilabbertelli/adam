@@ -147,7 +147,22 @@ const FilterView = (props) => {
                 <h5>{t("categories-label")}</h5>
                 <center>
                     {Object.keys(props.categories).map((key) => (
+                        <>
+                        
                         <Draggable key={key} id={key}><button className='dashboard-filter-category shadow' id={key}>{props.categories[key].name}</button></Draggable>
+                        {/* <div id="list1" class="dropdown-check-list" tabindex="100">
+                        <span class="anchor">Select Fruits</span>
+                        <ul class="items">
+                            <li><input type="checkbox" />Apple </li>
+                            <li><input type="checkbox" />Orange</li>
+                            <li><input type="checkbox" />Grapes </li>
+                            <li><input type="checkbox" />Berry </li>
+                            <li><input type="checkbox" />Mango </li>
+                            <li><input type="checkbox" />Banana </li>
+                            <li><input type="checkbox" />Tomato</li>
+                        </ul>
+                        </div> */}
+                        </>
                     ))
                 }
                 </center>
