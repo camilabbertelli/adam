@@ -96,8 +96,6 @@ const TabContent = (props) => {
 
     const { t } = useTranslation()
 
-    const [styleDropdown, setStyleDropdown] = useState(false);
-
     const [totalOccurrences, setTotalOccurrences] = useState(false)
     const [changedTotal, setChangedTotal] = useState(false)
     const [changedSorting, setChangedSorting] = useState(false)
@@ -586,17 +584,16 @@ const TabContent = (props) => {
     }
 
     const changeStyle = () => {
-        d3.selectAll("#tabchart-dropdown-icon").classed("tabchart-dropdown-content-show", !styleDropdown)
-        //"tabchart-dropdown-content-hide"
-
-        setStyleDropdown(!styleDropdown);
+        if (d3.selectAll("#tabchart-dropdown-icon").classed("tabchart-dropdown-content-show"))
+            d3.selectAll("#tabchart-dropdown-icon").classed("tabchart-dropdown-content-show", false)
+        else
+            d3.selectAll("#tabchart-dropdown-icon").classed("tabchart-dropdown-content-show", true)
     };
 
 
     const changeSorting = (s) => {
         props.setCurrentSorting(s)
         d3.selectAll("#tabchart-dropdown-icon").classed("tabchart-dropdown-content-show", false)
-        setStyleDropdown(false);
         setChangedSorting(true);
     }
 
@@ -667,7 +664,11 @@ const TabContent = (props) => {
 }
 
 const TabChart = (props) => {
-    const [currentCategory, setCurrentCategory] = useState(Object.keys(props.categories)[0])
+
+    const [currentCategory, setCurrentCategory] = useState("")
+    useEffect(() => {
+        setCurrentCategory(Object.keys(props.categories)[0])
+    }, [props.categories])
     const [currentSorting, setCurrentSorting] = useState("name_asc")
 
     window.addEventListener('click', function (e) {
@@ -724,7 +725,7 @@ const TabChart = (props) => {
                                     className={(currentCategory === category) ? "active" : ""}
                                     style={{ "borderRadius": "15px 15px 0px 0px" }}
                                     onClick={() => changeCurrentCategory(category)}>
-                                    {props.categories[category].name}
+                                    {t(category)}
                                 </button>
                             )
                         })}

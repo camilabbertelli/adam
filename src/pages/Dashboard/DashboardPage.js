@@ -12,7 +12,7 @@ import HeatmapChart from "./HeatmapChart";
 import ImportantPeopleChart from "./ImportantPeopleChart";
 import NetworkChart from './NetworkChart';
 import { useEffect, useState } from 'react';
-import { DndContext, DragOverlay } from '@dnd-kit/core';
+import { DndContext, DragOverlay, KeyboardSensor, MouseSensor, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { useTranslation } from 'react-i18next';
 
 
@@ -37,28 +37,7 @@ const DashboardPage = () => {
     const [csvIndexes, setCsvIndexes] = useState({})
 
     // FIXME: a lot to fix regarding csv columns
-    let categories = {
-        "category-action": {
-            name: t("category-action"),
-            index: csvIndexes.action,
-            indexSubcategory: csvIndexes.action,
-        },
-        "category-action-motives": {
-            name: t("category-motives"),
-            index: csvIndexes.action_motive,
-            indexSubcategory: csvIndexes.action_motive,
-        },
-        "category-body": {
-            name: t("category-body"),
-            index: csvIndexes.anatomical_part,
-            indexSubcategory: csvIndexes.organs,
-        },
-        "category-emotion": {
-            name: t("category-emotion"),
-            index: csvIndexes.subject_name,
-            indexSubcategory: csvIndexes.organs,
-        }
-    }
+    const [categories, setCategories] = useState({})
 
     let intention = {
         "intention-all": {
@@ -177,8 +156,9 @@ const DashboardPage = () => {
             nature: Object.keys(nature)[0],
             dimension: Object.keys(dimension)[0],
         })
-    const [activeCategories, setActiveCategories] = useState([Object.keys(categories)[0], Object.keys(categories)[1]]);
-    const [currentTabchartCategory, setCurrentTabchartCategory] = useState(Object.keys(categories)[0])
+    const [activeCategories, setActiveCategories] = useState([]);
+    const [currentTabchartCategory, setCurrentTabchartCategory] = useState("")
+
     const [activeCategory, setActiveCategory] = useState(null)
     const [activeCodices, setActiveCodices] = useState([])
     const [codices, setCodices] = useState({})
@@ -261,6 +241,7 @@ const DashboardPage = () => {
                 d => d.PP,
                 d => d.observation)
 
+
             setOriginalGlobalData([...globalData])
             setGlobalData([...globalData])
 
@@ -271,6 +252,39 @@ const DashboardPage = () => {
             })
 
             setCsvIndexes(indexes)
+
+            let categoriesAux = {
+                "category-action": {
+                    index: indexes.action,
+                    indexSubcategory: indexes.action,
+                    list: []
+                },
+                "category-action-motives": {
+                    index: indexes.action_motive,
+                    indexSubcategory: indexes.action_motive,
+                    list: []
+                },
+                "category-body": {
+                    index: indexes.anatomical_part,
+                    indexSubcategory: indexes.organs,
+                    list: []
+                },
+                "category-emotion": {
+                    index: indexes.subject_name,
+                    indexSubcategory: indexes.organs,
+                    list: []
+                }
+            }
+
+            Object.keys(categoriesAux).forEach(key => {
+                categoriesAux[key]["list"] = d3.flatGroup(globalData, d=> d[[categoriesAux[key].index]], d=> d[[categoriesAux[key].indexSubcategory]])
+                    .flatMap(d => [[d[0], d[1]]])
+                categoriesAux[key]["list"] = d3.flatGroup(categoriesAux[key]["list"], d=>d[0])
+            })
+
+            setCategories(categoriesAux)
+            setActiveCategories([Object.keys(categoriesAux)[0], Object.keys(categoriesAux)[1]])
+            setCurrentTabchartCategory(Object.keys(categoriesAux)[0])
 
             let codicesGenres = d3.flatGroup(globalData, d => d[indexes.genre], d => d[indexes.title]).map(entry => [entry[0], entry[1]])
 
@@ -352,14 +366,30 @@ const DashboardPage = () => {
     const [isOpen, setIsOpen] = useState(false);
     const handleClose = () => setIsOpen(false);
 
+    const pointerSensor = useSensor(PointerSensor, {
+        activationConstraint: {
+          distance: 8
+        }
+      })
+      const mouseSensor = useSensor(MouseSensor)
+      const touchSensor = useSensor(TouchSensor)
+      const keyboardSensor = useSensor(KeyboardSensor)
+    
+      const sensors = useSensors(
+        mouseSensor,
+        touchSensor,
+        keyboardSensor,
+        pointerSensor
+      )
 
     return (<>
 
-        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} sensors={sensors}>
             <div className="dashboard-view">
                 <div id="overlay">
                 </div>
-                <FilterView categories={categories}
+                <FilterView 
+                    categories={categories}
                     intention={intention}
                     origin={origin}
                     explanation={explanation}
@@ -371,7 +401,7 @@ const DashboardPage = () => {
                     activeFilters={activeFilters} setActiveFilters={setFilters} />
                 <DragOverlay dropAnimation={{ duration: 500 }}>
                     {activeCategory ? (
-                        <button className='dashboard-filter-category-drag shadow' style={{ border: "10px" }} key={activeCategory}>{categories[activeCategory].name}</button>
+                        <button className='dashboard-filter-category-drag shadow' style={{ border: "10px" }} key={activeCategory}>{t(activeCategory)}</button>
                     ) : null}
                 </DragOverlay>
 
@@ -390,14 +420,14 @@ const DashboardPage = () => {
                                 setChangedFilter={setChangedFilter}>
                                 <div className={"heatmap-drag"} >{/*  style={{ minHeight: "15%", top: ((activeCategories.length !== 2) ? "40%" : "0%"), left: "7%" }} */}
                                     <div className={"category " + (activeCategories.length ? "" : "default ") + (activeCategories.length === 2 ? " shrink" : "")} key={activeCategories.length ? activeCategories[0] : "category1"} onClick={() => removeCategory(0)}>
-                                        {activeCategories.length ? categories[activeCategories[0]].name : t("category-label")}
+                                        {activeCategories.length ? t(activeCategories[0]) : t("category-label")}
                                     </div>
                                     {activeCategories.length > 0 && <img title={t("icon-close")} className={"x " + (activeCategories.length === 2 ? " shrink" : "big")} alt="x" src={x} width="20px" height="20px" onClick={() => removeCategory(0)} />}
 
                                     <img className={(activeCategories.length === 2 ? " shrink" : "")} alt="close" style={{ margin: "0 50px" }} src={close} width="20px" height="20px" />
 
                                     <div className={"category " + (activeCategories.length === 2 ? "" : "default ") + (activeCategories.length === 2 ? " shrink" : "")} key={activeCategories.length === 2 ? activeCategories[1] : "category2"} onClick={() => removeCategory(1)}>
-                                        {activeCategories.length === 2 ? categories[activeCategories[1]].name : t("category-label")}
+                                        {activeCategories.length === 2 ? t(activeCategories[1]) : t("category-label")}
                                     </div>
                                     {activeCategories.length === 2 && <img title={t("icon-close")} className={"x " + (activeCategories.length === 2 ? " shrink" : "big")} alt="x" src={x} width="20px" height="20px" onClick={() => removeCategory(1)} />}
                                 </div>

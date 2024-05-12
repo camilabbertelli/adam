@@ -106,9 +106,7 @@ const NetworkChart = (props) => {
                 qualities: [...new Set(v.flatMap(d => d.qualities))]
             }
             return dict
-        }, d => d.person)
-
-        nodesOriginal = nodesOriginal.map(entry => ({
+        }, d => d.person).map(entry => ({
             person: entry[0],
             ...entry[1]
         }))

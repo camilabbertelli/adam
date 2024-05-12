@@ -55,14 +55,6 @@ button.dashboard-filter-category-drag{
     padding: 5px 10px;
 }
 
-.category-group:nth-of-type(1) button{
-    border-radius: 20px 20px 0 0;
-}
-
-.category-group:nth-last-of-type(1) button{
-    border-radius: 0 0 20px 20px;
-}
-
 .dashboard-filter-options{
     background-color: white;
     color: black;
@@ -166,3 +158,39 @@ div.dashboard-image-component {
 
     cursor: pointer;
 }
+
+
+/* Advanced filter category */
+.category-buttons{
+    width: 100%;
+    height: 100%;
+}
+
+.filter-dropdown-content-hide {
+    display: none;
+}
+
+.filter-dropdown-content-show {
+    display: block;
+    font-size: 15px;
+	background-color: white;
+    width: 100%;
+}
+
+.filter-dropdown-content-show ul{
+    padding: 0 2%;
+    margin: 0;
+}
+
+.filter-dropdown-content-show li{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 1% 0%;
+}
+
+.filter-dropdown-content-show input{
+    margin-right: 2%;
+}
+

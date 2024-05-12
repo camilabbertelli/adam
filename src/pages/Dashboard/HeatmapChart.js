@@ -115,8 +115,8 @@ const HeatmapChart = (props) => {
 	const prevActiveCategories = useRef([])
 	const prevCategories = useRef({})
 	useEffect(() => {
-		if (props.activeCategories.length === 2) {
 
+		if (props.activeCategories.length === 2) {
 			if (prevActiveCategories.current.length !== props.activeCategories.length
 			|| (prevCategories.current[props.activeCategories[0]] && prevCategories.current[props.activeCategories[1]] && prevCategories.current[props.activeCategories[0]].index !== props.categories[props.activeCategories[0]].index)
 			) {
