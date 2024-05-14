@@ -153,7 +153,7 @@ const Citations = (props) => {
         setPagination((prevState) => ({
             ...prevState,
             data: aux,
-            pageCount: aux.length / prevState.numberPerPage,
+            pageCount: Math.ceil(aux.length / prevState.numberPerPage),
             currentData: aux.slice(0, pagination.numberPerPage),
         }))
     }, [props.data, props.pyramidData, props.networkData, props.heatmapData])
@@ -161,7 +161,7 @@ const Citations = (props) => {
     useEffect(() => {
         setPagination((prevState) => ({
             ...prevState,
-            pageCount: data.length / prevState.numberPerPage,
+            pageCount: Math.ceil(data.length / prevState.numberPerPage),
             currentData: data.slice(pagination.offset, pagination.offset + pagination.numberPerPage)
         }))
     }, [data, pagination.numberPerPage, pagination.offset])

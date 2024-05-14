@@ -29,14 +29,13 @@ function noSpaces(str) {
     return str
 }
 
-let colorCodices = null
+let colorCodices = () => { }
 
 const DashboardPage = () => {
 
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const [csvIndexes, setCsvIndexes] = useState({})
 
-    // FIXME: a lot to fix regarding csv columns
     const [categories, setCategories] = useState({})
 
     let intention = {
@@ -156,6 +155,8 @@ const DashboardPage = () => {
             nature: Object.keys(nature)[0],
             dimension: Object.keys(dimension)[0],
         })
+
+    const [advancedCategoryFilters, setAdvancedCategoryFilters] = useState({})
     const [activeCategories, setActiveCategories] = useState([]);
     const [currentTabchartCategory, setCurrentTabchartCategory] = useState("")
 
@@ -276,12 +277,20 @@ const DashboardPage = () => {
                 }
             }
 
+            let advancedFilterAux = {}
             Object.keys(categoriesAux).forEach(key => {
-                categoriesAux[key]["list"] = d3.flatGroup(globalData, d=> d[[categoriesAux[key].index]], d=> d[[categoriesAux[key].indexSubcategory]])
-                    .flatMap(d => [[d[0], d[1]]])
-                categoriesAux[key]["list"] = d3.flatGroup(categoriesAux[key]["list"], d=>d[0])
+                categoriesAux[key].list = d3.flatGroup(globalData, d => d[[categoriesAux[key].index]], d => d[[categoriesAux[key].indexSubcategory]])
+                    .flatMap(d => [[d[0], d[1]]]).sort()
+                categoriesAux[key].list = d3.flatGroup(categoriesAux[key].list, d => d[0])
+
+                advancedFilterAux[key] = {
+                    list: [],
+                    sublist: []
+                }
             })
 
+
+            setAdvancedCategoryFilters(advancedFilterAux)
             setCategories(categoriesAux)
             setActiveCategories([Object.keys(categoriesAux)[0], Object.keys(categoriesAux)[1]])
             setCurrentTabchartCategory(Object.keys(categoriesAux)[0])
@@ -317,7 +326,7 @@ const DashboardPage = () => {
     const [isImpPeopleExpanded, setIsImpPeopleExpanded] = useState(false)
     const [isNetworkExpanded, setIsNetworkExpanded] = useState(false)
 
-    const [networkData, setNetworkData] = useState({selected: [], people:[]})
+    const [networkData, setNetworkData] = useState({ selected: [], people: [] })
     const [pyramidData, setPyramidData] = useState("")
     const [heatmapData, setHeatmapData] = useState([])
 
@@ -331,9 +340,10 @@ const DashboardPage = () => {
         }
     });
 
-    function setFilters(newFilters, types, codicesFilter) {
+    function setFilters(newFilters, types, codicesFilter, advFilters) {
+
         let filtered = originalGlobalData.filter((d) => {
-            if (codicesFilter) {
+            if (codicesFilter && codicesFilter.length) {
                 if (!codicesFilter.includes(noSpaces(d[csvIndexes.title])))
                     return false;
             }
@@ -347,7 +357,30 @@ const DashboardPage = () => {
                     return false;
             }
 
-            return true;
+
+            let passAdvanced = true
+            
+            if (advFilters)
+            for (const [key, value] of Object.entries(advFilters)) {
+                let passIntern = false
+                let indexList = categories[key].index
+                let indexSublist = categories[key].indexSubcategory
+
+                if (value.list.length)
+                    if (value.list.includes(noSpaces(d[indexList])))
+                        passIntern = true
+                
+                if (value.sublist.length)
+                    if (value.sublist.includes(noSpaces(d[indexSublist])))
+                        passIntern = true
+
+                if (value.list.length === 0 && value.sublist.length === 0)
+                    passIntern = true
+
+                passAdvanced = passAdvanced && passIntern
+            }
+
+            return passAdvanced;
 
         });
 
@@ -358,7 +391,9 @@ const DashboardPage = () => {
 
         setGlobalData(filtered)
         setActiveFilters(filters)
-        if (codicesFilter)
+        if (advFilters)
+            setAdvancedCategoryFilters(advFilters)
+        if (codicesFilter && codicesFilter.length)
             setActiveCodices(codicesFilter)
         setChangedFilter(true)
     }
@@ -368,19 +403,19 @@ const DashboardPage = () => {
 
     const pointerSensor = useSensor(PointerSensor, {
         activationConstraint: {
-          distance: 8
+            distance: 8
         }
-      })
-      const mouseSensor = useSensor(MouseSensor)
-      const touchSensor = useSensor(TouchSensor)
-      const keyboardSensor = useSensor(KeyboardSensor)
-    
-      const sensors = useSensors(
+    })
+    const mouseSensor = useSensor(MouseSensor)
+    const touchSensor = useSensor(TouchSensor)
+    const keyboardSensor = useSensor(KeyboardSensor)
+
+    const sensors = useSensors(
         mouseSensor,
         touchSensor,
         keyboardSensor,
         pointerSensor
-      )
+    )
 
     return (<>
 
@@ -388,7 +423,7 @@ const DashboardPage = () => {
             <div className="dashboard-view">
                 <div id="overlay">
                 </div>
-                <FilterView 
+                <FilterView
                     categories={categories}
                     intention={intention}
                     origin={origin}
@@ -398,7 +433,7 @@ const DashboardPage = () => {
                     codices={codices}
                     colorCodices={colorCodices}
                     genres={genres}
-                    activeFilters={activeFilters} setActiveFilters={setFilters} />
+                    activeFilters={activeFilters} setActiveFilters={setFilters} advancedCategoryFilters={advancedCategoryFilters} />
                 <DragOverlay dropAnimation={{ duration: 500 }}>
                     {activeCategory ? (
                         <button className='dashboard-filter-category-drag shadow' style={{ border: "10px" }} key={activeCategory}>{t(activeCategory)}</button>
@@ -434,12 +469,12 @@ const DashboardPage = () => {
                             </HeatmapChart>
                         </div>
                         <div className={"dashboard-viz2" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
-                            <ImportantPeopleChart 
-                            data={globalData}
-                            networkData={networkData} pyramidData={pyramidData} heatmapData={heatmapData}
-                            csvIndexes={csvIndexes}
-                            isExpanded={isImpPeopleExpanded}
-                            setIsExpanded={setIsImpPeopleExpanded}/>
+                            <ImportantPeopleChart
+                                data={globalData}
+                                networkData={networkData} pyramidData={pyramidData} heatmapData={heatmapData}
+                                csvIndexes={csvIndexes}
+                                isExpanded={isImpPeopleExpanded}
+                                setIsExpanded={setIsImpPeopleExpanded} />
                         </div>
                     </div>
                     <div className="dashboard-row2">
@@ -453,13 +488,13 @@ const DashboardPage = () => {
                                 changedFilter={changedFilter} setChangedFilter={setChangedFilter} />
                         </div>
                         <div className={"dashboard-viz4" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
-                            <NetworkChart 
-                            data={globalData}
-                            setNetworkData={setNetworkData} pyramidData={pyramidData} heatmapData={heatmapData}
-                            colorCodices={colorCodices}
-                            csvIndexes={csvIndexes}
-                            isExpanded={isNetworkExpanded}
-                            setIsExpanded={setIsNetworkExpanded}/>
+                            <NetworkChart
+                                data={globalData}
+                                setNetworkData={setNetworkData} pyramidData={pyramidData} heatmapData={heatmapData}
+                                colorCodices={colorCodices}
+                                csvIndexes={csvIndexes}
+                                isExpanded={isNetworkExpanded}
+                                setIsExpanded={setIsNetworkExpanded} />
                         </div>
 
                     </div>

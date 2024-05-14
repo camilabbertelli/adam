@@ -79,8 +79,8 @@
     "search-imp-placeholder": "Procurar pessoas",
 
     "network-label": "Rede de relacionamentos",
-    "network-about-who": "Sobre quem",
-    "network-with-who": "Com quem",
+    "network-about-whom": "Sobre quem",
+    "network-with-whom": "Com quem",
     "network-tooltip-about": "Sobre",
     "network-tooltip-with": "Com",
 
@@ -117,5 +117,5 @@
     "not-found-button": "Ir para Início",
 
     
-    "mobile-warning": "Para uma melhor experiência, use um dispositivo com tela maior e gire para o modo paisagem."
+    "mobile-warning": "Para uma melhor experiência, use um dispositivo com tela maior (ex: 13'' ou superior) e gire para o modo paisagem."
 }
