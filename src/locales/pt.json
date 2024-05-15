@@ -5,6 +5,7 @@
     "information-heatmap": "Passe o mouse sobre uma célula para obter mais informações. <br/>Clique na mesma para mudar para a visualização detalhada.",
     "information-imp": "Passe o mouse sobre uma célula para obter mais informações. Escolha duas pessoas para comparar suas características.",
     "information-network": "Passe o rato sobre uma conexão ou célula para obter mais informações. <br/><b>Atenção:</b> Afaste para ver todas as conexões.",
+    "information-categories": "Selecione duas categorias para comparar no gráfico arrastando-as para a área de comparação.<br/><b>Nota:</b> Você só pode comparar duas categorias por vez.",
     "imp-tooltip-person": "Pessoa",
     "imp-tooltip-field": "Campo",
     "network-tooltip-person": "Pessoa",

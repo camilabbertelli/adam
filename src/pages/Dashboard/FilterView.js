@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import spine from "./../../assets/images/spine.png"
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import info from "./../../assets/images/info-black.png"
 
 import * as d3 from "d3"
 
@@ -14,6 +15,8 @@ function noSpaces(str) {
         str = str.replace(/[\s+&/\\#,+()$~%.'":*?<>{};]/g, '');
     return str
 }
+
+var tooltipCategories;
 
 const FilterView = (props) => {
 
@@ -24,11 +27,6 @@ const FilterView = (props) => {
     const [codices, setCodices] = useState({})
     const [currentCodices, setCurrentCodices] = useState([])
     const [genre, setGenre] = useState("")
-
-    useEffect(() => {
-        setCodices(props.codices)
-        setCurrentCodices(Object.keys(props.codices))
-    }, [props.codices, props.genres])
 
     function Draggable(props) {
         const { attributes, listeners, setNodeRef } = useDraggable({
@@ -43,6 +41,43 @@ const FilterView = (props) => {
         );
     }
 
+    let infoMouseLeaveCategories = function (event, d) {
+        tooltipCategories
+            .style("opacity", 0)
+
+        let element = document.getElementById('tooltipCategories')
+        if (element)
+            element.innerHTML = "";
+    }
+
+    let infoMouseOverCategories = function (event, d) {
+        tooltipCategories
+            .style("opacity", 1);
+
+        tooltipCategories.html(`<center><b>${t("information")}</b></center>
+                  ${t("information-categories")}`)
+            .style("top", event.pageY - 10 + "px")
+            .style("left", event.pageX + 10 + "px")
+    }
+
+    useEffect(() => {
+        setCodices(props.codices)
+        setCurrentCodices(Object.keys(props.codices))
+
+        
+        d3.selectAll("#tooltipCategories").remove();
+
+        tooltipCategories = d3.select("body")
+            .append("div")
+            .attr("id", "tooltipCategories")
+            .attr("class", "tooltip shadow rounded")
+            .attr("padding", "1px")
+            .style("opacity", 0);
+
+        d3.select("#infoCategories")
+            .on("mouseover", infoMouseOverCategories)
+            .on("mouseleave", infoMouseLeaveCategories)
+    }, [props.codices, props.genres])
 
     const changeSelect = function () {
 
@@ -156,10 +191,10 @@ const FilterView = (props) => {
         d3.select(`[id="citation-sub-arrow-${key}"]`).style("transform", subDropDownActive ? "rotate(90deg)" : "none")
     }
 
-    function clickDropdownCategory(category, key, sublist){
+    function clickDropdownCategory(category, key, sublist) {
         let source = document.getElementById(`checkbox-${key}`)
         let checkboxes = document.getElementsByName(`checkbox-sub-${key}`);
-        let aux = {...props.advancedCategoryFilters}
+        let aux = { ...props.advancedCategoryFilters }
 
         checkboxes.forEach((checkbox) => {
             checkbox.checked = source.checked;
@@ -187,18 +222,17 @@ const FilterView = (props) => {
 
         sublist.forEach(subitem => {
             const indexSub = aux[category].sublist.indexOf(noSpaces(subitem));
-            if (source.checked){
+            if (source.checked) {
                 aux[category].sublist.push(noSpaces(subitem))
             }
-            else if (indexSub !== -1) 
+            else if (indexSub !== -1)
                 aux[category].sublist.splice(indexSub, 1);
         })
-        
-        console.log(aux)
+
         props.setActiveFilters([], [], [], aux)
     }
 
-    function clickDropdownSubCategory(category, key, subkey){
+    function clickDropdownSubCategory(category, key, subkey) {
         let source = document.getElementById(`checkbox-${key}`)
         let checkboxes = document.getElementsByName(`checkbox-sub-${key}`);
         source.checked = false
@@ -206,19 +240,18 @@ const FilterView = (props) => {
             if (checkbox.checked)
                 source.checked = checkbox.checked;
         })
-        
-        let target = document.getElementById(`checkbox-sub-${subkey}`);
-        let aux = {...props.advancedCategoryFilters}
 
-        if (!target.checked){
+        let target = document.getElementById(`checkbox-sub-${subkey}`);
+        let aux = { ...props.advancedCategoryFilters }
+
+        if (!target.checked) {
             const index = aux[category].sublist.indexOf(subkey);
             aux[category].sublist.splice(index, 1);
         } else aux[category].sublist.push(subkey)
 
-        console.log(aux)
         props.setActiveFilters([], [], [], aux)
 
-        
+
     }
 
     return (
@@ -236,13 +269,18 @@ const FilterView = (props) => {
                 </div>
 
                 <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "10px 0" }} key={"actual-filters"}>
-                    <h5>{t("categories-label")}</h5>
+                    <div style={{width: "100%", display: "flex", alignItems: "center"}}>
+                        <h5>{t("categories-label")}</h5>
+                        <img alt="info" id="infoCategories" src={info}
+                        style={{ marginBottom:"8px", marginLeft: "5px", cursor: "pointer", width:"15px", height: "15px" }} 
+                        />
+                    </div>
                     {Object.keys(props.categories).map((key, index) => {
 
                         let category = props.categories[key]
-                        return(
+                        return (
                             <>
-                                <div className="category-buttons" key={"category_"+key}>
+                                <div className="category-buttons" key={"category_" + key}>
                                     <Draggable key={key} id={key}><button className='dashboard-filter-category shadow' id={key}
                                         style={(index === 0) ? { borderRadius: "20px 20px 0 0" } :
                                             (index === Object.keys(props.categories).length - 1 ? { borderRadius: "0 0 20px 20px" } : null)}
@@ -252,38 +290,39 @@ const FilterView = (props) => {
                                     </button>
                                     </Draggable>
                                     {!simpleFilter &&
-                                    <div id={`filter-dropdown-${key}`} className={"shadow filter-dropdown-content-hide"} key={"hidden-dropdown"}>
-                                        <ul style={{ position: "relative" }}>
-                                            {category.list.map(categorylist => {
-                                            let item = categorylist[0]
-                                            let sublist = categorylist[1].map(d=>d[1])
-                                            return(
-                                            <li key={"li_" + item}>
-                                                <div style={{ display: "flex", alignItems: "center", width: "100%", height: "100%" }} key={"item-pack-" + item}>
-                                                    <input id={`checkbox-${noSpaces(item)}`} type="checkbox" onClick={() => clickDropdownCategory(key, noSpaces(item), sublist)}/>
-                                                    <button onClick={() => toggleDropdownSubCategory(noSpaces(item))} style={{ width: "100%", height: "100%", display: "flex" }}>
-                                                        {item} <ArrowForwardIosIcon id={`citation-sub-arrow-${noSpaces(item)}`} style={{ position: "absolute", right: 0, width: "15px", marginRight: "5px", marginTop: "2px" }} />
-                                                    </button>
-                                                </div>
-                                                <div id={`filter-sub-dropdown-${noSpaces(item)}`} className={"filter-dropdown-content-hide"} key={"hidden-sub-dropdown"}>
-                                                    <ul>
-                                                        {sublist.map(subitem => (
-                                                        <li key={"li_sub_" + subitem}>
-                                                            <div style={{ display: "flex", alignItems: "center", width: "100%", height: "100%", marginLeft: "6%"}}>
-                                                                <input onClick={() => clickDropdownSubCategory(key, noSpaces(item), noSpaces(subitem))} type="checkbox" id={`checkbox-sub-${noSpaces(subitem)}`} name={`checkbox-sub-${noSpaces(item)}`}/>
-                                                                <button style={{ width: "100%", height: "100%", display: "flex" }}>{subitem}</button>
+                                        <div id={`filter-dropdown-${key}`} className={"shadow filter-dropdown-content-hide"} key={"hidden-dropdown"}>
+                                            <ul style={{ position: "relative" }}>
+                                                {category.list.map(categorylist => {
+                                                    let item = categorylist[0]
+                                                    let sublist = categorylist[1].map(d => d[1])
+                                                    return (
+                                                        <li key={"li_" + item}>
+                                                            <div style={{ display: "flex", alignItems: "center", width: "100%", height: "100%" }} key={"item-pack-" + item}>
+                                                                <input id={`checkbox-${noSpaces(item)}`} type="checkbox" onClick={() => clickDropdownCategory(key, noSpaces(item), sublist)} />
+                                                                <button onClick={() => toggleDropdownSubCategory(noSpaces(item))} style={{ width: "100%", height: "100%", display: "flex" }}>
+                                                                    {item} <ArrowForwardIosIcon id={`citation-sub-arrow-${noSpaces(item)}`} style={{ position: "absolute", right: 0, width: "15px", marginRight: "5px", marginTop: "2px" }} />
+                                                                </button>
                                                             </div>
-                                                        </li>))}
-                                                    </ul>
-                                                </div>
-                                            </li>)})}
+                                                            <div id={`filter-sub-dropdown-${noSpaces(item)}`} className={"filter-dropdown-content-hide"} key={"hidden-sub-dropdown"}>
+                                                                <ul>
+                                                                    {sublist.map(subitem => (
+                                                                        <li key={"li_sub_" + subitem}>
+                                                                            <div style={{ display: "flex", alignItems: "center", width: "100%", height: "100%", marginLeft: "6%" }}>
+                                                                                <input onClick={() => clickDropdownSubCategory(key, noSpaces(item), noSpaces(subitem))} type="checkbox" id={`checkbox-sub-${noSpaces(subitem)}`} name={`checkbox-sub-${noSpaces(item)}`} />
+                                                                                <button style={{ width: "100%", height: "100%", display: "flex" }}>{subitem}</button>
+                                                                            </div>
+                                                                        </li>))}
+                                                                </ul>
+                                                            </div>
+                                                        </li>)
+                                                })}
 
-                                        </ul>
-                                    </div>}
+                                            </ul>
+                                        </div>}
                                 </div>
-    
+
                             </>
-    )
+                        )
                     })}
                 </div>
 

@@ -5,6 +5,7 @@
     "information-heatmap": "Hover on a cell for more information. <br>Click on it to change to the detailed view.",
     "information-imp": "Hover on a cell for more information. Choose two people to compare their characteristics.",
     "information-network": "Hover over the connections or cells for more information.<br/><b>Attention:</b> Zoom out to see all connections.",
+    "information-categories": "Select two categories to compare on the graph by dragging them over the comparison area.<br/><b>Note:</b> You can only compare two categories at a time.",
     "imp-tooltip-person": "Person",
     "imp-tooltip-field": "Field",
     "network-tooltip-person": "Person",
