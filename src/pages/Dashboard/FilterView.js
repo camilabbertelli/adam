@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import spine from "./../../assets/images/spine.png"
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import info from "./../../assets/images/info-black.png"
+import close from "./../../assets/images/close.png"
 
 import * as d3 from "d3"
 
@@ -105,7 +106,7 @@ const FilterView = (props) => {
                 if (c.genre === selectedValue) {
                     newCurrentCodices.push(key)
                     setCurrentCodices(newCurrentCodices)
-                    props.setCurrentCodices(newCurrentCodices)
+                    props.setActiveFilters([], [], newCurrentCodices)
                     return
                 }
             }
@@ -170,6 +171,38 @@ const FilterView = (props) => {
     const changeFilterType = () => {
         if (props.activeFilters.nature !== "nature-all" || props.activeFilters.dimension !== "dimension-all")
             props.setActiveFilters(["nature-all", "dimension-all"], ["nature", "dimension"])
+
+        if (!simpleFilter){
+            let advancedFilterAux = {}
+            let changedAdvancedFilters = false
+            
+            Object.keys(props.categories).forEach((key) => {
+    
+                if (props.advancedCategoryFilters[key].list.length !== 0 || 
+                    props.advancedCategoryFilters[key].sublist.length !== 0){
+                        advancedFilterAux[key] = {
+                            list: [],
+                            sublist: []
+                        }
+
+                        changedAdvancedFilters = true
+                    }
+    
+                var container = document.querySelector(`#filter-dropdown-${key}`);
+                var checkBoxes = container.querySelectorAll('input[type="checkbox"]');
+        
+                checkBoxes.forEach((checkbox) => {
+                    checkbox.checked = false;
+                })
+            })
+    
+            d3.selectAll(`.filter-dropdown-content-show`).classed("filter-dropdown-content-show", false)
+            d3.selectAll(`.arrow-dropdown`).style("transform", "none")
+
+            if (changedAdvancedFilters)
+                props.setActiveFilters([], [], [], advancedFilterAux)
+        }
+        
         setSimpleFilter(!simpleFilter)
     }
 
@@ -199,26 +232,6 @@ const FilterView = (props) => {
         checkboxes.forEach((checkbox) => {
             checkbox.checked = source.checked;
         })
-
-
-        // if (!source.checked){
-        //     const index = aux[category].list.indexOf(key);
-        //     aux[category].list.splice(index, 1);
-
-        //     props.advancedCategoryFilters[category].sublist.forEach(subitem => {
-        //         if (sublist.includes(subitem)){
-        //             const indexSub = aux[category].sublist.indexOf(subitem);
-        //             aux[category].sublist.splice(indexSub, 1);
-        //         }
-        //     })
-
-        // } else {
-        //     aux[category].list.push(key)
-        //     props.advancedCategoryFilters[category].sublist.forEach(subitem => {
-        //         if (!aux[category].sublist.includes(subitem))
-        //            aux[category].sublist.push(subitem)
-        //     })
-        // }
 
         sublist.forEach(subitem => {
             const indexSub = aux[category].sublist.indexOf(noSpaces(subitem));
@@ -250,8 +263,26 @@ const FilterView = (props) => {
         } else aux[category].sublist.push(subkey)
 
         props.setActiveFilters([], [], [], aux)
+    }
 
+    function resetFilters(){
+        props.resetFilters()
+        setGenre("")
+        setCurrentCodices(Object.keys(codices).sort())
 
+        Object.keys(props.categories).forEach((key) => {
+            var container = document.querySelector(`#filter-dropdown-${key}`);
+            if (container){
+
+                var checkBoxes = container.querySelectorAll('input[type="checkbox"]');
+                checkBoxes.forEach((checkbox) => {
+                    checkbox.checked = false;
+                })
+            }
+        })
+
+        d3.selectAll(`.filter-dropdown-content-show`).classed("filter-dropdown-content-show", false)
+        d3.selectAll(`.arrow-dropdown`).style("transform", "none")
     }
 
     return (
@@ -267,9 +298,16 @@ const FilterView = (props) => {
                         {t("advanced-filter")}
                     </button>
                 </div>
-
+                <div style={{ position:"relative", width: "95%", display: "flex", justifyContent: "flex-end", alignItems: "center"}}>
+                    <button className="btn-clear-all" onClick={resetFilters}>
+                        <img alt="close" src={close}
+                        style={{ margin: "0 5px", cursor: "pointer", width:"10px", height: "10px" }} 
+                        />
+                        Clear all    
+                    </button>
+                </div>
                 <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "10px 0" }} key={"actual-filters"}>
-                    <div style={{width: "100%", display: "flex", alignItems: "center"}}>
+                    <div style={{ position:"relative", width: "100%", display: "flex", alignItems: "center"}}>
                         <h5>{t("categories-label")}</h5>
                         <img alt="info" id="infoCategories" src={info}
                         style={{ marginBottom:"8px", marginLeft: "5px", cursor: "pointer", width:"15px", height: "15px" }} 
@@ -286,7 +324,7 @@ const FilterView = (props) => {
                                             (index === Object.keys(props.categories).length - 1 ? { borderRadius: "0 0 20px 20px" } : null)}
                                         onClick={() => toggleDropdownCategory(key, index)} >
                                         {t(key)}
-                                        {!simpleFilter && <ArrowForwardIosIcon id={`citation-arrow-${key}`} style={{ float: "right", width: "15px", marginRight: "5px", marginTop: "2px" }} />}
+                                        {!simpleFilter && <ArrowForwardIosIcon id={`citation-arrow-${key}`} className="arrow-dropdown" style={{ float: "right", width: "15px", marginRight: "5px", marginTop: "2px" }} />}
                                     </button>
                                     </Draggable>
                                     {!simpleFilter &&
@@ -300,7 +338,7 @@ const FilterView = (props) => {
                                                             <div style={{ display: "flex", alignItems: "center", width: "100%", height: "100%" }} key={"item-pack-" + item}>
                                                                 <input id={`checkbox-${noSpaces(item)}`} type="checkbox" onClick={() => clickDropdownCategory(key, noSpaces(item), sublist)} />
                                                                 <button onClick={() => toggleDropdownSubCategory(noSpaces(item))} style={{ width: "100%", height: "100%", display: "flex" }}>
-                                                                    {item} <ArrowForwardIosIcon id={`citation-sub-arrow-${noSpaces(item)}`} style={{ position: "absolute", right: 0, width: "15px", marginRight: "5px", marginTop: "2px" }} />
+                                                                    {item} <ArrowForwardIosIcon className="arrow-dropdown" id={`citation-sub-arrow-${noSpaces(item)}`} style={{ position: "absolute", right: 0, width: "15px", marginRight: "5px", marginTop: "2px" }} />
                                                                 </button>
                                                             </div>
                                                             <div id={`filter-sub-dropdown-${noSpaces(item)}`} className={"filter-dropdown-content-hide"} key={"hidden-sub-dropdown"}>

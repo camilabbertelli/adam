@@ -30,7 +30,11 @@ class Table extends React.Component {
                 let keys = Object.keys(d[0])
                 this.props.updateKeys(keys)
             }
-        });
+        }).catch((error) => {
+            console.error('Error fetching data:', error);
+            // Display a user-friendly error message
+            alert('An error occurred while fetching data.');
+          });
 
     }
 

@@ -32,7 +32,7 @@ const App = () => {
 
 	return (
 		<div className="App">
-			{/* <ErrorBoundary> */}
+			<ErrorBoundary>
 				{showMobileWarning && <MobileWarning/>}
 				{!showMobileWarning && <BrowserRouter basename='/ist196848/build'>
 					<div className="App">
@@ -48,7 +48,7 @@ const App = () => {
 						</div>
 					</div>
 				</BrowserRouter>}
-			{/* </ErrorBoundary> */}
+			</ErrorBoundary>
 		</div>
 	);
 }

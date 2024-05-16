@@ -26,7 +26,7 @@ const ImportantPeopleChart = (props) => {
 
     const [impPeople, setImpPeople] = useState([])
     const [searchedPeople, setSearchedPeople] = useState([])
-    const [selectedImp, setSelectedImp] = useState([])
+    const [selectedImp, setSelectedImp] = useState([null, null])
 
     const [data, setData] = useState([])
 
@@ -39,7 +39,7 @@ const ImportantPeopleChart = (props) => {
         props.setIsExpanded(!isExpanded)
     }
 
-    function highlightNode(networkKey){
+    function highlightNode(networkKey) {
 
         let selectionNetwork = d3.select(`#network-${networkKey}`);
         let elementNetwork = selectionNetwork.node();
@@ -62,26 +62,26 @@ const ImportantPeopleChart = (props) => {
     useEffect(() => {
 
         let dataInitial = props.data.filter(entry => {
-			let networkFilter = true
-			let pyramidFilter = true
-			let detailsFilter = true
-			let sexes = ["Mult.", "N", props.pyramidData.sex]
+            let networkFilter = true
+            let pyramidFilter = true
+            let detailsFilter = true
+            let sexes = ["Mult.", "N", props.pyramidData.sex]
 
-			if (props.networkData.people.length)
-				networkFilter = (props.networkData.people.includes(entry[props.csvIndexes.subject_name]))
+            if (props.networkData.people.length)
+                networkFilter = (props.networkData.people.includes(entry[props.csvIndexes.subject_name]))
 
-			if (props.pyramidData.sex)
+            if (props.pyramidData.sex)
                 pyramidFilter = sexes.includes(entry[props.csvIndexes.subject_sex])
 
             if (props.pyramidData.category)
                 pyramidFilter = pyramidFilter && entry[props.pyramidData.categoryIndex] === props.pyramidData.category
 
-			if (Object.keys(props.heatmapData).length)
-				detailsFilter = entry[props.heatmapData.searchKey1] === props.heatmapData.key1 && 
-								entry[props.heatmapData.searchKey2] === props.heatmapData.key2
+            if (Object.keys(props.heatmapData).length)
+                detailsFilter = entry[props.heatmapData.searchKey1] === props.heatmapData.key1 &&
+                    entry[props.heatmapData.searchKey2] === props.heatmapData.key2
 
-			return networkFilter && pyramidFilter && detailsFilter
-		})
+            return networkFilter && pyramidFilter && detailsFilter
+        })
 
         let impData = d3.flatGroup(dataInitial, d => d[props.csvIndexes.subject_name])
 
@@ -102,8 +102,9 @@ const ImportantPeopleChart = (props) => {
         sortedkeys.filter(key => key !== "")
 
         let aux = [...selectedImp]
-        if (selectedImp.length > 0 && !sortedkeys.includes(selectedImp[0])) aux.splice(0, 1)
-        if (selectedImp.length === 2 && !sortedkeys.includes(selectedImp[1])) aux.splice(aux.indexOf(selectedImp[1]), 1)
+
+        if (!sortedkeys.includes(selectedImp[0])) aux[0] = null
+        if (!sortedkeys.includes(selectedImp[1])) aux[1] = null
 
         setSelectedImp(aux)
         setData(dataInitial)
@@ -113,27 +114,39 @@ const ImportantPeopleChart = (props) => {
 
     function removeSelectedImp(index) {
         let aux = [...selectedImp]
-        aux.splice(index, 1)
+        aux[index] = null
         setSelectedImp(aux)
-        
     }
 
     function changeSelected(key) {
 
         let aux = [...selectedImp]
 
-        if (aux.includes(key)) {
-            aux.splice(aux.indexOf(key), 1)
-        } else {
-            if (aux.length === 2)
-                aux.shift()
-            aux.push(key)
+        if (aux.includes(key))
+            aux[aux.indexOf(key)] = null
+        else {
+            if (aux[0] === null) {
+                aux[0] = key
+                highlightNode(key)
+            }
+            else if (aux[1] === null) {
+                aux[1] = key
+                highlightNode(key)
+            }
+            else {
+                d3.selectAll(".default-selection").transition().duration(500)
+                    .style("background-color", "#bfa3a3")
+
+                setTimeout(() => {
+                    d3.selectAll(".default-selection").transition().duration(500)
+                        .style("background-color", "white")
+                }, 1000);
+            }
+
         }
 
         setSelectedImp(aux)
 
-        if (aux.length)
-            highlightNode(aux[aux.length - 1])
     }
 
     useEffect(() => {
@@ -142,44 +155,44 @@ const ImportantPeopleChart = (props) => {
             tooltipImp
                 .style("opacity", "1");
 
-                let component = d3.select(this).node()
-                let componentId = component.id
-                let [person, key] = componentId.split("|")
-    
-                if (person === "undefined"){
-                    tooltipImp
-                    .style("opacity", "0")
-                    return
-                }
-    
-                let componentData = component.getAttribute("data-dict")
-                componentData = JSON.parse(componentData)
-    
-                let content = ""
-    
-                Object.keys(componentData).sort().map((i) => {
-                    content = content.concat(`<span>${i}: ${componentData[i]}<br/></span>`)
-                })
-    
+            let component = d3.select(this).node()
+            let componentId = component.id
+            let [person, key] = componentId.split("|")
+
+            if (person === "undefined" || d === undefined) {
                 tooltipImp
-                    .html(
-                        `<b>${t("imp-tooltip-person")}: </b>${impPeople[person].name}<br/>
+                    .style("opacity", "0")
+                return
+            }
+
+            let componentData = component.getAttribute("data-dict")
+            componentData = JSON.parse(componentData)
+
+            let content = ""
+
+            Object.keys(componentData).sort().map((i) => {
+                content = content.concat(`<span>${i}: ${componentData[i]}<br/></span>`)
+            })
+
+            tooltipImp
+                .html(
+                    `<b>${t("imp-tooltip-person")}: </b>${impPeople[person].name}<br/>
                          <b>${t("imp-tooltip-field")}: </b>${key} <br/><br/>
                         ${content}`)
-                    .style("top", event.pageY - 10 + "px")
-                    .style("left", event.pageX + 10 + "px")
+                .style("top", event.pageY - 10 + "px")
+                .style("left", event.pageX + 10 + "px")
 
-                let tooltip_rect = tooltipImp.node().getBoundingClientRect();
-                if (tooltip_rect.x + tooltip_rect.width > window.innerWidth){
-                    tooltipImp.style("left", event.pageX - 20 - tooltip_rect.width + "px")
-                    tooltipImp.style("top", event.pageY + 10 + "px")
-                }
-                
-                tooltip_rect = tooltipImp.node().getBoundingClientRect();
-                if (tooltip_rect.y + tooltip_rect.height > window.innerHeight){
-                    tooltipImp.style("left", tooltip_rect.left - 10 - tooltip_rect.width + "px")
-                    tooltipImp.style("top", event.pageY + 20 - tooltip_rect.height + "px")
-                }
+            let tooltip_rect = tooltipImp.node().getBoundingClientRect();
+            if (tooltip_rect.x + tooltip_rect.width > window.innerWidth) {
+                tooltipImp.style("left", event.pageX - 20 - tooltip_rect.width + "px")
+                tooltipImp.style("top", event.pageY + 10 + "px")
+            }
+
+            tooltip_rect = tooltipImp.node().getBoundingClientRect();
+            if (tooltip_rect.y + tooltip_rect.height > window.innerHeight) {
+                tooltipImp.style("left", tooltip_rect.left - 10 - tooltip_rect.width + "px")
+                tooltipImp.style("top", event.pageY + 20 - tooltip_rect.height + "px")
+            }
         }
 
         let mouseleave = function (event, d) {
@@ -192,24 +205,24 @@ const ImportantPeopleChart = (props) => {
         }
 
         let infoMouseOverImp = function (event, d) {
-			tooltipImp
-				.style("opacity", 1);
+            tooltipImp
+                .style("opacity", 1);
 
-			tooltipImp.html(`<center><b>${t("information")}</b></center>
+            tooltipImp.html(`<center><b>${t("information")}</b></center>
 						  ${t("information-imp")}`)
-				.style("top", event.pageY - 10 + "px")
-				.style("left", event.pageX + 10 + "px")
-		}
+                .style("top", event.pageY - 10 + "px")
+                .style("left", event.pageX + 10 + "px")
+        }
 
 
-		let infoMouseLeaveImp = function (event, d) {
-			tooltipImp
-				.style("opacity", 0)
+        let infoMouseLeaveImp = function (event, d) {
+            tooltipImp
+                .style("opacity", 0)
 
-			let element = document.getElementById('tooltipImp')
-			if (element)
-				element.innerHTML = "";
-		}
+            let element = document.getElementById('tooltipImp')
+            if (element)
+                element.innerHTML = "";
+        }
 
         d3.selectAll("#tooltipImp").remove();
         // create a tooltipImp
@@ -229,11 +242,11 @@ const ImportantPeopleChart = (props) => {
             .on("mouseleave", mouseleave)
     }, [impPeople]);
 
-    function changeSearchInput(){
+    function changeSearchInput() {
         let element = document.getElementById('imp-search-bar')
         let search = element.value
 
-        if (search === ""){
+        if (search === "") {
             setSearchedPeople(Array.from(Object.keys(impPeople)))
             return
         }
@@ -255,20 +268,20 @@ const ImportantPeopleChart = (props) => {
                 {data.length > 0 &&
                     <>
                         <div className='imp-left-section'>
-                            <input id="imp-search-bar" type='text' className='imp-search-bar' placeholder={t("search-imp-placeholder")} text="" onChange={() => changeSearchInput()}/>
+                            <input id="imp-search-bar" type='text' className='imp-search-bar' placeholder={t("search-imp-placeholder")} text="" onChange={() => changeSearchInput()} />
                             <div className='imp-left-section-inside'>
-                            {Array.from(searchedPeople).map(key => {
-                                let entry = impPeople[key]
-                                return (
-                                    <button
-                                        key={key}
-                                        id={`imp-${noSpaces(key)}`}
-                                        className={"imp-left-btn" + ((selectedImp.includes(key)) ? " selected-imp" : "") + ((props.networkData.selected.includes(entry.name)) ? " network-selected-imp" : "")}
-                                        onClick={() => changeSelected(key)}>
-                                        {entry.name}
-                                    </button>
-                                )
-                            })}
+                                {Array.from(searchedPeople).map(key => {
+                                    let entry = impPeople[key]
+                                    return (
+                                        <button
+                                            key={key}
+                                            id={`imp-${noSpaces(key)}`}
+                                            className={"imp-left-btn" + ((selectedImp.includes(key)) ? " selected-imp" : "") + ((props.networkData.selected.includes(entry.name)) ? " network-selected-imp" : "")}
+                                            onClick={() => changeSelected(key)}>
+                                            {entry.name}
+                                        </button>
+                                    )
+                                })}
                             </div>
                         </div>
                         <div className='imp-right-section'>
@@ -289,27 +302,27 @@ const ImportantPeopleChart = (props) => {
                                     <div className='imp-empty-space'></div>
                                     <div className='imp-selected-names'>
 
-                                        <div title={selectedImp.length > 0 ? impPeople[selectedImp[0]].name : t("imp-no-selection-label")}
-                                            className={"default-selection " + (selectedImp.length ? "" : "no-selection")}
-                                            key={selectedImp.length ? selectedImp[0] : "selected1"}
+                                        <div title={selectedImp[0] ? impPeople[selectedImp[0]].name : t("imp-no-selection-label")}
+                                            className={"default-selection " + (selectedImp[0] ? "" : "no-selection")}
+                                            key={selectedImp[0] ? selectedImp[0] : "selected1"}
                                             onClick={() => removeSelectedImp(0)}>
 
                                             <span style={{ width: "calc(100%)", display: "inline-block", verticalAlign: "middle", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                                                {selectedImp.length > 0 ? impPeople[selectedImp[0]].name : t("imp-no-selection-label")}
+                                                {selectedImp[0] ? impPeople[selectedImp[0]].name : t("imp-no-selection-label")}
                                             </span>
                                         </div>
-                                        {selectedImp.length > 0 && <img title={t("icon-close")} className={"imp-x"} alt="x" src={x} width="15px" height="15px" onClick={() => removeSelectedImp(0)} />}
+                                        {selectedImp[0] && <img title={t("icon-close")} className={"imp-x"} alt="x" src={x} width="15px" height="15px" onClick={() => removeSelectedImp(0)} />}
                                     </div>
                                     <div className='imp-selected-names'>
-                                        <div title={selectedImp.length === 2 ? impPeople[selectedImp[1]].name : t("imp-no-selection-label")}
-                                            className={"default-selection " + (selectedImp.length === 2 ? "" : "no-selection")}
-                                            key={selectedImp.length === 2 ? selectedImp[1] : "selected2"}
-                                            onClick={() => removeSelectedImp(0)}>
+                                        <div title={selectedImp[1] ? impPeople[selectedImp[1]].name : t("imp-no-selection-label")}
+                                            className={"default-selection " + (selectedImp[1] ? "" : "no-selection")}
+                                            key={selectedImp[1] ? selectedImp[1] : "selected2"}
+                                            onClick={() => removeSelectedImp(1)}>
                                             <span style={{ width: "calc(100%)", display: "inline-block", verticalAlign: "middle", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                                                {selectedImp.length === 2 ? impPeople[selectedImp[1]].name : t("imp-no-selection-label")}
+                                                {selectedImp[1] ? impPeople[selectedImp[1]].name : t("imp-no-selection-label")}
                                             </span>
                                         </div>
-                                        {selectedImp.length === 2 && <img title={t("icon-close")} className={"imp-x"} alt="x" src={x} width="15px" height="15px" onClick={() => removeSelectedImp(1)} />}
+                                        {selectedImp[1] && <img title={t("icon-close")} className={"imp-x"} alt="x" src={x} width="15px" height="15px" onClick={() => removeSelectedImp(1)} />}
                                     </div>
                                 </div>
                                 <div className='imp-selected-section'>
@@ -325,7 +338,7 @@ const ImportantPeopleChart = (props) => {
                                                 let selectDict1 = {}
                                                 let selectDict2 = {}
 
-                                                if (selectedImp.length > 0) {
+                                                if (selectedImp[0]) {
                                                     impPeople[selectedImp[0]].entries.forEach((entry) => {
                                                         selectDict1[entry[index]] = (selectDict1[entry[index]] === undefined ? 1 : selectDict1[entry[index]] + 1)
                                                     })
@@ -333,7 +346,7 @@ const ImportantPeopleChart = (props) => {
                                                     selectArray1 = [...new Set(Object.keys(selectDict1))].sort()
                                                 }
 
-                                                if (selectedImp.length === 2) {
+                                                if (selectedImp[1]) {
                                                     impPeople[selectedImp[1]].entries.forEach((entry) => {
                                                         selectDict2[entry[index]] = (selectDict2[entry[index]] === undefined ? 1 : selectDict2[entry[index]] + 1)
                                                     })
@@ -344,7 +357,7 @@ const ImportantPeopleChart = (props) => {
                                                 return (
                                                     <tr className="imp-table" key={`tr-${key}`}>
                                                         <th className="imp-th">{key}</th>
-                                                        <td data-dict={JSON.stringify({...selectDict1})} className="imp-td" id={`${selectedImp[0]}|${key}`} style={{ borderRight: "1px solid #dddddd" }}>
+                                                        <td data-dict={JSON.stringify({ ...selectDict1 })} className="imp-td" id={`${selectedImp[0]}|${key}`} style={{ borderRight: "1px solid #dddddd" }}>
                                                             {selectArray1.map(function (text, i) {
                                                                 if (text === "")
                                                                     return ""
@@ -362,7 +375,7 @@ const ImportantPeopleChart = (props) => {
                                                             })}
                                                             {selectArray1.length === 0 && "-"}
                                                         </td>
-                                                        <td data-dict={JSON.stringify({...selectDict2})} className="imp-td" id={`${selectedImp[1]}|${key}`}>
+                                                        <td data-dict={JSON.stringify({ ...selectDict2 })} className="imp-td" id={`${selectedImp[1]}|${key}`}>
                                                             {selectArray2.map(function (text, i) {
                                                                 if (text === "")
                                                                     return ""
@@ -375,7 +388,7 @@ const ImportantPeopleChart = (props) => {
 
                                                                 if ((selectArray2.length - 1) === i)
                                                                     return (`${text}`)
-                                                                
+
                                                                 return (`${text} | `)
                                                             })}
                                                             {selectArray2.length === 0 && "-"}

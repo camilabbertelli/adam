@@ -60,11 +60,10 @@ div.timeline {
     color: white;
     --mdb-card-box-shadow: 0;
 
-    border: none;
-    border-radius: 0%;
-    border-bottom: white;
-    border-style: solid;
-    border-width: 0 0 5px 0;
+    border-radius: 0% !important;
+    border-bottom: white !important;
+    border-style: solid !important;
+    border-width: 0 0 5px 0 !important;
 }
 
 .timeline.card-img-top {

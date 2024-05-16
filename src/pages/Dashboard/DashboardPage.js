@@ -146,15 +146,14 @@ const DashboardPage = () => {
     const [globalData, setGlobalData] = useState([])
     const [originalGlobalData, setOriginalGlobalData] = useState([])
 
-    const [activeFilters, setActiveFilters] = useState(
-        {
-            intention: Object.keys(intention)[0],
-            origin: Object.keys(origin)[0],
-            explanation: Object.keys(explanation)[0],
+    const [activeFilters, setActiveFilters] = useState({
+        intention: Object.keys(intention)[0],
+        origin: Object.keys(origin)[0],
+        explanation: Object.keys(explanation)[0],
 
-            nature: Object.keys(nature)[0],
-            dimension: Object.keys(dimension)[0],
-        })
+        nature: Object.keys(nature)[0],
+        dimension: Object.keys(dimension)[0],
+    })
 
     const [advancedCategoryFilters, setAdvancedCategoryFilters] = useState({})
     const [activeCategories, setActiveCategories] = useState([]);
@@ -316,7 +315,11 @@ const DashboardPage = () => {
             setActiveCodices([...sortedkeys])
             setGenres([...new Set(codicesGenres.map((entry) => entry[0]))].sort())
 
-        }, []);
+        }, []).catch((error) => {
+            console.error('Error fetching data:', error);
+            // Display a user-friendly error message
+            alert('An error occurred while fetching data.');
+        });
 
         document.getElementById("overlay").style.display = "none";
     }, [])
@@ -359,9 +362,8 @@ const DashboardPage = () => {
 
 
             let passAdvanced = true
-            
-            if (advFilters)
-            for (const [key, value] of Object.entries(advFilters)) {
+
+            for (const [key, value] of Object.entries(advFilters ? advFilters : advancedCategoryFilters)) {
                 let passIntern = false
                 let indexList = categories[key].index
                 let indexSublist = categories[key].indexSubcategory
@@ -369,7 +371,7 @@ const DashboardPage = () => {
                 if (value.list.length)
                     if (value.list.includes(noSpaces(d[indexList])))
                         passIntern = true
-                
+
                 if (value.sublist.length)
                     if (value.sublist.includes(noSpaces(d[indexSublist])))
                         passIntern = true
@@ -396,6 +398,29 @@ const DashboardPage = () => {
         if (codicesFilter && codicesFilter.length)
             setActiveCodices(codicesFilter)
         setChangedFilter(true)
+    }
+
+
+    function resetFilters() {
+
+        let advancedFilterAux = {...advancedCategoryFilters}
+        Object.keys(advancedCategoryFilters).forEach(key => {
+            advancedFilterAux[key] = {
+                list: [],
+                sublist: []
+            }
+        })
+
+        setFilters(
+            [Object.keys(intention)[0],
+                    Object.keys(origin)[0],
+                    Object.keys(explanation)[0],
+                    Object.keys(nature)[0],
+                    Object.keys(dimension)[0]
+            ],
+            ["intention", "origin", "explanation", "nature", "dimension"],
+        Object.keys(codices).sort(), 
+        advancedFilterAux)
     }
 
     const [isOpen, setIsOpen] = useState(false);
@@ -433,7 +458,7 @@ const DashboardPage = () => {
                     codices={codices}
                     colorCodices={colorCodices}
                     genres={genres}
-                    activeFilters={activeFilters} setActiveFilters={setFilters} advancedCategoryFilters={advancedCategoryFilters} />
+                    activeFilters={activeFilters} setActiveFilters={setFilters} advancedCategoryFilters={advancedCategoryFilters} resetFilters={resetFilters} />
                 <DragOverlay dropAnimation={{ duration: 500 }}>
                     {activeCategory ? (
                         <button className='dashboard-filter-category-drag shadow' style={{ border: "10px" }} key={activeCategory}>{t(activeCategory)}</button>
@@ -453,7 +478,7 @@ const DashboardPage = () => {
                                 setIsExpanded={setIsHeatmapExpanded}
                                 changedFilter={changedFilter}
                                 setChangedFilter={setChangedFilter}>
-                                <div className={"heatmap-drag"} >{/*  style={{ minHeight: "15%", top: ((activeCategories.length !== 2) ? "40%" : "0%"), left: "7%" }} */}
+                                <div className={"heatmap-drag"} >
                                     <div className={"category " + (activeCategories.length ? "" : "default ") + (activeCategories.length === 2 ? " shrink" : "")} key={activeCategories.length ? activeCategories[0] : "category1"} onClick={() => removeCategory(0)}>
                                         {activeCategories.length ? t(activeCategories[0]) : t("category-label")}
                                     </div>
@@ -468,7 +493,7 @@ const DashboardPage = () => {
                                 </div>
                             </HeatmapChart>
                         </div>
-                        <div className={"dashboard-viz2" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
+                        <div className={"dashboard-viz2" + ((activeCategory !== null) ? " drag-active" : "")}>
                             <ImportantPeopleChart
                                 data={globalData}
                                 networkData={networkData} pyramidData={pyramidData} heatmapData={heatmapData}
@@ -478,7 +503,7 @@ const DashboardPage = () => {
                         </div>
                     </div>
                     <div className="dashboard-row2">
-                        <div id="viz3" className={"dashboard-viz3" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
+                        <div id="viz3" className={"dashboard-viz3" + ((activeCategory !== null) ? " drag-active" : "")}>
                             <TabChart categories={categories}
                                 data={globalData}
                                 setPyramidData={setPyramidData} networkData={networkData} heatmapData={heatmapData}
@@ -487,7 +512,7 @@ const DashboardPage = () => {
                                 isExpanded={isTabchartExpanded} setIsExpanded={setIsTabchartExpanded}
                                 changedFilter={changedFilter} setChangedFilter={setChangedFilter} />
                         </div>
-                        <div className={"dashboard-viz4" + ((activeCategory !== null && activeCategories.length !== 2) ? " drag-active" : "")}>
+                        <div className={"dashboard-viz4" + ((activeCategory !== null) ? " drag-active" : "")}>
                             <NetworkChart
                                 data={globalData}
                                 setNetworkData={setNetworkData} pyramidData={pyramidData} heatmapData={heatmapData}

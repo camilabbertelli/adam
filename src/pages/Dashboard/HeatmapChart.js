@@ -480,7 +480,7 @@ const HeatmapChart = (props) => {
 		<>
 			{props.data.length > 0 &&
 				<>
-					<div id="droppable" ref={setNodeRef} className={"shadow heatmap-area" + ((props.activeCategory !== null && props.activeCategories.length !== 2) ? " dashed" : "")}>
+					<div id="droppable" ref={setNodeRef} className={"shadow heatmap-area" + ((props.activeCategory !== null) ? (props.activeCategories.length !== 2?" dashed" : " dashed-red") : "")} style={(props.activeCategories.length === 2)?{}:null}>
 						<div className='heatmap-content'>
 							<div style={{display: "flex", marginLeft: "20%", width:"100%", height: (props.activeCategories.length === 2? "15%" : "100%")}}>
 								<img alt="info" id="infoHeatmap" src={info}

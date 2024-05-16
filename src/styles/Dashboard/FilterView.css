@@ -12,6 +12,8 @@
 
     max-height: 100%;
     overflow: auto;
+
+    position: relative;
 }
 
 
@@ -194,3 +196,19 @@ div.dashboard-image-component {
     margin-right: 2%;
 }
 
+
+.btn-clear-all{
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    width: 30%;
+    font-size: smaller;
+    background-color: #ececec;
+    border-color: #6e6e6e;
+    border-width: 2px;
+
+    &:hover{
+        
+        background-color: #dbdbdb;
+    }
+}
