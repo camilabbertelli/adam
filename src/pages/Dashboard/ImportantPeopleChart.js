@@ -159,7 +159,7 @@ const ImportantPeopleChart = (props) => {
             let componentId = component.id
             let [person, key] = componentId.split("|")
 
-            if (person === "undefined" || d === undefined) {
+            if (person === "undefined" || person === "null") {
                 tooltipImp
                     .style("opacity", "0")
                 return
@@ -237,7 +237,11 @@ const ImportantPeopleChart = (props) => {
             .on("mouseover", infoMouseOverImp)
             .on("mouseleave", infoMouseLeaveImp)
 
+
         d3.selectAll(`.imp-td`)
+        
+        .attr("user-select", "none")
+            .style("cursor", "pointer")
             .on("mouseover", mouseover)
             .on("mouseleave", mouseleave)
     }, [impPeople]);
