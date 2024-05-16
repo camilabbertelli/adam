@@ -25,9 +25,13 @@
     background-color: white;
     color: black;
 
+    width: 50%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
     padding: 0px 10px;
 
-    width: 50%;
 
     border: solid 2px #935959;
     font-size: 20px;

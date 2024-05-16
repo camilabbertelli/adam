@@ -1,0 +1,55 @@
+.mobile-dropdown{
+    position: relative;
+}
+
+.mobile-languages {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+
+    z-index: inherit;
+}
+.mobile-dropdown-content-hide {
+    display: none;
+}
+
+.mobile-dropdown-content-show {
+    display: block;
+    position: absolute;
+    right: 0;
+    z-index: 1;
+    min-width: 150px;
+    z-index: 1;
+    background-color: rgb(56, 16, 16);
+
+    font-family: lato;
+}
+
+
+
+.flag {
+    position: relative;
+    top: -10px;
+    width: 30px;
+}
+
+
+button.flagbutton {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+
+    color: rgb(94, 83, 83);
+
+    &:hover{
+        background-color: rgba(255, 0, 0, 0.199);
+    }
+}
+
+button.flagselected {
+    color: white;
+    background-color: rgb(80, 23, 23);
+}
