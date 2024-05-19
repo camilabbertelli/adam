@@ -215,9 +215,14 @@ div.dashboard-image-component {
     border-width: 2px;
 
     padding-right: 5px;
+    max-width: 50%;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &:hover{
-        
         background-color: #dbdbdb;
     }
+
 }

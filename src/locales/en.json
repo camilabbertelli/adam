@@ -32,7 +32,7 @@
     "home-map-title": "Places present in the medieval narrative",
     "icon-language": "Language",
 
-
+    "clear-selection-filter": "Clear selection",
     "clear-all-filter": "Clear all",
     "simple-filter": "Simple filter",
     "advanced-filter": "Advanced filter",
@@ -85,6 +85,8 @@
     "pyramid-total": "Total occurrences",
     "pyramid-masculine": "Masculine",
     "pyramid-feminine": "Feminine",
+    "pyramid-name-descending": "Name (descending)",
+    "pyramid-name-ascending": "Name (ascending)",
 
 
     "imp-label": "Important people",

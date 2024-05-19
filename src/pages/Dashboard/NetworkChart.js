@@ -5,6 +5,8 @@ import "./../../styles/Dashboard/NetworkChart.css";
 import info from "./../../assets/images/info-black.png"
 import expand from "./../../assets/images/dashboard/expand.png"
 import shrink from "./../../assets/images/dashboard/shrink.png"
+import close from "./../../assets/images/close.png"
+
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -411,7 +413,6 @@ const NetworkChart = (props) => {
         // Apply zoom behavior to the SVG element
         svgInitial.call(zoom);
 
-
         // Function to handle the zoom event
         function zoomed(event) {
             svg.attr("transform", event.transform);
@@ -571,9 +572,10 @@ const NetworkChart = (props) => {
     }, [data, typeClick, selectedNodes, nodeClickCheck])
 
     function nodeclick(event, d) {
+
         let aux = [...selectedNodes]
-        let index = -1
-        if (index = !aux.includes(d.person))
+        let index = aux.indexOf(d.person)
+        if (index === -1)
             aux.push(d.person)
         else
             aux.splice(index, 1)
@@ -582,12 +584,24 @@ const NetworkChart = (props) => {
         setNodeClickCheck(true)
     }
 
+    function clearSelection(){
+        setSelectedNodes([])
+        setNodeClickCheck(true)
+    }
+
     return (
         <>
             <div className="network-area shadow">
                 <div className='network-top-section'>
+                {(selectedNodes.length !== 0) &&
+                            <button className="network-btn-clear-selection" onClick={clearSelection} title={t("clear-selection-filter")}>
+                                <img alt="close" src={close}
+                                    style={{ margin: "0 5px", cursor: "pointer", width: "10px", height: "10px" }}
+                                />
+                                <span className="network-btn-clear-selection-text">{t("clear-selection-filter")}</span>
+                            </button>
+                        }
                     <div className='network-title'>
-
                         <h5 className='network-top-title'>{t("network-label")}</h5>
                         <img alt="info" id="infoNetwork" src={info}
                             style={{ marginLeft: "5px", cursor: "pointer" }} width="15px" height="15px"

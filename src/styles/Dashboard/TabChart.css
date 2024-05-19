@@ -128,6 +128,30 @@
 	height: 100%;
 }
 
+.pyramid-btn-clear-selection{
+	display: flex;
+    align-items: center;
+    margin-top: 10px;
+	margin-left:10px;
+    font-size: small;
+    background-color: #ececec;
+    border-color: #6e6e6e;
+    border-width: 2px;
+    padding-right: 5px;
+
+	max-width: 100%;
+
+    &:hover{
+        background-color: #dbdbdb;
+    }
+}
+
+.pyramid-btn-clear-selection-text{
+	white-space: nowrap;
+    overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .pyramid-axes-bottom{
 	display: flex;
 	width: 80%;

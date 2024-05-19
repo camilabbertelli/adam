@@ -12,6 +12,7 @@ import sorting_icon from "./../../assets/images/dashboard/sorting.png"
 
 import expand from "./../../assets/images/dashboard/expand.png"
 import shrink from "./../../assets/images/dashboard/shrink.png"
+import close from "./../../assets/images/close.png"
 
 import $ from "jquery"
 
@@ -113,15 +114,23 @@ const TabContent = (props) => {
             setSelectedSex({ sex: "", category: "", categoryIndex: "" })
             props.setPyramidData({ sex: "", category: "", categoryIndex: "" })
         }
+    }, [props.category])
 
-        if (props.resetComponents) {
-			setSelectedSex({ sex: "", category: "", categoryIndex: "" })
+    useEffect(() => {
+
+        if (props.resetComponents){
+            setSelectedSex({ sex: "", category: "", categoryIndex: "" })
             props.setPyramidData({ sex: "", category: "", categoryIndex: "" })
-			props.setResetComponents(false)
-		}
+            props.setResetComponents(false)
+        }
 
-    }, [props.category, props.data])
+    }, [props.resetComponents])
 
+    function clearSelection(){
+        setSelectedSex({ sex: "", category: "", categoryIndex: "" })
+        props.setPyramidData({ sex: "", category: "", categoryIndex: "" })
+    }
+    
     useEffect(() => {
         let index = props.categories[props.category].index
         let sexIndex = props.csvIndexes.subject_sex
@@ -605,7 +614,6 @@ const TabContent = (props) => {
             d3.selectAll("#tabchart-dropdown-icon").classed("tabchart-dropdown-content-show", true)
     };
 
-
     const changeSorting = (s) => {
         props.setCurrentSorting(s)
         d3.selectAll("#tabchart-dropdown-icon").classed("tabchart-dropdown-content-show", false)
@@ -645,18 +653,18 @@ const TabContent = (props) => {
                         /></button>
                     <div id="tabchart-dropdown-icon" className={"shadow tabchart-dropdown-content-hide"}>
                         <button className={props.currentSorting === "name_asc" ? "sorting-active" : ""} onClick={() => changeSorting("name_asc")}> Name (ascending) </button>
-                        <button className={props.currentSorting === "name_desc" ? "sorting-active" : ""} onClick={() => changeSorting("name_desc")}> Name (descending) </button>
+                        <button className={props.currentSorting === "name_desc" ? "sorting-active" : ""} onClick={() => changeSorting("name_desc")}> {t("pyramid-name-descending")} </button>
 
                         {!totalOccurrences && <>
-                            <button className={props.currentSorting === "masc_asc" ? "sorting-active" : ""} onClick={() => changeSorting("masc_asc")}> Masc. - Low to High </button>
-                            <button className={props.currentSorting === "masc_desc" ? "sorting-active" : ""} onClick={() => changeSorting("masc_desc")}> Masc. - High to Low </button>
-                            <button className={props.currentSorting === "fem_asc" ? "sorting-active" : ""} onClick={() => changeSorting("fem_asc")}> Fem. - Low to High </button>
-                            <button className={props.currentSorting === "fem_desc" ? "sorting-active" : ""} onClick={() => changeSorting("fem_desc")}> Fem. - High to Low </button>
+                            <button className={props.currentSorting === "masc_asc" ? "sorting-active" : ""} onClick={() => changeSorting("masc_asc")}> {t("pyramid-masculine")} - Low to High </button>
+                            <button className={props.currentSorting === "masc_desc" ? "sorting-active" : ""} onClick={() => changeSorting("masc_desc")}> {t("pyramid-masculine")} - High to Low </button>
+                            <button className={props.currentSorting === "fem_asc" ? "sorting-active" : ""} onClick={() => changeSorting("fem_asc")}> {t("pyramid-feminine")}. - Low to High </button>
+                            <button className={props.currentSorting === "fem_desc" ? "sorting-active" : ""} onClick={() => changeSorting("fem_desc")}> {t("pyramid-feminine")}. - High to Low </button>
                         </>}
 
                         {totalOccurrences && <>
                             <button className={props.currentSorting === "total_asc" ? "sorting-active" : ""} onClick={() => changeSorting("total_asc")}> Total - Low to High </button>
-                            <button className={props.currentSorting === "total_desc" ? "sorting-active" : ""} onClick={() => changeSorting("total_desc")}> Total - High to Low </button>
+                            <button className={props.currentSorting === "total_desc" ? "sorting-active" : ""} onClick={() => changeSorting("total_desc")}> {t("pyramid-total")} - High to Low </button>
                         </>}
                     </div>
                 </div>
@@ -670,6 +678,14 @@ const TabContent = (props) => {
             </div>
             <div className="pyramid-bottom-content">
                 <div className="pyramid-empty-space">
+                    {(selectedSex.sex || selectedSex.category) &&
+                        <button className="pyramid-btn-clear-selection" onClick={clearSelection} title={t("clear-selection-filter")}>
+                            <img alt="close" src={close}
+                                style={{ margin: "0 5px", cursor: "pointer", width: "10px", height: "10px" }}
+                            />
+                            <span className="pyramid-btn-clear-selection-text">{t("clear-selection-filter")}</span>
+                        </button>
+                    }
                 </div>
                 <div className="pyramid-axes-bottom">
                 </div>
@@ -746,7 +762,7 @@ const TabChart = (props) => {
                         })}
                 </div>
                 {data.length > 0 &&
-                    <TabContent categories={props.categories}
+                    <TabContent categories={props.categories} resetComponents={props.resetComponents} setResetComponents={props.setResetComponents}
                         category={currentCategory}
                         csvIndexes={props.csvIndexes}
                         data={data}

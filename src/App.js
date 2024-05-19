@@ -10,7 +10,7 @@ import DashboardPage from './pages/Dashboard/DashboardPage';
 import LibraryPage from './pages/Library/LibraryPage';
 import DatabasePage from './pages/DatabasePage';
 
-import ErrorBoundary from './ErrorBoundary';
+import ErrorBoundary from './pages/ErrorBoundary';
 
 import React, { useEffect, useState } from 'react';
 import MobileWarning from './pages/MobileWarning';

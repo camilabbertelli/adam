@@ -43,6 +43,32 @@ h5.network-top-title {
     vertical-align: middle;
 }
 
+
+.network-btn-clear-selection{
+    position: absolute;
+	display: flex;
+    align-items: center;
+    margin-top: 10px;
+	margin-left:10px;
+    font-size: small;
+    background-color: #ececec;
+    border-color: #6e6e6e;
+    border-width: 2px;
+    padding-right: 5px;
+
+	max-width: 30%;
+
+    &:hover{
+        background-color: #dbdbdb;
+    }
+}
+
+.network-btn-clear-selection-text{
+	white-space: nowrap;
+    overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .network-bottom-section {
     width: 100%;
     height: 85%;
