@@ -115,8 +115,6 @@ const ImportantPeopleChart = (props) => {
         setData(dataInitial)
         setImpPeople(imp)
         setSearchedPeople(Array.from(Object.keys(imp)))
-
-        console.log(props.data)
     }, [props.data, props.networkData, props.pyramidData, props.heatmapData])
 
     function removeSelectedImp(index) {
