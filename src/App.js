@@ -20,7 +20,7 @@ const App = () => {
 	useEffect(() => {
 
 		const onResize = () => {
-            setShowMobileWarning(window.innerWidth < 1500 || window.innerHeight > window.innerWidth);
+            setShowMobileWarning(window.innerWidth < 1300 || window.innerHeight > window.innerWidth);
         }
 
         window.addEventListener("resize", onResize);

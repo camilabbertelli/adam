@@ -158,6 +158,14 @@ const NetworkChart = (props) => {
 
     const [nodeClickCheck, setNodeClickCheck] = useState(false)
 
+
+    useEffect(() => {
+		if (props.resetComponents) {
+			setSelectedNodes([])
+			props.setResetComponents(false)
+		}
+	}, [props.resetComponents])
+
     useEffect(() => {
 
         let links = [...linksGlobal]

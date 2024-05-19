@@ -11,7 +11,7 @@
 
 #countries {
   fill: none;
-  stroke: black;
+  stroke: rgb(216, 184, 154);
   stroke-linejoin: round;
   stroke-width: 0.5px;
 }
@@ -19,10 +19,10 @@
 #countries .active {
   display: none;
 }
-
+/* 
 .country:hover {
   fill: rgb(163, 131, 116)
-}
+} */
 
 
 .mark:hover {

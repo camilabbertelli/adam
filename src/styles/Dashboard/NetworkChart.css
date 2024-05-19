@@ -1,11 +1,12 @@
 .network-area {
-    width: 94%;
-    height: 85%;
+	width: 95%;
+	height: 95%;
 
     position: relative;
-    top: 46%;
-    left: 30px;
-    transform: translate(0, -50%);
+    
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 
     background-color: white;
     border-radius: 20px;
@@ -104,7 +105,7 @@ h5.network-top-title {
 .network-graph {
     width: 100%;
     height: 100%;
-    background-color: #eeeae7;
+    background-color: #f3efeb;
     border-radius: 0 0 20px 20px;
     display: flex;
     justify-content: center;

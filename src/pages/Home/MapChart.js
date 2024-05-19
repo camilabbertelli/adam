@@ -141,7 +141,6 @@ const MapChart = ({ codices }) => {
             .attr("class", "country")
             // Here's an example of what I was saying in my previous comment.
             .attr("fill", "#d8b89a")
-            .on("click", handleZoom)
 
         // Create zoom behavior for the map
         const zoom = d3
@@ -161,12 +160,6 @@ const MapChart = ({ codices }) => {
         // Function to handle the zoom event
         function zoomed(event) {
             mapGroup.attr("transform", event.transform);
-        }
-
-        function handleZoom(event, item) {
-            // Set the state backgroud to 'none' so that the counties can be displayed.
-            //active.classed("active", false);
-            //active = d3.select(this).classed("active", true);
         }
 
         var marks = gatherCodicesMarks();

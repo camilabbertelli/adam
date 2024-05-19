@@ -1,3 +1,31 @@
+
+.mobile-warning {
+    background: linear-gradient(134deg, #4a1515, #010a26);
+
+	width: 100vw;
+	height: 100vh;
+
+    background-size: 400% 400%;
+
+    -webkit-animation: backgroundanimation 7s ease infinite;
+    -moz-animation: backgroundanimation 7s ease infinite;
+    -o-animation: backgroundanimation 7s ease infinite;
+    animation: backgroundanimation 7s ease infinite;
+
+	color: white;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.mobile-warning-title{
+	position: absolute;
+	top:10%;
+}
+
+
 .mobile-dropdown{
     position: relative;
 }

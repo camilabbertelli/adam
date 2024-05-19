@@ -32,7 +32,7 @@
     "icon-language": "Idioma",
 
 
-
+    "clear-all-filter": "Limpar tudo",
     "simple-filter": "Filtro simples",
     "advanced-filter": "Filtro avançado",
     "categories-label": "Categorias",
@@ -40,7 +40,6 @@
     "category-action": "Ações",
     "category-action-motives": "Motivos das ações",
     "category-body": "Corpo&Alma",
-    "category-emotion": "Emoções",
     "intention-label": "Intenção",
     "origin-label": "Origem",
     "explanation-label": "Explicação",
@@ -101,7 +100,7 @@
 
     "database-content": "Conteúdo",
     "database-select-all" : "Selecionar tudo",
-
+    "database-download-csv": "Baixar visão atual da tabela",
 
 
     "library-filter-ancient": "Português antigo",

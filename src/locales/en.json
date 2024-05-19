@@ -33,7 +33,7 @@
     "icon-language": "Language",
 
 
-    
+    "clear-all-filter": "Clear all",
     "simple-filter": "Simple filter",
     "advanced-filter": "Advanced filter",
     "categories-label": "Categories",
@@ -41,7 +41,6 @@
     "category-action": "Actions",
     "category-action-motives": "Actions Motives",
     "category-body": "Body&Soul",
-    "category-emotion": "Emotions",
     "intention-label": "Intention",
     "origin-label": "Origin",
     "explanation-label": "Explanation",
@@ -100,7 +99,7 @@
 
     "database-content": "Content",
     "database-select-all" : "Select all",
-
+    "database-download-csv": "Download current table view",
 
 
     "library-filter-ancient": "Ancient portuguese",

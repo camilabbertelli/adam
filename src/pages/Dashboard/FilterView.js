@@ -303,7 +303,7 @@ const FilterView = (props) => {
                         <img alt="close" src={close}
                         style={{ margin: "0 5px", cursor: "pointer", width:"10px", height: "10px" }} 
                         />
-                        Clear all    
+                        {t("clear-all-filter")}    
                     </button>
                 </div>
                 <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center"}} key={"actual-filters"}>
@@ -314,12 +314,11 @@ const FilterView = (props) => {
                         />
                     </div>
                     {Object.keys(props.categories).map((key, index) => {
-
                         let category = props.categories[key]
                         return (
                             <>
                                 <div className="category-buttons" key={"category_" + key}>
-                                    <Draggable key={key} id={key}><button className='dashboard-filter-category shadow' id={key}
+                                    <Draggable key={key} id={key}><button className={`shadow dashboard-filter-category` + (props.activeCategories.includes(key) ? " selected" : "")} id={key}
                                         style={(index === 0) ? { borderRadius: "20px 20px 0 0" } :
                                             (index === Object.keys(props.categories).length - 1 ? { borderRadius: "0 0 20px 20px" } : null)}
                                         onClick={() => toggleDropdownCategory(key, index)} >

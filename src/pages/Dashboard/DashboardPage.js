@@ -168,6 +168,18 @@ const DashboardPage = () => {
 
     function handleDragStart(event) {
         setActiveCategory(event.active.id);
+
+        if (activeCategories.length === 2){
+            d3.selectAll(".category").transition().duration(500)
+                    .style("background-color", "#bfa3a3")
+
+            setTimeout(() => {
+                d3.selectAll(".category").transition().duration(500)
+                    .style("background-color", "#d3c5b8")
+
+                    
+            }, 1000);
+        }
     }
 
     function handleDragEnd({ active, delta }) {
@@ -268,11 +280,6 @@ const DashboardPage = () => {
                     index: indexes.anatomical_part,
                     indexSubcategory: indexes.organs,
                     list: []
-                },
-                "category-emotion": {
-                    index: indexes.subject_name,
-                    indexSubcategory: indexes.organs,
-                    list: []
                 }
             }
 
@@ -330,7 +337,7 @@ const DashboardPage = () => {
     const [isNetworkExpanded, setIsNetworkExpanded] = useState(false)
 
     const [networkData, setNetworkData] = useState({ selected: [], people: [] })
-    const [pyramidData, setPyramidData] = useState("")
+    const [pyramidData, setPyramidData] = useState({ sex: "", category: "", categoryIndex: "" })
     const [heatmapData, setHeatmapData] = useState([])
 
     window.addEventListener('click', function (e) {
@@ -342,6 +349,8 @@ const DashboardPage = () => {
             setIsNetworkExpanded(false)
         }
     });
+
+    const [resetComponents, setResetComponents] = useState(false)
 
     function setFilters(newFilters, types, codicesFilter, advFilters) {
 
@@ -421,6 +430,12 @@ const DashboardPage = () => {
             ["intention", "origin", "explanation", "nature", "dimension"],
         Object.keys(codices).sort(), 
         advancedFilterAux)
+
+        setPyramidData({ sex: "", category: "", categoryIndex: "" })
+        setHeatmapData([])
+        setNetworkData({ selected: [], people: [] })
+
+        setResetComponents(true)
     }
 
     const [isOpen, setIsOpen] = useState(false);
@@ -449,7 +464,7 @@ const DashboardPage = () => {
                 <div id="overlay">
                 </div>
                 <FilterView
-                    categories={categories}
+                    categories={categories} activeCategories={activeCategories}
                     intention={intention}
                     origin={origin}
                     explanation={explanation}
@@ -461,14 +476,14 @@ const DashboardPage = () => {
                     activeFilters={activeFilters} setActiveFilters={setFilters} advancedCategoryFilters={advancedCategoryFilters} resetFilters={resetFilters} />
                 <DragOverlay dropAnimation={{ duration: 500 }}>
                     {activeCategory ? (
-                        <button className='dashboard-filter-category-drag shadow' style={{ border: "10px" }} key={activeCategory}>{t(activeCategory)}</button>
+                        <button className={`shadow dashboard-filter-category ${(activeCategories.includes(activeCategory) ? "selected" : "")} drag`} style={{ border: "10px" }} key={activeCategory}>{t(activeCategory)}</button>
                     ) : null}
                 </DragOverlay>
 
                 <div className="dashboard-graph-view">
                     <div className="dashboard-row1">
                         <div className="dashboard-viz1">
-                            <HeatmapChart data={globalData}
+                            <HeatmapChart data={globalData} resetComponents={resetComponents} setResetComponents={setResetComponents}
                                 setHeatmapData={setHeatmapData} networkData={networkData} pyramidData={pyramidData}
                                 csvIndexes={csvIndexes}
                                 activeCategories={activeCategories}
@@ -479,14 +494,14 @@ const DashboardPage = () => {
                                 changedFilter={changedFilter}
                                 setChangedFilter={setChangedFilter}>
                                 <div className={"heatmap-drag"} >
-                                    <div className={"category " + (activeCategories.length ? "" : "default ") + (activeCategories.length === 2 ? " shrink" : "")} key={activeCategories.length ? activeCategories[0] : "category1"} onClick={() => removeCategory(0)}>
+                                    <div className={"category " + (activeCategories.length ? "shadow" : "default ") + (activeCategories.length === 2 ? " shrink" : "")} key={activeCategories.length ? activeCategories[0] : "category1"} onClick={() => removeCategory(0)}>
                                         {activeCategories.length ? t(activeCategories[0]) : t("category-label")}
                                     </div>
                                     {activeCategories.length > 0 && <img title={t("icon-close")} className={"x " + (activeCategories.length === 2 ? " shrink" : "big")} alt="x" src={x} width="20px" height="20px" onClick={() => removeCategory(0)} />}
 
                                     <img className={(activeCategories.length === 2 ? " shrink" : "")} alt="close" style={{ margin: "0 50px" }} src={close} width="20px" height="20px" />
 
-                                    <div className={"category " + (activeCategories.length === 2 ? "" : "default ") + (activeCategories.length === 2 ? " shrink" : "")} key={activeCategories.length === 2 ? activeCategories[1] : "category2"} onClick={() => removeCategory(1)}>
+                                    <div className={"category " + (activeCategories.length === 2 ? "shadow" : "default ") + (activeCategories.length === 2 ? " shrink" : "")} key={activeCategories.length === 2 ? activeCategories[1] : "category2"} onClick={() => removeCategory(1)}>
                                         {activeCategories.length === 2 ? t(activeCategories[1]) : t("category-label")}
                                     </div>
                                     {activeCategories.length === 2 && <img title={t("icon-close")} className={"x " + (activeCategories.length === 2 ? " shrink" : "big")} alt="x" src={x} width="20px" height="20px" onClick={() => removeCategory(1)} />}
@@ -495,7 +510,7 @@ const DashboardPage = () => {
                         </div>
                         <div className={"dashboard-viz2" + ((activeCategory !== null) ? " drag-active" : "")}>
                             <ImportantPeopleChart
-                                data={globalData}
+                                data={globalData} resetComponents={resetComponents} setResetComponents={setResetComponents}
                                 networkData={networkData} pyramidData={pyramidData} heatmapData={heatmapData}
                                 csvIndexes={csvIndexes}
                                 isExpanded={isImpPeopleExpanded}
@@ -505,7 +520,7 @@ const DashboardPage = () => {
                     <div className="dashboard-row2">
                         <div id="viz3" className={"dashboard-viz3" + ((activeCategory !== null) ? " drag-active" : "")}>
                             <TabChart categories={categories}
-                                data={globalData}
+                                data={globalData} resetComponents={resetComponents} setResetComponents={setResetComponents}
                                 setPyramidData={setPyramidData} networkData={networkData} heatmapData={heatmapData}
                                 csvIndexes={csvIndexes}
                                 setCurrentTabchartCategory={setCurrentTabchartCategory}
@@ -514,7 +529,7 @@ const DashboardPage = () => {
                         </div>
                         <div className={"dashboard-viz4" + ((activeCategory !== null) ? " drag-active" : "")}>
                             <NetworkChart
-                                data={globalData}
+                                data={globalData} resetComponents={resetComponents} setResetComponents={setResetComponents}
                                 setNetworkData={setNetworkData} pyramidData={pyramidData} heatmapData={heatmapData}
                                 colorCodices={colorCodices}
                                 csvIndexes={csvIndexes}

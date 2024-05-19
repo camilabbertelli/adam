@@ -55,12 +55,12 @@ button.dashboard-filter-category{
     background-color: white;
 }
 
-button.dashboard-filter-category-drag{
-    width: 100%;
-    border: solid;
+button.dashboard-filter-category.selected{
+    background-color: #dad8d8;
+}
+
+button.dashboard-filter-category.drag{
     border-radius: 20px;
-    border-color: #EAEAEA;
-    background-color: white;
 }
 
 .dashboard-filter-options{
@@ -70,7 +70,7 @@ button.dashboard-filter-category-drag{
     padding: 0px 5px;
 
     border: solid;
-    border-color: #cacaca;
+    border-color: #dad8d8;
     font-size: 16px;
     
     &:hover{
@@ -79,8 +79,10 @@ button.dashboard-filter-category-drag{
 }
 
 .dashboard-filter-options.active{
-    background-color: #cacaca;
-    border-color: #cacaca;
+    background-color: #dad8d8;
+    border-color: #dad8d8;
+
+    color: black;
 }
 
 .dashboard-filter-options:nth-of-type(1){
@@ -207,11 +209,12 @@ div.dashboard-image-component {
     display: flex;
     align-items: center;
     margin-top: 10px;
-    width: 30%;
     font-size: smaller;
     background-color: #ececec;
     border-color: #6e6e6e;
     border-width: 2px;
+
+    padding-right: 5px;
 
     &:hover{
         

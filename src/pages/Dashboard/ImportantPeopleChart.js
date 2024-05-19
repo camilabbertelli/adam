@@ -29,7 +29,7 @@ const ImportantPeopleChart = (props) => {
     const [selectedImp, setSelectedImp] = useState([null, null])
 
     const [data, setData] = useState([])
-
+    
     function expandImp() {
         document.getElementById("overlay").style.display = (!isExpanded) ? "block" : "none";
 
@@ -106,10 +106,17 @@ const ImportantPeopleChart = (props) => {
         if (!sortedkeys.includes(selectedImp[0])) aux[0] = null
         if (!sortedkeys.includes(selectedImp[1])) aux[1] = null
 
+        if (props.resetComponents) {
+            aux = [null, null]
+			props.setResetComponents(false)
+		}
+
         setSelectedImp(aux)
         setData(dataInitial)
         setImpPeople(imp)
         setSearchedPeople(Array.from(Object.keys(imp)))
+
+        console.log(props.data)
     }, [props.data, props.networkData, props.pyramidData, props.heatmapData])
 
     function removeSelectedImp(index) {
@@ -146,12 +153,12 @@ const ImportantPeopleChart = (props) => {
         }
 
         setSelectedImp(aux)
-
     }
 
     useEffect(() => {
 
         let mouseover = function (event, d) {
+
             tooltipImp
                 .style("opacity", "1");
 
@@ -307,7 +314,7 @@ const ImportantPeopleChart = (props) => {
                                     <div className='imp-selected-names'>
 
                                         <div title={selectedImp[0] ? impPeople[selectedImp[0]].name : t("imp-no-selection-label")}
-                                            className={"default-selection " + (selectedImp[0] ? "" : "no-selection")}
+                                            className={"default-selection " + (selectedImp[0] ? "shadow-imp" : "no-selection")}
                                             key={selectedImp[0] ? selectedImp[0] : "selected1"}
                                             onClick={() => removeSelectedImp(0)}>
 
@@ -319,7 +326,7 @@ const ImportantPeopleChart = (props) => {
                                     </div>
                                     <div className='imp-selected-names'>
                                         <div title={selectedImp[1] ? impPeople[selectedImp[1]].name : t("imp-no-selection-label")}
-                                            className={"default-selection " + (selectedImp[1] ? "" : "no-selection")}
+                                            className={"default-selection " + (selectedImp[1] ? "shadow-imp" : "no-selection")}
                                             key={selectedImp[1] ? selectedImp[1] : "selected2"}
                                             onClick={() => removeSelectedImp(1)}>
                                             <span style={{ width: "calc(100%)", display: "inline-block", verticalAlign: "middle", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>

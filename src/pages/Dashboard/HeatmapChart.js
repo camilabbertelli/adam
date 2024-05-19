@@ -32,7 +32,7 @@ function wrap(text, width) {
 
 		let breakLine = false
 
-		words.forEach(word => {
+		words.forEach((word, i) => {
 			if (word !== "" && !breakLine) {
 				line.push(word);
 				tspan.text(line.join(" "));
@@ -40,15 +40,21 @@ function wrap(text, width) {
 					breakLine = true
 					line.pop();
 					tspan.text(line.join(" "));
-					line = [word + "..."];
+					line = [word];
 					if (words.length === 1)
 						tspan = text.append("tspan").attr("x", x).attr("y", Number(tspan.attr("y"))).text(word.substring(0, Math.floor((word.length / 1.5))) + "...");
 					else {
 						tspan.attr("y", Number(tspan.attr("y")) - 8)
 						tspan = text.append("tspan").attr("x", x).attr("y", Number(tspan.attr("y")) + 16).text(word);
-						if (tspan.node().getComputedTextLength() > width) {
-							tspan.text(word.substring(0, Math.floor((word.length / 2))) + "...")
-							tspan.attr("y", Number(tspan.attr("y")) - 16)
+						while (tspan.node().getComputedTextLength() < width && i < words.length) {
+							i++
+							word = words[i]
+							line.push(word);
+							tspan.text(line.join(" "));
+						}
+						if (tspan.node().getComputedTextLength() >= width) {
+							var wholeLine = line.join(" ")
+							tspan.text(wholeLine.substring(0, Math.floor((wholeLine.length / 2))) + "...")
 						}
 					}
 				}
@@ -69,7 +75,7 @@ function wrap_bottom(text, width) {
 
 		let breakLine = false
 
-		words.forEach(word => {
+		words.forEach((word, i) => {
 			if (word !== "" && !breakLine) {
 				line.push(word);
 				tspan.text(line.join(" "));
@@ -83,8 +89,15 @@ function wrap_bottom(text, width) {
 					else {
 						tspan.attr("y", Number(tspan.attr("y")))
 						tspan = text.append("tspan").attr("x", 0).attr("y", Number(tspan.attr("y")) + 20).text(word);
-						if (tspan.node().getComputedTextLength() > width) {
-							tspan.text(word.substring(0, Math.floor((word.length / 2))) + "...")
+						while (tspan.node().getComputedTextLength() < width && i < words.length) {
+							i++
+							word = words[i]
+							line.push(word);
+							tspan.text(line.join(" "));
+						}
+						if (tspan.node().getComputedTextLength() >= width) {
+							var wholeLine = line.join(" ")
+							tspan.text(wholeLine.substring(0, Math.floor((wholeLine.length / 2))) + "...")
 						}
 					}
 				}
@@ -114,15 +127,29 @@ const HeatmapChart = (props) => {
 	const [indexKey2, setIndexKey2] = useState(null)
 	const prevActiveCategories = useRef([])
 	const prevCategories = useRef({})
+
+	useEffect(() => {
+		if (props.resetComponents) {
+			if (props.activeCategories.length === 2) {
+				setIndexKey1(props.categories[props.activeCategories[0]].index)
+				setIndexKey2(props.categories[props.activeCategories[1]].index)
+				setDetails({})
+				props.setHeatmapData({})
+			}
+			props.setResetComponents(false)
+		}
+	}, [props.resetComponents])
+
 	useEffect(() => {
 
 		if (props.activeCategories.length === 2) {
 			if (prevActiveCategories.current.length !== props.activeCategories.length
-			|| (prevCategories.current[props.activeCategories[0]] && prevCategories.current[props.activeCategories[1]] && prevCategories.current[props.activeCategories[0]].index !== props.categories[props.activeCategories[0]].index)
+				|| (prevCategories.current[props.activeCategories[0]] && prevCategories.current[props.activeCategories[1]] && prevCategories.current[props.activeCategories[0]].index !== props.categories[props.activeCategories[0]].index)
 			) {
 				setIndexKey1(props.categories[props.activeCategories[0]].index)
 				setIndexKey2(props.categories[props.activeCategories[1]].index)
 				setDetails({})
+				props.setHeatmapData({})
 			}
 		}
 		prevActiveCategories.current = [...props.activeCategories]
@@ -142,10 +169,10 @@ const HeatmapChart = (props) => {
 			props.networkData.people.includes(entry[props.csvIndexes.about_name])
 
 			if (props.pyramidData.sex)
-                pyramidFilter = sexes.includes(entry[props.csvIndexes.subject_sex])
+				pyramidFilter = sexes.includes(entry[props.csvIndexes.subject_sex])
 
-            if (props.pyramidData.category)
-                pyramidFilter = pyramidFilter && entry[props.pyramidData.categoryIndex] === props.pyramidData.category
+			if (props.pyramidData.category)
+				pyramidFilter = pyramidFilter && entry[props.pyramidData.categoryIndex] === props.pyramidData.category
 
 			if (Object.keys(details).length)
 				detailsFilter = entry[details.searchKey1] === details.key1 &&
@@ -397,7 +424,7 @@ const HeatmapChart = (props) => {
 
 		svg_left_axis.selectAll("text")
 			.call(wrap, width_left - 20)
-			.append("svg:title").text(d=>d);
+			.append("svg:title").text(d => d);
 
 		svg_bottom_axis.append("g")
 			.style("font-size", 14)
@@ -406,7 +433,7 @@ const HeatmapChart = (props) => {
 			.call(d3.axisBottom(x).tickSize(0))
 			.selectAll(".tick text")
 			.call(wrap_bottom, x.bandwidth())
-			.append("svg:title").text(d=>d);
+			.append("svg:title").text(d => d);
 
 		d3.select(".heatmap-bottom-header")
 			.select(".domain").remove()
@@ -436,6 +463,7 @@ const HeatmapChart = (props) => {
 			.attr("ry", 4)
 			.attr("width", x.bandwidth())
 			.attr("height", y.bandwidth())
+			.style("cursor", "pointer")
 			.style("fill", d => myColor(d[2]))
 			.style("stroke-width", 3)
 			.style("stroke", "#ECECEC")
@@ -480,9 +508,9 @@ const HeatmapChart = (props) => {
 		<>
 			{props.data.length > 0 &&
 				<>
-					<div id="droppable" ref={setNodeRef} className={"shadow heatmap-area" + ((props.activeCategory !== null) ? (props.activeCategories.length !== 2?" dashed" : " dashed-red") : "")} style={(props.activeCategories.length === 2)?{}:null}>
+					<div id="droppable" ref={setNodeRef} className={"shadow heatmap-area" + ((props.activeCategory !== null && props.activeCategories.length !== 2) ? " dashed" : "")} style={(props.activeCategories.length === 2) ? {} : null}>
 						<div className='heatmap-content'>
-							<div style={{display: "flex", marginLeft: "20%", width:"100%", height: (props.activeCategories.length === 2? "15%" : "100%")}}>
+							<div style={{ display: "flex", marginLeft: "20%", width: "100%", height: (props.activeCategories.length === 2 ? "15%" : "100%") }}>
 								<img alt="info" id="infoHeatmap" src={info}
 									style={{ position: "absolute", left: "0", marginTop: "10px", marginLeft: "10px", cursor: "pointer" }} width="15" height="15"
 								/>

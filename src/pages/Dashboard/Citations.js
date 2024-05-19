@@ -155,6 +155,7 @@ const Citations = (props) => {
             data: aux,
             pageCount: Math.ceil(aux.length / prevState.numberPerPage),
             currentData: aux.slice(0, pagination.numberPerPage),
+            offset:0
         }))
     }, [props.data, props.pyramidData, props.networkData, props.heatmapData])
 
@@ -162,15 +163,14 @@ const Citations = (props) => {
         setPagination((prevState) => ({
             ...prevState,
             pageCount: Math.ceil(data.length / prevState.numberPerPage),
-            currentData: data.slice(pagination.offset, pagination.offset + pagination.numberPerPage)
+            currentData: data.slice(pagination.offset, pagination.offset + pagination.numberPerPage),
         }))
     }, [data, pagination.numberPerPage, pagination.offset])
 
     const handlePageClick = event => {
-
         const selected = event.selected;
         const offset = selected * pagination.numberPerPage
-        setPagination({ ...pagination, offset })
+        setPagination({ ...pagination, offset:offset })
     }
 
     const { t } = useTranslation()

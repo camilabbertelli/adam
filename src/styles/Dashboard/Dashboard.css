@@ -1,4 +1,5 @@
 .dashboard-view {
+
     position: relative;
     display: flex;
     flex-direction: row;
@@ -51,12 +52,12 @@
 
 .dashboard-viz3 {
     width: 40%;
-    height: calc((100dvh - var(--nav-bar-height)) * 0.5);
+    height: calc((100dvh - var(--nav-bar-height)) * 0.47);
 }
 
 .dashboard-viz4 {
     width: 60%;
-    height: calc((100dvh - var(--nav-bar-height)) * 0.5);
+    height: calc((100dvh - var(--nav-bar-height)) * 0.47);
 }
 
 .dashboard-row3 {

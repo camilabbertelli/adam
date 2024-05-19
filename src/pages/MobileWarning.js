@@ -17,7 +17,7 @@ const MobileWarning = () => {
 
     const { t, i18n } = useTranslation();
 
-    const [language, setLanguage] = useState("en");
+    const [language, setLanguage] = useState("pt");
 
     const changeStyle = () => {
         let dropDownActive = !d3.select(`.mobile-dropdown-content-hide`).classed("mobile-dropdown-content-show")

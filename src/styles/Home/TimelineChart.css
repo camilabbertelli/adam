@@ -83,17 +83,9 @@ div.image-component {
     position: relative;
     transition: all 0.2s ease-in-out !important;
 
-    &:hover {
-        transform: translateY(-5px);
-        box-shadow: none;
-        opacity: 0.9;
-    }
-}
+    cursor: pointer;
 
-div.image-component.hover {
-    transform: translateY(-5px);
-    box-shadow: none;
-    opacity: 0.9;
+    opacity: 0.8;
 }
 
 .centered {

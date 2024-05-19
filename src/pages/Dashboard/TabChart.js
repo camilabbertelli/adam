@@ -33,40 +33,47 @@ let pyramid_boundaries_bottom = null
 let pyramid_boundaries_left = null
 
 function wrap(text, width) {
-	text.each(function () {
-		var text = d3.select(this),
-			words = text.text().split(/\s+/),
-			line = [],
-			y = text.attr("y"),
-			x = text.attr("x"),
-			tspan = text.text(null).append("tspan").attr("x", x).attr("y", y);
+    text.each(function () {
+        var text = d3.select(this),
+            words = text.text().split(/\s+/),
+            line = [],
+            y = text.attr("y"),
+            x = text.attr("x"),
+            tspan = text.text(null).append("tspan").attr("x", x).attr("y", y);
 
 
-		let breakLine = false
+        let breakLine = false
 
-		words.forEach(word => {
-			if (word !== "" && !breakLine) {
-				line.push(word);
-				tspan.text(line.join(" "));
-				if (tspan.node().getComputedTextLength() > width) {
-					breakLine = true
-					line.pop();
-					tspan.text(line.join(" "));
-					line = [word + "..."];
-					if (words.length === 1)
-						tspan = text.append("tspan").attr("x", x).attr("y", Number(tspan.attr("y"))).text(word.substring(0, Math.floor((word.length / 1.5))) + "...");
-					else {
-						tspan.attr("y", Number(tspan.attr("y")) - 5)
-						tspan = text.append("tspan").attr("x", x).attr("y", Number(tspan.attr("y")) + 10).text(word);
-						if (tspan.node().getComputedTextLength() > width) {
-							tspan.text(word.substring(0, Math.floor((word.length / 2))) + "...")
-						}
-					}
-				}
-			}
-		})
+        words.forEach((word, i) => {
+            if (word !== "" && !breakLine) {
+                line.push(word);
+                tspan.text(line.join(" "));
+                if (tspan.node().getComputedTextLength() > width) {
+                    breakLine = true
+                    line.pop();
+                    tspan.text(line.join(" "));
+                    line = [word + "..."];
+                    if (words.length === 1)
+                        tspan = text.append("tspan").attr("x", x).attr("y", Number(tspan.attr("y"))).text(word.substring(0, Math.floor((word.length / 1.5))) + "...");
+                    else {
+                        tspan.attr("y", Number(tspan.attr("y")) - 5)
+                        tspan = text.append("tspan").attr("x", x).attr("y", Number(tspan.attr("y")) + 10).text(word);
+                        while (tspan.node().getComputedTextLength() < width && i < words.length) {
+                            i++
+                            word = words[i]
+                            line.push(word);
+                            tspan.text(line.join(" "));
+                        }
+                        if (tspan.node().getComputedTextLength() >= width) {
+                            var wholeLine = line.join(" ")
+                            tspan.text(wholeLine.substring(0, Math.floor((wholeLine.length / 2))) + "...")
+                        }
+                    }
+                }
+            }
+        })
 
-	});
+    });
 }
 
 function noSpaces(str) {
@@ -99,14 +106,21 @@ const TabContent = (props) => {
     const [totalOccurrences, setTotalOccurrences] = useState(false)
     const [changedTotal, setChangedTotal] = useState(false)
     const [changedSorting, setChangedSorting] = useState(false)
-    const [selectedSex, setSelectedSex] = useState({sex:"", category:"", categoryIndex:""})
+    const [selectedSex, setSelectedSex] = useState({ sex: "", category: "", categoryIndex: "" })
 
     useEffect(() => {
-        if (!(selectedSex.sex === "" && selectedSex.category === "")){
-            setSelectedSex({sex:"", category:"", categoryIndex:""})
-            props.setPyramidData({sex:"", category:"", categoryIndex:""})
+        if (!(selectedSex.sex === "" && selectedSex.category === "")) {
+            setSelectedSex({ sex: "", category: "", categoryIndex: "" })
+            props.setPyramidData({ sex: "", category: "", categoryIndex: "" })
         }
-    }, [props.category])
+
+        if (props.resetComponents) {
+			setSelectedSex({ sex: "", category: "", categoryIndex: "" })
+            props.setPyramidData({ sex: "", category: "", categoryIndex: "" })
+			props.setResetComponents(false)
+		}
+
+    }, [props.category, props.data])
 
     useEffect(() => {
         let index = props.categories[props.category].index
@@ -140,13 +154,13 @@ const TabContent = (props) => {
 
         let factor = maxScale > 0.1 ? 0.05 : 0.01
 
-        const mouseclick = function (event, d, type){
+        const mouseclick = function (event, d, type) {
             if (!totalOccurrences) {
                 let s = (selectedSex.sex === type && selectedSex.category === d[0]) ? "" : type
                 let c = (selectedSex.sex === type && selectedSex.category === d[0]) ? "" : d[0]
 
-                setSelectedSex({sex:s, category: c, categoryIndex: index})
-                props.setPyramidData({sex:s, category: c, categoryIndex: index})
+                setSelectedSex({ sex: s, category: c, categoryIndex: index })
+                props.setPyramidData({ sex: s, category: c, categoryIndex: index })
             }
         }
 
@@ -167,8 +181,9 @@ const TabContent = (props) => {
 
             let data = d[1][type]
 
+            let name = type === "masc" ? t("pyramid-masculine") : t("pyramid-feminine")
             tooltipPyramid
-                .html(`<center><b>${d[0]} - ${type.charAt(0).toUpperCase() + type.slice(1)}</b></center>
+                .html(`<center><b>${d[0]} - ${name.charAt(0).toUpperCase() + name.slice(1)}</b></center>
                         Percentage: ${d3.format(".1f")((data / participants_total) * 100)}%<br>
                         Occurrence: ${data}`)
                 .style("top", event.pageY - 10 + "px")
@@ -312,14 +327,14 @@ const TabContent = (props) => {
             .on("click", () => {
                 if (!totalOccurrences) {
                     let s = (selectedSex.sex === "") ? "Masc." : ""
-                    setSelectedSex({sex:s, category: "", categoryIndex: ""})
-                    props.setPyramidData({sex:s, category: "", categoryIndex: ""})
+                    setSelectedSex({ sex: s, category: "", categoryIndex: "" })
+                    props.setPyramidData({ sex: s, category: "", categoryIndex: "" })
                 }
             })
 
         bottom_legend
             .append("text")
-			.style("font-family", "lato")
+            .style("font-family", "lato")
             .style("font-size", "smaller")
             .attr("x", ((totalOccurrences) ? barsWidth / 2 : 0) + 20)
             .attr("y", margin.top + 12)
@@ -348,8 +363,8 @@ const TabContent = (props) => {
                     if (!totalOccurrences) {
                         let s = (selectedSex.sex === "") ? "Fem." : ""
 
-                        setSelectedSex({sex:s, category: "", categoryIndex: ""})
-                        props.setPyramidData({sex:s, category: "", categoryIndex: ""})
+                        setSelectedSex({ sex: s, category: "", categoryIndex: "" })
+                        props.setPyramidData({ sex: s, category: "", categoryIndex: "" })
                     }
                 })
 
@@ -410,13 +425,13 @@ const TabContent = (props) => {
                     .attr("width", d => barsWidth - xScaleMasc(d[1].masc / participants_total))
                     .attr("height", yScale.bandwidth())
                     .style("fill", "#7BB3B7")
-                    .style("opacity", d=>{
-                        
+                    .style("opacity", d => {
+
                         if (selectedSex.sex === "Fem.")
                             return 0.5
                         if (selectedSex.category === "" || selectedSex.category === d[0])
                             return 1
-                        
+
                         return 0.5
                     })
 
@@ -430,13 +445,13 @@ const TabContent = (props) => {
                     .attr("width", d => xScaleFem(d[1].fem / participants_total) - xScaleFem(0))
                     .attr("height", yScale.bandwidth())
                     .style("fill", "#DA9C80")
-                    .style("opacity", d=>{
-                        
+                    .style("opacity", d => {
+
                         if (selectedSex.sex === "Masc.")
                             return 0.5
                         if (selectedSex.category === "" || selectedSex.category === d[0])
                             return 1
-                        
+
                         return 0.5
                     })
             }
@@ -464,13 +479,13 @@ const TabContent = (props) => {
                     (barsWidth - xScaleMasc(d[1].masc / participants_total)))
                 .attr("height", yScale.bandwidth())
                 .style("fill", (totalOccurrences) ? "#935959" : "#7BB3B7")
-                .style("opacity", d=>{
-                        
+                .style("opacity", d => {
+
                     if (selectedSex.sex === "Fem.")
                         return 0.5
                     if (selectedSex.category === "" || selectedSex.category === d[0])
                         return 1
-                    
+
                     return 0.5
                 })
                 .style("stroke", "black")
@@ -501,14 +516,14 @@ const TabContent = (props) => {
                 .attr("width", (totalOccurrences) ? 0 : d => xScaleFem(d[1].fem / participants_total) - xScaleFem(0))
                 .attr("height", yScale.bandwidth())
                 .style("fill", "#DA9C80")
-                .style("opacity", d=>{
-                        
+                .style("opacity", d => {
+
                     if (selectedSex.sex === "Masc.")
                         return 0.5
-                    
+
                     if (selectedSex.category === "" || selectedSex.category === d[0])
                         return 1
-                    
+
                     return 0.5
                 })
                 .style("stroke", "black")
@@ -544,7 +559,7 @@ const TabContent = (props) => {
 
         axes_left.selectAll("text")
             .call(wrap, width_left)
-			.append("svg:title").text(d=>d[0]);
+            .append("svg:title").text(d => d[0]);
 
         const GridLineM = function () { return d3.axisBottom().scale(xScaleMasc) };
         svg.append("g")
@@ -572,13 +587,13 @@ const TabContent = (props) => {
         setChangedSorting(false)
         props.setChangedFilter(false)
 
-    }, [props.category, totalOccurrences, props.currentSorting, props.data, selectedSex])
+    }, [props.category, totalOccurrences, props.currentSorting, props.data, selectedSex, props.resetComponents])
 
     const changeTotalOccurrence = () => {
         setTotalOccurrences(!totalOccurrences)
         if (selectedSex.sex !== "") {
-            setSelectedSex({sex:"", category:"", categoryIndex:""})
-            props.setPyramidData({sex:"", category:"", categoryIndex:""})
+            setSelectedSex({ sex: "", category: "", categoryIndex: "" })
+            props.setPyramidData({ sex: "", category: "", categoryIndex: "" })
         }
         setChangedTotal(true)
     }
@@ -606,7 +621,7 @@ const TabContent = (props) => {
     }
 
     return (<>
-        <div id="tab-content" className="tab-chart-area-content shadow">
+        <div className="tab-content shadow">
             <div className="titles" id="pyramidTitle">
                 <h5 className="pyramid-title">{(totalOccurrences) ? t("pyramid-total") : t("pyramid-separate")}</h5>
                 <img alt="info" id="infoPyramid" src={info}
@@ -694,23 +709,23 @@ const TabChart = (props) => {
             let networkFilter = true
 
             if (Object.keys(props.heatmapData).length)
-                heatmapFilter = entry[props.heatmapData.searchKey1] === props.heatmapData.key1 && 
-                                entry[props.heatmapData.searchKey2] === props.heatmapData.key2
+                heatmapFilter = entry[props.heatmapData.searchKey1] === props.heatmapData.key1 &&
+                    entry[props.heatmapData.searchKey2] === props.heatmapData.key2
 
 
             if (props.networkData.selected.length)
                 networkFilter = ((props.networkData.people.includes(entry[subjectIndex]) &&
                     props.networkData.people.includes(entry[withIndex])) ||
                     (props.networkData.people.includes(entry[subjectIndex]) &&
-                    props.networkData.people.includes(entry[aboutIndex]))) ||
+                        props.networkData.people.includes(entry[aboutIndex]))) ||
                     props.networkData.people.includes(entry[subjectIndex])
 
-            return heatmapFilter && networkFilter 
-                
+            return heatmapFilter && networkFilter
+
         }))
-        
+
         props.setChangedFilter(true)
-        
+
     }, [props.networkData, props.data, props.heatmapData])
 
     return (
@@ -740,7 +755,7 @@ const TabChart = (props) => {
                         currentSorting={currentSorting} setCurrentSorting={setCurrentSorting}
                         changedFilter={props.changedFilter} setChangedFilter={props.setChangedFilter} />}
                 {data.length === 0 &&
-                    <div id="tab-content" className="tab-chart-area-content shadow" style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+                    <div className="tab-content shadow">
                         {t("no-data-to-show")}
                     </div>}
             </div>
