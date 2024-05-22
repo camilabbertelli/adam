@@ -212,13 +212,13 @@
     position: absolute;
     left: 0;
 	background-color: white;
-    min-width: 190px;
+    min-width: 200px;
     z-index: 1;
 }
 
 .tabchart-dropdown-content-show button {
 
-    width: 190px;
+    width: 200px;
     text-align: left;
 	display: flex;
 

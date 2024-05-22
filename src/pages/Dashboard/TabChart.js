@@ -652,19 +652,19 @@ const TabContent = (props) => {
 
                         /></button>
                     <div id="tabchart-dropdown-icon" className={"shadow tabchart-dropdown-content-hide"}>
-                        <button className={props.currentSorting === "name_asc" ? "sorting-active" : ""} onClick={() => changeSorting("name_asc")}> Name (ascending) </button>
+                        <button className={props.currentSorting === "name_asc" ? "sorting-active" : ""} onClick={() => changeSorting("name_asc")}> {t("pyramid-name-ascending")} </button>
                         <button className={props.currentSorting === "name_desc" ? "sorting-active" : ""} onClick={() => changeSorting("name_desc")}> {t("pyramid-name-descending")} </button>
 
                         {!totalOccurrences && <>
-                            <button className={props.currentSorting === "masc_asc" ? "sorting-active" : ""} onClick={() => changeSorting("masc_asc")}> {t("pyramid-masculine")} - Low to High </button>
-                            <button className={props.currentSorting === "masc_desc" ? "sorting-active" : ""} onClick={() => changeSorting("masc_desc")}> {t("pyramid-masculine")} - High to Low </button>
-                            <button className={props.currentSorting === "fem_asc" ? "sorting-active" : ""} onClick={() => changeSorting("fem_asc")}> {t("pyramid-feminine")}. - Low to High </button>
-                            <button className={props.currentSorting === "fem_desc" ? "sorting-active" : ""} onClick={() => changeSorting("fem_desc")}> {t("pyramid-feminine")}. - High to Low </button>
+                            <button className={props.currentSorting === "masc_asc" ? "sorting-active" : ""} onClick={() => changeSorting("masc_asc")}> {t("pyramid-masculine")} - {t("pyramid-low-high")} </button>
+                            <button className={props.currentSorting === "masc_desc" ? "sorting-active" : ""} onClick={() => changeSorting("masc_desc")}> {t("pyramid-masculine")} - {t("pyramid-high-low")} </button>
+                            <button className={props.currentSorting === "fem_asc" ? "sorting-active" : ""} onClick={() => changeSorting("fem_asc")}> {t("pyramid-feminine")} - {t("pyramid-low-high")} </button>
+                            <button className={props.currentSorting === "fem_desc" ? "sorting-active" : ""} onClick={() => changeSorting("fem_desc")}> {t("pyramid-feminine")} - {t("pyramid-high-low")} </button>
                         </>}
 
                         {totalOccurrences && <>
-                            <button className={props.currentSorting === "total_asc" ? "sorting-active" : ""} onClick={() => changeSorting("total_asc")}> Total - Low to High </button>
-                            <button className={props.currentSorting === "total_desc" ? "sorting-active" : ""} onClick={() => changeSorting("total_desc")}> {t("pyramid-total")} - High to Low </button>
+                            <button className={props.currentSorting === "total_asc" ? "sorting-active" : ""} onClick={() => changeSorting("total_asc")}> Total - {t("pyramid-low-high")} </button>
+                            <button className={props.currentSorting === "total_desc" ? "sorting-active" : ""} onClick={() => changeSorting("total_desc")}> Total - {t("pyramid-high-low")} </button>
                         </>}
                     </div>
                 </div>

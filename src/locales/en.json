@@ -87,6 +87,8 @@
     "pyramid-feminine": "Feminine",
     "pyramid-name-descending": "Name (descending)",
     "pyramid-name-ascending": "Name (ascending)",
+    "pyramid-low-high": "Low to High",
+    "pyramid-high-low": "High to Low",
 
 
     "imp-label": "Important people",
