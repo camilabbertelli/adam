@@ -276,7 +276,6 @@ const HeatmapChart = (props) => {
 			if (element) element.innerHTML = "";
 		}
 
-		console.log(data)
 
 		if (!data.length || !indexKey1 || !indexKey2 || props.activeCategories.length !== 2) {
 			d3.select(".heatmap-graph").selectAll("svg").remove("")
@@ -299,15 +298,7 @@ const HeatmapChart = (props) => {
 			return (detailsAux2[d[0] ? d[0] : "--"] = [...new Set(d[1].flatMap(d => [d[1]]).map(d => d ? d : "--"))])
 		})
 
-		console.log(details)
-		console.log(detailsAux1)
-		console.log(detailsAux2)
-
 		if (Object.keys(details).length) {
-			// TODO: see what else makes sense hereeee
-			// if (detailsAux1[details.key1].length === 1 && detailsAux2[details.key2].length === 1)
-			// 	return
-
 			heatmapKey1 = Array.from(detailsAux1[details.key1])
 			heatmapKey2 = Array.from(detailsAux2[details.key2])
 		} else {
@@ -315,19 +306,15 @@ const HeatmapChart = (props) => {
 			heatmapKey2 = Array.from(props.categories[props.activeCategories[1]].list.map(d => d[0])).map(d => d ? d : "--")
 		}
 
-		console.log(data)
 		let heatmapData = d3.flatRollup(data, v => v.length, d => d[indexKey1], d => d[indexKey2]).map(d => [d[0] ? d[0] : "--", d[1] ? d[1] : "--", d[2]])
-		console.log(heatmapData)
+
 
 		d3.select(".heatmap-graph").selectAll("svg").remove("")
 		d3.select(".heatmap-left-header").selectAll("svg").remove("")
 		d3.select(".heatmap-bottom-header").selectAll("svg").remove("")
 		d3.select(".heatmap-legend").selectAll("svg").remove("")
 
-
 		heatmapData.sort((a, b) => a[2] - b[2]).reverse()
-
-		console.log(heatmapData)
 
 		if (sorting1 === "name_asc")
 			heatmapKey1.sort()
