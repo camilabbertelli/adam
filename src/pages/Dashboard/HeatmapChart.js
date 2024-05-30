@@ -130,8 +130,8 @@ const HeatmapChart = (props) => {
 	const prevActiveCategories = useRef([])
 	const prevCategories = useRef({})
 
-	const [currentSorting1, setCurrentSorting1] = useState("name_asc")
-	const [currentSorting2, setCurrentSorting2] = useState("name_asc")
+	const [currentSorting1, setCurrentSorting1] = useState("value_desc")
+	const [currentSorting2, setCurrentSorting2] = useState("value_desc")
 
 	useEffect(() => {
 		if (props.resetComponents) {
@@ -155,8 +155,8 @@ const HeatmapChart = (props) => {
 				setIndexKey2(props.categories[props.activeCategories[1]].index)
 
 
-				setCurrentSorting1("name_asc")
-				setCurrentSorting2("name_asc")
+				setCurrentSorting1("value_desc")
+				setCurrentSorting2("value_desc")
 			}
 		}
 		prevActiveCategories.current = [...props.activeCategories]

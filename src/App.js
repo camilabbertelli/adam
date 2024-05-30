@@ -20,11 +20,18 @@ import csv_data from "./assets/data.csv"
 import * as d3 from "d3"
 
 const App = () => {
+	// App
 	const [showMobileWarning, setShowMobileWarning] = useState(window.innerWidth < 1300)
+
+	// Global
 	const [data, setData] = useState([])
+
+	// Dashboard
+	const [dashboardFilterConfiguration, setDashboardFilterConfiguration] = useState({})
+	
+	// Database
 	const [databaseFilterConfiguration, setDatabaseFilterConfiguration] = useState([])
 	const [databaseCheckedKeys, setDatabaseCheckedKeys] = useState([])
-	const [dashboardFilterConfiguration, setDashboardFilterConfiguration] = useState([])
 
 	useEffect(() => {
 

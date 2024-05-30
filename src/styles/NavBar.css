@@ -34,6 +34,8 @@ nav a {
     font-weight: bold;
     padding: 10px 20%;
     font-size: 1.25rem;
+    
+	border-radius: 20px;
 }
 
 nav img {

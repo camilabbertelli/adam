@@ -8,6 +8,11 @@
 	src: local('EB Garamond'), url(./assets/fonts/EBGaramond-Medium.ttf) format('truetype');
 }
 
+@font-face {
+	font-family: 'lato';
+	src: local('lato'), url(./assets/fonts/Lato-Regular.ttf) format('truetype');
+}
+
 html,
 body {
 	max-width: 100dvw;

@@ -6,30 +6,33 @@ import '../../styles/Home/GalleryChart.css';
 
 import gallery from './../../assets/gallery.js';
 
-import { Card } from 'flowbite-react';
-
 const GalleryImage = ({ src, title, description }) => {
     return (
         <>
             <div className='col'>
                 <div className="bg-image hover-overlay" data-mdb-ripple-color="light">
                     <img className="images" alt="medieval-img" src={require(`./../../assets/images/gallery/${src}`)} />
-                    <div className='modal fade' id={title.replace(/\s+/g, '')} tabIndex="-1" aria-hidden="true">
-                        <div className='modal-dialog'>
-                            <div className='modal-body'>
-                                <Card
-                                    className="max-w-bg card-click" imgAlt='medieval-img'
-                                    imgSrc={require(`./../../assets/images/gallery/${src}`)}>
-                                    <h4 className="title">{title}</h4>
-                                    <p>{description}</p>
-                                </Card>
-                            </div>
-                        </div>
-                    </div>
-                    <div data-bs-toggle="modal" data-bs-target={`#${title.replace(/\s+/g, '')}`} className="mask text-light d-flex justify-content-center flex-column text-left card-img">
+                    <div onClick={() => {
+                        let dialog = document.getElementById(`dialog-gallery-${title.replace(/\s+/g, '')}`)
+                        if (dialog){
+                            dialog.showModal()
+                            dialog.addEventListener("click", (e) => {
+                                if (e.target.className === "dialog-gallery") 
+                                    dialog.close()
+                            })
+                        } 
+                    }} className="mask text-light d-flex justify-content-center flex-column text-left card-img">
                         <h4 className="title smaller">{title}</h4>
                         <p>{description}</p>
                     </div>
+                    <dialog className="dialog-gallery" id={`dialog-gallery-${title.replace(/\s+/g, '')}`}>
+
+                        <div id="dialog-content">
+                            <img className="max-w-bg" alt="medieval-img" src={require(`./../../assets/images/gallery/${src}`)} />
+                            <h4>{title}</h4>
+                            <p>{description}</p>
+                        </div>
+                    </dialog>
                 </div>
             </div>
         </>

@@ -2,26 +2,6 @@
     -bs-gutter-x: 0rem;
 }
 
-.modal-dialog {
-    position: relative;
-    display: flex;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    justify-items: center;
-    align-content: space-between;
-}
-
-.modal-body {
-    position: absolute;
-    top: 45%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-}
-
-
 .gallery {
     width: 100%;
     align-items: center;
@@ -34,13 +14,6 @@ h4.title {
 }
 
 .mask {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 288px;
-    height: 185px;
-    padding: 15px 5px;
     overflow: hidden;
     background-attachment: fixed;
 }
@@ -49,7 +22,8 @@ h4.title {
     width: 288px;
     height: 200px;
     object-fit: cover;
-    padding: 15px 5px;
+    margin: 10px 0px;
+	border-radius: 20px;
 }
 
 .smaller {
@@ -57,16 +31,22 @@ h4.title {
 }
 
 .card-img {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+    
     background-color: rgba(0, 0, 0, 0.5);
     text-align: left;
+    
+    width: 288px;
+    height: 200px;
     padding: 5%;
     cursor: pointer;
     font-size: 0.8dvw;
-}
-
-.card-click {
-    background-color: #FFEFD5 !important;
-    text-align: left;
+	border-radius: 20px;
 }
 
 @media(prefers-reduced-motion) {
@@ -92,4 +72,48 @@ h4.title {
     60% {
         transform: translateY(-15px);
     }
+}
+
+/*Dialog Styles*/
+dialog[open] {
+    display: flex;
+    text-align: left;
+	background: #fff4e3;
+	max-width: 30%;
+	border-radius: 20px;
+	border: 0;
+	box-shadow: 0 5px 30px 0 rgb(0 0 0 / 10%);
+	animation: fadeIn 1s ease both;
+	&::backdrop {
+		animation: fadeIn 1s ease both;
+		background: rgb(255 255 255 / 40%);
+		z-index: 2;
+		backdrop-filter: blur(20px);
+	}
+    h4{
+        padding: 1rem 3rem;
+        text-align: center;
+        font-family: "Celtic";
+    }
+    p{
+        padding: 0rem 2rem;
+    }
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes fadeOut {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
 }

@@ -168,15 +168,15 @@ const DashboardPage = (props) => {
     function handleDragStart(event) {
         setActiveCategory(event.active.id);
 
-        if (activeCategories.length === 2){
+        if (activeCategories.length === 2) {
             d3.selectAll(".category").transition().duration(500)
-                    .style("background-color", "#bfa3a3")
+                .style("background-color", "#bfa3a3")
 
             setTimeout(() => {
                 d3.selectAll(".category").transition().duration(500)
                     .style("background-color", "#d3c5b8")
 
-                    
+
             }, 1000);
         }
     }
@@ -254,9 +254,9 @@ const DashboardPage = (props) => {
 
         setOriginalGlobalData([...data])
         setGlobalData([...data])
-        
+
         let indexes = {}
-        if (props.data.length){
+        if (props.data.length) {
 
             Object.keys(props.data[0]).forEach((key, index) => {
                 indexes[key] = index
@@ -313,13 +313,26 @@ const DashboardPage = (props) => {
         })
 
         colorCodices = d3.scaleOrdinal(Object.keys(allCodices), ["#cc8b86", "#9FB9BA", "#C5C5B3", "#B89283", "#FFD18C", "#7587AA"]);
+
+        if (Object.keys(props.dashboardFilterConfiguration).length){
+            console.log(props.dashboardFilterConfiguration)
+
+            setActiveCategories(props.dashboardFilterConfiguration.activeCategories)
+            setCurrentTabchartCategory(props.dashboardFilterConfiguration.currentTabchartCategory)
+            setActiveCodices(props.dashboardFilterConfiguration.activeCodices)
+            setActiveFilters(props.dashboardFilterConfiguration.activeFilters)
+            setNetworkData(props.dashboardFilterConfiguration.networkData)
+            setPyramidData(props.dashboardFilterConfiguration.pyramidData)
+            setHeatmapData(props.dashboardFilterConfiguration.heatmapData)
+        }else{
+            setAdvancedCategoryFilters(advancedFilterAux)
+            setActiveCategories([Object.keys(categoriesAux)[0], Object.keys(categoriesAux)[1]])
+            setCurrentTabchartCategory(Object.keys(categoriesAux)[0])
+            setActiveCodices([...sortedkeys])
+        }
         
-        setAdvancedCategoryFilters(advancedFilterAux)
         setCategories(categoriesAux)
-        setActiveCategories([Object.keys(categoriesAux)[0], Object.keys(categoriesAux)[1]])
-        setCurrentTabchartCategory(Object.keys(categoriesAux)[0])
         setCodices({ ...allCodices })
-        setActiveCodices([...sortedkeys])
         setGenres([...new Set(codicesGenres.map((entry) => entry[0]))].sort())
 
         document.getElementById("overlay").style.display = "none";
@@ -406,7 +419,7 @@ const DashboardPage = (props) => {
 
     function resetFilters() {
 
-        let advancedFilterAux = {...advancedCategoryFilters}
+        let advancedFilterAux = { ...advancedCategoryFilters }
         Object.keys(advancedCategoryFilters).forEach(key => {
             advancedFilterAux[key] = {
                 list: [],
@@ -416,14 +429,14 @@ const DashboardPage = (props) => {
 
         setFilters(
             [Object.keys(intention)[0],
-                    Object.keys(origin)[0],
-                    Object.keys(explanation)[0],
-                    Object.keys(nature)[0],
-                    Object.keys(dimension)[0]
+            Object.keys(origin)[0],
+            Object.keys(explanation)[0],
+            Object.keys(nature)[0],
+            Object.keys(dimension)[0]
             ],
             ["intention", "origin", "explanation", "nature", "dimension"],
-        Object.keys(codices).sort(), 
-        advancedFilterAux)
+            Object.keys(codices).sort(),
+            advancedFilterAux)
 
         setPyramidData({ sex: "", category: "", categoryIndex: "" })
         setHeatmapData([])
@@ -450,14 +463,6 @@ const DashboardPage = (props) => {
         keyboardSensor,
         pointerSensor
     )
-
-    // TODO: persistent data
-    // useEffect(() => {
-    //     // returned function will be called on component unmount 
-    //     return () => {
-    //       window.removeEventListener('mousemove', () => {})
-    //     }
-    //   }, [])
 
     return (<>
 
@@ -564,7 +569,7 @@ const DashboardPage = (props) => {
                     </div>
                 </div>
             </div>
-            
+
         </DndContext>
     </>)
 }

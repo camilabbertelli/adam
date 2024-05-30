@@ -129,7 +129,11 @@ const FilterView = (props) => {
             aux = [id]
         else {
             if (currentCodices.includes(id)) {
-                if (currentCodices.length === 1) return
+                if (currentCodices.length === 1){
+                    setCurrentCodices(sortedkeys)
+                    props.setActiveFilters([], [], sortedkeys)
+                    return
+                }
                 aux.splice(aux.indexOf(id), 1);
             }
             else
@@ -178,7 +182,7 @@ const FilterView = (props) => {
             
             Object.keys(props.categories).forEach((key) => {
     
-                if (props.advancedCategoryFilters[key].list.length !== 0 || 
+                if (props.advancedCategoryFilters[key] && props.advancedCategoryFilters[key].list.length !== 0 || 
                     props.advancedCategoryFilters[key].sublist.length !== 0){
                         advancedFilterAux[key] = {
                             list: [],
@@ -298,8 +302,8 @@ const FilterView = (props) => {
                         {t("advanced-filter")}
                     </button>
                 </div>
-                <div style={{ position:"relative", width: "95%", display: "flex", justifyContent: "flex-end", alignItems: "center"}}>
-                    <button className="btn-clear-all" onClick={resetFilters}>
+                <div key={"clean-all-button"} style={{ position:"relative", width: "95%", display: "flex", justifyContent: "flex-end", alignItems: "center"}}>
+                    <button key="clean-all-button-content" className="btn-clear-all" onClick={resetFilters}>
                         <img alt="close" src={close}
                         style={{ margin: "0 5px", cursor: "pointer", width:"10px", height: "10px" }} 
                         />
