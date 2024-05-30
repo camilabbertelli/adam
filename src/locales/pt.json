@@ -97,10 +97,13 @@
     "pyramid-total": "Occorências totais",
     "pyramid-masculine": "Masculino",
     "pyramid-feminine": "Feminino",
-    "pyramid-name-descending": "Nome (descendente)",
-    "pyramid-name-ascending": "Nome (ascendente)",
+    "pyramid-descending": "Descendente",
+    "pyramid-ascending": "Ascendente",
     "pyramid-low-high": "Menor para Maior",
     "pyramid-high-low": "Maior para Menor",
+
+    
+    "heatmap-occurrence": "Ocorrência",
 
 
     "database-content": "Conteúdo",

@@ -8,11 +8,13 @@ import info from "./../../assets/images/info-black.png"
 import expand from "./../../assets/images/dashboard/expand.png"
 import shrink from "./../../assets/images/dashboard/shrink.png"
 import back from "./../../assets/images/dashboard/arrow.png"
+import sorting_icon from "./../../assets/images/dashboard/sorting.png"
 
 import * as d3 from "d3";
 import { useTranslation } from 'react-i18next';
 
 import $ from 'jquery';
+import { transform } from 'framer-motion';
 
 var tooltipHeatmap;
 
@@ -121,12 +123,15 @@ const HeatmapChart = (props) => {
 	const { t } = useTranslation()
 	const [data, setData] = useState([])
 
-	const [details, setDetails] = useState([])
+	const [details, setDetails] = useState({})
 
 	const [indexKey1, setIndexKey1] = useState(null)
 	const [indexKey2, setIndexKey2] = useState(null)
 	const prevActiveCategories = useRef([])
 	const prevCategories = useRef({})
+
+	const [currentSorting1, setCurrentSorting1] = useState("name_asc")
+	const [currentSorting2, setCurrentSorting2] = useState("name_asc")
 
 	useEffect(() => {
 		if (props.resetComponents) {
@@ -148,12 +153,17 @@ const HeatmapChart = (props) => {
 			) {
 				setIndexKey1(props.categories[props.activeCategories[0]].index)
 				setIndexKey2(props.categories[props.activeCategories[1]].index)
-				setDetails({})
-				props.setHeatmapData({})
+
+
+				setCurrentSorting1("name_asc")
+				setCurrentSorting2("name_asc")
 			}
 		}
 		prevActiveCategories.current = [...props.activeCategories]
 		prevCategories.current = { ...props.categories }
+
+		setDetails({})
+		props.setHeatmapData({})
 	}, [props.activeCategories, props.categories])
 
 	useEffect(() => {
@@ -175,8 +185,8 @@ const HeatmapChart = (props) => {
 				pyramidFilter = pyramidFilter && entry[props.pyramidData.categoryIndex] === props.pyramidData.category
 
 			if (Object.keys(details).length)
-				detailsFilter = entry[details.searchKey1] === details.key1 &&
-					entry[details.searchKey2] === details.key2
+				detailsFilter = (entry[details.searchKey1] ? entry[details.searchKey1] : "--") === details.key1 &&
+					(entry[details.searchKey2] ? entry[details.searchKey2] : "--") === details.key2
 
 			return networkFilter && pyramidFilter && detailsFilter
 		})
@@ -186,27 +196,33 @@ const HeatmapChart = (props) => {
 
 	useEffect(() => {
 		if (props.activeCategories.length === 2) {
-			drawHeatmap(indexKey1, indexKey2)
+			drawHeatmap(indexKey1, indexKey2, currentSorting1, currentSorting2)
 		}
-	}, [props.activeCategories, data, indexKey1, indexKey2, props.data])
+	}, [props.activeCategories, data, indexKey1, indexKey2, props.data, currentSorting1, currentSorting2])
 
 
 	function cellClick(event, d) {
 		if (Object.keys(details).length)
 			return
 
-		setIndexKey1(props.categories[props.activeCategories[0]].indexSubcategory)
-		setIndexKey2(props.categories[props.activeCategories[1]].indexSubcategory)
+		d3.select(`.heatmap-${noSpaces(d[0])}-${noSpaces(d[1])}`)
+			.transition()
+			.style("opacity", 0)
 
-		let aux = {
-			searchKey1: props.categories[props.activeCategories[0]].index,
-			key1: d[0],
-			searchKey2: props.categories[props.activeCategories[1]].index,
-			key2: d[1]
-		}
+		setTimeout(() => {
+			setIndexKey1(props.categories[props.activeCategories[0]].indexSubcategory)
+			setIndexKey2(props.categories[props.activeCategories[1]].indexSubcategory)
 
-		setDetails(aux)
-		props.setHeatmapData(aux)
+			let aux = {
+				searchKey1: props.categories[props.activeCategories[0]].index,
+				key1: d[0],
+				searchKey2: props.categories[props.activeCategories[1]].index,
+				key2: d[1]
+			}
+
+			setDetails(aux)
+			props.setHeatmapData(aux)
+		}, 1000);
 	}
 
 	function backDetails() {
@@ -216,7 +232,7 @@ const HeatmapChart = (props) => {
 		props.setHeatmapData({})
 	}
 
-	function drawHeatmap(indexKey1, indexKey2) {
+	function drawHeatmap(indexKey1, indexKey2, sorting1, sorting2) {
 
 		let infoMouseOverHeatmap = function (event, d) {
 			tooltipHeatmap
@@ -246,7 +262,7 @@ const HeatmapChart = (props) => {
 
 			tooltipHeatmap
 				.html(`<center><b>${d[0] ? d[0] : "--"} x ${d[1] ? d[1] : "--"}</b></center>
-						Occurrence: ${d[2]}`)
+						${t("heatmap-occurrence")}: ${d[2]}`)
 				.style("top", event.pageY - 10 + "px")
 				.style("left", event.pageX + 10 + "px");
 		}
@@ -260,20 +276,111 @@ const HeatmapChart = (props) => {
 			if (element) element.innerHTML = "";
 		}
 
+		console.log(data)
+
+		if (!data.length || !indexKey1 || !indexKey2 || props.activeCategories.length !== 2) {
+			d3.select(".heatmap-graph").selectAll("svg").remove("")
+			d3.select(".heatmap-left-header").selectAll("svg").remove("")
+			d3.select(".heatmap-bottom-header").selectAll("svg").remove("")
+			d3.select(".heatmap-legend").selectAll("svg").remove("")
+
+			return
+		}
+
+		let heatmapKey1 = []
+		let heatmapKey2 = []
+
+		let detailsAux1 = {}
+		let detailsAux2 = {}
+		props.categories[props.activeCategories[0]].list.map(d => {
+			return (detailsAux1[d[0] ? d[0] : "--"] = [...new Set(d[1].flatMap(d => [d[1]]).map(d => d ? d : "--"))])
+		})
+		props.categories[props.activeCategories[1]].list.map(d => {
+			return (detailsAux2[d[0] ? d[0] : "--"] = [...new Set(d[1].flatMap(d => [d[1]]).map(d => d ? d : "--"))])
+		})
+
+		console.log(details)
+		console.log(detailsAux1)
+		console.log(detailsAux2)
+
+		if (Object.keys(details).length) {
+			// TODO: see what else makes sense hereeee
+			// if (detailsAux1[details.key1].length === 1 && detailsAux2[details.key2].length === 1)
+			// 	return
+
+			heatmapKey1 = Array.from(detailsAux1[details.key1])
+			heatmapKey2 = Array.from(detailsAux2[details.key2])
+		} else {
+			heatmapKey1 = Array.from(props.categories[props.activeCategories[0]].list.map(d => d[0])).map(d => d ? d : "--")
+			heatmapKey2 = Array.from(props.categories[props.activeCategories[1]].list.map(d => d[0])).map(d => d ? d : "--")
+		}
+
+		console.log(data)
+		let heatmapData = d3.flatRollup(data, v => v.length, d => d[indexKey1], d => d[indexKey2]).map(d => [d[0] ? d[0] : "--", d[1] ? d[1] : "--", d[2]])
+		console.log(heatmapData)
+
 		d3.select(".heatmap-graph").selectAll("svg").remove("")
 		d3.select(".heatmap-left-header").selectAll("svg").remove("")
 		d3.select(".heatmap-bottom-header").selectAll("svg").remove("")
 		d3.select(".heatmap-legend").selectAll("svg").remove("")
 
-		if (!data.length || !indexKey1 || !indexKey2)
-			return
 
-		let heatmapKey1 = Array.from(d3.group(data, d => d[indexKey1]).keys()).map(d => d ? d : "--")
-		let heatmapKey2 = Array.from(d3.group(data, d => d[indexKey2]).keys()).map(d => d ? d : "--")
-		let heatmapData = d3.flatRollup(data, v => v.length, d => d[indexKey1], d => d[indexKey2])
+		heatmapData.sort((a, b) => a[2] - b[2]).reverse()
 
-		heatmapKey1.sort()
-		heatmapKey2.sort()
+		console.log(heatmapData)
+
+		if (sorting1 === "name_asc")
+			heatmapKey1.sort()
+		if (sorting2 === "name_asc")
+			heatmapKey2.sort()
+		if (sorting1 === "name_desc")
+			heatmapKey1.sort().reverse()
+		if (sorting2 === "name_desc")
+			heatmapKey2.sort().reverse()
+
+
+		if (sorting1 === "value_asc")
+			heatmapKey1.sort((a, b) => {
+				let indexA = heatmapData.findIndex(([d1, d2, d3]) => d1 === a)
+				let indexB = heatmapData.findIndex(([d1, d2, d3]) => d1 === b)
+				if (indexA === -1)
+					return 1
+				if (indexB === -1)
+					return -1
+				return indexA - indexB
+			}).reverse();
+		if (sorting2 === "value_asc")
+			heatmapKey2.sort((a, b) => {
+				let indexA = heatmapData.findIndex(([d1, d2, d3]) => d2 === a)
+				let indexB = heatmapData.findIndex(([d1, d2, d3]) => d2 === b)
+				if (indexA === -1)
+					return 1
+				if (indexB === -1)
+					return -1
+				return indexA - indexB
+			}).reverse();
+
+		if (sorting1 === "value_desc")
+			heatmapKey1.sort((a, b) =>{
+				let indexA = heatmapData.findIndex(([d1, d2, d3]) => d1 === a)
+				let indexB = heatmapData.findIndex(([d1, d2, d3]) => d1 === b)
+				if (indexA === -1)
+					return 1
+				if (indexB === -1)
+					return -1
+				return indexA - indexB
+			});
+
+		if (sorting2 === "value_desc")
+			heatmapKey2.sort((a, b) => {
+				let indexA = heatmapData.findIndex(([d1, d2, d3]) => d2 === a)
+				let indexB = heatmapData.findIndex(([d1, d2, d3]) => d2 === b)
+				if (indexA === -1)
+					return 1
+				if (indexB === -1)
+					return -1
+				return indexA - indexB
+			});
 
 		let box_left = document.querySelector(".heatmap-left-header");
 		if (heatmap_boundaries_left === null)
@@ -321,8 +428,8 @@ const HeatmapChart = (props) => {
 			.attr("height", height_legend)
 			.append("g")
 
+		let colorRange = ["#f1f1f1", "#E4D1D1", "#B88989", "#A16666", "#894343", "#712121", "#5D1B1B", "#320404"]
 		function domainColorsHeatmap() {
-			let colorRange = ["white", "#E4D1D1", "#B88989", "#A16666", "#894343", "#712121", "#5D1B1B", "#320404"]
 
 			let unique = [...new Set(heatmapData.map(d => d[2]))];
 			let min = Math.min(...unique)
@@ -354,7 +461,7 @@ const HeatmapChart = (props) => {
 
 		let [domain, maxValue] = domainColorsHeatmap()
 
-		let colorRange = ["white", "#E4D1D1", "#B88989", "#A16666", "#894343", "#712121", "#5D1B1B", "#320404"].slice(0, domain.length)
+		colorRange = colorRange.slice(0, domain.length)
 		// Build color scale
 		const myColor = d3.scaleThreshold()
 			.range(["none"].concat(colorRange))
@@ -459,6 +566,7 @@ const HeatmapChart = (props) => {
 			.attr("class", d => `heatmap-${noSpaces(d[0])}-${noSpaces(d[1])}`)
 			.attr("x", d => x(d[1]))
 			.attr("y", d => y(d[0]))
+			.style("opacity", 0)
 			.attr("rx", 4)
 			.attr("ry", 4)
 			.attr("width", x.bandwidth())
@@ -470,6 +578,9 @@ const HeatmapChart = (props) => {
 			.on("mouseover", mouseover)
 			.on("mouseleave", mouseleave)
 			.on("click", cellClick)
+			.transition()
+			.duration(1000)
+			.style("opacity", 1)
 	}
 
 	function handleGraphScroll() {
@@ -504,6 +615,37 @@ const HeatmapChart = (props) => {
 		d3.selectAll(".heatmap-area").classed("heatmap-expand", props.isExpanded)
 	}, [props.isExpanded])
 
+	const changeStyle1 = () => {
+		if (d3.selectAll("#heatmap-dropdown-icon1").classed("tabchart-dropdown-content-show"))
+			d3.selectAll("#heatmap-dropdown-icon1").classed("tabchart-dropdown-content-show", false)
+		else
+			d3.selectAll("#heatmap-dropdown-icon1").classed("tabchart-dropdown-content-show", true)
+	};
+
+	const changeStyle2 = () => {
+		if (d3.selectAll("#heatmap-dropdown-icon2").classed("heatmap-dropdown-content-show"))
+			d3.selectAll("#heatmap-dropdown-icon2").classed("heatmap-dropdown-content-show", false)
+		else
+			d3.selectAll("#heatmap-dropdown-icon2").classed("heatmap-dropdown-content-show", true)
+	};
+
+	const changeSorting1 = (s) => {
+		setCurrentSorting1(s)
+		d3.selectAll("#heatmap-dropdown-icon1").classed("tabchart-dropdown-content-show", false)
+	}
+
+	const changeSorting2 = (s) => {
+		setCurrentSorting2(s)
+		d3.selectAll("#heatmap-dropdown-icon2").classed("heatmap-dropdown-content-show", false)
+	}
+
+	window.addEventListener('click', function (e) {
+		if (document.getElementById('heatmap-dropdown1') && !document.getElementById('heatmap-dropdown1').contains(e.target))
+			d3.selectAll("#heatmap-dropdown-icon1").classed("tabchart-dropdown-content-show", false)
+		if (document.getElementById('heatmap-dropdown2') && !document.getElementById('heatmap-dropdown2').contains(e.target))
+			d3.selectAll("#heatmap-dropdown-icon2").classed("heatmap-dropdown-content-show", false)
+	});
+
 	return (
 		<>
 			{props.data.length > 0 &&
@@ -518,18 +660,35 @@ const HeatmapChart = (props) => {
 							</div>
 							{props.activeCategories.length === 2 && <>
 								<div id="heatmap-chart">
-									<div className="heatmap-details-sector">
-										{Object.keys(details).length !== 0 &&
-											<>
-												<img title={t("icon-back")} alt="info" src={back}
-													style={{ width: "15px", height: "15px", marginRight: "10px", cursor: "pointer" }}
-													onClick={backDetails}
-												/>
-												<span>{details.key1}</span>
-												<span>&nbsp;&&nbsp;</span>
-												<span>{details.key2}</span>
-											</>
-										}</div>
+									<div style={{ display: 'flex', flexDirection: "row", alignItems: "center" }}>
+
+										<div id="heatmap-dropdown1" className='tabchart-dropdown'>
+											<button className='tabchart-dropbtn' onClick={changeStyle1}>
+												<img title={t("icon-sort")} alt="total" src={sorting_icon}
+													style={{ "marginLeft": 5 + "px" }} className="tabchart-sorting-icon"
+
+												/></button>
+											<div id="heatmap-dropdown-icon1" className={"shadow tabchart-dropdown-content-hide"}>
+												<button className={currentSorting1 === "name_asc" ? "sorting-active" : ""} onClick={() => changeSorting1("name_asc")}> {t(props.activeCategories[0])} - {t("pyramid-ascending")} </button>
+												<button className={currentSorting1 === "name_desc" ? "sorting-active" : ""} onClick={() => changeSorting1("name_desc")}> {t(props.activeCategories[0])} -  {t("pyramid-descending")}</button>
+												<button className={currentSorting1 === "value_asc" ? "sorting-active" : ""} onClick={() => changeSorting1("value_asc")}> {t("heatmap-occurrence")} - {t("pyramid-low-high")} </button>
+												<button className={currentSorting1 === "value_desc" ? "sorting-active" : ""} onClick={() => changeSorting1("value_desc")}> {t("heatmap-occurrence")} - {t("pyramid-high-low")} </button>
+
+											</div>
+										</div>
+										<div className="heatmap-details-sector">
+											{Object.keys(details).length !== 0 &&
+												<>
+													<img title={t("icon-back")} alt="info" src={back}
+														style={{ width: "15px", height: "15px", marginRight: "10px", cursor: "pointer" }}
+														onClick={backDetails}
+													/>
+													<span>{details.key1}</span>
+													<span>&nbsp;&&nbsp;</span>
+													<span>{details.key2}</span>
+												</>
+											}</div>
+									</div>
 									<div className='heatmap-top-sector'>
 
 										<div onScroll={handleLeftScroll} className='heatmap-left-header'></div>
@@ -550,7 +709,25 @@ const HeatmapChart = (props) => {
 								/>
 							</div>
 							{props.activeCategories.length === 2 &&
-								<div className='heatmap-legend'></div>}
+								<>
+
+									<div className='heatmap-legend'></div>
+									<div id="heatmap-dropdown2" className='tabchart-dropdown'>
+										<button className='tabchart-dropbtn' onClick={changeStyle2}>
+											<img title={t("icon-sort")} alt="total" src={sorting_icon}
+												style={{ "marginLeft": 5 + "px" }} className="tabchart-sorting-icon"
+
+											/></button>
+										<div id="heatmap-dropdown-icon2" className={"shadow tabchart-dropdown-content-hide"}>
+											<button className={currentSorting2 === "name_asc" ? "sorting-active" : ""} onClick={() => changeSorting2("name_asc")}> {t(props.activeCategories[1])} - {t("pyramid-ascending")} </button>
+											<button className={currentSorting2 === "name_desc" ? "sorting-active" : ""} onClick={() => changeSorting2("name_desc")}> {t(props.activeCategories[1])} - {t("pyramid-descending")} </button>
+											<button className={currentSorting2 === "value_asc" ? "sorting-active" : ""} onClick={() => changeSorting2("value_asc")}> {t("heatmap-occurrence")} - {t("pyramid-low-high")} </button>
+											<button className={currentSorting2 === "value_desc" ? "sorting-active" : ""} onClick={() => changeSorting2("value_desc")}> {t("heatmap-occurrence")} - {t("pyramid-high-low")} </button>
+
+										</div>
+									</div>
+								</>
+							}
 						</div>
 
 					</div>

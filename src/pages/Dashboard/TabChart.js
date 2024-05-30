@@ -176,7 +176,7 @@ const TabContent = (props) => {
         // tooltipPyramid events
         const mouseover = function (event, d, type) {
             tooltipPyramid.style("opacity", 1)
-            d3.select(this).transition().duration(100).style("stroke-width", 1)
+            d3.select(`.pyramid-${type === "masc" ? "Masc": "Fem"}-${noSpaces(d[0])}`).transition().duration(100).style("stroke-width", 1)
 
             var previousElement = d3.select(".barMasc");
             var isTotal = false
@@ -199,13 +199,13 @@ const TabContent = (props) => {
                 .style("left", event.pageX + 10 + "px");
         };
 
-        const mouseleave = function (d) {
+        const mouseleave = function (event, d, type) {
             tooltipPyramid.style("opacity", 0)
 
             let element = document.getElementById('tooltipPyramid')
             if (element) element.innerHTML = "";
 
-            d3.select(this).transition().duration(100).style("stroke-width", 0)
+            d3.select(`.pyramid-${type === "masc" ? "Masc": "Fem"}-${noSpaces(d[0])}`).transition().duration(100).style("stroke-width", 0)
         };
 
         let infoMouseLeavePyramid = function (event, d) {
@@ -500,7 +500,7 @@ const TabContent = (props) => {
                 .style("stroke", "black")
                 .style("stroke-width", 0)
                 .on("mouseover", (event, d) => mouseover(event, d, "masc"))
-                .on("mouseleave", mouseleave)
+                .on("mouseleave", (event, d) => mouseleave(event, d, "masc"))
                 .on("click", (event, d) => mouseclick(event, d, "Masc."))
 
             svg.selectAll(".linePyramidHorizontal")
@@ -538,7 +538,7 @@ const TabContent = (props) => {
                 .style("stroke", "black")
                 .style("stroke-width", 0)
                 .on("mouseover", (event, d) => mouseover(event, d, "fem"))
-                .on("mouseleave", mouseleave)
+                .on("mouseleave", (event, d) => mouseleave(event, d, "fem"))
                 .on("click", (event, d) => mouseclick(event, d, "Fem."))
         }
 
@@ -652,8 +652,8 @@ const TabContent = (props) => {
 
                         /></button>
                     <div id="tabchart-dropdown-icon" className={"shadow tabchart-dropdown-content-hide"}>
-                        <button className={props.currentSorting === "name_asc" ? "sorting-active" : ""} onClick={() => changeSorting("name_asc")}> {t("pyramid-name-ascending")} </button>
-                        <button className={props.currentSorting === "name_desc" ? "sorting-active" : ""} onClick={() => changeSorting("name_desc")}> {t("pyramid-name-descending")} </button>
+                        <button className={props.currentSorting === "name_asc" ? "sorting-active" : ""} onClick={() => changeSorting("name_asc")}> {t(props.category)} - {t("pyramid-ascending")} </button>
+                        <button className={props.currentSorting === "name_desc" ? "sorting-active" : ""} onClick={() => changeSorting("name_desc")}> {t(props.category)} - {t("pyramid-descending")} </button>
 
                         {!totalOccurrences && <>
                             <button className={props.currentSorting === "masc_asc" ? "sorting-active" : ""} onClick={() => changeSorting("masc_asc")}> {t("pyramid-masculine")} - {t("pyramid-low-high")} </button>

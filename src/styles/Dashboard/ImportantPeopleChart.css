@@ -20,7 +20,7 @@
 }
 
 .imp-expand {
-    transform: scale(1.9) translate(-32%, 0%);
+    transform: scale(1.9) translate(-60%, 0%);
     z-index: 10;
 }
 
@@ -58,10 +58,16 @@
     text-align: left;
     padding: 2% 5%;
     width: 100%;
-    background-color: #e4dad2;
+    background-color: #ded0c5;
     border-top: solid 0.5px #c9c0b8;
     border-bottom: solid 0.5px #c9c0b8;
     font-size: 14.5px;
+	transition: 0.3s;
+
+    &:hover{
+        
+        background-color:rgb(211, 192, 178);
+    }
 }
 
 
@@ -181,6 +187,7 @@ h5.imp-top-title {
 
     cursor: pointer;
     line-height: calc(250%);
+	transition: 0.3s;
 }
 
 .shadow-imp{
@@ -191,6 +198,7 @@ h5.imp-top-title {
     width: 100%;
     height: 100%;
 
+	transition: 0.3s;
     border: 1.5px dashed;
     border-radius: 50px;
 

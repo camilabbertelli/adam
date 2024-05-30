@@ -16,7 +16,6 @@ import { DndContext, DragOverlay, KeyboardSensor, MouseSensor, PointerSensor, To
 import { useTranslation } from 'react-i18next';
 
 
-import csv_data from "./../../assets/data.csv"
 import * as d3 from "d3"
 
 import FilterView from './FilterView';
@@ -31,7 +30,7 @@ function noSpaces(str) {
 
 let colorCodices = () => { }
 
-const DashboardPage = () => {
+const DashboardPage = (props) => {
 
     const { t } = useTranslation();
     const [csvIndexes, setCsvIndexes] = useState({})
@@ -220,116 +219,111 @@ const DashboardPage = () => {
     }
 
     useEffect(() => {
-        d3.csv(csv_data).then(d => {
-            let globalData = d3.flatRollup(d, v => v.length,
-                d => d["#"],
-                d => d.font_type,
-                d => d.genre,
-                d => d.title,
-                d => d.description,
-                d => d.subject_name,
-                d => d.subject_number,
-                d => d.subject_sex,
-                d => d.subject_qualities,
-                d => d.action,
-                d => d.nature,
-                d => d.dimension,
-                d => d.anatomical_part,
-                d => d.organs,
-                d => d.intention,
-                d => d.time,
-                d => d.place,
-                d => d.how,
-                d => d.with_name,
-                d => d.with_sex,
-                d => d.with_qualities,
-                d => d.about_name,
-                d => d.about_sex,
-                d => d.about_qualities,
-                d => d.action_motive,
-                d => d.object,
-                d => d.origin,
-                d => d.explanation,
-                d => d.PP,
-                d => d.observation)
+        let data = d3.flatRollup(props.data, v => v.length,
+            d => d["#"],
+            d => d.font_type,
+            d => d.genre,
+            d => d.title,
+            d => d.description,
+            d => d.subject_name,
+            d => d.subject_number,
+            d => d.subject_sex,
+            d => d.subject_qualities,
+            d => d.action,
+            d => d.nature,
+            d => d.dimension,
+            d => d.anatomical_part,
+            d => d.organs,
+            d => d.intention,
+            d => d.time,
+            d => d.place,
+            d => d.how,
+            d => d.with_name,
+            d => d.with_sex,
+            d => d.with_qualities,
+            d => d.about_name,
+            d => d.about_sex,
+            d => d.about_qualities,
+            d => d.action_motive,
+            d => d.object,
+            d => d.origin,
+            d => d.explanation,
+            d => d.PP,
+            d => d.observation)
 
 
-            setOriginalGlobalData([...globalData])
-            setGlobalData([...globalData])
+        setOriginalGlobalData([...data])
+        setGlobalData([...data])
+        
+        let indexes = {}
+        if (props.data.length){
 
-            let keys = Object.keys(d[0])
-            let indexes = {}
-            keys.forEach((key, index) => {
+            Object.keys(props.data[0]).forEach((key, index) => {
                 indexes[key] = index
             })
+        }
 
-            setCsvIndexes(indexes)
+        setCsvIndexes(indexes)
 
-            let categoriesAux = {
-                "category-action": {
-                    index: indexes.action,
-                    indexSubcategory: indexes.action,
-                    list: []
-                },
-                "category-action-motives": {
-                    index: indexes.action_motive,
-                    indexSubcategory: indexes.action_motive,
-                    list: []
-                },
-                "category-body": {
-                    index: indexes.anatomical_part,
-                    indexSubcategory: indexes.organs,
-                    list: []
-                }
+        let categoriesAux = {
+            "category-action": {
+                index: indexes.action,
+                indexSubcategory: indexes.action,
+                list: []
+            },
+            "category-action-motives": {
+                index: indexes.action_motive,
+                indexSubcategory: indexes.action_motive,
+                list: []
+            },
+            "category-body": {
+                index: indexes.anatomical_part,
+                indexSubcategory: indexes.organs,
+                list: []
             }
+        }
 
-            let advancedFilterAux = {}
-            Object.keys(categoriesAux).forEach(key => {
-                categoriesAux[key].list = d3.flatGroup(globalData, d => d[[categoriesAux[key].index]], d => d[[categoriesAux[key].indexSubcategory]])
-                    .flatMap(d => [[d[0], d[1]]]).sort()
-                categoriesAux[key].list = d3.flatGroup(categoriesAux[key].list, d => d[0])
+        let advancedFilterAux = {}
+        Object.keys(categoriesAux).forEach(key => {
+            categoriesAux[key].list = d3.flatGroup(data, d => d[[categoriesAux[key].index]], d => d[[categoriesAux[key].indexSubcategory]])
+                .flatMap(d => [[d[0], d[1]]]).sort()
+            categoriesAux[key].list = d3.flatGroup(categoriesAux[key].list, d => d[0])
 
-                advancedFilterAux[key] = {
-                    list: [],
-                    sublist: []
-                }
-            })
+            advancedFilterAux[key] = {
+                list: [],
+                sublist: []
+            }
+        })
 
 
-            setAdvancedCategoryFilters(advancedFilterAux)
-            setCategories(categoriesAux)
-            setActiveCategories([Object.keys(categoriesAux)[0], Object.keys(categoriesAux)[1]])
-            setCurrentTabchartCategory(Object.keys(categoriesAux)[0])
+        let codicesGenres = d3.flatGroup(data, d => d[indexes.genre], d => d[indexes.title]).map(entry => [entry[0], entry[1]])
 
-            let codicesGenres = d3.flatGroup(globalData, d => d[indexes.genre], d => d[indexes.title]).map(entry => [entry[0], entry[1]])
+        let allCodicesAux = {}
+        codicesGenres.forEach(entry => {
+            allCodicesAux[noSpaces(entry[1])] = {
+                title: entry[1],
+                genre: entry[0]
+            }
+        })
 
-            let allCodicesAux = {}
-            codicesGenres.forEach(entry => {
-                allCodicesAux[noSpaces(entry[1])] = {
-                    title: entry[1],
-                    genre: entry[0]
-                }
-            })
+        let sortedkeys = Object.keys(allCodicesAux).sort()
+        let allCodices = {}
+        sortedkeys.forEach((key) => {
+            allCodices[key] = allCodicesAux[key]
+        })
 
-            let sortedkeys = Object.keys(allCodicesAux).sort()
-            let allCodices = {}
-            sortedkeys.forEach((key) => {
-                allCodices[key] = allCodicesAux[key]
-            })
-
-            colorCodices = d3.scaleOrdinal(Object.keys(allCodices), ["#cc8b86", "#9FB9BA", "#C5C5B3", "#B89283", "#FFD18C", "#7587AA"]);
-            setCodices({ ...allCodices })
-            setActiveCodices([...sortedkeys])
-            setGenres([...new Set(codicesGenres.map((entry) => entry[0]))].sort())
-
-        }, []).catch((error) => {
-            console.error('Error fetching data:', error);
-            // Display a user-friendly error message
-            alert('An error occurred while fetching data.');
-        });
+        colorCodices = d3.scaleOrdinal(Object.keys(allCodices), ["#cc8b86", "#9FB9BA", "#C5C5B3", "#B89283", "#FFD18C", "#7587AA"]);
+        
+        setAdvancedCategoryFilters(advancedFilterAux)
+        setCategories(categoriesAux)
+        setActiveCategories([Object.keys(categoriesAux)[0], Object.keys(categoriesAux)[1]])
+        setCurrentTabchartCategory(Object.keys(categoriesAux)[0])
+        setCodices({ ...allCodices })
+        setActiveCodices([...sortedkeys])
+        setGenres([...new Set(codicesGenres.map((entry) => entry[0]))].sort())
 
         document.getElementById("overlay").style.display = "none";
-    }, [])
+    }, [props.data])
 
     const [isHeatmapExpanded, setIsHeatmapExpanded] = useState(false)
     const [isTabchartExpanded, setIsTabchartExpanded] = useState(false)
@@ -457,6 +451,14 @@ const DashboardPage = () => {
         pointerSensor
     )
 
+    // TODO: persistent data
+    // useEffect(() => {
+    //     // returned function will be called on component unmount 
+    //     return () => {
+    //       window.removeEventListener('mousemove', () => {})
+    //     }
+    //   }, [])
+
     return (<>
 
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} sensors={sensors}>
@@ -562,6 +564,7 @@ const DashboardPage = () => {
                     </div>
                 </div>
             </div>
+            
         </DndContext>
     </>)
 }

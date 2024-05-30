@@ -30,7 +30,7 @@
 /* Style the buttons inside the tab */
 .tab-chart-area-tabs button {
 	height: 100%;
-	background-color: #e2e2e2;
+	background-color: #f1f1f1;
 	border: none;
 	cursor: pointer;
 	padding: 4px 10px;
@@ -39,7 +39,7 @@
 	color: #919191;
 
 	&:hover {
-		background-color: #f0f0f0;
+		background-color: #e2e2e2;
 	}
 }
 
@@ -134,11 +134,12 @@
     margin-top: 10px;
 	margin-left:10px;
     font-size: small;
-    background-color: #ececec;
+    background-color: #f1f1f1;
     border-color: #6e6e6e;
     border-width: 2px;
     padding-right: 5px;
 
+	transition: 0.3s;
 	max-width: 100%;
 
     &:hover{

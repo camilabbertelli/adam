@@ -85,11 +85,12 @@
     "pyramid-total": "Total occurrences",
     "pyramid-masculine": "Masculine",
     "pyramid-feminine": "Feminine",
-    "pyramid-name-descending": "Name (descending)",
-    "pyramid-name-ascending": "Name (ascending)",
+    "pyramid-descending": "Descending",
+    "pyramid-ascending": "Ascending",
     "pyramid-low-high": "Low to High",
     "pyramid-high-low": "High to Low",
 
+    "heatmap-occurrence": "Occurrence",
 
     "imp-label": "Important people",
     "imp-no-selection-label" : "Select a person",

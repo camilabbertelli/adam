@@ -32,8 +32,9 @@
 
     padding: 0px 10px;
 
+	transition: 0.3s;
 
-    border: solid 2px #935959;
+    border: solid 2px #642d2d;
     font-size: 20px;
     
     &:hover{
@@ -42,9 +43,9 @@
 }
 
 .dashboard-filter-button.active{
-    background-color: #935959;
+    background-color: #642d2d;
     color: white;
-    border: solid 2px #935959;
+    border: solid 2px #642d2d;
 }
 
 
@@ -56,7 +57,7 @@ button.dashboard-filter-category{
 }
 
 button.dashboard-filter-category.selected{
-    background-color: #dad8d8;
+    background-color: #e2e2e2;
 }
 
 button.dashboard-filter-category.drag{
@@ -72,6 +73,7 @@ button.dashboard-filter-category.drag{
     border: solid;
     border-color: #dad8d8;
     font-size: 16px;
+	transition: 0.3s;
     
     &:hover{
         background-color: rgb(226, 226, 226);
@@ -79,7 +81,7 @@ button.dashboard-filter-category.drag{
 }
 
 .dashboard-filter-options.active{
-    background-color: #dad8d8;
+    background-color: #e2e2e2;
     border-color: #dad8d8;
 
     color: black;
@@ -210,12 +212,13 @@ div.dashboard-image-component {
     align-items: center;
     margin-top: 10px;
     font-size: smaller;
-    background-color: #ececec;
+    background-color: #f1f1f1;
     border-color: #6e6e6e;
     border-width: 2px;
 
     padding-right: 5px;
     max-width: 50%;
+	transition: 0.3s;
 
     white-space: nowrap;
     overflow: hidden;

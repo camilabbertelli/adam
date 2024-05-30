@@ -1,58 +1,60 @@
 
 import "./../styles/Database.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TableFilter from "react-table-filter";
 import "react-table-filter/lib/styles.css";
 
 import 'bootstrap/dist/css/bootstrap.css';
 import downloads from "./../assets/images/downloads.png"
-
-
-import csv_data from "./../assets/data.csv"
-
-import * as d3 from "d3"
+import close from "./../assets/images/dashboard/reset.png"
 
 import { useTranslation } from "react-i18next";
+
+import * as d3 from "d3"
 
 class Table extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            data: []
+            data: props.data,
+            filterConfiguration: props.filterConfiguration,
         };
         this._filterUpdated = this._filterUpdated.bind(this);
     }
 
     componentDidMount() {
-        d3.csv(csv_data).then(d => {
-
-            if (d?.length) {
-                let keys = Object.keys(d[0])
-                this.props.updateKeys(keys)
-            }
-
-            d.forEach(entry => {
-                entry[" "] = " "
-            })
-
-            this.setState({ data: d })
-            this.props.setData(d)
-
-        }).catch((error) => {
-            console.error('Error fetching data:', error);
-            // Display a user-friendly error message
-            alert('An error occurred while fetching data.');
-        });
-
+        this.setState({
+            data: this.props.data,
+            filterConfiguration: this.props.filterConfiguration
+        })
     }
 
-    _filterUpdated(newData, filtersObject) {
-        if (newData.length)
+    componentDidUpdate(prevProps) {
+        if (this.props.data !== prevProps.data) {
             this.setState({
-                data: newData
+                data: this.props.data
+            })
+        }
+
+        if (this.props.filterConfiguration !== prevProps.filterConfiguration){
+            if (this.props.filterConfiguration.length === 0)
+                this.tableFilterNode.reset(this.props.data, true)
+            this.setState({
+                filterConfiguration: this.props.filterConfiguration
+            })
+        }
+    }
+
+    _filterUpdated(newData, filterConfiguration) {
+        if (newData.length) {
+            this.setState({
+                data: newData,
+                filterConfiguration: filterConfiguration
             });
-        this.props.setData(newData)
+            this.props.setData(newData)
+            this.props.setFilterConfiguration(filterConfiguration)
+        }
     }
 
     render() {
@@ -74,6 +76,8 @@ class Table extends React.Component {
                         rows={data_table}
                         rowClass="h5 text-center"
                         onFilterUpdate={this._filterUpdated}
+                        initialFilters={this.state.filterConfiguration}
+                        ref={(node) => {this.tableFilterNode = node;}}
                     >
                         {keys.map(function (key) {
                             if (!checkedKeys || checkedKeys.includes(key) || key === " ")
@@ -120,7 +124,7 @@ const ExcelFilter = (props) => {
             temp.splice(index, 1);
         } else temp.push(key)
 
-        props.updateCheckedKeys(temp)
+        props.updateCheckedKeys(temp.length === props.keys.length ? props.keys : temp)
     }
 
     if (!props.keys)
@@ -130,6 +134,7 @@ const ExcelFilter = (props) => {
         <>
             <div className="excel-filter-body" style={{ borderTop: "1.5px solid black", paddingTop: "10px", marginTop: "10px" }}>
                 {props.keys.map(function (key) {
+                    if (key !== " ")
                     return (
                         <div key={key} className="form-check">
                             <input className="form-check-input" type="checkbox" value={key} onChange={() => toggleItem(key)} checked={(props.checkedKeys.includes(key))} />
@@ -144,18 +149,13 @@ const ExcelFilter = (props) => {
     )
 }
 
-const DatabasePage = () => {
+const DatabasePage = (props) => {
 
     const [keys, setKeys] = useState([])
     const [checkedKeys, setCheckedKeys] = useState([])
     const [data, setData] = useState([])
 
     const { t } = useTranslation()
-
-    function updateKeys(newKeys) {
-        setKeys(newKeys)
-        setCheckedKeys(newKeys)
-    }
 
     function downloadCSV() {
         const titleKeys = [...checkedKeys]
@@ -197,25 +197,63 @@ const DatabasePage = () => {
         document.body.removeChild(link);
     }
 
+    useEffect(() => {
+        setData(props.data)
+
+        if (props.data.length) {
+            let keys = Object.keys(props.data[0])
+            setKeys(keys)
+            setCheckedKeys(props.databaseCheckedKeys !== keys && props.databaseCheckedKeys.length ? props.databaseCheckedKeys : keys)
+        }
+
+        props.data.forEach(entry => {
+            entry[" "] = " "
+        })
+
+    }, [props.data])
+
+    function updateCheckedKeys(newKeys) {
+        setCheckedKeys(newKeys)
+        props.setDatabaseCheckedKeys(newKeys)
+    }
+
+    function clearSelection() {
+        setData(props.data)
+
+        setCheckedKeys(keys)
+        props.setDatabaseCheckedKeys(keys)
+
+        let aux= []
+        Object.keys(props.databaseFilterConfiguration).forEach(key => {
+            aux[key] = []
+        })
+        props.setDatabaseFilterConfiguration(aux)
+    }
+
     return (
         <div className="database-view">
             <div className="database-filter-view" style={{ position: "relative" }}>
+                <div style={{ position: "absolute", top: "2%", left: "3%" }}>
+                    <img alt="close" src={close} onClick={clearSelection} title={t("clear-all-filter")} width={"25px"} height={"25px"}
+                        style={{ cursor: "pointer"}} 
+                    />
+                </div>
                 <div style={{ position: "absolute", right: "3%", top: "2%" }}>
                     <img style={{ cursor: "pointer" }} alt={"download csv"} src={downloads} onClick={downloadCSV} title={t("database-download-csv")} width={"20px"} height={"20px"} />
                 </div>
                 <h3>{t("database-content")}</h3>
                 <div>
                     <div className="form-check">
-                        <input className="form-check-input" type="checkbox" onChange={() => (setCheckedKeys(checkedKeys === keys ? [] : keys))} checked={checkedKeys === keys} />
+                        <input className="form-check-input select-all" type="checkbox" checked={checkedKeys === keys} onChange={() => (setCheckedKeys(checkedKeys === keys ? [] : keys))}/>
                         <label className="form-check-label">
                             {t("database-select-all")}
                         </label>
                     </div>
-                    <ExcelFilter updateCheckedKeys={setCheckedKeys} keys={keys} checkedKeys={checkedKeys} />
+                    <ExcelFilter updateCheckedKeys={updateCheckedKeys} keys={keys} checkedKeys={checkedKeys} />
                 </div>
             </div>
             <div className="database-table-view">
-                <Table updateKeys={updateKeys} checkedKeys={checkedKeys} setData={setData} />
+                <Table checkedKeys={checkedKeys} data={data} setData={setData} filterConfiguration={props.databaseFilterConfiguration} setFilterConfiguration={props.setDatabaseFilterConfiguration} />
                 <div id="loader" className="loader"></div>
             </div>
         </div>)
