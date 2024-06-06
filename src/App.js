@@ -60,7 +60,7 @@ const App = () => {
 		<div className="App">
 			<ErrorBoundary>
 				{showMobileWarning && <MobileWarning/>}
-				{!showMobileWarning && <BrowserRouter basename='/ist196848/adam'>
+				{!showMobileWarning && <BrowserRouter basename='/ist196848/test'>
 					<div className="App">
 						<NavBar />
 						<div className='pageBody'>

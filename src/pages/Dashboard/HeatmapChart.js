@@ -14,7 +14,6 @@ import * as d3 from "d3";
 import { useTranslation } from 'react-i18next';
 
 import $ from 'jquery';
-import { transform } from 'framer-motion';
 
 var tooltipHeatmap;
 
@@ -257,8 +256,43 @@ const HeatmapChart = (props) => {
 		// Three function that change the tooltip when user hover / move / leave a cell
 		const mouseover = function (event, d) {
 			tooltipHeatmap.style("opacity", 1)
+
 			d3.select(this).transition().duration(100)
 				.style("stroke", "black")
+
+			let svg = d3.select(".heatmap-graph").select("svg").select("g")
+			let x = Number(d3.select(this).attr("x"))
+			let y = Number(d3.select(this).attr("y"))
+			let width = Number(d3.select(this).attr("width"))
+			let height = Number(d3.select(this).attr("height"))
+
+			let dim = 20
+
+			// FIXME: mouse over ends when passing over
+			svg.append("image")
+				.attr("href", expand)
+				.attr("width", dim)
+				.attr("height", dim)
+				.attr("id", "image-expand")
+				.attr("x", x + (width/2) - (dim/2))
+				.attr("y", y + (height/2) - (dim/2))
+				.on("mousemove", (event) => {
+					tooltipHeatmap
+				.html(`<center><b>${d[0] ? d[0] : "--"} x ${d[1] ? d[1] : "--"}</b></center>
+						${t("heatmap-occurrence")}: ${d[2]}`)
+				.style("top", event.pageY - 10 + "px")
+				.style("left", event.pageX + 10 + "px");
+				})
+				.on("click", () => cellClick(event, d))
+				.style("opacity", 0)
+				.style("cursor", "pointer")
+				.transition()
+				.style("opacity", 1)
+				
+		}
+
+		// Three function that change the tooltip when user hover / move / leave a cell
+		const mousemove = function (event, d) {
 
 			tooltipHeatmap
 				.html(`<center><b>${d[0] ? d[0] : "--"} x ${d[1] ? d[1] : "--"}</b></center>
@@ -268,9 +302,14 @@ const HeatmapChart = (props) => {
 		}
 
 		const mouseleave = function (event, d) {
+			if (document.elementFromPoint(event.clientX, event.clientY).id === "image-expand")
+				return
+
 			tooltipHeatmap.style("opacity", 0)
 			d3.select(this).transition().duration(100)
 				.style("stroke", "#ECECEC")
+
+			d3.select(".heatmap-graph").select("svg").select("g").selectAll("image").remove()
 
 			let element = document.getElementById('tooltipHeatmap')
 			if (element) element.innerHTML = "";
@@ -348,7 +387,7 @@ const HeatmapChart = (props) => {
 			}).reverse();
 
 		if (sorting1 === "value_desc")
-			heatmapKey1.sort((a, b) =>{
+			heatmapKey1.sort((a, b) => {
 				let indexA = heatmapData.findIndex(([d1, d2, d3]) => d1 === a)
 				let indexB = heatmapData.findIndex(([d1, d2, d3]) => d1 === b)
 				if (indexA === -1)
@@ -553,7 +592,6 @@ const HeatmapChart = (props) => {
 			.attr("class", d => `heatmap-${noSpaces(d[0])}-${noSpaces(d[1])}`)
 			.attr("x", d => x(d[1]))
 			.attr("y", d => y(d[0]))
-			.style("opacity", 0)
 			.attr("rx", 4)
 			.attr("ry", 4)
 			.attr("width", x.bandwidth())
@@ -563,10 +601,11 @@ const HeatmapChart = (props) => {
 			.style("stroke-width", 3)
 			.style("stroke", "#ECECEC")
 			.on("mouseover", mouseover)
+			.on("mousemove", mousemove)
 			.on("mouseleave", mouseleave)
 			.on("click", cellClick)
+			.style("opacity", 0)
 			.transition()
-			.duration(1000)
 			.style("opacity", 1)
 	}
 
@@ -728,5 +767,6 @@ const HeatmapChart = (props) => {
 		</>
 	);
 }
+
 
 export default HeatmapChart

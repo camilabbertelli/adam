@@ -43,13 +43,13 @@ const Sec = ({ codices }) => {
 
 
         content.push(
-            <div key={key} className="timeline card">
-                <div className='sec-collection'>
+            <div key={key} className="timeline-card">
+                <div className='timeline-sec-collection'>
                     <CodicesSec key={key} element={value} />
                 </div>
-                <div className="timeline card-body" >
-                    <h5 className="card-title">{key}</h5>
-                    <img src={minus} className="timeline tick" width="4px" alt="tick" />
+                <div className="timeline-card-body" >
+                    <h5>{key}</h5>
+                    <img src={minus} className="timeline-tick" width="4px" alt="tick" />
                 </div>
             </div>
         )
@@ -200,7 +200,7 @@ const TimelineChart = ({ codices }) => {
     }, [selectedCodex]);
 
     return (
-        <div className='timeline principal'>
+        <div className='timeline-principal'>
             <div className="timeline card-group card-group-scroll" id='style-1'>
                 <Sec codices={codices} />
             </div>

@@ -12,49 +12,47 @@
     }
 }
 
-.timeline.card-group.card-group-scroll>.card {
-    flex-basis: 10%;
-}
-
-
-.timeline.card-group {
-    width: 90%;
-    padding: 5%;
-}
-
-.timeline.tick {
+.timeline-tick {
     display: block;
     margin-left: auto;
     margin-right: auto;
 }
 
-.timeline.card-body {
-    display: grid;
-    justify-content: center;
-    padding-bottom: 0;
-    width: max-content;
+.timeline-card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0;
+    margin: 0;
+    height: 20%;
 }
 
-div.timeline {
+.timeline-principal {
+    height: 100%;
+    width: 100%;
+}
+
+.timeline {
     position: relative;
-    padding-bottom: 10px;
     display: flex;
     flex-direction: row;
     justify-content: center;
+    height: 100%;
 }
 
-.timeline.card {
+.timeline-card {
     position: relative;
-    margin-top: 3px;
 
-    display: grid;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin: 0;
+    padding: 0% 7%;
     justify-items: center;
     align-content: space-between;
 
-    width: max-content;
-    height: 280px;
+    height: 90%;
 
     background-color: transparent;
     color: white;
@@ -66,16 +64,18 @@ div.timeline {
     border-width: 0 0 5px 0 !important;
 }
 
-.timeline.card-img-top {
-    width: 50px;
-    height: 200px;
+.card-img-top {
+    height: 100%;
+    width: auto;
     opacity: 50%;
 }
 
 
-.sec-collection {
+.timeline-sec-collection {
     display: flex;
     flex-direction: row;
+    justify-content: center;
+    height: 80%;
 }
 
 div.image-component {
@@ -90,13 +90,13 @@ div.image-component {
 
 .centered {
     position: absolute;
-
+    padding: 5%;
     transform: rotate(180deg);
-    top: 40%;
-    left: 50%;
+    top: 35%;
+    left: 45%;
     transform: translate(-50%, -50%);
     width: 100%;
-    font-size: 12px;
+    font-size: small;
     text-align: center;
 
     user-select: none;

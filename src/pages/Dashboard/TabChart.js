@@ -164,7 +164,16 @@ const TabContent = (props) => {
         let factor = maxScale > 0.1 ? 0.05 : 0.01
 
         const mouseclick = function (event, d, type) {
-            if (!totalOccurrences) {
+
+            var previousElement = d3.select(".barMasc");
+            var isTotal = false
+
+            if (previousElement) {
+                var color = d3.rgb(previousElement.style("fill"))
+                isTotal = (color.r === 147 && color.g === 89 && color.b === 89)
+            }
+
+            if (!isTotal) {
                 let s = (selectedSex.sex === type && selectedSex.category === d[0]) ? "" : type
                 let c = (selectedSex.sex === type && selectedSex.category === d[0]) ? "" : d[0]
 
@@ -191,6 +200,7 @@ const TabContent = (props) => {
             let data = d[1][type]
 
             let name = type === "masc" ? t("pyramid-masculine") : t("pyramid-feminine")
+            if (type === "total") name = "Total"
             tooltipPyramid
                 .html(`<center><b>${d[0]} - ${name.charAt(0).toUpperCase() + name.slice(1)}</b></center>
                         Percentage: ${d3.format(".1f")((data / participants_total) * 100)}%<br>

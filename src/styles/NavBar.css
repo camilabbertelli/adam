@@ -1,5 +1,10 @@
 :root {
-    --nav-bar-height: 145px;
+    --nav-bar-height: 16dvh;
+}
+
+h1.title{
+    font-size: 2.5dvw;
+    margin: 0;
 }
 
 nav {
@@ -11,7 +16,7 @@ nav {
     background: #4A1515;
     color: white;
     font-family: "Celtic";
-    padding-top: 20px;
+    padding-top: 2dvh;
 }
 
 nav ul {
@@ -23,24 +28,20 @@ nav ul {
 nav li {
     display: inline-block;
     width: 22%;
-    padding-bottom: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-top: 1dvh;
+    padding-bottom: 1dvh;
+    padding-left: 1dvh;
+    padding-right: 1dvh;
 }
 
 nav a {
     text-decoration: none;
     color: #805956;
     font-weight: bold;
-    padding: 10px 20%;
-    font-size: 1.25rem;
+    padding: 1dvh 10dvh;
+    font-size: 1.2dvw;
     
 	border-radius: 20px;
-}
-
-nav img {
-    position: relative;
-    top: -1em;
 }
 
 nav a:hover {
@@ -53,7 +54,10 @@ nav a:hover {
 }
 
 .ornament {
-    width: 15%;
+    position: relative;
+    top: -0.5dvh;
+    width: 15dvw;
+    height: auto;
 }
 
 .languages {
@@ -80,11 +84,11 @@ nav a:hover {
 
 .navbar-dropdown-content-show {
     display: block;
-    font-size: 15px;
+    font-size: medium;
     position: absolute;
     right: 0;
     background-color: #4A1515;
-    min-width: 190px;
+    width: 190px;
     box-shadow: 16px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
     border-radius: 0px 0px 25px 25px;
@@ -92,7 +96,7 @@ nav a:hover {
 
 .navbar-dropdown-content-show button {
 
-    width: 190px;
+    width: 100%;
     text-align: left;
     color: #805956;
     padding: 5px 16px;
@@ -116,7 +120,7 @@ nav a:hover {
 
 .flag {
     display: inline-flex;
-    width: 30px;
+    width: 30dvw;
     margin-top: 20px;
     margin-right: 20px;
     margin-left: 5px;

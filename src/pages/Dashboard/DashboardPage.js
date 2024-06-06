@@ -312,7 +312,7 @@ const DashboardPage = (props) => {
             allCodices[key] = allCodicesAux[key]
         })
 
-        colorCodices = d3.scaleOrdinal(Object.keys(allCodices), ["#cc8b86", "#9FB9BA", "#C5C5B3", "#B89283", "#FFD18C", "#7587AA"]);
+        colorCodices = d3.scaleOrdinal(Object.keys(allCodices), ["#C0A0CB", "#A3BA9F", "#C5C5B3", "#B89283", "#FEE0B2", "#A9BFC8"]);
 
         if (Object.keys(props.dashboardFilterConfiguration).length){
             console.log(props.dashboardFilterConfiguration)

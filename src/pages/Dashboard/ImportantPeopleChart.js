@@ -107,8 +107,12 @@ const ImportantPeopleChart = (props) => {
         if (!sortedkeys.includes(selectedImp[1])) aux[1] = null
 
         if (props.resetComponents) {
+
             aux = [null, null]
 			props.setResetComponents(false)
+            
+            let element = document.getElementById('imp-search-bar')
+            element.value = ""
 		}
 
         setSelectedImp(aux)
