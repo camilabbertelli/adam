@@ -50,10 +50,16 @@
 
 
 button.dashboard-filter-category{
+    position: relative;
     width: 100%;
     border: solid;
     border-color: #EAEAEA;
     background-color: white;
+    font-size: medium;
+    vertical-align: middle;
+    display: grid;
+    grid-template-columns: 100% 0%;
+    align-items : center;
 }
 
 button.dashboard-filter-category.selected{
@@ -210,7 +216,6 @@ div.dashboard-image-component {
 .btn-clear-all{
     display: flex;
     align-items: center;
-    margin-top: 10px;
     font-size: smaller;
     background-color: #f1f1f1;
     border-color: #6e6e6e;

@@ -23,8 +23,6 @@ const FilterView = (props) => {
 
     const { t } = useTranslation();
 
-    const [simpleFilter, setSimpleFilter] = useState(true);
-
     const [codices, setCodices] = useState({})
     const [currentCodices, setCurrentCodices] = useState([])
     const [genre, setGenre] = useState("")
@@ -172,43 +170,6 @@ const FilterView = (props) => {
         return content
     }
 
-    const changeFilterType = () => {
-        if (props.activeFilters.nature !== "nature-all" || props.activeFilters.dimension !== "dimension-all")
-            props.setActiveFilters(["nature-all", "dimension-all"], ["nature", "dimension"])
-
-        if (!simpleFilter){
-            let advancedFilterAux = {}
-            let changedAdvancedFilters = false
-            
-            Object.keys(props.categories).forEach((key) => {
-    
-                if (props.advancedCategoryFilters[key] && props.advancedCategoryFilters[key].list.length !== 0 || 
-                    props.advancedCategoryFilters[key].sublist.length !== 0){
-                        advancedFilterAux[key] = {
-                            list: [],
-                            sublist: []
-                        }
-
-                        changedAdvancedFilters = true
-                    }
-    
-                var container = document.querySelector(`#filter-dropdown-${key}`);
-                var checkBoxes = container.querySelectorAll('input[type="checkbox"]');
-        
-                checkBoxes.forEach((checkbox) => {
-                    checkbox.checked = false;
-                })
-            })
-    
-            d3.selectAll(`.filter-dropdown-content-show`).classed("filter-dropdown-content-show", false)
-            d3.selectAll(`.arrow-dropdown`).style("transform", "none")
-
-            if (changedAdvancedFilters)
-                props.setActiveFilters([], [], [], advancedFilterAux)
-        }
-        
-        setSimpleFilter(!simpleFilter)
-    }
 
     function toggleDropdownCategory(key, index) {
 
@@ -293,15 +254,6 @@ const FilterView = (props) => {
         <>
 
             <div className="dashboard-filter-view" key={"filterview"}>
-
-                <div className="dashboard-filter-simple-advanced-group" role="group" key={"change-filter-btn"}>
-                    <button key="simple-filter-btn" type="button" className={"dashboard-filter-button" + ((simpleFilter) ? " active" : "")} style={{ borderRadius: "20px 0px 0px 20px" }} onClick={changeFilterType}>
-                        {t("simple-filter")}
-                    </button>
-                    <button key={"advanced-filter-btn"} type="button" className={"dashboard-filter-button" + ((!simpleFilter) ? " active" : "")} style={{ borderRadius: "0px 20px 20px 0px" }} onClick={changeFilterType}>
-                        {t("advanced-filter")}
-                    </button>
-                </div>
                 <div key={"clean-all-button"} style={{ position:"relative", width: "95%", display: "flex", justifyContent: "flex-end", alignItems: "center"}}>
                     <button key="clean-all-button-content" className="btn-clear-all" onClick={resetFilters}>
                         <img alt="close" src={close}
@@ -312,7 +264,7 @@ const FilterView = (props) => {
                 </div>
                 <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center"}} key={"actual-filters"}>
                     <div style={{ position:"relative", width: "100%", display: "flex", alignItems: "center"}}>
-                        <h5>{t("categories-label")}</h5>
+                        {t("categories-label")}
                         <img alt="info" id="infoCategories" src={info}
                         style={{ marginBottom:"8px", marginLeft: "5px", cursor: "pointer", width:"15px", height: "15px" }} 
                         />
@@ -327,10 +279,9 @@ const FilterView = (props) => {
                                             (index === Object.keys(props.categories).length - 1 ? { borderRadius: "0 0 20px 20px" } : null)}
                                         onClick={() => toggleDropdownCategory(key, index)} >
                                         {t(key)}
-                                        {!simpleFilter && <ArrowForwardIosIcon id={`citation-arrow-${key}`} className="arrow-dropdown" style={{ float: "right", width: "15px", marginRight: "5px", marginTop: "2px" }} />}
+                                        <ArrowForwardIosIcon id={`citation-arrow-${key}`} className="arrow-dropdown" style={{ position:"absolute",right: "0", width: "15px", marginRight: "5px", marginTop: "2px" }} />
                                     </button>
                                     </Draggable>
-                                    {!simpleFilter &&
                                         <div id={`filter-dropdown-${key}`} className={"shadow filter-dropdown-content-hide"} key={"hidden-dropdown"}>
                                             <ul style={{ position: "relative" }}>
                                                 {category.list.map(categorylist => {
@@ -359,7 +310,7 @@ const FilterView = (props) => {
                                                 })}
 
                                             </ul>
-                                        </div>}
+                                        </div>
                                 </div>
 
                             </>
@@ -367,8 +318,8 @@ const FilterView = (props) => {
                     })}
                 </div>
 
-                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
-                    <h5>{t("intention-label")}</h5>
+                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "2px 0" }}>
+                    {t("intention-label")}
                     <div className="inline-flex" role="group">
                         {Object.keys(props.intention).map((intention) => {
                             return (
@@ -380,8 +331,8 @@ const FilterView = (props) => {
                     </div>
                 </div>
 
-                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
-                    <h5>{t("origin-label")}</h5>
+                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "2px 0" }}>
+                    {t("origin-label")}
                     <div className="inline-flex" role="group">
                         {Object.keys(props.origin).map((origin) => {
                             return (
@@ -393,8 +344,8 @@ const FilterView = (props) => {
                     </div>
                 </div>
 
-                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
-                    <h5>{t("explanation-label")}</h5>
+                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "2px 0" }}>
+                    {t("explanation-label")}
                     <div className="inline-flex" role="group">
                         {Object.keys(props.explanation).map((explanation) => {
                             return (
@@ -406,8 +357,8 @@ const FilterView = (props) => {
                     </div>
                 </div>
 
-                {!simpleFilter && <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
-                    <h5>{t("nature-label")}</h5>
+                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "2px 0" }}>
+                    {t("nature-label")}
                     <div className="inline-flex" role="group">
                         {Object.keys(props.nature).map((nature) => {
                             return (
@@ -417,11 +368,10 @@ const FilterView = (props) => {
                             )
                         })}
                     </div>
-                </div>}
+                </div>
 
-
-                {!simpleFilter && <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
-                    <h5>{t("dimension-label")}</h5>
+                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "2px 0" }}>
+                    {t("dimension-label")}
                     <div className="inline-flex" role="group">
                         {Object.keys(props.dimension).map((dimension) => {
                             return (
@@ -431,10 +381,10 @@ const FilterView = (props) => {
                             )
                         })}
                     </div>
-                </div>}
+                </div>
 
-                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "5px 0" }}>
-                    <h5>{t("codices-label")}</h5>
+                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "2px 0" }}>
+                    {t("codices-label")}
                     <select id="genreSelect" className="dashboard form-select" value={genre} onChange={() => changeSelect()}>
                         <option value="">{t("library-genre-all")}</option>
                         <SelectGenre genres={props.genres} />

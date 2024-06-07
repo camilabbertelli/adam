@@ -176,6 +176,7 @@ const MapChart = ({ codices }) => {
             .attr("cx", 0)
             .attr("fill", "white")
             .attr("stroke", "#54220b")
+            .attr("cursor", "pointer")
             .attr("transform", function (d) { return "translate(" + projection([d.long, d.lat]) + ")"; })
             .on("mouseover", mouseover)
             .on("mouseleave", mouseleave)
