@@ -193,6 +193,7 @@ div.dashboard-image-component {
     font-size: 15px;
 	background-color: white;
     width: 100%;
+    padding: 1%;
 }
 
 .filter-dropdown-content-show ul{

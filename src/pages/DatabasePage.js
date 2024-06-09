@@ -17,6 +17,7 @@ class Table extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            t: props.t,
             data: props.data,
             filterConfiguration: props.filterConfiguration,
         };
@@ -70,6 +71,8 @@ class Table extends React.Component {
         loader.classList.add('loader--hide');
 
         return (
+            <>
+            <strong>{this.state.t("database-results")}</strong>: {Object.keys(data_table).length}
             <table className="table table-sm table-bordered table-hover">
                 <thead className='table-dark text-dark'>
                     <TableFilter
@@ -90,7 +93,7 @@ class Table extends React.Component {
                                         showsearch={"true"}
                                         className={(key !== "#") ? `cell + ${key}` : `cardinal`}
                                     >
-                                        {key.charAt(0).toUpperCase() + key.slice(1)}
+                                        {key}
                                     </th>
                                 )
                         })}
@@ -109,6 +112,7 @@ class Table extends React.Component {
                         );
                     })}</tbody>
             </table>
+            </>
         );
     }
 }
@@ -253,7 +257,7 @@ const DatabasePage = (props) => {
                 </div>
             </div>
             <div className="database-table-view">
-                <Table checkedKeys={checkedKeys} data={data} setData={setData} filterConfiguration={props.databaseFilterConfiguration} setFilterConfiguration={props.setDatabaseFilterConfiguration} />
+                <Table t={t} checkedKeys={checkedKeys} data={data} setData={setData} filterConfiguration={props.databaseFilterConfiguration} setFilterConfiguration={props.setDatabaseFilterConfiguration} />
                 <div id="loader" className="loader"></div>
             </div>
         </div>)

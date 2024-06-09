@@ -105,7 +105,7 @@
     "database-content": "Content",
     "database-select-all" : "Select all",
     "database-download-csv": "Download current table view",
-
+    "database-results":"Results",
 
     "library-filter-ancient": "Ancient portuguese",
     "library-filter-modern": "Modern portuguese",

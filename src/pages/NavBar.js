@@ -32,6 +32,12 @@ const NavBar = () => {
         d3.select(`.navbar-dropdown-content-hide`).classed("navbar-dropdown-content-show", false)
     }
 
+
+    window.addEventListener('click', function (e) {
+        if (document.getElementById('navbar-dropdown') && !document.getElementById('navbar-dropdown').contains(e.target))
+            d3.selectAll("#navbar-dropdown-icon").classed("navbar-dropdown-content-show", false)
+    });
+
     return (
         <nav className="sticky-top">
             <h1 className="title">A.D.A.M</h1>
@@ -45,9 +51,9 @@ const NavBar = () => {
                 </ul>
             </center>
             <div className="languages">
-                <div className='navbar-dropdown'>
+                <div id='navbar-dropdown'>
                     <button className='navbar-dropbtn'><img title={t("icon-language")} className="icon-language" src={languages} alt="language selection" onClick={changeStyle} /></button>
-                    <div className="navbar-dropdown-content-hide">
+                    <div id="navbar-dropdown-icon" className="navbar-dropdown-content-hide">
                         <button className={`flagbutton` + (language === "en" ? " flagselected" : "")} onClick={() => changeLng("en")}>
                             <img className="flag" src={ukflag} alt="language uk" />
                             English

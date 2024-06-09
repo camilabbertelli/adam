@@ -315,11 +315,11 @@ const TabContent = (props) => {
             .padding(.3);
 
         // X scale
-        let xScaleMasc = d3.scaleLinear()
+        let xScaleMasc = d3.scaleSqrt()
             .domain([0, ((maxScale + factor) > 1 ? 1 : maxScale + factor)])
             .range(totalOccurrences ? [5, barsWidth * 2] : [barsWidth, 0]);
 
-        let xScaleFem = d3.scaleLinear()
+        let xScaleFem = d3.scaleSqrt()
             .domain([0, ((maxScale + factor) > 1 ? 1 : maxScale + factor)])
             .range([barsWidth, barsWidth * 2]);
 

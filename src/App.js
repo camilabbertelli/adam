@@ -27,7 +27,7 @@ const App = () => {
 	const [data, setData] = useState([])
 
 	// Dashboard
-	const [dashboardFilterConfiguration, setDashboardFilterConfiguration] = useState({})
+	const [dashboard, setDashboard] = useState({})
 	
 	// Database
 	const [databaseFilterConfiguration, setDatabaseFilterConfiguration] = useState([])
@@ -56,6 +56,12 @@ const App = () => {
 
 	}, [])
 
+	function updateDashboard(variable, value){
+		let aux = dashboard
+		aux[variable] = value
+		setDashboard(aux)
+	}
+
 	return (
 		<div className="App">
 			<ErrorBoundary>
@@ -67,8 +73,8 @@ const App = () => {
 							<Routes >
 								<Route path="/" element={<HomePage />} />
 								<Route path="/dashboard" element={<DashboardPage data={data}
-																				 dashboardFilterConfiguration={dashboardFilterConfiguration}
-																				 setDashboardFilterConfiguration={setDashboardFilterConfiguration}/>} />
+																				 dashboard={dashboard} updateDashboard={updateDashboard}
+																				 />} />
 								<Route path="/database" element={<DatabasePage data={data} 
 																			   databaseFilterConfiguration={databaseFilterConfiguration} 
 																			   setDatabaseFilterConfiguration={setDatabaseFilterConfiguration}

@@ -145,21 +145,19 @@ const DashboardPage = (props) => {
     const [globalData, setGlobalData] = useState([])
     const [originalGlobalData, setOriginalGlobalData] = useState([])
 
-    const [activeFilters, setActiveFilters] = useState({
-        intention: Object.keys(intention)[0],
-        origin: Object.keys(origin)[0],
-        explanation: Object.keys(explanation)[0],
 
-        nature: Object.keys(nature)[0],
-        dimension: Object.keys(dimension)[0],
-    })
+    const [activeCategory, setActiveCategory] = useState(null)
 
+    const [activeFilters, setActiveFilters] = useState({})
     const [advancedCategoryFilters, setAdvancedCategoryFilters] = useState({})
     const [activeCategories, setActiveCategories] = useState([]);
     const [currentTabchartCategory, setCurrentTabchartCategory] = useState("")
-
-    const [activeCategory, setActiveCategory] = useState(null)
     const [activeCodices, setActiveCodices] = useState([])
+    const [networkData, setNetworkData] = useState({ selected: [], people: [] })
+    const [pyramidData, setPyramidData] = useState({ sex: "", category: "", categoryIndex: "" })
+    const [heatmapData, setHeatmapData] = useState([])
+
+
     const [codices, setCodices] = useState({})
     const [genres, setGenres] = useState([])
 
@@ -180,6 +178,8 @@ const DashboardPage = (props) => {
             }, 1000);
         }
     }
+
+    
 
     function handleDragEnd({ active, delta }) {
         let droppableRect = document.getElementById("droppable").getBoundingClientRect()
@@ -202,6 +202,7 @@ const DashboardPage = (props) => {
                     aux.sort()
 
                     setActiveCategories(aux);
+                    props.updateDashboard("activeCategories", aux)
                 }
                 return false;
             }
@@ -216,6 +217,7 @@ const DashboardPage = (props) => {
         aux.splice(index, 1);
 
         setActiveCategories(aux)
+        props.updateDashboard("activeCategories", aux)
     }
 
     useEffect(() => {
@@ -314,22 +316,46 @@ const DashboardPage = (props) => {
 
         colorCodices = d3.scaleOrdinal(Object.keys(allCodices), ["#C0A0CB", "#A3BA9F", "#C5C5B3", "#B89283", "#FEE0B2", "#A9BFC8"]);
 
-        if (Object.keys(props.dashboardFilterConfiguration).length){
-            console.log(props.dashboardFilterConfiguration)
-
-            setActiveCategories(props.dashboardFilterConfiguration.activeCategories)
-            setCurrentTabchartCategory(props.dashboardFilterConfiguration.currentTabchartCategory)
-            setActiveCodices(props.dashboardFilterConfiguration.activeCodices)
-            setActiveFilters(props.dashboardFilterConfiguration.activeFilters)
-            setNetworkData(props.dashboardFilterConfiguration.networkData)
-            setPyramidData(props.dashboardFilterConfiguration.pyramidData)
-            setHeatmapData(props.dashboardFilterConfiguration.heatmapData)
-        }else{
-            setAdvancedCategoryFilters(advancedFilterAux)
+        // if (Object.keys(props.dashboard).length > 1){
+        //     setActiveCategories(props.dashboard.activeCategories)
+        //     setCurrentTabchartCategory(props.dashboard.currentTabchartCategory)
+        //     setActiveCodices(props.dashboard.activeCodices)
+        //     setActiveFilters(props.dashboard.activeFilters)
+        //     setAdvancedCategoryFilters(props.dashboard.advancedCategoryFilters)
+        //     setNetworkData(props.dashboard.networkData)
+        //     setPyramidData(props.dashboard.pyramidData)
+        //     setHeatmapData(props.dashboard.heatmapData)
+        // }else{
             setActiveCategories([Object.keys(categoriesAux)[0], Object.keys(categoriesAux)[1]])
             setCurrentTabchartCategory(Object.keys(categoriesAux)[0])
             setActiveCodices([...sortedkeys])
-        }
+            setActiveFilters({
+                intention: Object.keys(intention)[0],
+                origin: Object.keys(origin)[0],
+                explanation: Object.keys(explanation)[0],
+        
+                nature: Object.keys(nature)[0],
+                dimension: Object.keys(dimension)[0],
+            })
+            setAdvancedCategoryFilters(advancedFilterAux)
+
+            props.updateDashboard("activeCategories", [Object.keys(categoriesAux)[0], Object.keys(categoriesAux)[1]])
+            props.updateDashboard("currentTabchartCategory", Object.keys(categoriesAux)[0])
+            props.updateDashboard("activeCodices", [...sortedkeys])
+            props.updateDashboard("activeFilters", {
+                intention: Object.keys(intention)[0],
+                origin: Object.keys(origin)[0],
+                explanation: Object.keys(explanation)[0],
+        
+                nature: Object.keys(nature)[0],
+                dimension: Object.keys(dimension)[0],
+            })
+            props.updateDashboard("advancedCategoryFilters", advancedFilterAux)
+            
+            props.updateDashboard("pyramidData", { sex: "", category: "", categoryIndex: "" })
+            props.updateDashboard("heatmapData", [])
+            props.updateDashboard("networkData", { selected: [], people: [] })
+        //}
         
         setCategories(categoriesAux)
         setCodices({ ...allCodices })
@@ -342,10 +368,6 @@ const DashboardPage = (props) => {
     const [isTabchartExpanded, setIsTabchartExpanded] = useState(false)
     const [isImpPeopleExpanded, setIsImpPeopleExpanded] = useState(false)
     const [isNetworkExpanded, setIsNetworkExpanded] = useState(false)
-
-    const [networkData, setNetworkData] = useState({ selected: [], people: [] })
-    const [pyramidData, setPyramidData] = useState({ sex: "", category: "", categoryIndex: "" })
-    const [heatmapData, setHeatmapData] = useState([])
 
     window.addEventListener('click', function (e) {
         if (document.getElementById('overlay') && document.getElementById('overlay').contains(e.target)) {
@@ -409,10 +431,15 @@ const DashboardPage = (props) => {
 
         setGlobalData(filtered)
         setActiveFilters(filters)
-        if (advFilters)
+        props.updateDashboard("activeFilters", filters)
+        if (advFilters){
             setAdvancedCategoryFilters(advFilters)
-        if (codicesFilter && codicesFilter.length)
+            props.updateDashboard("advancedCategoryFilters", advFilters)
+        }
+        if (codicesFilter && codicesFilter.length){
             setActiveCodices(codicesFilter)
+            props.updateDashboard("activeCodices", codicesFilter)
+        }
         setChangedFilter(true)
     }
 
@@ -442,7 +469,26 @@ const DashboardPage = (props) => {
         setHeatmapData([])
         setNetworkData({ selected: [], people: [] })
 
+        props.updateDashboard("pyramidData", { sex: "", category: "", categoryIndex: "" })
+        props.updateDashboard("heatmapData", [])
+        props.updateDashboard("networkData", { selected: [], people: [] })
+
         setResetComponents(true)
+    }
+
+    function updatePyramidData(d){
+        setPyramidData(d)
+        props.updateDashboard("pyramidData", d)
+    }
+
+    function updateHeatmapData(d){
+        setHeatmapData(d)
+        props.updateDashboard("heatmapData", d)
+    }
+
+    function updateNetworkData(d){
+        setNetworkData(d)
+        props.updateDashboard("networkData", d)
     }
 
     const [isOpen, setIsOpen] = useState(false);
@@ -491,7 +537,7 @@ const DashboardPage = (props) => {
                     <div className="dashboard-row1">
                         <div className="dashboard-viz1">
                             <HeatmapChart data={globalData} resetComponents={resetComponents} setResetComponents={setResetComponents}
-                                setHeatmapData={setHeatmapData} networkData={networkData} pyramidData={pyramidData}
+                                setHeatmapData={updateHeatmapData} networkData={networkData} pyramidData={pyramidData}
                                 csvIndexes={csvIndexes}
                                 activeCategories={activeCategories}
                                 activeCategory={activeCategory}
@@ -528,7 +574,7 @@ const DashboardPage = (props) => {
                         <div id="viz3" className={"dashboard-viz3" + ((activeCategory !== null) ? " drag-active" : "")}>
                             <TabChart categories={categories}
                                 data={globalData} resetComponents={resetComponents} setResetComponents={setResetComponents}
-                                setPyramidData={setPyramidData} networkData={networkData} heatmapData={heatmapData}
+                                setPyramidData={updatePyramidData} networkData={networkData} heatmapData={heatmapData}
                                 csvIndexes={csvIndexes}
                                 setCurrentTabchartCategory={setCurrentTabchartCategory}
                                 isExpanded={isTabchartExpanded} setIsExpanded={setIsTabchartExpanded}
@@ -537,7 +583,7 @@ const DashboardPage = (props) => {
                         <div className={"dashboard-viz4" + ((activeCategory !== null) ? " drag-active" : "")}>
                             <NetworkChart
                                 data={globalData} resetComponents={resetComponents} setResetComponents={setResetComponents}
-                                setNetworkData={setNetworkData} pyramidData={pyramidData} heatmapData={heatmapData}
+                                setNetworkData={updateNetworkData} pyramidData={pyramidData} heatmapData={heatmapData}
                                 colorCodices={colorCodices}
                                 csvIndexes={csvIndexes}
                                 isExpanded={isNetworkExpanded}

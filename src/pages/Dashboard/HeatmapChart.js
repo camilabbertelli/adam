@@ -201,6 +201,8 @@ const HeatmapChart = (props) => {
 
 
 	function cellClick(event, d) {
+		
+
 		if (Object.keys(details).length)
 			return
 
@@ -454,7 +456,7 @@ const HeatmapChart = (props) => {
 			.attr("height", height_legend)
 			.append("g")
 
-		let colorRange = ["#f1f1f1", "#E4D1D1", "#B88989", "#A16666", "#894343", "#712121", "#5D1B1B", "#320404"]
+		let colorRange = ["#f1f1f1", "#E4D1D1", "#B88989", "#A16666", "#894343", "#712121"]
 		function domainColorsHeatmap() {
 
 			let unique = [...new Set(heatmapData.map(d => d[2]))];
@@ -473,21 +475,16 @@ const HeatmapChart = (props) => {
 			let domain = []
 
 			quantiles.forEach((c) => {
-				let factor = 5
-				if (max <= 10) factor = 2
-				if (c >= 40) factor = 50
-
-				if (c !== min) c = Math.round(c / factor) * factor;
-				if (c < min) c = min
-				if (!domain.includes(c)) domain.push(c)
+				domain.push(Math.ceil(c))
 			})
+
+			domain = [...new Set(domain)]
 
 			return [domain, max]
 		}
 
 		let [domain, maxValue] = domainColorsHeatmap()
 
-		colorRange = colorRange.slice(0, domain.length)
 		// Build color scale
 		const myColor = d3.scaleThreshold()
 			.range(["none"].concat(colorRange))
@@ -509,7 +506,7 @@ const HeatmapChart = (props) => {
 
 		svg_legend.append("g")
 			.selectAll(".legendText")
-			.data(domain)
+			.data(colorRange)
 			.join('text')
 			.style("font-size", 14)
 			.style("font-family", "lato")
@@ -528,6 +525,8 @@ const HeatmapChart = (props) => {
 						return domain[i] + "-" + maxValue;
 					return domain[i];
 				}
+				if (i >= domain.length)
+					return "-"
 			});
 
 
