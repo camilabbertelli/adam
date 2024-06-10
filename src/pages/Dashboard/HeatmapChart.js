@@ -518,6 +518,8 @@ const HeatmapChart = (props) => {
 				if (i + 1 < domain.length) {
 					if (domain[i] === (domain[i + 1] + 1))
 						return domain[i];
+					if (domain[i] === (domain[i + 1] - 1))
+						return domain[i]
 					return domain[i] + "-" + (domain[i + 1] - 1);
 				}
 				if (i + 1 === domain.length) {

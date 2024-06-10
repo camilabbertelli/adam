@@ -165,9 +165,15 @@
 }
 
 .pyramid-subcategory-axis{
-	font-size: 13px;
-	font-family: "lato";
+	
+	transition: 0.3s;
+	&:hover{
+		fill: rgb(173, 30, 25);
+	}
+
 }
+
+
 
 .grid path {
 	stroke-width: 0;

@@ -159,60 +159,6 @@ const ImportantPeopleChart = (props) => {
 
     useEffect(() => {
 
-        let mouseover = function (event, d) {
-
-            tooltipImp
-                .style("opacity", "1");
-
-            let component = d3.select(this).node()
-            let componentId = component.id
-            let [person, key] = componentId.split("|")
-
-            if (person === "undefined" || person === "null") {
-                tooltipImp
-                    .style("opacity", "0")
-                return
-            }
-
-            let componentData = component.getAttribute("data-dict")
-            componentData = JSON.parse(componentData)
-
-            let content = ""
-
-            Object.keys(componentData).sort().map((i) => {
-                content = content.concat(`<span>${i}: ${componentData[i]}<br/></span>`)
-            })
-
-            tooltipImp
-                .html(
-                    `<b>${t("imp-tooltip-person")}: </b>${impPeople[person].name}<br/>
-                         <b>${t("imp-tooltip-field")}: </b>${key} <br/><br/>
-                        ${content}`)
-                .style("top", event.pageY - 10 + "px")
-                .style("left", event.pageX + 10 + "px")
-
-            let tooltip_rect = tooltipImp.node().getBoundingClientRect();
-            if (tooltip_rect.x + tooltip_rect.width > window.innerWidth) {
-                tooltipImp.style("left", event.pageX - 20 - tooltip_rect.width + "px")
-                tooltipImp.style("top", event.pageY + 10 + "px")
-            }
-
-            tooltip_rect = tooltipImp.node().getBoundingClientRect();
-            if (tooltip_rect.y + tooltip_rect.height > window.innerHeight) {
-                tooltipImp.style("left", tooltip_rect.left - 10 - tooltip_rect.width + "px")
-                tooltipImp.style("top", event.pageY + 20 - tooltip_rect.height + "px")
-            }
-        }
-
-        let mouseleave = function (event, d) {
-            tooltipImp
-                .style("opacity", "0")
-
-            let element = document.getElementById('tooltipImp')
-            if (element)
-                element.innerHTML = "";
-        }
-
         let infoMouseOverImp = function (event, d) {
             tooltipImp
                 .style("opacity", 1);
@@ -246,14 +192,79 @@ const ImportantPeopleChart = (props) => {
             .on("mouseover", infoMouseOverImp)
             .on("mouseleave", infoMouseLeaveImp)
 
+    }, [impPeople]);
 
-        d3.selectAll(`.imp-td`)
-        
+    useEffect(() => {
+        d3.selectAll("#tooltipImp").remove();
+        // create a tooltipImp
+        tooltipImp = d3.select("body")
+            .append("div")
+            .attr("id", "tooltipImp")
+            .attr("class", "tooltip shadow rounded")
+            .attr("padding", "1px")
+            .style("opacity", "0")
+            
+        let mouseover = function (event, d) {
+            tooltipImp
+                .style("opacity", "1");
+        }
+
+        let mousemove = function (event, d){
+
+            let span = d3.select(this).node()
+            let parent = span.parentElement
+            let parentId = parent.id
+
+            let [person, key] = parentId.split("|")
+
+            if (person === "undefined" || person === "null") {
+                tooltipImp
+                    .style("opacity", "0")
+                return
+            } 
+
+            var spanText = span.innerText;
+            let parentData = parent.getAttribute("data-dict")
+            parentData = JSON.parse(parentData)
+
+            tooltipImp
+                .html(
+                    `<b>${t("imp-tooltip-person")}: </b>${impPeople[person].name}<br/>
+                         <b>${t("imp-tooltip-field")}: </b>${key} <br/><br/>
+                         <b>${t("imp-tooltip-value")}: </b>${spanText} <br/>
+                         <b>${t("heatmap-occurrence")}: </b>${parentData[spanText]} <br/>`)
+                .style("top", event.pageY - 10 + "px")
+                .style("left", event.pageX + 10 + "px")
+
+            let tooltip_rect = tooltipImp.node().getBoundingClientRect();
+            if (tooltip_rect.x + tooltip_rect.width > window.innerWidth) {
+                tooltipImp.style("left", event.pageX - 20 - tooltip_rect.width + "px")
+                tooltipImp.style("top", event.pageY + 10 + "px")
+            }
+
+            tooltip_rect = tooltipImp.node().getBoundingClientRect();
+            if (tooltip_rect.y + tooltip_rect.height > window.innerHeight) {
+                tooltipImp.style("left", tooltip_rect.left - 10 - tooltip_rect.width + "px")
+                tooltipImp.style("top", event.pageY + 20 - tooltip_rect.height + "px")
+            }
+        }
+
+        let mouseleave = function (event, d) {
+            tooltipImp
+                .style("opacity", "0")
+
+            let element = document.getElementById('tooltipImp')
+            if (element)
+                element.innerHTML = "";
+        }
+
+        d3.selectAll(`.individual-term`)
         .attr("user-select", "none")
             .style("cursor", "pointer")
-            .on("mouseover", mouseover)
-            .on("mouseleave", mouseleave)
-    }, [impPeople]);
+        .on("mouseover", mouseover)
+        .on("mousemove", mousemove)
+        .on("mouseleave", mouseleave)
+    }, [selectedImp])
 
     function changeSearchInput() {
         let element = document.getElementById('imp-search-bar')
@@ -377,14 +388,14 @@ const ImportantPeopleChart = (props) => {
 
                                                                 if (selectArray2.includes(text)) {
                                                                     if ((selectArray1.length - 1) === i)
-                                                                        return (<span className='imp-same-content'>{text} </span>)
-                                                                    return (<span><span className='imp-same-content'>{text}</span> | </span>)
+                                                                        return (<span className='individual-term imp-same-content'>{text}</span>)
+                                                                    return (<><span className='individual-term imp-same-content'>{text} |</span><span> | </span></>)
                                                                 }
 
                                                                 if ((selectArray1.length - 1) === i)
-                                                                    return (`${text}`)
+                                                                    return (<span className='individual-term'>{text}</span>)
 
-                                                                return (`${text} | `)
+                                                                return (<><span className='individual-term'>{text}</span><span> | </span></>)
                                                             })}
                                                             {selectArray1.length === 0 && "-"}
                                                         </td>
@@ -395,14 +406,14 @@ const ImportantPeopleChart = (props) => {
 
                                                                 if (selectArray1.includes(text)) {
                                                                     if ((selectArray2.length - 1) === i)
-                                                                        return (<span className='imp-same-content'>{text}</span>)
-                                                                    return (<span><span className='imp-same-content'>{text}</span> | </span>)
+                                                                        return (<span className='individual-term imp-same-content'>{text}</span>)
+                                                                    return (<><span className='individual-term imp-same-content'>{text} |</span><span> | </span></>)
                                                                 }
 
                                                                 if ((selectArray2.length - 1) === i)
-                                                                    return (`${text}`)
+                                                                    return (<span className='individual-term'>{text}</span>)
 
-                                                                return (`${text} | `)
+                                                                return (<><span className='individual-term'>{text}</span><span> | </span></>)
                                                             })}
                                                             {selectArray2.length === 0 && "-"}
                                                         </td>

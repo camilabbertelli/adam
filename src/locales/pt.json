@@ -8,6 +8,7 @@
     "information-categories": "Selecione duas categorias para comparar no gráfico arrastando-as para a área de comparação.<br/><b>Nota:</b> Você só pode comparar duas categorias por vez.",
     "imp-tooltip-person": "Pessoa",
     "imp-tooltip-field": "Campo",
+    "imp-tooltip-value": "Valor",
     "network-tooltip-person": "Pessoa",
     "network-tooltip-groups": "Grupo(s)",
     "network-tooltip-sex": "Sexo",

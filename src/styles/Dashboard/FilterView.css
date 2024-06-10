@@ -178,10 +178,17 @@ div.dashboard-image-component {
 }
 
 
-/* Advanced filter category */
 .category-buttons{
     width: 100%;
     height: 100%;
+}
+
+.category-buttons-group{
+	transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid transparent;
+    border-radius: 20px;
 }
 
 .filter-dropdown-content-hide {

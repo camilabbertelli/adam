@@ -63,7 +63,7 @@ const FilterView = (props) => {
         setCodices(props.codices)
         setCurrentCodices(Object.keys(props.codices))
 
-        
+
         d3.selectAll("#tooltipCategories").remove();
 
         tooltipCategories = d3.select("body")
@@ -127,7 +127,7 @@ const FilterView = (props) => {
             aux = [id]
         else {
             if (currentCodices.includes(id)) {
-                if (currentCodices.length === 1){
+                if (currentCodices.length === 1) {
                     setCurrentCodices(sortedkeys)
                     props.setActiveFilters([], [], sortedkeys)
                     return
@@ -230,14 +230,14 @@ const FilterView = (props) => {
         props.setActiveFilters([], [], [], aux)
     }
 
-    function resetFilters(){
+    function resetFilters() {
         props.resetFilters()
         setGenre("")
         setCurrentCodices(Object.keys(codices).sort())
 
         Object.keys(props.categories).forEach((key) => {
             var container = document.querySelector(`#filter-dropdown-${key}`);
-            if (container){
+            if (container) {
 
                 var checkBoxes = container.querySelectorAll('input[type="checkbox"]');
                 checkBoxes.forEach((checkbox) => {
@@ -250,52 +250,69 @@ const FilterView = (props) => {
         d3.selectAll(`.arrow-dropdown`).style("transform", "none")
     }
 
+    function highlightHeatmap() {
+        d3.selectAll(".heatmap-drag").selectAll(".default").style("background-color", "#D8BABA")
+        d3.select(".category-buttons-group").style("border", "2px dashed #8C5E5E")
+        
+        setTimeout(() => {
+            d3.selectAll(".heatmap-drag").selectAll(".default").style("background-color", "white")
+            d3.select(".category-buttons-group").style("border", "2px solid transparent")
+        }, 2000);
+    }
+
+    function dismissHeatmap() {
+        d3.selectAll(".heatmap-drag").selectAll(".default").style("background-color", "white")
+        d3.select(".category-buttons-group").style("border", "2px solid transparent")
+    }
+
     return (
         <>
 
             <div className="dashboard-filter-view" key={"filterview"}>
-                <div key={"clean-all-button"} style={{ position:"relative", width: "95%", display: "flex", justifyContent: "flex-end", alignItems: "center"}}>
+                <div key={"clean-all-button"} style={{ position: "relative", width: "95%", display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
                     <button key="clean-all-button-content" className="btn-clear-all" onClick={resetFilters}>
                         <img alt="close" src={close}
-                        style={{ margin: "0 5px", cursor: "pointer", width:"10px", height: "10px" }} 
+                            style={{ margin: "0 5px", cursor: "pointer", width: "10px", height: "10px" }}
                         />
-                        {t("clear-all-filter")}    
+                        {t("clear-all-filter")}
                     </button>
                 </div>
-                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center"}} key={"actual-filters"}>
-                    <div style={{ position:"relative", width: "100%", display: "flex", alignItems: "flex-end", }}>
+                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center" }} key={"actual-filters"}>
+                    <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "flex-end", }}>
                         {t("categories-label")}
                         <img alt="info" id="infoCategories" src={info}
-                        style={{ marginBottom:"8px", marginLeft: "5px", cursor: "pointer", width:"15px", height: "15px" }} 
+                            style={{ marginBottom: "8px", marginLeft: "5px", cursor: "pointer", width: "15px", height: "15px" }}
                         />
                     </div>
-                    {Object.keys(props.categories).map((key, index) => {
-                        let category = props.categories[key]
-                        return (
-                            <>
-                                <div className="category-buttons" key={"category_" + key}>
-                                    <Draggable key={key} id={key}><button className={`shadow dashboard-filter-category` + (props.activeCategories.includes(key) ? " selected" : "")} id={key}
-                                        style={(index === 0) ? { borderRadius: "20px 20px 0 0" } :
-                                            (index === Object.keys(props.categories).length - 1 ? { borderRadius: "0 0 20px 20px" } : null)}
-                                        onClick={() => toggleDropdownCategory(key, index)} >
-                                        {t(key)}
-                                        <ArrowForwardIosIcon id={`citation-arrow-${key}`} className="arrow-dropdown" style={{ position:"absolute",right: "0", width: "15px", marginRight: "5px", marginTop: "2px" }} />
-                                    </button>
-                                    </Draggable>
+                    <div className="category-buttons-group" onMouseOver={highlightHeatmap} onMouseLeave={dismissHeatmap}>
+                        {Object.keys(props.categories).map((key, index) => {
+                            let category = props.categories[key]
+                            return (
+                                <>
+
+                                    <div className="category-buttons" key={"category_" + key}>
+                                        <Draggable key={key} id={key}><button className={`shadow dashboard-filter-category` + (props.activeCategories.includes(key) ? " selected" : "")} id={key}
+                                            style={(index === 0) ? { borderRadius: "20px 20px 0 0" } :
+                                                (index === Object.keys(props.categories).length - 1 ? { borderRadius: "0 0 20px 20px" } : null)}
+                                            onClick={() => toggleDropdownCategory(key, index)} >
+                                            {t(key)}
+                                            <ArrowForwardIosIcon id={`citation-arrow-${key}`} className="arrow-dropdown" style={{ position: "absolute", right: "0", width: "15px", marginRight: "5px", marginTop: "2px" }} />
+                                        </button>
+                                        </Draggable>
                                         <div id={`filter-dropdown-${key}`} style={(index === Object.keys(props.categories).length - 1 ? { borderRadius: "0 0 20px 20px" } : null)} className={"shadow filter-dropdown-content-hide"} key={"hidden-dropdown"}>
-                                            <ul style={{ position: "relative"}}>
+                                            <ul style={{ position: "relative" }}>
                                                 {category.list.map(categorylist => {
                                                     let item = categorylist[0]
                                                     let sublist = categorylist[1].map(d => d[1])
                                                     return (
                                                         <li key={"li_" + item}>
-                                                            <div style={{ display: "flex", alignItems: "center", width: "100%", height: "100%", borderRadius: "20px"}} key={"item-pack-" + item}>
+                                                            <div style={{ display: "flex", alignItems: "center", width: "100%", height: "100%", borderRadius: "20px" }} key={"item-pack-" + item}>
                                                                 <input id={`checkbox-${noSpaces(item)}`} type="checkbox" onClick={() => clickDropdownCategory(key, noSpaces(item), sublist)} />
                                                                 <button onClick={() => toggleDropdownSubCategory(noSpaces(item))} style={{ width: "100%", height: "100%", display: "flex" }}>
                                                                     {item} {sublist.length > 1 && <ArrowForwardIosIcon className="arrow-dropdown" id={`citation-sub-arrow-${noSpaces(item)}`} style={{ position: "absolute", right: 0, width: "15px", marginRight: "5px", marginTop: "2px" }} />}
                                                                 </button>
                                                             </div>
-                                                            {sublist.length > 1 && <div id={`filter-sub-dropdown-${noSpaces(item)}`} className={"filter-dropdown-content-hide"}  key={"hidden-sub-dropdown"}>
+                                                            {sublist.length > 1 && <div id={`filter-sub-dropdown-${noSpaces(item)}`} className={"filter-dropdown-content-hide"} key={"hidden-sub-dropdown"}>
                                                                 <ul>
                                                                     {sublist.map(subitem => (
                                                                         <li key={"li_sub_" + subitem}>
@@ -311,11 +328,12 @@ const FilterView = (props) => {
 
                                             </ul>
                                         </div>
-                                </div>
+                                    </div>
+                                </>
 
-                            </>
-                        )
-                    })}
+                            )
+                        })}
+                    </div>
                 </div>
 
                 <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "2px 0" }}>

@@ -179,7 +179,7 @@ const DashboardPage = (props) => {
         }
     }
 
-    
+
 
     function handleDragEnd({ active, delta }) {
         let droppableRect = document.getElementById("droppable").getBoundingClientRect()
@@ -326,37 +326,37 @@ const DashboardPage = (props) => {
         //     setPyramidData(props.dashboard.pyramidData)
         //     setHeatmapData(props.dashboard.heatmapData)
         // }else{
-            setActiveCategories([Object.keys(categoriesAux)[0], Object.keys(categoriesAux)[1]])
-            setCurrentTabchartCategory(Object.keys(categoriesAux)[0])
-            setActiveCodices([...sortedkeys])
-            setActiveFilters({
-                intention: Object.keys(intention)[0],
-                origin: Object.keys(origin)[0],
-                explanation: Object.keys(explanation)[0],
-        
-                nature: Object.keys(nature)[0],
-                dimension: Object.keys(dimension)[0],
-            })
-            setAdvancedCategoryFilters(advancedFilterAux)
+        setActiveCategories([Object.keys(categoriesAux)[0], Object.keys(categoriesAux)[1]])
+        setCurrentTabchartCategory(Object.keys(categoriesAux)[0])
+        setActiveCodices([...sortedkeys])
+        setActiveFilters({
+            intention: Object.keys(intention)[0],
+            origin: Object.keys(origin)[0],
+            explanation: Object.keys(explanation)[0],
 
-            props.updateDashboard("activeCategories", [Object.keys(categoriesAux)[0], Object.keys(categoriesAux)[1]])
-            props.updateDashboard("currentTabchartCategory", Object.keys(categoriesAux)[0])
-            props.updateDashboard("activeCodices", [...sortedkeys])
-            props.updateDashboard("activeFilters", {
-                intention: Object.keys(intention)[0],
-                origin: Object.keys(origin)[0],
-                explanation: Object.keys(explanation)[0],
-        
-                nature: Object.keys(nature)[0],
-                dimension: Object.keys(dimension)[0],
-            })
-            props.updateDashboard("advancedCategoryFilters", advancedFilterAux)
-            
-            props.updateDashboard("pyramidData", { sex: "", category: "", categoryIndex: "" })
-            props.updateDashboard("heatmapData", [])
-            props.updateDashboard("networkData", { selected: [], people: [] })
+            nature: Object.keys(nature)[0],
+            dimension: Object.keys(dimension)[0],
+        })
+        setAdvancedCategoryFilters(advancedFilterAux)
+
+        props.updateDashboard("activeCategories", [Object.keys(categoriesAux)[0], Object.keys(categoriesAux)[1]])
+        props.updateDashboard("currentTabchartCategory", Object.keys(categoriesAux)[0])
+        props.updateDashboard("activeCodices", [...sortedkeys])
+        props.updateDashboard("activeFilters", {
+            intention: Object.keys(intention)[0],
+            origin: Object.keys(origin)[0],
+            explanation: Object.keys(explanation)[0],
+
+            nature: Object.keys(nature)[0],
+            dimension: Object.keys(dimension)[0],
+        })
+        props.updateDashboard("advancedCategoryFilters", advancedFilterAux)
+
+        props.updateDashboard("pyramidData", { sex: "", category: "", categoryIndex: "" })
+        props.updateDashboard("heatmapData", [])
+        props.updateDashboard("networkData", { selected: [], people: [] })
         //}
-        
+
         setCategories(categoriesAux)
         setCodices({ ...allCodices })
         setGenres([...new Set(codicesGenres.map((entry) => entry[0]))].sort())
@@ -432,11 +432,11 @@ const DashboardPage = (props) => {
         setGlobalData(filtered)
         setActiveFilters(filters)
         props.updateDashboard("activeFilters", filters)
-        if (advFilters){
+        if (advFilters) {
             setAdvancedCategoryFilters(advFilters)
             props.updateDashboard("advancedCategoryFilters", advFilters)
         }
-        if (codicesFilter && codicesFilter.length){
+        if (codicesFilter && codicesFilter.length) {
             setActiveCodices(codicesFilter)
             props.updateDashboard("activeCodices", codicesFilter)
         }
@@ -476,17 +476,17 @@ const DashboardPage = (props) => {
         setResetComponents(true)
     }
 
-    function updatePyramidData(d){
+    function updatePyramidData(d) {
         setPyramidData(d)
         props.updateDashboard("pyramidData", d)
     }
 
-    function updateHeatmapData(d){
+    function updateHeatmapData(d) {
         setHeatmapData(d)
         props.updateDashboard("heatmapData", d)
     }
 
-    function updateNetworkData(d){
+    function updateNetworkData(d) {
         setNetworkData(d)
         props.updateDashboard("networkData", d)
     }
@@ -509,6 +509,23 @@ const DashboardPage = (props) => {
         keyboardSensor,
         pointerSensor
     )
+
+    function highlightDefaultCategory(proceed){
+        if (proceed){
+            d3.selectAll(".heatmap-drag").selectAll(".default").style("background-color", "#D8BABA")
+            d3.select(".category-buttons-group").style("border", "2px dashed #8C5E5E")
+        }
+        
+        setTimeout(() => {
+            d3.selectAll(".heatmap-drag").selectAll(".default").style("background-color", "white")
+            d3.select(".category-buttons-group").style("border", "2px solid transparent")
+        }, 2000);
+    }
+
+    function dismissDefaultCategory() {
+        d3.selectAll(".heatmap-drag").selectAll(".default").style("background-color", "white")
+        d3.select(".category-buttons-group").style("border", "2px solid transparent")
+    }
 
     return (<>
 
@@ -547,17 +564,28 @@ const DashboardPage = (props) => {
                                 changedFilter={changedFilter}
                                 setChangedFilter={setChangedFilter}>
                                 <div className={"heatmap-drag"} >
-                                    <div className={"category " + (activeCategories.length ? "shadow" : "default ") + (activeCategories.length === 2 ? " shrink" : "")} key={activeCategories.length ? activeCategories[0] : "category1"} onClick={() => removeCategory(0)}>
+                                    <div className={"category " + (activeCategories.length ? "shadow" : "default ") + (activeCategories.length === 2 ? " shrink" : "")}
+                                        key={activeCategories.length ? activeCategories[0] : "category1"}
+                                        onClick={() => removeCategory(0)}
+                                        onMouseOver={() => highlightDefaultCategory(activeCategories.length ? false : true)} onMouseLeave={dismissDefaultCategory}>
                                         {activeCategories.length ? t(activeCategories[0]) : t("category-label")}
                                     </div>
-                                    {activeCategories.length > 0 && <img title={t("icon-close")} className={"x " + (activeCategories.length === 2 ? " shrink" : "big")} alt="x" src={x} width="20px" height="20px" onClick={() => removeCategory(0)} />}
+                                    {activeCategories.length > 0 && <img title={t("icon-close")} className={"x " + (activeCategories.length === 2 ? " shrink" : "big")}
+                                        alt="x" src={x} width="20px" height="20px"
+                                        onClick={() => removeCategory(0)} />}
 
-                                    <img className={(activeCategories.length === 2 ? " shrink" : "")} alt="close" style={{ margin: "0 50px" }} src={close} width="20px" height="20px" />
+                                    <img className={(activeCategories.length === 2 ? " shrink" : "")}
+                                        alt="close" style={{ margin: "0 50px" }} src={close} width="20px" height="20px" />
 
-                                    <div className={"category " + (activeCategories.length === 2 ? "shadow" : "default ") + (activeCategories.length === 2 ? " shrink" : "")} key={activeCategories.length === 2 ? activeCategories[1] : "category2"} onClick={() => removeCategory(1)}>
+                                    <div className={"category " + (activeCategories.length === 2 ? "shadow" : "default ") + (activeCategories.length === 2 ? " shrink" : "")}
+                                        key={activeCategories.length === 2 ? activeCategories[1] : "category2"}
+                                        onClick={() => removeCategory(1)}
+                                        onMouseOver={() => highlightDefaultCategory(activeCategories.length === 2 ? false : true)} onMouseLeave={dismissDefaultCategory}>
                                         {activeCategories.length === 2 ? t(activeCategories[1]) : t("category-label")}
                                     </div>
-                                    {activeCategories.length === 2 && <img title={t("icon-close")} className={"x " + (activeCategories.length === 2 ? " shrink" : "big")} alt="x" src={x} width="20px" height="20px" onClick={() => removeCategory(1)} />}
+                                    {activeCategories.length === 2 && <img title={t("icon-close")} className={"x " + (activeCategories.length === 2 ? " shrink" : "big")}
+                                        alt="x" src={x} width="20px" height="20px"
+                                        onClick={() => removeCategory(1)} />}
                                 </div>
                             </HeatmapChart>
                         </div>

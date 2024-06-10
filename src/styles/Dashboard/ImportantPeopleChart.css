@@ -53,6 +53,10 @@
     direction: rtl;
 }
 
+.individual-term{
+    cursor: pointer;
+}
+
 .imp-left-btn {
     direction: ltr;
     text-align: left;

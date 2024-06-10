@@ -187,6 +187,10 @@ const TabContent = (props) => {
             tooltipPyramid.style("opacity", 1)
             d3.select(`.pyramid-${type === "masc" ? "Masc": "Fem"}-${noSpaces(d[0])}`).transition().duration(100).style("stroke-width", 1)
 
+            
+        };
+
+        const mousemove = function(event, d, type){
             var previousElement = d3.select(".barMasc");
             var isTotal = false
 
@@ -204,10 +208,10 @@ const TabContent = (props) => {
             tooltipPyramid
                 .html(`<center><b>${d[0]} - ${name.charAt(0).toUpperCase() + name.slice(1)}</b></center>
                         Percentage: ${d3.format(".1f")((data / participants_total) * 100)}%<br>
-                        Occurrence: ${data}`)
+                        ${t("heatmap-occurrence")}: ${data}`)
                 .style("top", event.pageY - 10 + "px")
                 .style("left", event.pageX + 10 + "px");
-        };
+        }
 
         const mouseleave = function (event, d, type) {
             tooltipPyramid.style("opacity", 0)
@@ -510,6 +514,7 @@ const TabContent = (props) => {
                 .style("stroke", "black")
                 .style("stroke-width", 0)
                 .on("mouseover", (event, d) => mouseover(event, d, "masc"))
+                .on("mousemove", (event, d) => mousemove(event, d, "masc"))
                 .on("mouseleave", (event, d) => mouseleave(event, d, "masc"))
                 .on("click", (event, d) => mouseclick(event, d, "Masc."))
 
@@ -548,6 +553,7 @@ const TabContent = (props) => {
                 .style("stroke", "black")
                 .style("stroke-width", 0)
                 .on("mouseover", (event, d) => mouseover(event, d, "fem"))
+                .on("mousemove", (event, d) => mousemove(event, d, "fem"))
                 .on("mouseleave", (event, d) => mouseleave(event, d, "fem"))
                 .on("click", (event, d) => mouseclick(event, d, "Fem."))
         }
@@ -564,17 +570,26 @@ const TabContent = (props) => {
 
 
         axes_left.append("g")
-            .attr("class", "pyramid-subcategory-axis")
             .selectAll("text")
             .data(pyramidData)
             .join("text")
+            .attr("class", d=>`pyramid-subcategory-axis ${noSpaces(d[0])}`)
             .text((d) => d[0])
             .style("font-size", 13)
             .style("font-family", "lato")
+            .style("cursor", "pointer")
+            .style("font-weight", d=> (selectedSex.category !== d[0]) ? "normal" : "bold")
             .attr("direction", "ltr")
             .attr("x", 5)
             .attr("text-anchor", "start")
             .attr("y", d => yScale(d[0]) + 15)
+            .on("click", (event, d)=> {
+                let c = (selectedSex.category === d[0]) ? "" : d[0]
+
+                setSelectedSex({ sex: "", category: c, categoryIndex: index })
+                props.setPyramidData({ sex: "", category: c, categoryIndex: index })
+            })
+
 
         axes_left.selectAll("text")
             .call(wrap, width_left)
