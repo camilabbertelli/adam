@@ -46,34 +46,34 @@ const NetworkChart = (props) => {
     const [data, setData] = useState([])
     const [nodesGlobal, setNodesGlobal] = useState([])
     const [linksGlobal, setLinksGlobal] = useState([])
-    
+
 
     useEffect(() => {
         let aux = props.data.filter(entry => {
             let pyramidFilter = true
-			let heatmapFilter = true
-			let sexes = ["Mult.", "N", props.pyramidData.sex]
+            let heatmapFilter = true
+            let sexes = ["Mult.", "N", props.pyramidData.sex]
 
-			if (props.pyramidData.sex)
-				pyramidFilter = sexes.includes(entry[props.csvIndexes.subject_sex]) && 
-                                sexes.includes(entry[props.csvIndexes.with_sex]) && 
-                                sexes.includes(entry[props.csvIndexes.about_sex])
+            if (props.pyramidData.sex)
+                pyramidFilter = sexes.includes(entry[props.csvIndexes.subject_sex]) &&
+                    sexes.includes(entry[props.csvIndexes.with_sex]) &&
+                    sexes.includes(entry[props.csvIndexes.about_sex])
 
             if (props.pyramidData.category)
                 pyramidFilter = pyramidFilter && entry[props.pyramidData.categoryIndex] === props.pyramidData.category
-            
 
-			if (Object.keys(props.heatmapData).length)
-				heatmapFilter = entry[props.heatmapData.searchKey1] === props.heatmapData.key1 && 
-								entry[props.heatmapData.searchKey2] === props.heatmapData.key2
 
-			return pyramidFilter && heatmapFilter
+            if (Object.keys(props.heatmapData).length)
+                heatmapFilter = entry[props.heatmapData.searchKey1] === props.heatmapData.key1 &&
+                    entry[props.heatmapData.searchKey2] === props.heatmapData.key2
+
+            return pyramidFilter && heatmapFilter
         })
 
         d3.select(".network-graph").selectAll("svg").remove("")
 
         if (aux.length === 0)
-            return 
+            return
 
         let subject_nodes = d3.flatGroup(aux, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.title], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.subject_sex], d => d[props.csvIndexes.subject_qualities]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4]]])
         let with_nodes = d3.flatGroup(aux, d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.title], d => d[props.csvIndexes.with_sex], d => d[props.csvIndexes.with_qualities]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4]]])
@@ -162,11 +162,11 @@ const NetworkChart = (props) => {
 
 
     useEffect(() => {
-		if (props.resetComponents) {
-			setSelectedNodes([])
-			props.setResetComponents(false)
-		}
-	}, [props.resetComponents])
+        if (props.resetComponents) {
+            setSelectedNodes([])
+            props.setResetComponents(false)
+        }
+    }, [props.resetComponents])
 
     useEffect(() => {
 
@@ -179,14 +179,14 @@ const NetworkChart = (props) => {
         if (selectedNodes.length) {
             links = links.filter(l => {
                 return selectedNodes.includes(l.source) || selectedNodes.includes(l.target) ||
-                        selectedNodes.includes(l.source.person) || selectedNodes.includes(l.target.person)
+                    selectedNodes.includes(l.source.person) || selectedNodes.includes(l.target.person)
             })
         }
 
         nodes = nodes.filter(n => {
             let passLinks = false
             links.forEach(l => {
-                if (n.person === l.source || n.person === l.target || 
+                if (n.person === l.source || n.person === l.target ||
                     n.person === l.source.person || n.person === l.target.person)
                     passLinks = true
             })
@@ -197,11 +197,11 @@ const NetworkChart = (props) => {
             return passLinks
         })
 
-        if (nodeClickCheck){
-            props.setNetworkData({ selected: selectedNodes, people: nodes.map(d => d.person)})
+        if (nodeClickCheck) {
+            props.setNetworkData({ selected: selectedNodes, people: nodes.map(d => d.person) })
             setNodeClickCheck(false)
         }
-        
+
         let nodemouseover = function (event, d) {
             tooltipNetwork
                 .style("opacity", "1");
@@ -312,7 +312,58 @@ const NetworkChart = (props) => {
                 element.innerHTML = "";
         }
 
-        
+
+        let infoLegendEnter = function (event, d) {
+
+            tooltipNetwork
+                .style("opacity", 1);
+
+            let id = d3.select(this).node().id
+
+            d3.select(".network-graph").selectAll("line").filter(
+                entry => entry.type !== id
+            ).transition().duration(200).style("stroke-opacity", 0.2)
+
+            d3.select(".network-graph").selectAll("marker").filter(
+                entry => entry.type !== id
+            ).transition().duration(200).style("stroke-opacity", 0.2)
+        }
+
+        let infoLegendMove = function (event, d) {
+
+            let type = d3.select(this).node().id
+
+            tooltipNetwork.html(`<center><b>${t("information")}</b></center>
+                      ${t(`network-${type}-info`)}`)
+                .style("top", event.pageY - 10 + "px")
+                .style("left", event.pageX + 10 + "px")
+
+            let tooltip_rect = tooltipNetwork.node().getBoundingClientRect();
+            if (event.pageX + 10 + tooltip_rect.width > window.outerWidth)
+                tooltipNetwork.style("left", event.pageX + 10 - tooltip_rect.width + "px")
+            if (event.pageY - 10 + tooltip_rect.height > window.outerHeight)
+                tooltipNetwork.style("top", event.pageY - 10 - tooltip_rect.height + "px")
+        }
+
+        let infoLegendLeave = function (event, d) {
+            tooltipNetwork
+                .style("opacity", 0)
+
+            let id = d3.select(this).node().id
+
+            d3.select(".network-graph").selectAll("line").filter(
+                entry => entry.type !== id
+            ).transition().duration(200).style("stroke-opacity", 1)
+
+            d3.select(".network-graph").selectAll("marker").filter(
+                entry => entry.type !== id
+            ).transition().duration(200).style("stroke-opacity", 1)
+
+            let element = document.getElementById('tooltipNetwork')
+            if (element)
+                element.innerHTML = "";
+        }
+
         d3.select(".network-graph").selectAll("svg").remove("")
 
         d3.selectAll("#tooltipNetwork").remove();
@@ -328,33 +379,10 @@ const NetworkChart = (props) => {
             .on("mouseover", infoMouseOverNetwork)
             .on("mouseleave", infoMouseLeaveNetwork)
 
-        function legendover() {
-            let id = d3.select(this).node().id
-
-            d3.select(".network-graph").selectAll("line").filter(
-                entry => entry.type !== id
-            ).transition().duration(200).style("stroke-opacity", 0.2)
-
-            d3.select(".network-graph").selectAll("marker").filter(
-                entry => entry.type !== id
-            ).transition().duration(200).style("stroke-opacity", 0.2)
-        }
-
-        function legendleave() {
-            let id = d3.select(this).node().id
-
-            d3.select(".network-graph").selectAll("line").filter(
-                entry => entry.type !== id
-            ).transition().duration(200).style("stroke-opacity", 1)
-
-            d3.select(".network-graph").selectAll("marker").filter(
-                entry => entry.type !== id
-            ).transition().duration(200).style("stroke-opacity", 1)
-        }
-
         d3.selectAll(".network-legend-items")
-            .on("mouseover", legendover)
-            .on("mouseleave", legendleave)
+            .on("mouseover", infoLegendEnter)
+            .on("mousemove", infoLegendMove)
+            .on("mouseleave", infoLegendLeave)
 
         let box = document.querySelector('.network-graph');
         if (network_boundaries === null)
@@ -584,7 +612,7 @@ const NetworkChart = (props) => {
         setNodeClickCheck(true)
     }
 
-    function clearSelection(){
+    function clearSelection() {
         setSelectedNodes([])
         setNodeClickCheck(true)
     }
@@ -593,14 +621,14 @@ const NetworkChart = (props) => {
         <>
             <div className="network-area shadow">
                 <div className='network-top-section'>
-                {(selectedNodes.length !== 0) &&
-                            <button className="network-btn-clear-selection" onClick={clearSelection} title={t("clear-selection-filter")}>
-                                <img alt="close" src={close}
-                                    style={{ margin: "0 5px", cursor: "pointer", width: "10px", height: "10px" }}
-                                />
-                                <span className="network-btn-clear-selection-text">{t("clear-selection-filter")}</span>
-                            </button>
-                        }
+                    {(selectedNodes.length !== 0) &&
+                        <button className="network-btn-clear-selection" onClick={clearSelection} title={t("clear-selection-filter")}>
+                            <img alt="close" src={close}
+                                style={{ margin: "0 5px", cursor: "pointer", width: "10px", height: "10px" }}
+                            />
+                            <span className="network-btn-clear-selection-text">{t("clear-selection-filter")}</span>
+                        </button>
+                    }
                     <div className='network-title'>
                         <h5 className='network-top-title'>{t("network-label")}</h5>
                         <img alt="info" id="infoNetwork" src={info}
@@ -615,14 +643,14 @@ const NetworkChart = (props) => {
                 <div className='network-bottom-section'>
                     <div className='network-graph'>
                         {data.length === 0 &&
-                            <div className='' style={{width: "100%",height: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
-                                    {t("no-data-to-show")}
+                            <div className='' style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                {t("no-data-to-show")}
                             </div>}
                     </div>
 
                     <div className='shadow network-legend'>
                         <div id="about" className={'network-legend-items' + (typeClick === "about" ? " network-about-selected" : "")}
-                            onClick={() => setTypeClick(typeClick === "" ? ("about") : "")} >
+                            onClick={() => setTypeClick(typeClick === "" ? ("about") : "")}>
                             <hr className='legend-about-whom' />
                             <p style={{ lineHeight: "200%" }}>{t("network-about-whom")}</p>
                         </div>

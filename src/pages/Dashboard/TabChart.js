@@ -118,7 +118,7 @@ const TabContent = (props) => {
 
     useEffect(() => {
 
-        if (props.resetComponents){
+        if (props.resetComponents) {
             setSelectedSex({ sex: "", category: "", categoryIndex: "" })
             props.setPyramidData({ sex: "", category: "", categoryIndex: "" })
             props.setResetComponents(false)
@@ -126,11 +126,11 @@ const TabContent = (props) => {
 
     }, [props.resetComponents])
 
-    function clearSelection(){
+    function clearSelection() {
         setSelectedSex({ sex: "", category: "", categoryIndex: "" })
         props.setPyramidData({ sex: "", category: "", categoryIndex: "" })
     }
-    
+
     useEffect(() => {
         let index = props.categories[props.category].index
         let sexIndex = props.csvIndexes.subject_sex
@@ -185,12 +185,12 @@ const TabContent = (props) => {
         // tooltipPyramid events
         const mouseover = function (event, d, type) {
             tooltipPyramid.style("opacity", 1)
-            d3.select(`.pyramid-${type === "masc" ? "Masc": "Fem"}-${noSpaces(d[0])}`).transition().duration(100).style("stroke-width", 1)
+            d3.select(`.pyramid-${type === "masc" ? "Masc" : "Fem"}-${noSpaces(d[0])}`).transition().duration(100).style("stroke-width", 1)
 
-            
+
         };
 
-        const mousemove = function(event, d, type){
+        const mousemove = function (event, d, type) {
             var previousElement = d3.select(".barMasc");
             var isTotal = false
 
@@ -219,7 +219,7 @@ const TabContent = (props) => {
             let element = document.getElementById('tooltipPyramid')
             if (element) element.innerHTML = "";
 
-            d3.select(`.pyramid-${type === "masc" ? "Masc": "Fem"}-${noSpaces(d[0])}`).transition().duration(100).style("stroke-width", 0)
+            d3.select(`.pyramid-${type === "masc" ? "Masc" : "Fem"}-${noSpaces(d[0])}`).transition().duration(100).style("stroke-width", 0)
         };
 
         let infoMouseLeavePyramid = function (event, d) {
@@ -573,17 +573,17 @@ const TabContent = (props) => {
             .selectAll("text")
             .data(pyramidData)
             .join("text")
-            .attr("class", d=>`pyramid-subcategory-axis ${noSpaces(d[0])}`)
+            .attr("class", d => `pyramid-subcategory-axis ${noSpaces(d[0])}`)
             .text((d) => d[0])
             .style("font-size", 13)
             .style("font-family", "lato")
             .style("cursor", "pointer")
-            .style("font-weight", d=> (selectedSex.category !== d[0]) ? "normal" : "bold")
+            .style("font-weight", d => (selectedSex.category !== d[0]) ? "normal" : "bold")
             .attr("direction", "ltr")
             .attr("x", 5)
             .attr("text-anchor", "start")
             .attr("y", d => yScale(d[0]) + 15)
-            .on("click", (event, d)=> {
+            .on("click", (event, d) => {
                 let c = (selectedSex.category === d[0]) ? "" : d[0]
 
                 setSelectedSex({ sex: "", category: c, categoryIndex: index })
@@ -653,6 +653,26 @@ const TabContent = (props) => {
         $('.pyramid-content').scrollTop($('.pyramid-axes-left').scrollTop());
     }
 
+
+    function infoTotalOccurrenceEnter(event) {
+        tooltipPyramid
+            .style("opacity", 1);
+
+        tooltipPyramid.html(`<center><b>${t("information")}</b></center>
+                      ${totalOccurrences? t("pyramid-separate-info") : t("pyramid-group-info")}`)
+            .style("top", event.pageY - 10 + "px")
+            .style("left", event.pageX + 10 + "px")
+    }
+
+    function infoTotalOccurrenceLeave() {
+        tooltipPyramid
+            .style("opacity", 0)
+
+        let element = document.getElementById('tooltipPyramid')
+        if (element)
+            element.innerHTML = "";
+    }
+
     return (<>
         <div className="tab-content shadow">
             <div className="titles" id="pyramidTitle">
@@ -666,9 +686,11 @@ const TabContent = (props) => {
                 />
             </div>
             <div className="pyramid-filters">
-                <img title={(totalOccurrences) ? t("icon-separate") : t("icon-group")} alt="total" src={(totalOccurrences) ? separate : group}
+                <img alt="total" src={(totalOccurrences) ? separate : group}
                     style={{ marginRight: "5%", float: "right", cursor: "pointer" }} width="20" height="20"
                     onClick={changeTotalOccurrence}
+                    onMouseEnter={infoTotalOccurrenceEnter}
+                    onMouseLeave={infoTotalOccurrenceLeave}
                 />
                 <div id="tabchart-dropdown" className='tabchart-dropdown'>
                     <button className='tabchart-dropbtn' onClick={changeStyle}>

@@ -389,7 +389,7 @@ const ImportantPeopleChart = (props) => {
                                                                 if (selectArray2.includes(text)) {
                                                                     if ((selectArray1.length - 1) === i)
                                                                         return (<span className='individual-term imp-same-content'>{text}</span>)
-                                                                    return (<><span className='individual-term imp-same-content'>{text} |</span><span> | </span></>)
+                                                                    return (<><span className='individual-term imp-same-content'>{text}</span><span> | </span></>)
                                                                 }
 
                                                                 if ((selectArray1.length - 1) === i)
@@ -407,7 +407,7 @@ const ImportantPeopleChart = (props) => {
                                                                 if (selectArray1.includes(text)) {
                                                                     if ((selectArray2.length - 1) === i)
                                                                         return (<span className='individual-term imp-same-content'>{text}</span>)
-                                                                    return (<><span className='individual-term imp-same-content'>{text} |</span><span> | </span></>)
+                                                                    return (<><span className='individual-term imp-same-content'>{text}</span><span> | </span></>)
                                                                 }
 
                                                                 if ((selectArray2.length - 1) === i)

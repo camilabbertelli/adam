@@ -6,6 +6,8 @@
     "information-imp": "Passe o mouse sobre uma célula para obter mais informações. Escolha duas pessoas para comparar suas características. Termos em comum serão destacados para facilitar a comparação.",
     "information-network": "Passe o rato sobre uma conexão ou célula para obter mais informações. <br/><b>Atenção:</b> Afaste para ver todas as conexões.",
     "information-categories": "Selecione duas categorias para comparar no gráfico arrastando-as para a área de comparação.<br/><b>Nota:</b> Você só pode comparar duas categorias por vez.",
+    "information-database": "Selecione as colunas da base de dados para serem visualizadas.",
+    
     "imp-tooltip-person": "Pessoa",
     "imp-tooltip-field": "Campo",
     "imp-tooltip-value": "Valor",
@@ -18,6 +20,12 @@
     "network-tooltip-value": "Quantidade",
     "network-tooltip-type": "Tipo",
     "network-tooltip-citation": "Citação",
+
+    "network-about-info": "Representa quando a pessoa A conversa SOBRE a pessoa B",
+    "network-with-info": "Representa quando a pessoa A conversa COM a pessoa B",
+
+    "pyramid-group-info":"Agrupar as pessoas",
+    "pyramid-separate-info":"Separar as pessoas por sexo",
 
     "no-data-to-show": "Nenhum dado para mostrar",
 

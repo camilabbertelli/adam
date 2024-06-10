@@ -7,10 +7,14 @@ import "react-table-filter/lib/styles.css";
 import 'bootstrap/dist/css/bootstrap.css';
 import downloads from "./../assets/images/downloads.png"
 import close from "./../assets/images/dashboard/reset.png"
+import info from "./../assets/images/info-black.png"
 
 import { useTranslation } from "react-i18next";
 
 import * as d3 from "d3"
+import { Flare } from "@material-ui/icons";
+
+let tooltipDatabase;
 
 class Table extends React.Component {
 
@@ -59,6 +63,7 @@ class Table extends React.Component {
     }
 
     render() {
+        
         const data_table = this.state.data;
 
         if (!data_table?.length) return "";
@@ -214,6 +219,46 @@ const DatabasePage = (props) => {
             entry[" "] = " "
         })
 
+
+        let infoMouseOverDatabase = function (event, d) {
+            
+            tooltipDatabase
+                .style("opacity", 1);
+
+            tooltipDatabase.html(`<center><b>${t("information")}</b></center>
+						  ${t("information-database")}`)
+                .style("top", event.pageY - 10 + "px")
+                .style("left", event.pageX + 10 + "px")
+
+            let tooltip_rect = tooltipDatabase.node().getBoundingClientRect();
+            if (tooltip_rect.x + tooltip_rect.width > window.outerWidth)
+                tooltipDatabase.style("left", event.pageX + 10 - tooltip_rect.width + "px")
+            if (tooltip_rect.y + tooltip_rect.height > window.outerHeight)
+                tooltipDatabase.style("top", event.pageY - 10 - tooltip_rect.height + "px")
+        }
+
+        let infoMouseLeaveDatabase = function (event, d) {
+            tooltipDatabase
+                .style("opacity", 0)
+
+            let element = document.getElementById('tooltipDatabase')
+            if (element)
+                element.innerHTML = "";
+        }
+
+        d3.selectAll("#tooltipDatabase").remove();
+        // create a tooltipDatabase
+        tooltipDatabase = d3.select("body")
+            .append("div")
+            .attr("id", "tooltipDatabase")
+            .attr("class", "tooltip shadow rounded")
+            .attr("padding", "1px")
+            .style("opacity", "0")
+
+        d3.select("#infoNetwork")
+            .on("mouseover", infoMouseOverDatabase)
+            .on("mouseleave", infoMouseLeaveDatabase)
+            
     }, [props.data])
 
     function updateCheckedKeys(newKeys) {
@@ -245,7 +290,13 @@ const DatabasePage = (props) => {
                 <div style={{ position: "absolute", right: "3%", top: "2%" }}>
                     <img style={{ cursor: "pointer" }} alt={"download csv"} src={downloads} onClick={downloadCSV} title={t("database-download-csv")} width={"20px"} height={"20px"} />
                 </div>
+                <div style={{display:"flex", flexDirection: "row", alignItems: "center"}}>
+
                 <h3>{t("database-content")}</h3>
+                <img alt="info" id="infoNetwork" src={info}
+                            style={{ marginLeft: "5px", cursor: "pointer" }} width="15px" height="15px"
+                        />
+                </div>
                 <div>
                     <div className="form-check">
                         <input className="form-check-input select-all" type="checkbox" checked={checkedKeys === keys} onChange={() => (setCheckedKeys(checkedKeys === keys ? [] : keys))}/>
