@@ -205,28 +205,29 @@ const NetworkChart = (props) => {
         let nodemouseover = function (event, d) {
             tooltipNetwork
                 .style("opacity", "1");
+        }
 
+        let nodemousemove = function (event, d){
             let groups = d.groups.join("<br/>")
+
+            
             tooltipNetwork
                 .html(`<b>${t("network-tooltip-person")}: </b>${d.person}<br/>
                        <b>${t("network-tooltip-groups")}: </b>${d.multipleGroups ? "<br/>" : ""} ${groups}<br/>
                        <b>${t("network-tooltip-sex")}: </b>${d.sex}<br/>
                        <b>${t("network-tooltip-qualities")}: </b>${d.qualities.length ? d.qualities.join(" | ") : "-"}`)
-                .style("top", event.pageY - 10 + "px")
-                .style("left", event.pageX + 10 + "px")
 
+            let xposition = event.pageX + 10
+            let yposition = event.pageY - 10
             let tooltip_rect = tooltipNetwork.node().getBoundingClientRect();
+            if (xposition + tooltip_rect.width > window.innerWidth)
+                xposition = xposition - 20 - tooltip_rect.width
+            if (yposition + tooltip_rect.height > window.innerHeight)
+                yposition = yposition + 20 - tooltip_rect.height
 
-            if (tooltip_rect.x + tooltip_rect.width > window.innerWidth) {
-                tooltipNetwork.style("left", event.pageX - 20 - tooltip_rect.width + "px")
-                tooltipNetwork.style("top", event.pageY + 10 + "px")
-            }
-
-            tooltip_rect = tooltipNetwork.node().getBoundingClientRect();
-            if (tooltip_rect.y + tooltip_rect.height > window.innerHeight) {
-                tooltipNetwork.style("left", tooltip_rect.left - 10 - tooltip_rect.width + "px")
-                tooltipNetwork.style("top", event.pageY + 20 - tooltip_rect.height + "px")
-            }
+            tooltipNetwork
+                .style("top", yposition + "px")
+                .style("left", xposition + "px")
         }
 
         let nodemouseleave = function (event, d) {
@@ -242,6 +243,9 @@ const NetworkChart = (props) => {
             tooltipNetwork
                 .style("opacity", "1");
 
+        }
+
+        let linemousemove = function (event, d){
             let aux = links.filter(l => (
                 l.source.person === d.target.person &&
                 l.target.person === d.source.person) ||
@@ -251,30 +255,27 @@ const NetworkChart = (props) => {
                 after += `<br/><b>${t("network-tooltip-source")}: </b>${str.source.person}<br/>
                             <b>${t("network-tooltip-target")}: </b>${str.target.person}<br/>
                             <b>${t("network-tooltip-type")}: </b><i>${str.type === "with" ? t("network-tooltip-with") : t("network-tooltip-about")}</i><br/>
-                            <b>${t("network-tooltip-value")}: </b><i>${str.value}</i><br/>
-                            <b>${t("network-tooltip-citation")}: </b> ${str.citations.join(" | ")}<br/>`)
+                            <b>${t("network-tooltip-citation")}: </b><i>${str.value}</i><br/>`)
 
             tooltipNetwork
                 .html(`<b>${t("network-tooltip-source")}: </b>${d.source.person}<br/>
                        <b>${t("network-tooltip-target")}: </b>${d.target.person}<br/>
                        <b>${t("network-tooltip-type")}: </b><i>${d.type === "with" ? t("network-tooltip-with") : t("network-tooltip-about")}</i><br/>
-                       <b>${t("network-tooltip-value")}: </b><i>${d.value}</i><br/>
-                       <b>${t("network-tooltip-citation")}: </b> ${d.citations.join(" | ")}<br/>${after}`)
-                .style("top", event.pageY - 10 + "px")
-                .style("left", event.pageX + 10 + "px")
+                       <b>${t("network-tooltip-citation")}: </b><i>${d.value}</i><br/>${after}<br/>
+                       
+                       <b>${t("network-tooltip-see-more")}</b>`)
 
+            let xposition = event.pageX + 10
+            let yposition = event.pageY - 10
             let tooltip_rect = tooltipNetwork.node().getBoundingClientRect();
+            if (xposition + tooltip_rect.width > window.innerWidth)
+                xposition = xposition - 20 - tooltip_rect.width
+            if (yposition + tooltip_rect.height > window.innerHeight)
+                yposition = yposition + 20 - tooltip_rect.height
 
-            if (tooltip_rect.x + tooltip_rect.width > window.innerWidth) {
-                tooltipNetwork.style("left", event.pageX - 20 - tooltip_rect.width + "px")
-                tooltipNetwork.style("top", event.pageY + 10 + "px")
-            }
-
-            tooltip_rect = tooltipNetwork.node().getBoundingClientRect();
-            if (tooltip_rect.y + tooltip_rect.height > window.innerHeight) {
-                tooltipNetwork.style("left", tooltip_rect.left - 10 - tooltip_rect.width + "px")
-                tooltipNetwork.style("top", event.pageY + 20 - tooltip_rect.height + "px")
-            }
+            tooltipNetwork
+                .style("top", yposition + "px")
+                .style("left", xposition + "px")
         }
 
         let linemouseleave = function (event, d) {
@@ -284,6 +285,15 @@ const NetworkChart = (props) => {
             let element = document.getElementById('tooltipNetwork')
             if (element)
                 element.innerHTML = "";
+        }
+        
+        function lineClick(event, d){
+            let aux = links.filter(l => (
+                l.source.person === d.target.person &&
+                l.target.person === d.source.person) ||
+                (l.source.person === d.source.person && l.target.person === d.target.person && l.type !== d.type))
+            aux.push(d)
+            props.setNetworkLink(aux)
         }
 
 
@@ -295,12 +305,6 @@ const NetworkChart = (props) => {
 						  ${t("information-network")}`)
                 .style("top", event.pageY - 10 + "px")
                 .style("left", event.pageX + 10 + "px")
-
-            let tooltip_rect = tooltipNetwork.node().getBoundingClientRect();
-            if (tooltip_rect.x + tooltip_rect.width > window.outerWidth)
-                tooltipNetwork.style("left", event.pageX + 10 - tooltip_rect.width + "px")
-            if (tooltip_rect.y + tooltip_rect.height > window.outerHeight)
-                tooltipNetwork.style("top", event.pageY - 10 - tooltip_rect.height + "px")
         }
 
         let infoMouseLeaveNetwork = function (event, d) {
@@ -335,14 +339,18 @@ const NetworkChart = (props) => {
 
             tooltipNetwork.html(`<center><b>${t("information")}</b></center>
                       ${t(`network-${type}-info`)}`)
-                .style("top", event.pageY - 10 + "px")
-                .style("left", event.pageX + 10 + "px")
 
+            let xposition = event.pageX + 10
+            let yposition = event.pageY - 10
             let tooltip_rect = tooltipNetwork.node().getBoundingClientRect();
-            if (event.pageX + 10 + tooltip_rect.width > window.outerWidth)
-                tooltipNetwork.style("left", event.pageX + 10 - tooltip_rect.width + "px")
-            if (event.pageY - 10 + tooltip_rect.height > window.outerHeight)
-                tooltipNetwork.style("top", event.pageY - 10 - tooltip_rect.height + "px")
+            if (xposition + tooltip_rect.width > window.innerWidth)
+                xposition = xposition - 20 - tooltip_rect.width
+            if (yposition + tooltip_rect.height > window.innerHeight)
+                yposition = yposition + 20 - tooltip_rect.height
+
+            tooltipNetwork
+                .style("top", yposition + "px")
+                .style("left", xposition + "px")
         }
 
         let infoLegendLeave = function (event, d) {
@@ -469,6 +477,7 @@ const NetworkChart = (props) => {
             .selectAll("line")
             .data(links)
             .join("line")
+            .attr("class", "network-lines")
             .attr("stroke-linecap", "round")
             .attr("stroke-linejoin", "round")
             .attr("stroke", d => colorLine(d.type))
@@ -477,7 +486,9 @@ const NetworkChart = (props) => {
             .attr("marker-end", d => `url(#arrow-${d.type})`)
             .attr("cursor", "pointer")
             .on("mouseover", linemouseover)
+            .on("mousemove", linemousemove)
             .on("mouseleave", linemouseleave)
+            .on("click", lineClick)
 
         const node = svg.append("g")
             .selectAll("circle")
@@ -491,6 +502,7 @@ const NetworkChart = (props) => {
             .attr("fill", d => d.multipleGroups ? "white" : props.colorCodices(d.groups[0]))
             .attr("r", 15)
             .on("mouseover", nodemouseover)
+            .on("mousemove", nodemousemove)
             .on("mouseleave", nodemouseleave)
             .on("click", nodeclick)
             .call(drag(simulation))
@@ -504,6 +516,7 @@ const NetworkChart = (props) => {
             .attr("text-anchor", "middle")
             .attr("cursor", "pointer")
             .on("mouseover", nodemouseover)
+            .on("mousemove", nodemousemove)
             .on("mouseleave", nodemouseleave)
             .on("click", nodeclick)
             .text(d => d.person)

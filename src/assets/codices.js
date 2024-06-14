@@ -2,8 +2,8 @@ const codices = {
     "XI": [{
         "genre": "Hagiografia",
         "title": "Vida de Santo Aleixo",
-        "pdf-ancient": "essay.pdf",
-        "pdf-modern": "dictionary.pdf",
+        "pdf-ancient": "",
+        "pdf-modern": "",
         "marks": [{ long: -9.142685, lat: 38.736946, city: "Lisbon", country: "Portugal" },
         { long: -6.3, lat: 53.3, city: "Dublin", country: "Irland" },
         { long: -1.9, lat: 52.4, city: "Birmingham", country: "England" }],
@@ -11,13 +11,12 @@ const codices = {
     "XII": [{
         "genre": "Epistolografia",
         "title": "Carta de Bruges",
-        "pdf-ancient": "ByteBeatJan2024.pdf",
         "marks": [{ long: -5.9, lat: 54.6, city: "Belfast", country: "Northern Ireland" },
         { long: 4.9, lat: 52.4, city: "Amsterdam", country: "the Netherlands" }]
     }, {
         "genre": "Novelas de Cavalaria",
         "title": "Livro de José de Arimateia",
-        "pdf-ancient": "invoicesample.pdf",
+        "pdf-ancient": "LivroJoseArimateia.pdf",
         "marks": [{ long: -4.5, lat: 48.8, city: "Brest", country: "France" },
         { long: 2.35, lat: 48.8, city: "Calais", country: "France" }]
     },],

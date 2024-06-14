@@ -123,7 +123,6 @@ const Citations = (props) => {
     });
 
     useEffect(() => {
-
         let aux = props.data.filter(entry => {
             let networkFilter = true
             let pyramidFilter = true
@@ -145,10 +144,12 @@ const Citations = (props) => {
 				detailsFilter = entry[props.heatmapData.searchKey1] === props.heatmapData.key1 && 
 								entry[props.heatmapData.searchKey2] === props.heatmapData.key2
 
+
 			return networkFilter && pyramidFilter && detailsFilter
         })
 
         setData(aux)
+        setBackupData([])
 
         setPagination((prevState) => ({
             ...prevState,
@@ -158,6 +159,58 @@ const Citations = (props) => {
             offset:0
         }))
     }, [props.data, props.pyramidData, props.networkData, props.heatmapData])
+
+    const [backupData, setBackupData] = useState([])
+
+    useEffect(() => {
+        
+        if (props.networkLink){
+
+            let toBeFiltered = backupData.length ? [...backupData] : [...data]
+            let aux = toBeFiltered.filter(entry => {
+                let passNetworkLink = false
+                props.networkLink.forEach(l => {
+                    if (l.source.person === entry[props.csvIndexes.subject_name])
+                        if (l.target.person === entry[l.type === "with" ? props.csvIndexes.with_name : props.csvIndexes.about_name])
+                            passNetworkLink = true
+                }); 
+
+                return passNetworkLink
+            })
+
+            setBackupData(toBeFiltered)
+            setData(aux)
+            setPagination((prevState) => ({
+                ...prevState,
+                data: aux,
+                pageCount: Math.ceil(aux.length / prevState.numberPerPage),
+                currentData: aux.slice(0, pagination.numberPerPage),
+                offset:0
+            }))
+            
+            props.setIsOpen(true)
+            props.setNetworkLink(null)
+        }
+
+        function clickCitation(e) {
+            if ("network-lines" === e.target.className.baseVal){
+                window.removeEventListener("click", clickCitation)
+            }else if (d3.select(".citations-btn").node() && d3.select(".citations-btn").node().contains(e.target)){
+                setData([...backupData])
+                setBackupData([])
+                window.removeEventListener("click", clickCitation)
+            } else if (d3.select(".citations-drawer").node() && !d3.select(".citations-drawer").node().contains(e.target)){
+                props.setIsOpen(!props.isOpen)
+                setData([...backupData])
+                setBackupData([])
+                window.removeEventListener("click", clickCitation)
+            }
+        }
+
+        if (props.isOpen){
+            window.addEventListener("click", clickCitation)
+        }
+    }, [props.networkLink])
 
     useEffect(() => {
         setPagination((prevState) => ({

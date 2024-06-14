@@ -5,8 +5,11 @@
     "information-heatmap": "Passe o mouse sobre uma célula para obter mais informações. <br/>Clique na mesma para mudar para a visualização detalhada.",
     "information-imp": "Passe o mouse sobre uma célula para obter mais informações. Escolha duas pessoas para comparar suas características. Termos em comum serão destacados para facilitar a comparação.",
     "information-network": "Passe o rato sobre uma conexão ou célula para obter mais informações. <br/><b>Atenção:</b> Afaste para ver todas as conexões.",
-    "information-categories": "Selecione duas categorias para comparar no gráfico arrastando-as para a área de comparação.<br/><b>Nota:</b> Você só pode comparar duas categorias por vez.",
     "information-database": "Selecione as colunas da base de dados para serem visualizadas.",
+    
+
+    "filter-tooltip-categories": "Selecione duas categorias para comparar no gráfico arrastando-as para a área de comparação.<br/><b>Nota:</b> Só é possível comparar duas categorias por vez.",
+    
     
     "imp-tooltip-person": "Pessoa",
     "imp-tooltip-field": "Campo",
@@ -19,7 +22,8 @@
     "network-tooltip-target": "Destino",
     "network-tooltip-value": "Quantidade",
     "network-tooltip-type": "Tipo",
-    "network-tooltip-citation": "Citação",
+    "network-tooltip-citation": "Citações",
+    "network-tooltip-see-more": "Clique neste link para ver as citações correspondentes.",
 
     "network-about-info": "Representa quando a pessoa A conversa SOBRE a pessoa B",
     "network-with-info": "Representa quando a pessoa A conversa COM a pessoa B",

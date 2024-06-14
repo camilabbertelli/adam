@@ -101,7 +101,7 @@ const LibraryPage = () => {
     let allGenres = []
     for (const [key, value] of Object.entries(codicesOriginal)) {
         value.forEach(codex => {
-            if (codex["pdf-ancient"] != null || codex["pdf-modern"] != null) {
+            if (codex["pdf-ancient"] || codex["pdf-modern"]) {
                 codex["century"] = key;
                 allCodicesAux[noSpaces(codex.title)] = codex;
                 allGenres.push(codex.genre);

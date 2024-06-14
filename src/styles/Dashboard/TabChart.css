@@ -22,7 +22,6 @@
 
 /* Style the tab */
 .tab-chart-area-tabs {
-	display: inline-block;
 	background-color: transparent;
 	height: 10%;
 }
@@ -35,7 +34,7 @@
 	cursor: pointer;
 	padding: 4px 10px;
 	transition: 0.3s;
-	font-size: 16px;
+	font-size: 85%;
 	color: #919191;
 
 	&:hover {

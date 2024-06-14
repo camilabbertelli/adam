@@ -55,6 +55,24 @@ const DashboardPage = (props) => {
         }
     }
 
+    let agent = {
+        "agent-all": {
+            name: t("agent-all"),
+            csv_name: "",
+            index: csvIndexes.intention
+        },
+        "agent-active": {
+            name: t("agent-active"),
+            csv_name: "Ativo",
+            index: csvIndexes.intention
+        },
+        "agent-passive": {
+            name: t("agent-passive"),
+            csv_name: "Passivo",
+            index: csvIndexes.intention
+        }
+    }
+
     let origin = {
         "origin-all": {
             name: t("intention-all"),
@@ -157,6 +175,7 @@ const DashboardPage = (props) => {
     const [pyramidData, setPyramidData] = useState({ sex: "", category: "", categoryIndex: "" })
     const [heatmapData, setHeatmapData] = useState([])
 
+    const [networkLink, setNetworkLink] = useState(null)
 
     const [codices, setCodices] = useState({})
     const [genres, setGenres] = useState([])
@@ -250,8 +269,7 @@ const DashboardPage = (props) => {
             d => d.object,
             d => d.origin,
             d => d.explanation,
-            d => d.PP,
-            d => d.observation)
+            d => d.PP)
 
 
         setOriginalGlobalData([...data])
@@ -316,21 +334,12 @@ const DashboardPage = (props) => {
 
         colorCodices = d3.scaleOrdinal(Object.keys(allCodices), ["#C0A0CB", "#A3BA9F", "#C5C5B3", "#B89283", "#FEE0B2", "#A9BFC8"]);
 
-        // if (Object.keys(props.dashboard).length > 1){
-        //     setActiveCategories(props.dashboard.activeCategories)
-        //     setCurrentTabchartCategory(props.dashboard.currentTabchartCategory)
-        //     setActiveCodices(props.dashboard.activeCodices)
-        //     setActiveFilters(props.dashboard.activeFilters)
-        //     setAdvancedCategoryFilters(props.dashboard.advancedCategoryFilters)
-        //     setNetworkData(props.dashboard.networkData)
-        //     setPyramidData(props.dashboard.pyramidData)
-        //     setHeatmapData(props.dashboard.heatmapData)
-        // }else{
         setActiveCategories([Object.keys(categoriesAux)[0], Object.keys(categoriesAux)[1]])
         setCurrentTabchartCategory(Object.keys(categoriesAux)[0])
         setActiveCodices([...sortedkeys])
         setActiveFilters({
             intention: Object.keys(intention)[0],
+            agent: Object.keys(agent)[0],
             origin: Object.keys(origin)[0],
             explanation: Object.keys(explanation)[0],
 
@@ -344,6 +353,7 @@ const DashboardPage = (props) => {
         props.updateDashboard("activeCodices", [...sortedkeys])
         props.updateDashboard("activeFilters", {
             intention: Object.keys(intention)[0],
+            agent: Object.keys(agent)[0],
             origin: Object.keys(origin)[0],
             explanation: Object.keys(explanation)[0],
 
@@ -456,12 +466,13 @@ const DashboardPage = (props) => {
 
         setFilters(
             [Object.keys(intention)[0],
+            Object.keys(agent)[0],
             Object.keys(origin)[0],
             Object.keys(explanation)[0],
             Object.keys(nature)[0],
             Object.keys(dimension)[0]
             ],
-            ["intention", "origin", "explanation", "nature", "dimension"],
+            ["intention", "agent", "origin", "explanation", "nature", "dimension"],
             Object.keys(codices).sort(),
             advancedFilterAux)
 
@@ -536,6 +547,7 @@ const DashboardPage = (props) => {
                 <FilterView
                     categories={categories} activeCategories={activeCategories}
                     intention={intention}
+                    agent={agent}
                     origin={origin}
                     explanation={explanation}
                     nature={nature}
@@ -611,7 +623,7 @@ const DashboardPage = (props) => {
                         <div className={"dashboard-viz4" + ((activeCategory !== null) ? " drag-active" : "")}>
                             <NetworkChart
                                 data={globalData} resetComponents={resetComponents} setResetComponents={setResetComponents}
-                                setNetworkData={updateNetworkData} pyramidData={pyramidData} heatmapData={heatmapData}
+                                setNetworkData={updateNetworkData} pyramidData={pyramidData} heatmapData={heatmapData} setNetworkLink={setNetworkLink}
                                 colorCodices={colorCodices}
                                 csvIndexes={csvIndexes}
                                 isExpanded={isNetworkExpanded}
@@ -621,24 +633,26 @@ const DashboardPage = (props) => {
                     </div>
                     <div className='dashboard-row3'>
 
-                        <button className="citations-btn" type='button' onClick={() => setIsOpen(!isOpen)}>
+                        <button className="citations-btn" type='button' onClick={() => {setIsOpen(!isOpen); setNetworkLink(null)}}>
                             <img alt="up-arrow" width="20px" height="20px" style={{ transform: "rotate(180deg)" }} src={doubleArrow} />
                             {t("citations-label")}
                         </button>
 
-                        <Drawer backdrop={false} open={isOpen} onClose={handleClose}
+                        <Drawer backdrop={false} open={isOpen} onClose={handleClose} 
                             className='citations-drawer shadow' position='bottom'>
-                            <button className="citations-btn" type='button' onClick={() => setIsOpen(false)}>
+                            <button className="citations-btn" type='button' onClick={() => {setIsOpen(false); setNetworkLink(null)}}>
                                 <img alt="up-arrow" width="20px" height="20px" src={doubleArrow} />
                                 {t("citations-label")}
                             </button>
                             <Citations
                                 data={globalData}
-                                networkData={networkData} pyramidData={pyramidData} heatmapData={heatmapData}
+                                networkData={networkData} pyramidData={pyramidData} heatmapData={heatmapData} networkLink={networkLink} setNetworkLink={setNetworkLink}
                                 categories={categories}
                                 activeCategories={activeCategories}
                                 currentTabchartCategory={currentTabchartCategory}
-                                csvIndexes={csvIndexes} />
+                                csvIndexes={csvIndexes}
+                                isOpen={isOpen} setIsOpen={setIsOpen}
+                                />
                         </Drawer>
                     </div>
                 </div>

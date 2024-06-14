@@ -36,13 +36,35 @@ const App = () => {
 	useEffect(() => {
 
 		const onResize = () => {
-            setShowMobileWarning(window.innerWidth < 1300 || window.innerHeight > window.innerWidth);
+            setShowMobileWarning(window.innerWidth < 1300 || window.innerHeight < 650 ||window.innerHeight > window.innerWidth);
         }
 
         window.addEventListener("resize", onResize);
 
+
 		d3.csv(csv_data).then(d => {
-            setData(d)
+
+			let aux = []
+			d.forEach(entry => {
+				let fullEntry = true
+				Object.keys(entry).forEach(key => {
+					if (key !== "observation"){
+						let value = entry[key]
+
+						var regex = /^[,?!'"]+|[,?!'"]+$/g;
+						value = value.replace(regex, '');
+						
+						if (value)
+							entry[key] = value[0].toUpperCase() + value.slice(1);
+						else 
+							fullEntry = false
+					}
+				})
+
+				if (fullEntry)
+					aux.push(entry)
+			})
+            setData(aux)
 
         }).catch((error) => {
             console.error('Error fetching data:', error);

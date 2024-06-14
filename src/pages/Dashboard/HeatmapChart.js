@@ -270,7 +270,6 @@ const HeatmapChart = (props) => {
 
 			let dim = 20
 
-			// FIXME: mouse over ends when passing over
 			svg.append("image")
 				.attr("href", expand)
 				.attr("width", dim)
@@ -687,7 +686,7 @@ const HeatmapChart = (props) => {
 							</div>
 							{props.activeCategories.length === 2 && <>
 								<div id="heatmap-chart">
-									<div style={{ display: 'flex', flexDirection: "row", alignItems: "center" }}>
+									<div style={{ display: 'flex', flexDirection: "row", alignItems: "center", height: "10%" }}>
 
 										<div id="heatmap-dropdown1" className='tabchart-dropdown'>
 											<button className='tabchart-dropbtn' onClick={changeStyle1}>

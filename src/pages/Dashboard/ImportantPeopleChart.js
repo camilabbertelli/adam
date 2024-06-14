@@ -233,20 +233,18 @@ const ImportantPeopleChart = (props) => {
                          <b>${t("imp-tooltip-field")}: </b>${key} <br/><br/>
                          <b>${t("imp-tooltip-value")}: </b>${spanText} <br/>
                          <b>${t("heatmap-occurrence")}: </b>${parentData[spanText]} <br/>`)
-                .style("top", event.pageY - 10 + "px")
-                .style("left", event.pageX + 10 + "px")
-
+                         
+            let xposition = event.pageX + 10
+            let yposition = event.pageY - 10
             let tooltip_rect = tooltipImp.node().getBoundingClientRect();
-            if (tooltip_rect.x + tooltip_rect.width > window.innerWidth) {
-                tooltipImp.style("left", event.pageX - 20 - tooltip_rect.width + "px")
-                tooltipImp.style("top", event.pageY + 10 + "px")
-            }
+            if (xposition + tooltip_rect.width > window.innerWidth)
+                xposition = xposition - 20 - tooltip_rect.width
+            if (yposition + tooltip_rect.height > window.innerHeight)
+                yposition = yposition + 20 - tooltip_rect.height
 
-            tooltip_rect = tooltipImp.node().getBoundingClientRect();
-            if (tooltip_rect.y + tooltip_rect.height > window.innerHeight) {
-                tooltipImp.style("left", tooltip_rect.left - 10 - tooltip_rect.width + "px")
-                tooltipImp.style("top", event.pageY + 20 - tooltip_rect.height + "px")
-            }
+            tooltipImp
+                .style("top", yposition + "px")
+                .style("left", xposition + "px")
         }
 
         let mouseleave = function (event, d) {

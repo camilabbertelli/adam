@@ -40,16 +40,16 @@ const NavBar = () => {
 
     return (
         <nav className="sticky-top">
-            <h1 className="title">A.D.A.M</h1>
-            <center>
+            <div style={{height: "60%"}}>
+                <h1 className="title">A.D.A.M</h1>
                 <img alt="ornament" className="ornament" src={ornament} />
-                <ul className="flex-container">
-                    <li><NavLink to="/" className={(navData) => (navData.isActive ? "navbar-selected" : null)}>{t("navbar_home")}</NavLink></li>
-                    <li><NavLink to="/dashboard" className={(navData) => (navData.isActive ? "navbar-selected" : null)}>{t("navbar_dashboard")}</NavLink></li>
-                    <li><NavLink to="/database" className={(navData) => (navData.isActive ? "navbar-selected" : null)}>{t("navbar_database")}</NavLink></li>
-                    <li><NavLink to="/library" className={(navData) => (navData.isActive ? "navbar-selected" : null)}>{t("navbar_library")}</NavLink></li>
-                </ul>
-            </center>
+            </div>
+            <ul>
+                <li><NavLink to="/" className={(navData) => (navData.isActive ? "navbar-selected" : null)}>{t("navbar_home")}</NavLink></li>
+                <li><NavLink to="/dashboard" className={(navData) => (navData.isActive ? "navbar-selected" : null)}>{t("navbar_dashboard")}</NavLink></li>
+                <li><NavLink to="/database" className={(navData) => (navData.isActive ? "navbar-selected" : null)}>{t("navbar_database")}</NavLink></li>
+                <li><NavLink to="/library" className={(navData) => (navData.isActive ? "navbar-selected" : null)}>{t("navbar_library")}</NavLink></li>
+            </ul>
             <div className="languages">
                 <div id='navbar-dropdown'>
                     <button className='navbar-dropbtn'><img title={t("icon-language")} className="icon-language" src={languages} alt="language selection" onClick={changeStyle} /></button>
