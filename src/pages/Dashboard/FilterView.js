@@ -354,7 +354,7 @@ const FilterView = (props) => {
                         {Object.keys(props.agent).map((agent) => {
                             return (
                                 <button key={agent} type="button" className={"dashboard-filter-options" + ((props.activeFilters.agent === agent) ? " active" : "")} onClick={() => props.setActiveFilters([agent], ["agent"])}>
-                                    {props.agent[agent].name}
+                                    {t(agent)}
                                 </button>
                             )
                         })}
@@ -372,7 +372,7 @@ const FilterView = (props) => {
                         {Object.keys(props.intention).map((intention) => {
                             return (
                                 <button key={intention} type="button" className={"dashboard-filter-options" + ((props.activeFilters.intention === intention) ? " active" : "")} onClick={() => props.setActiveFilters([intention], ["intention"])}>
-                                    {props.intention[intention].name}
+                                    {t(intention)}
                                 </button>
                             )
                         })}
@@ -382,16 +382,16 @@ const FilterView = (props) => {
                 <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "2px 0" }}>
                     
                     <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", }}>
-                    {t("origin-label")}
-                        <img alt="info" id="infoFilter" className="origin" src={info}
+                    {t("value-label")}
+                        <img alt="info" id="infoFilter" className="value" src={info}
                             style={{ marginLeft: "5px", cursor: "pointer", width: "15px", height: "15px" }}
                         />
                     </div>
                     <div className="inline-flex" role="group">
-                        {Object.keys(props.origin).map((origin) => {
+                        {Object.keys(props.value).map((value) => {
                             return (
-                                <button key={origin} type="button" className={"dashboard-filter-options" + ((props.activeFilters.origin === origin) ? " active" : "")} onClick={() => props.setActiveFilters([origin], ["origin"])}>
-                                    {props.origin[origin].name}
+                                <button key={value} type="button" className={"dashboard-filter-options" + ((props.activeFilters.value === value) ? " active" : "")} onClick={() => props.setActiveFilters([value], ["value"])}>
+                                    {t(value)}
                                 </button>
                             )
                         })}
@@ -401,16 +401,16 @@ const FilterView = (props) => {
                 <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "2px 0" }}>
                     
                     <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", }}>
-                    {t("explanation-label")}
-                        <img alt="info" id="infoFilter" className="explanation" src={info}
+                    {t("supernatural_type-label")}
+                        <img alt="info" id="infoFilter" className="supernatural_type" src={info}
                             style={{ marginLeft: "5px", cursor: "pointer", width: "15px", height: "15px" }}
                         />
                     </div>
                     <div className="inline-flex" role="group">
-                        {Object.keys(props.explanation).map((explanation) => {
+                        {Object.keys(props.supernatural_type).map((supernatural_type) => {
                             return (
-                                <button key={explanation} type="button" className={"dashboard-filter-options" + ((props.activeFilters.explanation === explanation) ? " active" : "")} onClick={() => props.setActiveFilters([explanation], ["explanation"])}>
-                                    {props.explanation[explanation].name}
+                                <button key={supernatural_type} type="button" className={"dashboard-filter-options" + ((props.activeFilters.supernatural_type === supernatural_type) ? " active" : "")} onClick={() => props.setActiveFilters([supernatural_type], ["supernatural_type"])}>
+                                    {t(supernatural_type)}
                                 </button>
                             )
                         })}
@@ -429,7 +429,7 @@ const FilterView = (props) => {
                         {Object.keys(props.nature).map((nature) => {
                             return (
                                 <button key={nature} type="button" className={"dashboard-filter-options" + ((props.activeFilters.nature === nature) ? " active" : "")} onClick={() => props.setActiveFilters([nature], ["nature"])}>
-                                    {props.nature[nature].name}
+                                    {t(nature)}
                                 </button>
                             )
                         })}
@@ -448,7 +448,7 @@ const FilterView = (props) => {
                         {Object.keys(props.dimension).map((dimension) => {
                             return (
                                 <button key={dimension} type="button" className={"dashboard-filter-options" + ((props.activeFilters.dimension === dimension) ? " active" : "")} onClick={() => props.setActiveFilters([dimension], ["dimension"])}>
-                                    {props.dimension[dimension].name}
+                                    {t(dimension)}
                                 </button>
                             )
                         })}

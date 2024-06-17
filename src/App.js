@@ -15,7 +15,7 @@ import ErrorBoundary from './pages/ErrorBoundary';
 import React, { useEffect, useState } from 'react';
 import MobileWarning from './pages/MobileWarning';
 
-import csv_data from "./assets/data.csv"
+import csv_data from "./assets/data2.csv"
 
 import * as d3 from "d3"
 
@@ -25,6 +25,8 @@ const App = () => {
 
 	// Global
 	const [data, setData] = useState([])
+	const [csvNames, setCsvNames] = useState({})
+	const [csvIndexes, setCsvIndexes] = useState({})
 
 	// Dashboard
 	const [dashboard, setDashboard] = useState({})
@@ -44,27 +46,52 @@ const App = () => {
 
 		d3.csv(csv_data).then(d => {
 
-			let aux = []
-			d.forEach(entry => {
-				let fullEntry = true
-				Object.keys(entry).forEach(key => {
-					if (key !== "observation"){
-						let value = entry[key]
+			let indexes = {}
+			let names = {}
+			if (d.length) {
+				// needs to have the same key names and order
+				names.index = "#"
+				names.material_type = "Tipo"
+				names.genre = "Género literário"
+				names.title = "Título"
+				names.description = "Passo do texto"
+				names.subject_name = "Nome"
+				names.agent = "Posição"
+				names.subject_number = "Número"
+				names.subject_sex = "Sexo"
+				names.nature = "Natureza"
+				names.dimension = "Dimensão"
+				names.anatomical_part = "Anatomia"
+				names.organs = "Órgãos"
+				names.subject_qualities = "Qualificativo"
+				names.action = "Ação"
+				names.causes_group = "Grupo de causas"
+				names.causes = "Causa"
+				names.time = "Quando"
+				names.place = "Onde"
+				names.latitude = "Latitude"
+				names.longitude = "Longitude"
+				names.how = "Como"
+				names.intention = "Intenção"
+				names.with_name = "Nome_1"
+				names.with_sex = "Sexo_1"
+				names.with_qualities = "Qualificativo_1"
+				names.about_name = "Nome_2"
+				names.about_sex = "Sexo_2"
+				names.about_qualities = "Qualificativo_2"
+				names.object = "Objeto"
+				names.value = "Valor"
+				names.supernatural_type = "Tipo de sobrenatural"
+				names.pp = "PP."
 
-						var regex = /^[,?!'"]+|[,?!'"]+$/g;
-						value = value.replace(regex, '');
-						
-						if (value)
-							entry[key] = value[0].toUpperCase() + value.slice(1);
-						else 
-							fullEntry = false
-					}
+				Object.keys(names).forEach((key, index) => {
+					indexes[key] = index
 				})
+			}
 
-				if (fullEntry)
-					aux.push(entry)
-			})
-            setData(aux)
+			setCsvNames(names)
+			setCsvIndexes(indexes)
+			setData(d)
 
         }).catch((error) => {
             console.error('Error fetching data:', error);
@@ -96,8 +123,9 @@ const App = () => {
 								<Route path="/" element={<HomePage />} />
 								<Route path="/dashboard" element={<DashboardPage data={data}
 																				 dashboard={dashboard} updateDashboard={updateDashboard}
+																				 csvNames={csvNames} csvIndexes={csvIndexes}
 																				 />} />
-								<Route path="/database" element={<DatabasePage data={data} 
+								<Route path="/database" element={<DatabasePage csvNames={csvNames} data={data} 
 																			   databaseFilterConfiguration={databaseFilterConfiguration} 
 																			   setDatabaseFilterConfiguration={setDatabaseFilterConfiguration}
 																			   databaseCheckedKeys={databaseCheckedKeys}

@@ -12,7 +12,6 @@ import info from "./../assets/images/info-black.png"
 import { useTranslation } from "react-i18next";
 
 import * as d3 from "d3"
-import { Flare } from "@material-ui/icons";
 
 let tooltipDatabase;
 
@@ -71,6 +70,7 @@ class Table extends React.Component {
         let keys = Object.keys(data_table[0])
 
         let checkedKeys = this.props.checkedKeys;
+        let names = this.props.csvNames; 
 
         let loader = document.getElementById("loader");
         loader.classList.add('loader--hide');
@@ -96,7 +96,7 @@ class Table extends React.Component {
                                         filterkey={key}
                                         casesensitive={"true"}
                                         showsearch={"true"}
-                                        className={(key !== "#") ? `cell + ${key}` : `cardinal`}
+                                        className={(key !== names["index"]) ? `cell + ${key}` : `cardinal`}
                                     >
                                         {key}
                                     </th>
@@ -111,7 +111,7 @@ class Table extends React.Component {
                             <tr key={"row_" + index}>
                                 {keys.map(function (key) {
                                     if (!checkedKeys || checkedKeys.includes(key) || key === " ")
-                                        return (<td key={key} className={(key !== "#") ? `cell + ${key}` : `cardinal`}>{item[key]}</td>)
+                                        return (<td key={key} className={(key !== names.index) ? `cell + ${key}` : `cardinal`}>{item[key]}</td>)
                                 })}
                             </tr>
                         );
@@ -304,11 +304,11 @@ const DatabasePage = (props) => {
                             {t("database-select-all")}
                         </label>
                     </div>
-                    <ExcelFilter updateCheckedKeys={updateCheckedKeys} keys={keys} checkedKeys={checkedKeys} />
+                    <ExcelFilter updateCheckedKeys={updateCheckedKeys} keys={keys} checkedKeys={checkedKeys} csvNames={props.csvNames}/>
                 </div>
             </div>
             <div className="database-table-view">
-                <Table t={t} checkedKeys={checkedKeys} data={data} setData={setData} filterConfiguration={props.databaseFilterConfiguration} setFilterConfiguration={props.setDatabaseFilterConfiguration} />
+                <Table t={t} checkedKeys={checkedKeys} csvNames={props.csvNames} data={data} setData={setData} filterConfiguration={props.databaseFilterConfiguration} setFilterConfiguration={props.setDatabaseFilterConfiguration} />
                 <div id="loader" className="loader"></div>
             </div>
         </div>)

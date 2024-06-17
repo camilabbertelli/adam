@@ -558,10 +558,10 @@ const NetworkChart = (props) => {
 
                 nodes.forEach(d => {
                     if (d.x && d.y) {
-                        minZoomX = d.x < minZoomX ? d.x : minZoomX
-                        maxZoomX = d.x > maxZoomX ? d.x : maxZoomX
-                        minZoomY = d.y < minZoomY ? d.y : minZoomY
-                        maxZoomY = d.y > maxZoomY ? d.y : maxZoomY
+                        minZoomX = d.x < minZoomX ? d.x - 50 : minZoomX
+                        maxZoomX = d.x > maxZoomX ? d.x + 50 : maxZoomX
+                        minZoomY = d.y < minZoomY ? d.y - 50 : minZoomY
+                        maxZoomY = d.y > maxZoomY ? d.y + 50 : maxZoomY
                     }
                 })
 

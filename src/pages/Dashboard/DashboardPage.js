@@ -33,130 +33,108 @@ let colorCodices = () => { }
 const DashboardPage = (props) => {
 
     const { t } = useTranslation();
-    const [csvIndexes, setCsvIndexes] = useState({})
 
     const [categories, setCategories] = useState({})
 
     let intention = {
         "intention-all": {
-            name: t("intention-all"),
             csv_name: "",
-            index: csvIndexes.intention
+            index: props.csvIndexes.intention
         },
         "intention-sacred": {
-            name: t("intention-sacred"),
             csv_name: "Sagrado",
-            index: csvIndexes.intention
+            index: props.csvIndexes.intention
         },
         "intention-profane": {
-            name: t("intention-profane"),
             csv_name: "Profano",
-            index: csvIndexes.intention
+            index: props.csvIndexes.intention
         }
     }
 
     let agent = {
         "agent-all": {
-            name: t("agent-all"),
             csv_name: "",
-            index: csvIndexes.intention
+            index: props.csvIndexes.agent
         },
         "agent-active": {
-            name: t("agent-active"),
             csv_name: "Ativo",
-            index: csvIndexes.intention
+            index: props.csvIndexes.agent
         },
         "agent-passive": {
-            name: t("agent-passive"),
             csv_name: "Passivo",
-            index: csvIndexes.intention
+            index: props.csvIndexes.agent
         }
     }
 
-    let origin = {
-        "origin-all": {
-            name: t("intention-all"),
+    let value = {
+        "value-all": {
             csv_name: "",
-            index: csvIndexes.origin
+            index: props.csvIndexes.value
         },
-        "origin-literal": {
-            name: t("origin-literal"),
+        "value-literal": {
             csv_name: "Literal",
-            index: csvIndexes.origin
+            index: props.csvIndexes.value
         },
-        "origin-symbolic": {
-            name: t("origin-symbolic"),
+        "value-symbolic": {
             csv_name: "Simbólico",
-            index: csvIndexes.origin
+            index: props.csvIndexes.value
         }
     }
 
-    let explanation = {
-        "explanation-all": {
-            name: t("explanation-all"),
+    let supernatural_type = {
+        "supernatural_type-all": {
             csv_name: "",
-            index: csvIndexes.explanation
+            index: props.csvIndexes.supernatural_type
         },
-        "explanation-miraculous": {
-            name: t("explanation-miraculous"),
+        "supernatural_type-miraculous": {
             csv_name: "Miraculoso",
-            index: csvIndexes.explanation
+            index: props.csvIndexes.supernatural_type
         },
-        "explanation-wonderful": {
-            name: t("explanation-wonderful"),
+        "supernatural_type-wonderful": {
             csv_name: "Maravilhoso",
-            index: csvIndexes.explanation
+            index: props.csvIndexes.supernatural_type
         },
-        "explanation-none": {
-            name: t("explanation-none"),
+        "supernatural_type-none": {
             csv_name: "Não aplicável",
-            index: csvIndexes.explanation
+            index: props.csvIndexes.supernatural_type
         }
     }
 
     let nature = {
         "nature-all": {
-            name: t("nature-all"),
             csv_name: "",
-            index: csvIndexes.nature
+            index: props.csvIndexes.nature
         },
         "nature-animal": {
-            name: t("nature-animal"),
             csv_name: "Animal",
-            index: csvIndexes.nature
+            index: props.csvIndexes.nature
         },
         "nature-human": {
-            name: t("nature-human"),
             csv_name: "Humana",
-            index: csvIndexes.nature
+            index: props.csvIndexes.nature
         },
         "nature-supernatural": {
-            name: t("nature-supernatural"),
             csv_name: "Sobrenatural",
-            index: csvIndexes.nature
+            index: props.csvIndexes.nature
         },
     }
 
     let dimension = {
         "dimension-all": {
-            name: t("dimension-all"),
             csv_name: "",
-            index: csvIndexes.dimension
+            index: props.csvIndexes.dimension
         },
         "dimension-body": {
-            name: t("dimension-body"),
             csv_name: "Corpo",
-            index: csvIndexes.dimension
+            index: props.csvIndexes.dimension
         },
         "dimension-soul": {
-            name: t("dimension-soul"),
             csv_name: "Alma",
-            index: csvIndexes.dimension
+            index: props.csvIndexes.dimension
         },
-        "dimension-transcendental": {
-            name: t("dimension-transcendental"),
+        "dimension-transcendental": { 
             csv_name: "Transcendental",
-            index: csvIndexes.dimension
+            index: props.csvIndexes.dimension
         },
     }
 
@@ -192,7 +170,6 @@ const DashboardPage = (props) => {
             setTimeout(() => {
                 d3.selectAll(".category").transition().duration(500)
                     .style("background-color", "#d3c5b8")
-
 
             }, 1000);
         }
@@ -240,65 +217,59 @@ const DashboardPage = (props) => {
     }
 
     useEffect(() => {
-        let data = d3.flatRollup(props.data, v => v.length,
-            d => d["#"],
-            d => d.font_type,
-            d => d.genre,
-            d => d.title,
-            d => d.description,
-            d => d.subject_name,
-            d => d.subject_number,
-            d => d.subject_sex,
-            d => d.subject_qualities,
-            d => d.action,
-            d => d.nature,
-            d => d.dimension,
-            d => d.anatomical_part,
-            d => d.organs,
-            d => d.intention,
-            d => d.time,
-            d => d.place,
-            d => d.how,
-            d => d.with_name,
-            d => d.with_sex,
-            d => d.with_qualities,
-            d => d.about_name,
-            d => d.about_sex,
-            d => d.about_qualities,
-            d => d.action_motive,
-            d => d.object,
-            d => d.origin,
-            d => d.explanation,
-            d => d.PP)
 
+        let data = d3.flatRollup(props.data, v => v.length,
+            d => d[props.csvNames.index],
+            d => d[props.csvNames.material_type],
+            d => d[props.csvNames.genre],
+            d => d[props.csvNames.title],
+            d => d[props.csvNames.description],
+            d => d[props.csvNames.subject_name],
+            d => d[props.csvNames.agent],
+            d => d[props.csvNames.subject_number],
+            d => d[props.csvNames.subject_sex],
+            d => d[props.csvNames.nature],
+            d => d[props.csvNames.dimension],
+            d => d[props.csvNames.anatomical_part],
+            d => d[props.csvNames.organs],
+            d => d[props.csvNames.subject_qualities],
+            d => d[props.csvNames.action],
+            d => d[props.csvNames.causes_group],
+            d => d[props.csvNames.causes],
+            d => d[props.csvNames.latitude],
+            d => d[props.csvNames.longitude],
+            d => d[props.csvNames.time],
+            d => d[props.csvNames.place],
+            d => d[props.csvNames.how],
+            d => d[props.csvNames.intention],
+            d => d[props.csvNames.with_name],
+            d => d[props.csvNames.with_sex],
+            d => d[props.csvNames.with_qualities],
+            d => d[props.csvNames.about_name],
+            d => d[props.csvNames.about_sex],
+            d => d[props.csvNames.about_qualities],
+            d => d[props.csvNames.object],
+            d => d[props.csvNames.value],
+            d => d[props.csvNames.supernatural_type],
+            d => d[props.csvNames.pp])
 
         setOriginalGlobalData([...data])
         setGlobalData([...data])
 
-        let indexes = {}
-        if (props.data.length) {
-
-            Object.keys(props.data[0]).forEach((key, index) => {
-                indexes[key] = index
-            })
-        }
-
-        setCsvIndexes(indexes)
-
         let categoriesAux = {
             "category-action": {
-                index: indexes.action,
-                indexSubcategory: indexes.action,
+                index: props.csvIndexes.action,
+                indexSubcategory: props.csvIndexes.action,
                 list: []
             },
             "category-action-motives": {
-                index: indexes.action_motive,
-                indexSubcategory: indexes.action_motive,
+                index: props.csvIndexes.causes_group,
+                indexSubcategory: props.csvIndexes.causes,
                 list: []
             },
             "category-body": {
-                index: indexes.anatomical_part,
-                indexSubcategory: indexes.organs,
+                index: props.csvIndexes.anatomical_part,
+                indexSubcategory: props.csvIndexes.organs,
                 list: []
             }
         }
@@ -316,7 +287,7 @@ const DashboardPage = (props) => {
         })
 
 
-        let codicesGenres = d3.flatGroup(data, d => d[indexes.genre], d => d[indexes.title]).map(entry => [entry[0], entry[1]])
+        let codicesGenres = d3.flatGroup(data, d => d[props.csvIndexes.genre], d => d[props.csvIndexes.title]).map(entry => [entry[0], entry[1]])
 
         let allCodicesAux = {}
         codicesGenres.forEach(entry => {
@@ -340,8 +311,8 @@ const DashboardPage = (props) => {
         setActiveFilters({
             intention: Object.keys(intention)[0],
             agent: Object.keys(agent)[0],
-            origin: Object.keys(origin)[0],
-            explanation: Object.keys(explanation)[0],
+            value: Object.keys(value)[0],
+            supernatural_type: Object.keys(supernatural_type)[0],
 
             nature: Object.keys(nature)[0],
             dimension: Object.keys(dimension)[0],
@@ -354,8 +325,8 @@ const DashboardPage = (props) => {
         props.updateDashboard("activeFilters", {
             intention: Object.keys(intention)[0],
             agent: Object.keys(agent)[0],
-            origin: Object.keys(origin)[0],
-            explanation: Object.keys(explanation)[0],
+            value: Object.keys(value)[0],
+            supernatural_type: Object.keys(supernatural_type)[0],
 
             nature: Object.keys(nature)[0],
             dimension: Object.keys(dimension)[0],
@@ -365,7 +336,6 @@ const DashboardPage = (props) => {
         props.updateDashboard("pyramidData", { sex: "", category: "", categoryIndex: "" })
         props.updateDashboard("heatmapData", [])
         props.updateDashboard("networkData", { selected: [], people: [] })
-        //}
 
         setCategories(categoriesAux)
         setCodices({ ...allCodices })
@@ -395,15 +365,14 @@ const DashboardPage = (props) => {
 
         let filtered = originalGlobalData.filter((d) => {
             if (codicesFilter && codicesFilter.length) {
-                if (!codicesFilter.includes(noSpaces(d[csvIndexes.title])))
+                if (!codicesFilter.includes(noSpaces(d[props.csvIndexes.title])))
                     return false;
             }
-            else if (!activeCodices.includes(noSpaces(d[csvIndexes.title])))
+            else if (!activeCodices.includes(noSpaces(d[props.csvIndexes.title])))
                 return false;
 
-            for (const [key, value] of Object.entries(activeFilters)) {
-                let filter = (types.includes(key)) ? newFilters[types.indexOf(key)] : value
-
+            for (const [key, v] of Object.entries(activeFilters)) {
+                let filter = (types.includes(key)) ? newFilters[types.indexOf(key)] : v
                 if (filter !== Object.keys(eval(key))[0] && d[eval(key)[filter].index] !== eval(key)[filter].csv_name)
                     return false;
             }
@@ -411,20 +380,20 @@ const DashboardPage = (props) => {
 
             let passAdvanced = true
 
-            for (const [key, value] of Object.entries(advFilters ? advFilters : advancedCategoryFilters)) {
+            for (const [key, v] of Object.entries(advFilters ? advFilters : advancedCategoryFilters)) {
                 let passIntern = false
                 let indexList = categories[key].index
                 let indexSublist = categories[key].indexSubcategory
 
-                if (value.list.length)
-                    if (value.list.includes(noSpaces(d[indexList])))
+                if (v.list.length)
+                    if (v.list.includes(noSpaces(d[indexList])))
                         passIntern = true
 
-                if (value.sublist.length)
-                    if (value.sublist.includes(noSpaces(d[indexSublist])))
+                if (v.sublist.length)
+                    if (v.sublist.includes(noSpaces(d[indexSublist])))
                         passIntern = true
 
-                if (value.list.length === 0 && value.sublist.length === 0)
+                if (v.list.length === 0 && v.sublist.length === 0)
                     passIntern = true
 
                 passAdvanced = passAdvanced && passIntern
@@ -467,12 +436,12 @@ const DashboardPage = (props) => {
         setFilters(
             [Object.keys(intention)[0],
             Object.keys(agent)[0],
-            Object.keys(origin)[0],
-            Object.keys(explanation)[0],
+            Object.keys(value)[0],
+            Object.keys(supernatural_type)[0],
             Object.keys(nature)[0],
             Object.keys(dimension)[0]
             ],
-            ["intention", "agent", "origin", "explanation", "nature", "dimension"],
+            ["intention", "agent", "value", "supernatural_type", "nature", "dimension"],
             Object.keys(codices).sort(),
             advancedFilterAux)
 
@@ -548,8 +517,8 @@ const DashboardPage = (props) => {
                     categories={categories} activeCategories={activeCategories}
                     intention={intention}
                     agent={agent}
-                    origin={origin}
-                    explanation={explanation}
+                    value={value}
+                    supernatural_type={supernatural_type}
                     nature={nature}
                     dimension={dimension}
                     codices={codices}
@@ -567,7 +536,7 @@ const DashboardPage = (props) => {
                         <div className="dashboard-viz1">
                             <HeatmapChart data={globalData} resetComponents={resetComponents} setResetComponents={setResetComponents}
                                 setHeatmapData={updateHeatmapData} networkData={networkData} pyramidData={pyramidData}
-                                csvIndexes={csvIndexes}
+                                csvIndexes={props.csvIndexes}
                                 activeCategories={activeCategories}
                                 activeCategory={activeCategory}
                                 categories={categories}
@@ -605,7 +574,7 @@ const DashboardPage = (props) => {
                             <ImportantPeopleChart
                                 data={globalData} resetComponents={resetComponents} setResetComponents={setResetComponents}
                                 networkData={networkData} pyramidData={pyramidData} heatmapData={heatmapData}
-                                csvIndexes={csvIndexes}
+                                csvIndexes={props.csvIndexes} csvNames={props.csvNames}
                                 isExpanded={isImpPeopleExpanded}
                                 setIsExpanded={setIsImpPeopleExpanded} />
                         </div>
@@ -615,7 +584,7 @@ const DashboardPage = (props) => {
                             <TabChart categories={categories}
                                 data={globalData} resetComponents={resetComponents} setResetComponents={setResetComponents}
                                 setPyramidData={updatePyramidData} networkData={networkData} heatmapData={heatmapData}
-                                csvIndexes={csvIndexes}
+                                csvIndexes={props.csvIndexes}
                                 setCurrentTabchartCategory={setCurrentTabchartCategory}
                                 isExpanded={isTabchartExpanded} setIsExpanded={setIsTabchartExpanded}
                                 changedFilter={changedFilter} setChangedFilter={setChangedFilter} />
@@ -625,7 +594,7 @@ const DashboardPage = (props) => {
                                 data={globalData} resetComponents={resetComponents} setResetComponents={setResetComponents}
                                 setNetworkData={updateNetworkData} pyramidData={pyramidData} heatmapData={heatmapData} setNetworkLink={setNetworkLink}
                                 colorCodices={colorCodices}
-                                csvIndexes={csvIndexes}
+                                csvIndexes={props.csvIndexes}
                                 isExpanded={isNetworkExpanded}
                                 setIsExpanded={setIsNetworkExpanded} />
                         </div>
@@ -650,7 +619,7 @@ const DashboardPage = (props) => {
                                 categories={categories}
                                 activeCategories={activeCategories}
                                 currentTabchartCategory={currentTabchartCategory}
-                                csvIndexes={csvIndexes}
+                                csvIndexes={props.csvIndexes} csvNames={props.csvNames}
                                 isOpen={isOpen} setIsOpen={setIsOpen}
                                 />
                         </Drawer>

@@ -351,7 +351,7 @@ const ImportantPeopleChart = (props) => {
                                     <table width={"100%"} key={`table-imp`}>
                                         <tbody key={`tbody-imp`}>
                                             {Object.keys(props.csvIndexes).map((key, index) => {
-                                                if (key === "#" || key === "description" || key === "subject_name")
+                                                if (props.csvNames[key] === props.csvNames.index || props.csvNames[key] === props.csvNames.description || props.csvNames[key] === props.csvNames.subject_name)
                                                     return ""
 
                                                 let selectArray1 = []
@@ -378,7 +378,7 @@ const ImportantPeopleChart = (props) => {
 
                                                 return (
                                                     <tr className="imp-table" key={`tr-${key}`}>
-                                                        <th className="imp-th">{key}</th>
+                                                        <th className="imp-th">{props.csvNames[key]}</th>
                                                         <td data-dict={JSON.stringify({ ...selectDict1 })} className="imp-td" id={`${selectedImp[0]}|${key}`} style={{ borderRight: "1px solid #dddddd" }}>
                                                             {selectArray1.map(function (text, i) {
                                                                 if (text === "")

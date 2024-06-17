@@ -22,7 +22,7 @@ const Citations = (props) => {
 
     const toggleCitation = (entry) => {
 
-        let id = entry[props.csvIndexes["#"]]
+        let id = entry[props.csvIndexes.index]
         let state = !d3.select(`[id="${id}"]`).classed("citations-sub-none")
         d3.select(`[id="${id}"]`).classed("citations-sub-none", state)
         d3.select(`[id="citation-arrow-${id}"]`).style("transform", state ? "none" : "rotate(90deg)")
@@ -238,21 +238,21 @@ const Citations = (props) => {
                 <>
                     <div className='citations-content' id='citations-content'>
                         {pagination.currentData && pagination.currentData.map(((entry) => (
-                            <div className='citations-dropdown' key={`div-${entry[props.csvIndexes["#"]]}`}>
-                                <button className='citations-dropbtn' key={`btn-${entry[props.csvIndexes["#"]]}`} onClick={() => toggleCitation(entry)}>
-                                    <ArrowForwardIosIcon id={`citation-arrow-${entry[props.csvIndexes["#"]]}`} style={{ width: "15px", marginRight: "5px" }} />
+                            <div className='citations-dropdown' key={`div-${entry[props.csvIndexes.index]}`}>
+                                <button className='citations-dropbtn' key={`btn-${entry[props.csvIndexes.index]}`} onClick={() => toggleCitation(entry)}>
+                                    <ArrowForwardIosIcon id={`citation-arrow-${entry[props.csvIndexes.index]}`} style={{ width: "15px", marginRight: "5px" }} />
                                     {entry[props.csvIndexes.description]}
                                 </button>
-                                <div className="citations-sub-content citations-sub-none" key={`dropdown-${entry[props.csvIndexes["#"]]}`} id={entry[props.csvIndexes["#"]]}>
-                                    <table width={"100%"} key={`tables-citation-${entry[props.csvIndexes["#"]]}`}>
-                                        <tbody key={`tbody-${entry[props.csvIndexes["#"]]}`}>
+                                <div className="citations-sub-content citations-sub-none" key={`dropdown-${entry[props.csvIndexes.index]}`} id={entry[props.csvIndexes.index]}>
+                                    <table width={"100%"} key={`tables-citation-${entry[props.csvIndexes.index]}`}>
+                                        <tbody key={`tbody-${entry[props.csvIndexes.index]}`}>
                                             {Object.keys(props.csvIndexes).map((key) => {
-                                                if (key === "description")
+                                                if (key === props.csvNames.description)
                                                     return ""
                                                 return (
-                                                    <tr className="citations-table" key={`tr-${entry[props.csvIndexes["#"]]}-${key}`}>
-                                                        <th className="citations-table" key={`th-${entry[props.csvIndexes["#"]]}`}>{key}</th>
-                                                        <td className="citations-table" key={`td-${entry[props.csvIndexes["#"]]}`}>{entry[props.csvIndexes[key]]}</td>
+                                                    <tr className="citations-table" key={`tr-${entry[props.csvIndexes.index]}-${key}`}>
+                                                        <th className="citations-table" key={`th-${entry[props.csvIndexes.index]}`}>{props.csvNames[key]}</th>
+                                                        <td className="citations-table" key={`td-${entry[props.csvIndexes.index]}`}>{entry[props.csvIndexes[key]]}</td>
                                                     </tr>
                                                 )
                                             })}
