@@ -173,6 +173,17 @@ const FilterView = (props) => {
         return content
     }
 
+    function toggleDropdownLocation() {
+
+        if (d3.select(`[id="location-dropdown"]`).node()) {
+
+            let dropDownActive = !d3.select(`#location-dropdown`).classed("location-dropdown-content-show")
+            d3.select(`#location-dropdown`).classed("location-dropdown-content-show", dropDownActive)
+            d3.select(`#location-arrow`).style("transform", dropDownActive ? "rotate(90deg)" : "none")
+
+            d3.select(`.btn-locations`).style("border-radius", !dropDownActive ? "20px" : "20px 20px 0 0")
+        }
+    }
 
     function toggleDropdownCategory(key, index) {
 
@@ -186,10 +197,25 @@ const FilterView = (props) => {
                 d3.select(`[id="${key}"]`).style("border-radius", dropDownActive ? "0" : "0 0 20px 20px")
         }
     }
+
     function toggleDropdownSubCategory(key) {
         let subDropDownActive = !d3.select(`[id="filter-sub-dropdown-${key}"]`).classed("filter-dropdown-content-show")
         d3.select(`[id="filter-sub-dropdown-${key}"]`).classed("filter-dropdown-content-show", subDropDownActive)
         d3.select(`[id="citation-sub-arrow-${key}"]`).style("transform", subDropDownActive ? "rotate(90deg)" : "none")
+
+    }
+
+    function clickDropdownLocation(place) {
+        let source = document.getElementById(`checkbox-location-${noSpaces(place)}`)
+
+        let aux = [...props.activeLocations]
+
+        if (!source.checked) {
+            const index = aux.indexOf(place);
+            aux.splice(index, 1);
+        } else aux.push(place)
+
+        props.setActiveFilters([], [], null, aux, null)
     }
 
     function clickDropdownCategory(category, key, sublist) {
@@ -256,10 +282,10 @@ const FilterView = (props) => {
     function highlightHeatmap() {
         if (props.activeCategories.length === 2)
             return
-        
+
         d3.selectAll(".heatmap-drag").selectAll(".default").style("background-color", "#D8BABA")
         d3.select(".category-buttons-group").style("border", "2px dashed #8C5E5E")
-        
+
         setTimeout(() => {
             d3.selectAll(".heatmap-drag").selectAll(".default").style("background-color", "white")
             d3.select(".category-buttons-group").style("border", "2px solid transparent")
@@ -343,9 +369,9 @@ const FilterView = (props) => {
                 </div>
 
                 <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "2px 0" }}>
-                    
+
                     <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", }}>
-                    {t("agent-label")}
+                        {t("agent-label")}
                         <img alt="info" id="infoFilter" className="agent" src={info}
                             style={{ marginLeft: "5px", cursor: "pointer", width: "15px", height: "15px" }}
                         />
@@ -363,7 +389,7 @@ const FilterView = (props) => {
 
                 <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "2px 0" }}>
                     <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", }}>
-                    {t("intention-label")}
+                        {t("intention-label")}
                         <img alt="info" id="infoFilter" className="intention" src={info}
                             style={{ marginLeft: "5px", cursor: "pointer", width: "15px", height: "15px" }}
                         />
@@ -380,9 +406,9 @@ const FilterView = (props) => {
                 </div>
 
                 <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "2px 0" }}>
-                    
+
                     <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", }}>
-                    {t("value-label")}
+                        {t("value-label")}
                         <img alt="info" id="infoFilter" className="value" src={info}
                             style={{ marginLeft: "5px", cursor: "pointer", width: "15px", height: "15px" }}
                         />
@@ -399,28 +425,9 @@ const FilterView = (props) => {
                 </div>
 
                 <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "2px 0" }}>
-                    
-                    <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", }}>
-                    {t("supernatural_type-label")}
-                        <img alt="info" id="infoFilter" className="supernatural_type" src={info}
-                            style={{ marginLeft: "5px", cursor: "pointer", width: "15px", height: "15px" }}
-                        />
-                    </div>
-                    <div className="inline-flex" role="group">
-                        {Object.keys(props.supernatural_type).map((supernatural_type) => {
-                            return (
-                                <button key={supernatural_type} type="button" className={"dashboard-filter-options" + ((props.activeFilters.supernatural_type === supernatural_type) ? " active" : "")} onClick={() => props.setActiveFilters([supernatural_type], ["supernatural_type"])}>
-                                    {t(supernatural_type)}
-                                </button>
-                            )
-                        })}
-                    </div>
-                </div>
 
-                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "2px 0" }}>
-                    
                     <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", }}>
-                    {t("nature-label")}
+                        {t("nature-label")}
                         <img alt="info" id="infoFilter" className="nature" src={info}
                             style={{ marginLeft: "5px", cursor: "pointer", width: "15px", height: "15px" }}
                         />
@@ -437,9 +444,28 @@ const FilterView = (props) => {
                 </div>
 
                 <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "2px 0" }}>
-                    
+
                     <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", }}>
-                    {t("dimension-label")}
+                        {t("supernatural_type-label")}
+                        <img alt="info" id="infoFilter" className="supernatural_type" src={info}
+                            style={{ marginLeft: "5px", cursor: "pointer", width: "15px", height: "15px" }}
+                        />
+                    </div>
+                    <div className="inline-flex" role="group">
+                        {Object.keys(props.supernatural_type).map((supernatural_type) => {
+                            return (
+                                <button key={supernatural_type} type="button" className={"dashboard-filter-options" + ((props.activeFilters.supernatural_type === supernatural_type) ? " active" : "")} onClick={() => props.setActiveFilters([supernatural_type], ["supernatural_type"])}>
+                                    {t(supernatural_type)}
+                                </button>
+                            )
+                        })}
+                    </div>
+                </div>
+
+                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "2px 0" }}>
+
+                    <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", }}>
+                        {t("dimension-label")}
                         <img alt="info" id="infoFilter" className="dimension" src={info}
                             style={{ marginLeft: "5px", cursor: "pointer", width: "15px", height: "15px" }}
                         />
@@ -456,9 +482,34 @@ const FilterView = (props) => {
                 </div>
 
                 <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "2px 0" }}>
-                 
+
                     <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", }}>
-                    {t("codices-label")}
+                        {t("locations-label")}
+                        <img alt="info" id="infoFilter" className="location" src={info}
+                            style={{ marginLeft: "5px", cursor: "pointer", width: "15px", height: "15px" }}
+                        />
+                    </div>
+                    <button className="btn-locations" style={{ color: (props.activeLocations.length ? "black" : "gray") }} onClick={toggleDropdownLocation}>
+                        {props.activeLocations.length === 0 ? t("location-select") : props.activeLocations.join(", ")}
+                        <ArrowForwardIosIcon id={`location-arrow`} className="arrow-dropdown" style={{ position: "absolute", right: "0", width: "15px", marginRight: "10px", marginTop: "auto", marginBottom: "auto" }} />
+                    </button>
+                    <div id={`location-dropdown`} className={"shadow location-dropdown-content-hide"} key={"hidden-location-dropdown"}>
+                        <ul>
+                            {props.locations.map(place => (
+                                <li key={"li_location_" + place}>
+                                    <div style={{ display: "flex", alignItems: "center", width: "100%", height: "100%", marginLeft: "6%" }}>
+                                        <input checked={props.activeLocations.includes(place)} onClick={() => clickDropdownLocation(place)} type="checkbox" id={`checkbox-location-${noSpaces(place)}`} name={`checkbox-location-${noSpaces(place)}`} />
+                                        <button style={{ width: "100%", height: "100%", display: "flex" }}>{place}</button>
+                                    </div>
+                                </li>))}
+                        </ul>
+                    </div>
+                </div>
+
+                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "2px 0" }}>
+
+                    <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", }}>
+                        {t("codices-label")}
                         <img alt="info" id="infoFilter" className="codices" src={info}
                             style={{ marginLeft: "5px", cursor: "pointer", width: "15px", height: "15px" }}
                         />

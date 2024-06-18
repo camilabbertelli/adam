@@ -170,9 +170,20 @@ const Citations = (props) => {
             let aux = toBeFiltered.filter(entry => {
                 let passNetworkLink = false
                 props.networkLink.forEach(l => {
-                    if (l.source.person === entry[props.csvIndexes.subject_name])
-                        if (l.target.person === entry[l.type === "with" ? props.csvIndexes.with_name : props.csvIndexes.about_name])
-                            passNetworkLink = true
+                    
+                    let isAgentActive = entry[props.csvIndexes.agent] === "Ativo"
+
+
+                    if (isAgentActive){
+                        if (l.source.person === entry[props.csvIndexes.subject_name])
+                            if (l.target.person === entry[l.type === "with" ? props.csvIndexes.with_name : props.csvIndexes.about_name])
+                                passNetworkLink = true
+                    }else{ // passive action, requires switch
+                        if (l.source.person === entry[l.type === "with" ? props.csvIndexes.with_name : props.csvIndexes.about_name])
+                            if (l.target.person === entry[props.csvIndexes.subject_name])
+                                passNetworkLink = true
+                    }
+
                 }); 
 
                 return passNetworkLink
@@ -247,7 +258,7 @@ const Citations = (props) => {
                                     <table width={"100%"} key={`tables-citation-${entry[props.csvIndexes.index]}`}>
                                         <tbody key={`tbody-${entry[props.csvIndexes.index]}`}>
                                             {Object.keys(props.csvIndexes).map((key) => {
-                                                if (key === props.csvNames.description)
+                                                if (props.csvNames[key] === props.csvNames.description)
                                                     return ""
                                                 return (
                                                     <tr className="citations-table" key={`tr-${entry[props.csvIndexes.index]}-${key}`}>

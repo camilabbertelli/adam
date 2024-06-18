@@ -67,10 +67,10 @@ const App = () => {
 				names.action = "Ação"
 				names.causes_group = "Grupo de causas"
 				names.causes = "Causa"
-				names.time = "Quando"
-				names.place = "Onde"
 				names.latitude = "Latitude"
 				names.longitude = "Longitude"
+				names.time = "Quando"
+				names.place = "Onde"
 				names.how = "Como"
 				names.intention = "Intenção"
 				names.with_name = "Nome_1"
@@ -120,7 +120,8 @@ const App = () => {
 						<NavBar />
 						<div className='pageBody'>
 							<Routes >
-								<Route path="/" element={<HomePage />} />
+								<Route path="/" element={<HomePage data={data}
+																   csvNames={csvNames} csvIndexes={csvIndexes} />} />
 								<Route path="/dashboard" element={<DashboardPage data={data}
 																				 dashboard={dashboard} updateDashboard={updateDashboard}
 																				 csvNames={csvNames} csvIndexes={csvIndexes}

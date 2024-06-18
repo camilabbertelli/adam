@@ -35,13 +35,19 @@ const CodicesSec = ({ sec, element }) => {
     return content
 }
 
-const Sec = ({ codices }) => {
+const Sec = ({ codices, codicesWithLocation }) => {
     let content = []
 
     for (const [key, value] of Object.entries(codices)) {
 
+        let pass = false
 
+        value.forEach(codex => {
+            if (codicesWithLocation.includes(codex.title))
+                pass = true
+        })
 
+        if (pass)
         content.push(
             <div key={key} className="timeline-card">
                 <div className='timeline-sec-collection'>
@@ -58,7 +64,7 @@ const Sec = ({ codices }) => {
     return content
 }
 
-const TimelineChart = ({ codices }) => {
+const TimelineChart = ({ codices, codicesWithLocation }) => {
     const [selectedCodex, setSelectedCodex] = useState("")
  
     useEffect(() => {
@@ -202,7 +208,7 @@ const TimelineChart = ({ codices }) => {
     return (
         <div className='timeline-principal'>
             <div className="timeline card-group card-group-scroll" id='style-1'>
-                <Sec codices={codices} />
+                <Sec codices={codices} codicesWithLocation={codicesWithLocation}/>
             </div>
         </div>
     )

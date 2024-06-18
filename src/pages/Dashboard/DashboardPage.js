@@ -15,6 +15,8 @@ import { useEffect, useState } from 'react';
 import { DndContext, DragOverlay, KeyboardSensor, MouseSensor, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { useTranslation } from 'react-i18next';
 
+import { useLocation } from "react-router-dom";
+
 
 import * as d3 from "d3"
 
@@ -35,6 +37,7 @@ const DashboardPage = (props) => {
     const { t } = useTranslation();
 
     const [categories, setCategories] = useState({})
+    const [locations, setLocations] = useState([])
 
     let intention = {
         "intention-all": {
@@ -148,6 +151,7 @@ const DashboardPage = (props) => {
     const [advancedCategoryFilters, setAdvancedCategoryFilters] = useState({})
     const [activeCategories, setActiveCategories] = useState([]);
     const [currentTabchartCategory, setCurrentTabchartCategory] = useState("")
+    const [activeLocations, setActiveLocations] = useState([])
     const [activeCodices, setActiveCodices] = useState([])
     const [networkData, setNetworkData] = useState({ selected: [], people: [] })
     const [pyramidData, setPyramidData] = useState({ sex: "", category: "", categoryIndex: "" })
@@ -198,7 +202,6 @@ const DashboardPage = (props) => {
                     aux.sort()
 
                     setActiveCategories(aux);
-                    props.updateDashboard("activeCategories", aux)
                 }
                 return false;
             }
@@ -213,8 +216,9 @@ const DashboardPage = (props) => {
         aux.splice(index, 1);
 
         setActiveCategories(aux)
-        props.updateDashboard("activeCategories", aux)
     }
+
+    let navigation = useLocation()
 
     useEffect(() => {
 
@@ -254,7 +258,12 @@ const DashboardPage = (props) => {
             d => d[props.csvNames.pp])
 
         setOriginalGlobalData([...data])
-        setGlobalData([...data])
+
+        let loc = d3.flatGroup(data, d=>d[props.csvIndexes.place])
+                    .filter(entry => {return entry !== "Não aplicável"})
+                    .flatMap(d => [d[0]]).sort()
+
+        setLocations(loc)
 
         let categoriesAux = {
             "category-action": {
@@ -262,7 +271,7 @@ const DashboardPage = (props) => {
                 indexSubcategory: props.csvIndexes.action,
                 list: []
             },
-            "category-action-motives": {
+            "category-causes-group": {
                 index: props.csvIndexes.causes_group,
                 indexSubcategory: props.csvIndexes.causes,
                 list: []
@@ -308,6 +317,28 @@ const DashboardPage = (props) => {
         setActiveCategories([Object.keys(categoriesAux)[0], Object.keys(categoriesAux)[1]])
         setCurrentTabchartCategory(Object.keys(categoriesAux)[0])
         setActiveCodices([...sortedkeys])
+        if (navigation.state && navigation.state.mark){
+            let places = []
+            
+            navigation.state.mark.places.forEach(entry => {
+                if (!places.includes(entry[3])){
+                    places.push(entry[3])
+                }
+            })
+            window.history.replaceState({}, '')
+
+            data = data.filter((d) => {
+                if (places && places.length)
+                    return places.includes(d[props.csvIndexes.place])
+                return true
+            });
+
+            if (places.length) 
+                setActiveLocations(places)
+            
+        }
+        
+        setGlobalData([...data])
         setActiveFilters({
             intention: Object.keys(intention)[0],
             agent: Object.keys(agent)[0],
@@ -315,28 +346,9 @@ const DashboardPage = (props) => {
             supernatural_type: Object.keys(supernatural_type)[0],
 
             nature: Object.keys(nature)[0],
-            dimension: Object.keys(dimension)[0],
+            dimension: Object.keys(dimension)[0]
         })
         setAdvancedCategoryFilters(advancedFilterAux)
-
-        props.updateDashboard("activeCategories", [Object.keys(categoriesAux)[0], Object.keys(categoriesAux)[1]])
-        props.updateDashboard("currentTabchartCategory", Object.keys(categoriesAux)[0])
-        props.updateDashboard("activeCodices", [...sortedkeys])
-        props.updateDashboard("activeFilters", {
-            intention: Object.keys(intention)[0],
-            agent: Object.keys(agent)[0],
-            value: Object.keys(value)[0],
-            supernatural_type: Object.keys(supernatural_type)[0],
-
-            nature: Object.keys(nature)[0],
-            dimension: Object.keys(dimension)[0],
-        })
-        props.updateDashboard("advancedCategoryFilters", advancedFilterAux)
-
-        props.updateDashboard("pyramidData", { sex: "", category: "", categoryIndex: "" })
-        props.updateDashboard("heatmapData", [])
-        props.updateDashboard("networkData", { selected: [], people: [] })
-
         setCategories(categoriesAux)
         setCodices({ ...allCodices })
         setGenres([...new Set(codicesGenres.map((entry) => entry[0]))].sort())
@@ -361,7 +373,7 @@ const DashboardPage = (props) => {
 
     const [resetComponents, setResetComponents] = useState(false)
 
-    function setFilters(newFilters, types, codicesFilter, advFilters) {
+    function setFilters(newFilters, types, codicesFilter, locationFilter, advFilters) {
 
         let filtered = originalGlobalData.filter((d) => {
             if (codicesFilter && codicesFilter.length) {
@@ -370,6 +382,13 @@ const DashboardPage = (props) => {
             }
             else if (!activeCodices.includes(noSpaces(d[props.csvIndexes.title])))
                 return false;
+
+            if (locationFilter){
+                if (locationFilter.length)
+                    return locationFilter.includes(d[props.csvIndexes.place])
+            } 
+            else if (activeLocations.length)
+                return activeLocations.includes(d[props.csvIndexes.place]);
 
             for (const [key, v] of Object.entries(activeFilters)) {
                 let filter = (types.includes(key)) ? newFilters[types.indexOf(key)] : v
@@ -410,15 +429,16 @@ const DashboardPage = (props) => {
 
         setGlobalData(filtered)
         setActiveFilters(filters)
-        props.updateDashboard("activeFilters", filters)
-        if (advFilters) {
+        if (advFilters) 
             setAdvancedCategoryFilters(advFilters)
-            props.updateDashboard("advancedCategoryFilters", advFilters)
-        }
-        if (codicesFilter && codicesFilter.length) {
+        
+        if (codicesFilter && codicesFilter.length)
             setActiveCodices(codicesFilter)
-            props.updateDashboard("activeCodices", codicesFilter)
-        }
+
+
+        if (locationFilter) 
+            setActiveLocations(locationFilter)
+        
         setChangedFilter(true)
     }
 
@@ -443,32 +463,26 @@ const DashboardPage = (props) => {
             ],
             ["intention", "agent", "value", "supernatural_type", "nature", "dimension"],
             Object.keys(codices).sort(),
+            [],
             advancedFilterAux)
 
         setPyramidData({ sex: "", category: "", categoryIndex: "" })
         setHeatmapData([])
         setNetworkData({ selected: [], people: [] })
-
-        props.updateDashboard("pyramidData", { sex: "", category: "", categoryIndex: "" })
-        props.updateDashboard("heatmapData", [])
-        props.updateDashboard("networkData", { selected: [], people: [] })
-
+        
         setResetComponents(true)
     }
 
     function updatePyramidData(d) {
         setPyramidData(d)
-        props.updateDashboard("pyramidData", d)
     }
 
     function updateHeatmapData(d) {
         setHeatmapData(d)
-        props.updateDashboard("heatmapData", d)
     }
 
     function updateNetworkData(d) {
         setNetworkData(d)
-        props.updateDashboard("networkData", d)
     }
 
     const [isOpen, setIsOpen] = useState(false);
@@ -515,6 +529,7 @@ const DashboardPage = (props) => {
                 </div>
                 <FilterView
                     categories={categories} activeCategories={activeCategories}
+                    locations={locations}
                     intention={intention}
                     agent={agent}
                     value={value}
@@ -524,7 +539,7 @@ const DashboardPage = (props) => {
                     codices={codices}
                     colorCodices={colorCodices}
                     genres={genres}
-                    activeFilters={activeFilters} setActiveFilters={setFilters} advancedCategoryFilters={advancedCategoryFilters} resetFilters={resetFilters} />
+                    activeLocations={activeLocations} activeFilters={activeFilters} setActiveFilters={setFilters} advancedCategoryFilters={advancedCategoryFilters} resetFilters={resetFilters} />
                 <DragOverlay dropAnimation={{ duration: 500 }}>
                     {activeCategory ? (
                         <button className={`shadow dashboard-filter-category ${(activeCategories.includes(activeCategory) ? "selected" : "")} drag`} style={{ border: "10px" }} key={activeCategory}>{t(activeCategory)}</button>

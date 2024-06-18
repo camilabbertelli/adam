@@ -255,11 +255,11 @@ const HeatmapChart = (props) => {
 				element.innerHTML = "";
 		}
 
-		// Three function that change the tooltip when user hover / move / leave a cell
 		const mouseover = function (event, d) {
 			tooltipHeatmap.style("opacity", 1)
 
 			d3.select(this).transition().duration(100)
+				.style("opacity", 1)
 				.style("stroke", "black")
 
 			let svg = d3.select(".heatmap-graph").select("svg").select("g")
@@ -270,6 +270,7 @@ const HeatmapChart = (props) => {
 
 			let dim = 20
 
+			if (Object.keys(details).length === 0)
 			svg.append("image")
 				.attr("href", expand)
 				.attr("width", dim)

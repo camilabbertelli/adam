@@ -11,20 +11,15 @@ const codices = {
     "XII": [{
         "genre": "Epistolografia",
         "title": "Carta de Bruges",
-        "marks": [{ long: -5.9, lat: 54.6, city: "Belfast", country: "Northern Ireland" },
-        { long: 4.9, lat: 52.4, city: "Amsterdam", country: "the Netherlands" }]
     }, {
         "genre": "Novelas de Cavalaria",
         "title": "Livro de José de Arimateia",
         "pdf-ancient": "LivroJoseArimateia.pdf",
-        "marks": [{ long: -4.5, lat: 48.8, city: "Brest", country: "France" },
-        { long: 2.35, lat: 48.8, city: "Calais", country: "France" }]
     },],
     "XIV": [{
         "genre": "Crónicas e historiografia",
         "title": "IV.ª Crónica Breve",
-        "marks": [{ long: 2.9, lat: 51.2, city: "Oostende", country: "Belgium" },
-        { long: -8.24, lat: 41.17, city: "Penafiel", country: "Portugal" }]
+        
     }]
 }
 

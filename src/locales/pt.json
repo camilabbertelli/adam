@@ -1,4 +1,8 @@
 {
+    "home-subtitle": "Explore as conexões e temas sobre o corpo e a alma na literatura medieval através de uma visualização interativa.",
+    "home-about-us": "Bem-vindos ao Dashboard de Análise para a Anatomia na Idade Média (A.D.A.M.), um esforço colaborativo originado do projeto Body&Soul. Nossa equipe interdisciplinar é composta por pesquisadores dedicados da Faculdade de Letras da Universidade de Lisboa—includindo o Centro de História, o Centro de Filosofia, Artis - Instituto de História da Arte, e o Centro de Estudos Anglo-Americanos—e estudantes de engenharia do Instituto Superior Técnico. Nossa missão é explorar as conexões e temas presentes no corpo e na alma na literatura medieval, apresentando o estudo original através de uma plataforma de visualização interativa, visando tornar a pesquisa mais acessível e envolvente tanto para acadêmicos quanto para entusiastas.",
+
+
     "information": "Informação",
     "information-map": "Passe o rato sobre um pin para obter mais informações.",
     "information-pyramid": "Passe o rato sobre uma barra para obter mais informações. <br/>Clique no ícone à direita para alterar os tipos de agrupamento.",
@@ -9,8 +13,20 @@
     
 
     "filter-tooltip-categories": "Selecione duas categorias para comparar no gráfico arrastando-as para a área de comparação.<br/><b>Nota:</b> Só é possível comparar duas categorias por vez.",
+    "filter-tooltip-agent": "",
+    "filter-tooltip-intention": "",
+    "filter-tooltip-value": "",
+    "filter-tooltip-nature": "",
+    "filter-tooltip-supernatural_type": "",
+    "filter-tooltip-dimension": "",
+    "filter-tooltip-location": "",
+    "filter-tooltip-codices": "",
     
-    
+    "mapchart-place": "Lugar", 
+    "mapchart-title": "Título",
+    "mapchart-occurrences":"Ocorrências",
+
+
     "imp-tooltip-person": "Pessoa",
     "imp-tooltip-field": "Campo",
     "imp-tooltip-value": "Valor",
@@ -18,7 +34,7 @@
     "network-tooltip-groups": "Grupo(s)",
     "network-tooltip-sex": "Sexo",
     "network-tooltip-qualities": "Qualidades",
-    "network-tooltip-source": "Fonte",
+    "network-tooltip-source": "Origem",
     "network-tooltip-target": "Destino",
     "network-tooltip-value": "Quantidade",
     "network-tooltip-type": "Tipo",
@@ -41,7 +57,7 @@
     "btnDiscover": "Descubra mais",
     "titleGallery": "Nossa Galeria",
     "titleAboutUs": "Sobre nós",
-    "home-map-title": "Lugares descritos na narrativa medieval",
+    "home-map-title": "Localidades descritas na narrativa medieval",
     "icon-language": "Idioma",
 
 
@@ -52,8 +68,8 @@
     "categories-label": "Categorias",
     "category-label": "Categoria",
     "category-action": "Ações",
-    "category-action-motives": "Motivos das ações",
-    "category-body": "Corpo&Alma",
+    "category-causes-group": "Causas das ações",
+    "category-body": "Partes anatómicas",
     "agent-label": "Agente",
     "intention-label": "Intenção",
     "value-label": "Valor",
@@ -61,6 +77,9 @@
     "nature-label": "Natureza",
     "dimension-label": "Dimensão",
     "codices-label": "Códices",
+    "locations-label": "Localidades",
+
+    "location-select": "Filtrar localidades",
 
     "agent-all": "Todos",
     "agent-active": "Ativo",
@@ -120,7 +139,7 @@
     "pyramid-high-low": "Maior para Menor",
 
     
-    "heatmap-occurrence": "Ocorrência",
+    "heatmap-occurrence": "Ocorrências",
 
 
     "database-content": "Conteúdo",

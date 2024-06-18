@@ -114,39 +114,40 @@ const NetworkChart = (props) => {
         }))
 
 
-        let with_links = d3.flatRollup(aux, v => v.length, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.description]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4]]])
+        let with_links = d3.flatRollup(aux, v => v.length, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.description], d=>d[props.csvIndexes.agent]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4], d[5]]])
 
         with_links = with_links.filter(entry => {
             return (entry[0] !== "Não aplicável" && entry[1] !== "Não aplicável") // entry[2] === "Individual"
-        }).flatMap(d => [[d[0], d[1], d[3], d[4]]])
+        }).flatMap(d => [[d[0], d[1], d[3], d[4], d[5]]])
+        
+        with_links = d3.flatGroup(with_links, d => d[0], d => d[1], d=>d[3])
 
-        with_links = d3.flatGroup(with_links, d => d[0], d => d[1])
 
         with_links = with_links.map((entry, index) => ({
             id: index,
-            source: entry[0],
-            target: entry[1],
-            value: entry[2].length,
+            source: (entry[2] === "Ativo") ? entry[0] : entry[1],
+            target: (entry[2] === "Ativo") ? entry[1] : entry[0],
+            value: entry[3].length,
             type: "with",
-            citations: [...new Set(entry[2].flatMap(d => d[2]))]
+            citations: [...new Set(entry[3].flatMap(d => d[2]))]
         }))
 
-        let about_links = d3.flatRollup(aux, v => v.length, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.about_name], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.description]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4], d[5]]])
+        let about_links = d3.flatRollup(aux, v => v.length, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.about_name], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.description], d=> d[props.csvIndexes.agent]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4], d[5], d[6]]])
 
         about_links = about_links.filter(entry => {
             return (entry[0] !== "Não aplicável" && entry[2] !== "Não aplicável") // entry[3] === "Individual"
-        }).flatMap(d => [[d[0], d[2], d[4], d[5]]])
+        }).flatMap(d => [[d[0], d[2], d[4], d[5], d[6]]])
 
-        about_links = d3.flatGroup(about_links, d => d[0], d => d[1])
-
+        about_links = d3.flatGroup(about_links, d => d[0], d => d[1], d=>d[3])
+        
         about_links = about_links.map((entry, index) => ({
             id: index,
-            source: entry[0],
-            target: entry[1],
-            value: entry[2].length,
+            source: (entry[2] === "Ativo") ? entry[0] : entry[1],
+            target: (entry[2] === "Ativo") ? entry[1] : entry[0],
+            value: entry[3].length,
             type: "about",
             with_id: with_links.findIndex(({ source, target }) => (source === entry[0] && target === entry[1])),
-            citations: [...new Set(entry[2].flatMap(d => d[2]))]
+            citations: [...new Set(entry[3].flatMap(d => d[2]))]
         }))
 
         let linksOriginal = [...new Set([...with_links, ...about_links])]

@@ -6,6 +6,7 @@ import './../../styles/Home/MapChart.css'
 // Geo json files
 import europeData from "./../../assets/maps/europe.json";
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 function noSpaces(str) {
     if (str)
@@ -15,22 +16,17 @@ function noSpaces(str) {
 
 var tooltipMark;
 
-const MapChart = ({ codices }) => {
+const MapChart = ({ codices, locations }) => {
 
     const {t} = useTranslation()
+    let navigate = useNavigate();
 
     const gatherCodicesMarks = () => {
         let marks = [];
 
-        for (const [key, value] of Object.entries(codices)) {
-            value.forEach(codex => {
-                codex.marks.forEach(mark => {
-                    mark["title"] = codex.title
-                    mark["century"] = key
-                    marks.push(mark);
-                })
-            })
-        }
+        locations.forEach(entry => {
+            marks.push(entry)
+        })
 
         return marks;
     }
@@ -62,11 +58,15 @@ const MapChart = ({ codices }) => {
         tooltipMark
             .style("opacity", "1");
 
+        let places = []
+        d.places.forEach(place => {
+            places.push(`<b>${t("mapchart-place")}:</b> ${place[3]} <br>
+                <b>${t("mapchart-title")}:</b> ${place[2]} <br>
+                <b>${t("mapchart-occurrences")}:</b> ${place[4]} <br>`)
+        })
+
         tooltipMark
-            .html(
-                `<center><b>${d.title} </b><br><b>${d.century}</b></center> <br>
-                City: ${d.city} <br>
-                Country: ${d.country} <br>`)
+            .html(places.join("<br>"))
             .style("top", event.pageY - 10 + "px")
             .style("left", event.pageX + 10 + "px")
     }
@@ -81,6 +81,14 @@ const MapChart = ({ codices }) => {
 
         d3.selectAll(`#${noSpaces(d.title)}`)
             .classed("hover", false)
+    }
+
+    let mouseclick = function (event, d){
+        navigate("/dashboard", {
+            state: {
+                mark: d
+            }
+        })
     }
 
     useEffect(() => {
@@ -169,18 +177,25 @@ const MapChart = ({ codices }) => {
             .enter()
             .append("circle")
             .attr("class", function (d) {
-                return "mark " + noSpaces(d.title)
+                let c = []
+                d.places.forEach(place => {
+                    if (!c.includes(noSpaces(place[2])))
+                        c.push(noSpaces(place[2]))
+                })
+                return "mark " + c.join(" ")
             })
-            .attr("r", 2)
+            .attr("r", 1.3)
             .attr("cy", 0)
             .attr("cx", 0)
             .attr("fill", "white")
             .attr("stroke", "#54220b")
+            .attr("stroke-width", 0.6)
             .attr("cursor", "pointer")
             .attr("transform", function (d) { return "translate(" + projection([d.long, d.lat]) + ")"; })
             .on("mouseover", mouseover)
             .on("mouseleave", mouseleave)
-    }, []);
+            .on("click", mouseclick)
+    }, [locations]);
 
     return (
         <>
