@@ -46,7 +46,7 @@ const MapChart = ({ codices, locations }) => {
         tooltipMark
             .style("opacity", 0)
 
-        let element = document.getElementById('tooltipMark')
+        let element = document.getElementById('tooltip')
         if (element)
             element.innerHTML = "";
     }
@@ -75,7 +75,7 @@ const MapChart = ({ codices, locations }) => {
         tooltipMark
             .style("opacity", "0")
 
-        let element = document.getElementById('tooltipMark')
+        let element = document.getElementById('tooltip')
         if (element)
             element.innerHTML = "";
 
@@ -84,6 +84,16 @@ const MapChart = ({ codices, locations }) => {
     }
 
     let mouseclick = function (event, d){
+        tooltipMark
+            .style("opacity", "0")
+
+        let element = document.getElementById('tooltip')
+        if (element)
+            element.innerHTML = "";
+
+        d3.selectAll(`#${noSpaces(d.title)}`)
+            .classed("hover", false)
+
         navigate("/dashboard", {
             state: {
                 mark: d
@@ -97,14 +107,9 @@ const MapChart = ({ codices, locations }) => {
         let width = box.offsetWidth;
         let height = box.offsetHeight;
 
-        d3.selectAll("#tooltipMark").remove();
         // create a tooltipMark
         tooltipMark = d3.select("body")
-            .append("div")
-            .attr("id", "tooltipMark")
-            .attr("class", "tooltip shadow rounded")
-            .attr("padding", "1px")
-            .style("opacity", "0")
+        .select("#tooltip")
 
         d3.select("#infoMap")
             .on("mouseover", infoMouseOverMap)

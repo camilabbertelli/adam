@@ -8,7 +8,7 @@
     "information-pyramid": "Passe o rato sobre uma barra para obter mais informações. <br/>Clique no ícone à direita para alterar os tipos de agrupamento.",
     "information-heatmap": "Passe o mouse sobre uma célula para obter mais informações. <br/>Clique na mesma para mudar para a visualização detalhada.",
     "information-imp": "Passe o mouse sobre uma célula para obter mais informações. Escolha duas pessoas para comparar suas características. Termos em comum serão destacados para facilitar a comparação.",
-    "information-network": "Passe o rato sobre uma conexão ou célula para obter mais informações. <br/><b>Atenção:</b> Afaste para ver todas as conexões.",
+    "information-network": "Passe o rato sobre uma conexão ou célula para obter mais informações. <br/> Nos casos aplicáveis, os links 'Sobre quem' aparecem associados e com origem no link correspondente 'Com quem'.<br/><b>Atenção:</b> Afaste para ver todas as conexões.",
     "information-database": "Selecione as colunas da base de dados para serem visualizadas.",
     
 

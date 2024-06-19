@@ -235,7 +235,7 @@ const NetworkChart = (props) => {
             tooltipNetwork
                 .style("opacity", "0")
 
-            let element = document.getElementById('tooltipNetwork')
+            let element = document.getElementById('tooltip')
             if (element)
                 element.innerHTML = "";
         }
@@ -283,7 +283,7 @@ const NetworkChart = (props) => {
             tooltipNetwork
                 .style("opacity", "0")
 
-            let element = document.getElementById('tooltipNetwork')
+            let element = document.getElementById('tooltip')
             if (element)
                 element.innerHTML = "";
         }
@@ -312,7 +312,7 @@ const NetworkChart = (props) => {
             tooltipNetwork
                 .style("opacity", 0)
 
-            let element = document.getElementById('tooltipNetwork')
+            let element = document.getElementById('tooltip')
             if (element)
                 element.innerHTML = "";
         }
@@ -368,22 +368,18 @@ const NetworkChart = (props) => {
                 entry => entry.type !== id
             ).transition().duration(200).style("stroke-opacity", 1)
 
-            let element = document.getElementById('tooltipNetwork')
+            let element = document.getElementById('tooltip')
             if (element)
                 element.innerHTML = "";
         }
 
         d3.select(".network-graph").selectAll("svg").remove("")
 
-        d3.selectAll("#tooltipNetwork").remove();
+       
         // create a tooltipNetwork
         tooltipNetwork = d3.select("body")
-            .append("div")
-            .attr("id", "tooltipNetwork")
-            .attr("class", "tooltip shadow rounded")
-            .attr("padding", "1px")
-            .style("opacity", "0")
-
+        .select("#tooltip")
+        
         d3.select("#infoNetwork")
             .on("mouseover", infoMouseOverNetwork)
             .on("mouseleave", infoMouseLeaveNetwork)

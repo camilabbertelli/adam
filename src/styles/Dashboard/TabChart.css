@@ -83,9 +83,14 @@
 	height: 10%;
 }
 
+.pyramid-all-content{
+	height: 80%;
+	width: 100%;
+}
+
 .pyramid-top-content{
 	width: 100%;
-	height: 65%;
+	max-height: 80%;
 
 	display: flex;
 	flex-direction: row;
@@ -93,7 +98,7 @@
 
 .pyramid-axes-left{
 	width: 20%;
-	height: 100%;
+	min-height: 100%;
 	display: flex;
 
 	direction: rtl;
@@ -108,7 +113,7 @@
 
 .pyramid-content {
 	width: 80%;
-	height: 100%;
+	min-height: 100%;
 	
 	display: flex;
 
@@ -117,7 +122,7 @@
 
 .pyramid-bottom-content{
 	width: 100%;
-	height: 15%;
+	height: 20%;
 	display: flex;
 	flex-direction: row;
 }

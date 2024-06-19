@@ -250,7 +250,7 @@ const HeatmapChart = (props) => {
 			tooltipHeatmap
 				.style("opacity", 0)
 
-			let element = document.getElementById('tooltipHeatmap')
+			let element = document.getElementById('tooltip')
 			if (element)
 				element.innerHTML = "";
 		}
@@ -572,14 +572,10 @@ const HeatmapChart = (props) => {
 		d3.select(".heatmap-bottom-header")
 			.select(".domain").remove()
 
-		d3.selectAll("#tooltipHeatmap").remove();
+		
 
 		tooltipHeatmap = d3.select("body")
-			.append("div")
-			.attr("id", "tooltipHeatmap")
-			.attr("class", "tooltip shadow rounded")
-			.attr("padding", "1px")
-			.style("opacity", 0);
+		.select("#tooltip")
 
 
 		d3.select("#infoHeatmap")
@@ -597,7 +593,7 @@ const HeatmapChart = (props) => {
 			.attr("ry", 4)
 			.attr("width", x.bandwidth())
 			.attr("height", y.bandwidth())
-			.style("cursor", "pointer")
+			.style("cursor", Object.keys(details).length ? "auto" : "pointer")
 			.style("fill", d => myColor(d[2]))
 			.style("stroke-width", 3)
 			.style("stroke", "#ECECEC")

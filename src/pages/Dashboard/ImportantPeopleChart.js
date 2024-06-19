@@ -174,19 +174,14 @@ const ImportantPeopleChart = (props) => {
             tooltipImp
                 .style("opacity", 0)
 
-            let element = document.getElementById('tooltipImp')
+            let element = document.getElementById('tooltip')
             if (element)
                 element.innerHTML = "";
         }
 
-        d3.selectAll("#tooltipImp").remove();
         // create a tooltipImp
         tooltipImp = d3.select("body")
-            .append("div")
-            .attr("id", "tooltipImp")
-            .attr("class", "tooltip shadow rounded")
-            .attr("padding", "1px")
-            .style("opacity", "0")
+        .select("#tooltip")
 
         d3.select("#infoImp")
             .on("mouseover", infoMouseOverImp)
@@ -195,14 +190,10 @@ const ImportantPeopleChart = (props) => {
     }, [impPeople]);
 
     useEffect(() => {
-        d3.selectAll("#tooltipImp").remove();
+        
         // create a tooltipImp
         tooltipImp = d3.select("body")
-            .append("div")
-            .attr("id", "tooltipImp")
-            .attr("class", "tooltip shadow rounded")
-            .attr("padding", "1px")
-            .style("opacity", "0")
+        .select("#tooltip")
             
         let mouseover = function (event, d) {
             tooltipImp
@@ -251,7 +242,7 @@ const ImportantPeopleChart = (props) => {
             tooltipImp
                 .style("opacity", "0")
 
-            let element = document.getElementById('tooltipImp')
+            let element = document.getElementById('tooltip')
             if (element)
                 element.innerHTML = "";
         }

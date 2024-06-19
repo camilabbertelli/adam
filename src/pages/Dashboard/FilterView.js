@@ -44,7 +44,7 @@ const FilterView = (props) => {
         tooltipCategories
             .style("opacity", 0)
 
-        let element = document.getElementById('tooltipCategories')
+        let element = document.getElementById('tooltip')
         if (element)
             element.innerHTML = "";
     }
@@ -67,14 +67,8 @@ const FilterView = (props) => {
         setCurrentCodices(Object.keys(props.codices))
 
 
-        d3.selectAll("#tooltipCategories").remove();
-
         tooltipCategories = d3.select("body")
-            .append("div")
-            .attr("id", "tooltipCategories")
-            .attr("class", "tooltip shadow rounded")
-            .attr("padding", "1px")
-            .style("opacity", 0);
+        .select("#tooltip")
 
         d3.selectAll("#infoFilter")
             .on("mouseover", infoMouseOverCategories)

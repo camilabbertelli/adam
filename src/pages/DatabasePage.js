@@ -241,19 +241,14 @@ const DatabasePage = (props) => {
             tooltipDatabase
                 .style("opacity", 0)
 
-            let element = document.getElementById('tooltipDatabase')
+            let element = document.getElementById('tooltip')
             if (element)
                 element.innerHTML = "";
         }
 
-        d3.selectAll("#tooltipDatabase").remove();
         // create a tooltipDatabase
         tooltipDatabase = d3.select("body")
-            .append("div")
-            .attr("id", "tooltipDatabase")
-            .attr("class", "tooltip shadow rounded")
-            .attr("padding", "1px")
-            .style("opacity", "0")
+            .select("#tooltip")
 
         d3.select("#infoNetwork")
             .on("mouseover", infoMouseOverDatabase)

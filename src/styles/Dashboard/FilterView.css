@@ -200,6 +200,7 @@ div.dashboard-image-component {
     padding: 2% 5%;
     border-radius: 20px;
     text-align: left;
+    vertical-align: middle;
 }
 
 .location-dropdown-content-hide {

@@ -41,7 +41,7 @@ const NavBar = () => {
     return (
         <nav className="sticky-top">
             <div style={{height: "60%"}}>
-                <h1 className="title">A.D.A.M</h1>
+                <h1 className="title">A.D.A.M.</h1>
                 <img alt="ornament" className="ornament" src={ornament} />
             </div>
             <ul>

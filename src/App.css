@@ -4,8 +4,8 @@
 }
 
 @font-face {
-	font-family: 'EB Garamond';
-	src: local('EB Garamond'), url(./assets/fonts/EBGaramond-Medium.ttf) format('truetype');
+	font-family: 'Spectral';
+	src: local('Spectral'), url(./assets/fonts/Spectral-Medium.ttf) format('truetype');
 }
 
 @font-face {

@@ -161,6 +161,8 @@ const TabContent = (props) => {
         let maxTotal = d3.max(pyramidData, d => d[1].total / participants_total)
         let maxScale = (totalOccurrences) ? maxTotal : Math.max(maxMasc, maxFem)
 
+        let oneSideScale = (totalOccurrences) ? false : (maxMasc === 0 || maxFem === 0) 
+
         let factor = maxScale > 0.1 ? 0.05 : 0.01
 
         const mouseclick = function (event, d, type) {
@@ -216,7 +218,7 @@ const TabContent = (props) => {
         const mouseleave = function (event, d, type) {
             tooltipPyramid.style("opacity", 0)
 
-            let element = document.getElementById('tooltipPyramid')
+            let element = document.getElementById('tooltip')
             if (element) element.innerHTML = "";
 
             d3.select(`.pyramid-${type === "masc" ? "Masc" : "Fem"}-${noSpaces(d[0])}`).transition().duration(100).style("stroke-width", 0)
@@ -226,7 +228,7 @@ const TabContent = (props) => {
             tooltipPyramid
                 .style("opacity", 0)
 
-            let element = document.getElementById('tooltipPyramid')
+            let element = document.getElementById('tooltip')
             if (element)
                 element.innerHTML = "";
         }
@@ -290,14 +292,8 @@ const TabContent = (props) => {
 
         let scrollableHeight = pyramidData.size * 30
 
-        d3.selectAll("#tooltipPyramid").remove();
-
         tooltipPyramid = d3.select("body")
-            .append("div")
-            .attr("id", "tooltipPyramid")
-            .attr("class", "tooltip shadow rounded")
-            .attr("padding", "1px")
-            .style("opacity", 0);
+        .select("#tooltip")
 
         d3.select("#infoPyramid")
             .on("mouseover", infoMouseOverPyramid)
@@ -331,7 +327,7 @@ const TabContent = (props) => {
             .attr("class", "pyramid-bottom-axis")
             .attr("transform", `translate(10,0)`)
             .attr("id", "axismale")
-            .call(d3.axisBottom(xScaleMasc).tickSize(0).tickPadding(2).ticks((factor === 0.01) ? 2 : 5, "%").tickFormat(x => { if (x === 0) return 0; else return `${(+(x * 100).toFixed(1))}%` }))
+            .call(d3.axisBottom(xScaleMasc).tickSize(0).tickPadding(2).ticks((factor === 0.01) ? 3 : (oneSideScale ? 3 : 5), "%").tickFormat(x => { if (x === 0) return 0; else return `${(+(x * 100).toFixed(1))}%` }))
             .call(function (d) { return d.select(".domain").remove() });
 
         let bottom_legend = axes_bottom
@@ -369,7 +365,7 @@ const TabContent = (props) => {
                 .attr("class", "pyramid-bottom-axis")
                 .attr("transform", `translate(10,0)`)
                 .attr("id", "axisfemale")
-                .call(d3.axisBottom(xScaleFem).tickSize(0).tickPadding(2).ticks((factor === 0.01) ? 2 : 5, "%").tickFormat(x => { if (x === 0) return; else return `${(+(x * 100).toFixed(1))}%` }))
+                .call(d3.axisBottom(xScaleFem).tickSize(0).tickPadding(2).ticks((factor === 0.01) ? 3 : (oneSideScale ? 3 : 5), "%").tickFormat(x => { if (x === 0) return; else return `${(+(x * 100).toFixed(1))}%` }))
                 .call(function (d) { return d.select(".domain").remove() });
 
             bottom_legend
@@ -668,7 +664,7 @@ const TabContent = (props) => {
         tooltipPyramid
             .style("opacity", 0)
 
-        let element = document.getElementById('tooltipPyramid')
+        let element = document.getElementById('tooltip')
         if (element)
             element.innerHTML = "";
     }
@@ -717,6 +713,7 @@ const TabContent = (props) => {
                 </div>
 
             </div>
+            <div className="pyramid-all-content">
             <div className="pyramid-top-content">
                 <div onScroll={handleLeftScroll} className="pyramid-axes-left">
                 </div>
@@ -737,6 +734,8 @@ const TabContent = (props) => {
                 <div className="pyramid-axes-bottom">
                 </div>
             </div>
+            </div>
+            
         </div>
     </>)
 }

@@ -53,7 +53,7 @@ const MobileWarning = () => {
                 </div>
                 <div className="mobile-warning-title">
                     <center>
-                        <h1 className="title">A.D.A.M</h1>
+                        <h1 className="title">A.D.A.M.</h1>
                         <img alt="ornament" src={ornament} width="40%" />
                     </center>
                 </div>

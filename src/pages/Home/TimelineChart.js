@@ -87,24 +87,12 @@ const TimelineChart = ({ codices, codicesWithLocation }) => {
                     .style("transform", "translateY(-5px)")
                     .style("box-shadow", "none")
                     .style("opacity", 1)
-
-            // tooltipCodex
-            //     .style("opacity", "1");
-
-            // tooltipCodex
-            //     .html(
-            //         `<center><b>${title}</b></center>`)
-            //     .style("top", event.pageY - 10 + "px")
-            //     .style("left", event.pageX + 10 + "px")
         }
 
         let mouseleave = function (event, d) {
             let title = d3.select(this).attr('id')
 
-            // tooltipCodex
-            //     .style("opacity", "0")
-
-            let element = document.getElementById('tooltipCodex')
+            let element = document.getElementById('tooltip')
             if (element)
                 element.innerHTML = "";
 
@@ -191,13 +179,6 @@ const TimelineChart = ({ codices, codicesWithLocation }) => {
         }
 
         d3.selectAll("#tooltipCodex").remove();
-        // // create a tooltipMark
-        // tooltipCodex = d3.select("body")
-        //     .append("div")
-        //     .attr("id", "tooltipCodex")
-        //     .attr("class", "tooltip shadow rounded")
-        //     .attr("padding", "1px")
-        //     .style("opacity", "0")
 
         d3.selectAll(`.image-component`)
             .on("mouseover", mouseover)
