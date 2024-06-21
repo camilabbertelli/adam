@@ -99,15 +99,12 @@ const LibraryPage = () => {
     let allCodicesAux = {}
     let allCodices = {}
     let allGenres = []
-    for (const [key, value] of Object.entries(codicesOriginal)) {
-        value.forEach(codex => {
-            if (codex["pdf-ancient"] || codex["pdf-modern"]) {
-                codex["century"] = key;
-                allCodicesAux[noSpaces(codex.title)] = codex;
-                allGenres.push(codex.genre);
-            }
-        })
-    }
+    codicesOriginal.forEach(codex => {
+        if (codex["pdf-ancient"] || codex["pdf-modern"]) {
+            allCodicesAux[noSpaces(codex.title)] = codex;
+            allGenres.push(codex.genre);
+        }
+    })
 
     if (allGenres) allGenres.sort()
 

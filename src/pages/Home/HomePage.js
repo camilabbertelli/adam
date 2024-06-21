@@ -14,8 +14,6 @@ import doubleArrow from "../../assets/images/doubleArrow.png"
 import logos from "../../assets/images/logos.png"
 import info from "../../assets/images/info-white.png"
 
-import codices from '../../assets/codices.js';
-
 import MapChart from './MapChart'
 import TimelineChart from './TimelineChart.js';
 import GalleryChart from './GalleryChart.js';
@@ -28,14 +26,37 @@ function noSpaces(str) {
     return str
 }
 
-function flatLatLong(latlong){
+function flatLatLong(latlong) {
     return latlong.split("°")[0];
+}
+
+function romanToInt(roman) {
+    const romanNumerals = {
+        I: 1,
+        V: 5,
+        X: 10,
+        L: 50,
+        C: 100,
+        D: 500,
+        M: 1000,
+    };
+    let result = 0;
+    for (let i = 0; i < roman.length; i++) {
+        const currentSymbol = romanNumerals[roman[i]];
+        const nextSymbol = romanNumerals[roman[i + 1]];
+        if (nextSymbol && currentSymbol < nextSymbol) {
+            result -= currentSymbol;
+        } else {
+            result += currentSymbol;
+        }
+    }
+    return result;
 }
 
 const HomePage = (props) => {
 
     const [locations, setLocations] = useState([])
-    const [codicesWithLocation, setCodicesWithLocation] = useState([])
+    const [centuries, setCenturies] = useState([])
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
@@ -69,10 +90,11 @@ const HomePage = (props) => {
             d => d[props.csvNames.action],
             d => d[props.csvNames.causes_group],
             d => d[props.csvNames.causes],
-            d => d[props.csvNames.latitude],
-            d => d[props.csvNames.longitude],
             d => d[props.csvNames.time],
             d => d[props.csvNames.place],
+            d => d[props.csvNames.latitude],
+            d => d[props.csvNames.longitude],
+            d => d[props.csvNames.chronology],
             d => d[props.csvNames.how],
             d => d[props.csvNames.intention],
             d => d[props.csvNames.with_name],
@@ -86,31 +108,54 @@ const HomePage = (props) => {
             d => d[props.csvNames.supernatural_type],
             d => d[props.csvNames.pp])
 
-        let loc = d3.flatRollup(data, v => v.length, d=> d[props.csvIndexes.latitude], d=>d[props.csvIndexes.longitude], d => d[props.csvIndexes.title], d=>d[props.csvIndexes.place])
-                          .map(entry => [flatLatLong(entry[0]), flatLatLong(entry[1]), entry[2], entry[3], entry[4]])
+        let loc = d3.flatRollup(data, v => v.length, d => d[props.csvIndexes.latitude], d => d[props.csvIndexes.longitude], d => d[props.csvIndexes.title], d => d[props.csvIndexes.place], d => d[props.csvIndexes.chronology])
+            .map(entry => [flatLatLong(entry[0]), flatLatLong(entry[1]), entry[2], entry[3], entry[4], entry[5]])
 
-        
+
         loc = loc.filter(entry => {
             return entry[0] !== "" && entry[1] !== "" && entry[3] !== "Não aplicável"
         })
 
-        loc = d3.flatGroup(loc, d=>d[0], d=>d[1])
+        loc = d3.flatGroup(loc, d => d[0], d => d[1])
 
-        loc = loc.map(entry=>({
-           long: entry[1],
-           lat:entry[0],
-           places: entry[2]
+        loc = loc.map(entry => ({
+            long: entry[1],
+            lat: entry[0],
+            places: entry[2]
         }))
 
-        let codwithLocation = loc.map(entry=>{
+        let centuriesArray = d3.flatRollup(data, v => v.length, d => d[props.csvIndexes.chronology], d => d[props.csvIndexes.title])
+
+        let centuriesAux = {}
+
+
+        let codwithLocation = loc.map(entry => {
             return [...new Set(entry.places.flatMap(place => place[2]))]
         })
 
         codwithLocation = [... new Set(codwithLocation.flat())]
 
-        setCodicesWithLocation(codwithLocation)
+        centuriesArray.forEach(([cJoined, v, occurrences]) => {
+            if (codwithLocation.includes(v)) {
+
+                let cIndividual = cJoined.split(" ")
+                cIndividual.forEach(c => {
+                    let codices = (centuriesAux[c] ? centuriesAux[c] : {})
+                    codices[v] = codices[v] ? codices[v] + occurrences : occurrences
+                    centuriesAux[c] = codices
+                })
+            }
+        })
+
+        let centuries = {}
+
+        Object.keys(centuriesAux).sort((a, b) => romanToInt(a) - romanToInt(b)).forEach(c => {
+            centuries[c] = centuriesAux[c]
+        })
+
+        setCenturies(centuries)
         setLocations(loc)
-    }, [props.data]);
+    }, [props.data, props.csvIndexes]);
 
     const { t } = useTranslation();
 
@@ -133,18 +178,18 @@ const HomePage = (props) => {
                             style={{ "marginLeft": 5 + "px" }} width="15" height="15"
                         />
                     </div>
-                    <MapChart codices={codices} locations={locations}/>
+                    <MapChart locations={locations} />
                 </div>
                 <div className='timeline-section'>
-                    <TimelineChart codices={codices} codicesWithLocation={codicesWithLocation} />
+                    {<TimelineChart centuries={centuries} />}
                 </div>
 
             </div>
         </div>
         <div className='row doubleArrow hidden scroll-bounce'>
             <center>
-                <div className="col">
-                    <a href="#gallery"><img alt="" src={doubleArrow} /></a>
+                <div className="col" style={{ width: "fit-content" }}>
+                    <a href="#gallery" ><img alt="" src={doubleArrow} /></a>
                 </div>
             </center>
         </div>

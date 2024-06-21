@@ -1,24 +1,25 @@
 .background {
-  fill: none;
-  pointer-events: all;
+	fill: none;
+	pointer-events: all;
 }
 
 .viz {
-  position: relative;
-  width: 45dvw;
-  height: 35dvh;
+	position: relative;
+	width: 45dvw;
+	height: 35dvh;
 }
 
 #countries {
-  fill: none;
-  stroke: rgb(216, 184, 154);
-  stroke-linejoin: round;
-  stroke-width: 0.5px;
+	fill: none;
+	stroke: rgb(216, 184, 154);
+	stroke-linejoin: round;
+	stroke-width: 0.5px;
 }
 
 #countries .active {
-  display: none;
+	display: none;
 }
+
 /* 
 .country:hover {
   fill: rgb(163, 131, 116)
@@ -26,5 +27,11 @@
 
 
 .mark:hover {
-  fill: #6d2c0e
+	fill: #6d2c0e
+}
+
+.map-icons{
+	
+	width: 35px;
+	position: absolute;
 }

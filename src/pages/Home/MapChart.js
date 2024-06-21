@@ -1,7 +1,10 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import * as d3 from 'd3'
 import 'bootstrap/dist/css/bootstrap.css';
 import './../../styles/Home/MapChart.css'
+
+import drag from "./../../assets/images/left-click.png"
+import scroll from "./../../assets/images/scroll.png"
 
 // Geo json files
 import europeData from "./../../assets/maps/europe.json";
@@ -16,15 +19,34 @@ function noSpaces(str) {
 
 var tooltipMark;
 
-const MapChart = ({ codices, locations }) => {
+const MapChart = ({ locations }) => {
 
-    const {t} = useTranslation()
+    const { t } = useTranslation()
     let navigate = useNavigate();
 
     const gatherCodicesMarks = () => {
         let marks = [];
 
         locations.forEach(entry => {
+            let places = []
+            entry.places.forEach(place => {
+
+                let centuries = place[4].split(" ")
+                centuries.forEach(century => {
+                    place[4] = century
+                    places.push([...place])
+                })
+            })
+
+            places = d3.flatGroup(places, d => d[0], d => d[1], d => d[2], d => d[3])
+
+            places.forEach((place, index) => {
+                let centuries = d3.flatRollup(place[4], v => d3.sum(v, d => d[5]), d => d[2], d => d[3], d => d[4])
+                centuries = centuries.flatMap(d => [[d[2], d[3]]])
+                places[index][4] = [...centuries]
+            })
+
+            entry.places = places
             marks.push(entry)
         })
 
@@ -58,15 +80,20 @@ const MapChart = ({ codices, locations }) => {
         tooltipMark
             .style("opacity", "1");
 
-        let places = []
-        d.places.forEach(place => {
-            places.push(`<b>${t("mapchart-place")}:</b> ${place[3]} <br>
+            let placesString = []
+
+            d.places.forEach(place => {
+                let centuriesOccurrences = []
+                place[4].forEach(century => {
+                     centuriesOccurrences.push(`${century[0]} (${century[1]})`)
+                })
+                placesString.push(`<b>${t("mapchart-place")}:</b> ${place[3]} <br>
                 <b>${t("mapchart-title")}:</b> ${place[2]} <br>
-                <b>${t("mapchart-occurrences")}:</b> ${place[4]} <br>`)
-        })
+                <b>${t("mapchart-occurrences")}:</b> ${centuriesOccurrences.join(", ")} <br>`)
+            })
 
         tooltipMark
-            .html(places.join("<br>"))
+            .html(placesString.join("<br>"))
             .style("top", event.pageY - 10 + "px")
             .style("left", event.pageX + 10 + "px")
     }
@@ -83,7 +110,7 @@ const MapChart = ({ codices, locations }) => {
             .classed("hover", false)
     }
 
-    let mouseclick = function (event, d){
+    let mouseclick = function (event, d) {
         tooltipMark
             .style("opacity", "0")
 
@@ -109,7 +136,7 @@ const MapChart = ({ codices, locations }) => {
 
         // create a tooltipMark
         tooltipMark = d3.select("body")
-        .select("#tooltip")
+            .select("#tooltip")
 
         d3.select("#infoMap")
             .on("mouseover", infoMouseOverMap)
@@ -184,8 +211,10 @@ const MapChart = ({ codices, locations }) => {
             .attr("class", function (d) {
                 let c = []
                 d.places.forEach(place => {
-                    if (!c.includes(noSpaces(place[2])))
-                        c.push(noSpaces(place[2]))
+                    place[4].forEach(century => {
+                        if (!c.includes(century[0] + "-" + noSpaces(place[2])))
+                            c.push(century[0] + "-" + noSpaces(place[2]))
+                    })
                 })
                 return "mark " + c.join(" ")
             })
@@ -202,9 +231,24 @@ const MapChart = ({ codices, locations }) => {
             .on("click", mouseclick)
     }, [locations]);
 
+    const [firstTimeTooltip, setFirstTimeTooltip] = useState(true)
+
+    function mapmouseenter(){
+        if (firstTimeTooltip){
+            setFirstTimeTooltip(false)
+            d3.selectAll(".map-icons").transition().duration(500).style("opacity", 1)
+
+            setTimeout(() => {
+                d3.selectAll(".map-icons").transition().duration(500).style("opacity", 0)  
+            }, 5000);
+        }
+    }
+
     return (
         <>
-            <div className="map">
+            <div className="map" onMouseEnter={mapmouseenter}>
+                <img title="Zoom" className="map-icons" alt="icon-zoom" src={scroll} style={{ opacity: 0}}/>
+                <img title="Drag" className="map-icons" alt="icon-drag" src={drag} style={{ marginLeft: "35px", opacity:0}}/>
                 <div className="viz">
                 </div>
             </div>

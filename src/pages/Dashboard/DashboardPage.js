@@ -32,12 +32,37 @@ function noSpaces(str) {
 
 let colorCodices = () => { }
 
+
+function romanToInt(roman) {
+    const romanNumerals = {
+        I: 1,
+        V: 5,
+        X: 10,
+        L: 50,
+        C: 100,
+        D: 500,
+        M: 1000,
+    };
+    let result = 0;
+    for (let i = 0; i < roman.length; i++) {
+        const currentSymbol = romanNumerals[roman[i]];
+        const nextSymbol = romanNumerals[roman[i + 1]];
+        if (nextSymbol && currentSymbol < nextSymbol) {
+            result -= currentSymbol;
+        } else {
+            result += currentSymbol;
+        }
+    }
+    return result;
+}
+
 const DashboardPage = (props) => {
 
     const { t } = useTranslation();
 
     const [categories, setCategories] = useState({})
     const [locations, setLocations] = useState([])
+    const [centuries, setCenturies] = useState([])
 
     let intention = {
         "intention-all": {
@@ -152,6 +177,7 @@ const DashboardPage = (props) => {
     const [activeCategories, setActiveCategories] = useState([]);
     const [currentTabchartCategory, setCurrentTabchartCategory] = useState("")
     const [activeLocations, setActiveLocations] = useState([])
+    const [activeCenturies, setActiveCenturies] = useState([])
     const [activeCodices, setActiveCodices] = useState([])
     const [networkData, setNetworkData] = useState({ selected: [], people: [] })
     const [pyramidData, setPyramidData] = useState({ sex: "", category: "", categoryIndex: "" })
@@ -240,10 +266,11 @@ const DashboardPage = (props) => {
             d => d[props.csvNames.action],
             d => d[props.csvNames.causes_group],
             d => d[props.csvNames.causes],
-            d => d[props.csvNames.latitude],
-            d => d[props.csvNames.longitude],
             d => d[props.csvNames.time],
             d => d[props.csvNames.place],
+            d => d[props.csvNames.latitude],
+            d => d[props.csvNames.longitude],
+            d => d[props.csvNames.chronology],
             d => d[props.csvNames.how],
             d => d[props.csvNames.intention],
             d => d[props.csvNames.with_name],
@@ -264,6 +291,20 @@ const DashboardPage = (props) => {
                     .flatMap(d => [d[0]]).sort()
 
         setLocations(loc)
+        
+        let centJoined = d3.flatGroup(data, d=>d[props.csvIndexes.chronology])
+        .filter(entry => {return entry !== "Não aplicável"})
+        .flatMap(d => [d[0]])
+
+        let cent = []
+        centJoined.forEach(c => {
+            c.split(" ").forEach(c => {
+                if (!cent.includes(c))
+                    cent.push(c)
+            })
+        })
+
+        setCenturies(cent.sort((a, b) => romanToInt(a) - romanToInt(b)))
 
         let categoriesAux = {
             "category-action": {
@@ -373,7 +414,7 @@ const DashboardPage = (props) => {
 
     const [resetComponents, setResetComponents] = useState(false)
 
-    function setFilters(newFilters, types, codicesFilter, locationFilter, advFilters) {
+    function setFilters(newFilters, types, codicesFilter, locationFilter, centuryFilter, advFilters) {
 
         let filtered = originalGlobalData.filter((d) => {
             if (codicesFilter && codicesFilter.length) {
@@ -389,6 +430,27 @@ const DashboardPage = (props) => {
             } 
             else if (activeLocations.length)
                 return activeLocations.includes(d[props.csvIndexes.place]);
+
+            if (centuryFilter){
+                if (centuryFilter.length){
+                    let pass = false
+                    let centuries = d[props.csvIndexes.chronology].split(" ")
+                    centuries.forEach(c => {
+                        if (centuryFilter.includes(c))
+                            pass = true
+                    })
+                    return pass
+                }
+            } 
+            else if (activeCenturies.length){
+                let pass = false
+                let centuries = d[props.csvIndexes.chronology].split(" ")
+                centuries.forEach(c => {
+                    if (activeCenturies.includes(c))
+                        pass = true
+                })
+                return pass
+            }
 
             for (const [key, v] of Object.entries(activeFilters)) {
                 let filter = (types.includes(key)) ? newFilters[types.indexOf(key)] : v
@@ -435,9 +497,11 @@ const DashboardPage = (props) => {
         if (codicesFilter && codicesFilter.length)
             setActiveCodices(codicesFilter)
 
-
         if (locationFilter) 
             setActiveLocations(locationFilter)
+
+        if (centuryFilter) 
+            setActiveCenturies(centuryFilter)
         
         setChangedFilter(true)
     }
@@ -463,7 +527,7 @@ const DashboardPage = (props) => {
             ],
             ["intention", "agent", "value", "supernatural_type", "nature", "dimension"],
             Object.keys(codices).sort(),
-            [],
+            [], [],
             advancedFilterAux)
 
         setPyramidData({ sex: "", category: "", categoryIndex: "" })
@@ -529,7 +593,7 @@ const DashboardPage = (props) => {
                 </div>
                 <FilterView
                     categories={categories} activeCategories={activeCategories}
-                    locations={locations}
+                    locations={locations} centuries={centuries}
                     intention={intention}
                     agent={agent}
                     value={value}
@@ -539,7 +603,8 @@ const DashboardPage = (props) => {
                     codices={codices}
                     colorCodices={colorCodices}
                     genres={genres}
-                    activeLocations={activeLocations} activeFilters={activeFilters} setActiveFilters={setFilters} advancedCategoryFilters={advancedCategoryFilters} resetFilters={resetFilters} />
+                    activeLocations={activeLocations} activeCenturies={activeCenturies} 
+                    activeFilters={activeFilters} setActiveFilters={setFilters} advancedCategoryFilters={advancedCategoryFilters} resetFilters={resetFilters} />
                 <DragOverlay dropAnimation={{ duration: 500 }}>
                     {activeCategory ? (
                         <button className={`shadow dashboard-filter-category ${(activeCategories.includes(activeCategory) ? "selected" : "")} drag`} style={{ border: "10px" }} key={activeCategory}>{t(activeCategory)}</button>
@@ -618,14 +683,14 @@ const DashboardPage = (props) => {
                     <div className='dashboard-row3'>
 
                         <button className="citations-btn" type='button' onClick={() => {setIsOpen(!isOpen); setNetworkLink(null)}}>
-                            <img alt="up-arrow" width="20px" height="20px" style={{ transform: "rotate(180deg)" }} src={doubleArrow} />
+                            <img alt="up-arrow" width="20px" height="20px" style={{ marginLeft:"10px", transform: "rotate(180deg)" }} src={doubleArrow} />
                             {t("citations-label")}
                         </button>
 
                         <Drawer backdrop={false} open={isOpen} onClose={handleClose} 
                             className='citations-drawer shadow' position='bottom'>
                             <button className="citations-btn" type='button' onClick={() => {setIsOpen(false); setNetworkLink(null)}}>
-                                <img alt="up-arrow" width="20px" height="20px" src={doubleArrow} />
+                                <img alt="up-arrow" width="20px" height="20px" style={{animation: "updown 2s ease infinite", marginLeft:"10px"}} src={doubleArrow} />
                                 {t("citations-label")}
                             </button>
                             <Citations

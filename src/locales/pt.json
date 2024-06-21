@@ -20,6 +20,7 @@
     "filter-tooltip-supernatural_type": "",
     "filter-tooltip-dimension": "",
     "filter-tooltip-location": "",
+    "filter-tooltip-centuries": "",
     "filter-tooltip-codices": "",
     
     "mapchart-place": "Lugar", 
@@ -78,8 +79,10 @@
     "dimension-label": "Dimensão",
     "codices-label": "Códices",
     "locations-label": "Localidades",
+    "centuries-label": "Séculos",
 
     "location-select": "Filtrar localidades",
+    "century-select": "Filtrar séculos",
 
     "agent-all": "Todos",
     "agent-active": "Ativo",

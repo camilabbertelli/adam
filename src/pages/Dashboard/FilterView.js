@@ -167,6 +167,18 @@ const FilterView = (props) => {
         return content
     }
 
+    function toggleDropdownCentury() {
+
+        if (d3.select(`[id="century-dropdown"]`).node()) {
+
+            let dropDownActive = !d3.select(`#century-dropdown`).classed("century-dropdown-content-show")
+            d3.select(`#century-dropdown`).classed("century-dropdown-content-show", dropDownActive)
+            d3.select(`#century-arrow`).style("transform", dropDownActive ? "rotate(90deg)" : "none")
+
+            d3.select(`.btn-centuries`).style("border-radius", !dropDownActive ? "20px" : "20px 20px 0 0")
+        }
+    }
+
     function toggleDropdownLocation() {
 
         if (d3.select(`[id="location-dropdown"]`).node()) {
@@ -199,6 +211,19 @@ const FilterView = (props) => {
 
     }
 
+    function clickDropdownCentury(century) {
+        let source = document.getElementById(`checkbox-century-${noSpaces(century)}`)
+
+        let aux = [...props.activeCenturies]
+
+        if (!source.checked) {
+            const index = aux.indexOf(century);
+            aux.splice(index, 1);
+        } else aux.push(century)
+
+        props.setActiveFilters([], [], null, null, aux)
+    }
+
     function clickDropdownLocation(place) {
         let source = document.getElementById(`checkbox-location-${noSpaces(place)}`)
 
@@ -209,7 +234,7 @@ const FilterView = (props) => {
             aux.splice(index, 1);
         } else aux.push(place)
 
-        props.setActiveFilters([], [], null, aux, null)
+        props.setActiveFilters([], [], null, aux)
     }
 
     function clickDropdownCategory(category, key, sublist) {
@@ -230,7 +255,7 @@ const FilterView = (props) => {
                 aux[category].sublist.splice(indexSub, 1);
         })
 
-        props.setActiveFilters([], [], [], aux)
+        props.setActiveFilters([], [], [], [], [], aux)
     }
 
     function clickDropdownSubCategory(category, key, subkey) {
@@ -250,7 +275,7 @@ const FilterView = (props) => {
             aux[category].sublist.splice(index, 1);
         } else aux[category].sublist.push(subkey)
 
-        props.setActiveFilters([], [], [], aux)
+        props.setActiveFilters([], [], [], [], [], aux)
     }
 
     function resetFilters() {
@@ -494,6 +519,31 @@ const FilterView = (props) => {
                                     <div style={{ display: "flex", alignItems: "center", width: "100%", height: "100%", marginLeft: "6%" }}>
                                         <input checked={props.activeLocations.includes(place)} onClick={() => clickDropdownLocation(place)} type="checkbox" id={`checkbox-location-${noSpaces(place)}`} name={`checkbox-location-${noSpaces(place)}`} />
                                         <button style={{ width: "100%", height: "100%", display: "flex" }}>{place}</button>
+                                    </div>
+                                </li>))}
+                        </ul>
+                    </div>
+                </div>
+
+                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "2px 0" }}>
+
+                    <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", }}>
+                        {t("centuries-label")}
+                        <img alt="info" id="infoFilter" className="century" src={info}
+                            style={{ marginLeft: "5px", cursor: "pointer", width: "15px", height: "15px" }}
+                        />
+                    </div>
+                    <button className="btn-centuries" style={{ color: (props.activeCenturies.length ? "black" : "gray") }} onClick={toggleDropdownCentury}>
+                        {props.activeCenturies.length === 0 ? t("century-select") : props.activeCenturies.join(", ")}
+                        <ArrowForwardIosIcon id={`century-arrow`} className="arrow-dropdown" style={{ position: "absolute", right: "0", width: "15px", marginRight: "10px", marginTop: "auto", marginBottom: "auto" }} />
+                    </button>
+                    <div id={`century-dropdown`} className={"shadow century-dropdown-content-hide"} key={"hidden-century-dropdown"}>
+                        <ul>
+                            {props.centuries.map(century => (
+                                <li key={"li_century_" + century}>
+                                    <div style={{ display: "flex", alignItems: "center", width: "100%", height: "100%", marginLeft: "6%" }}>
+                                        <input checked={props.activeCenturies.includes(century)} onClick={() => clickDropdownCentury(century)} type="checkbox" id={`checkbox-century-${noSpaces(century)}`} name={`checkbox-location-${noSpaces(century)}`} />
+                                        <button style={{ width: "100%", height: "100%", display: "flex" }}>{century}</button>
                                     </div>
                                 </li>))}
                         </ul>

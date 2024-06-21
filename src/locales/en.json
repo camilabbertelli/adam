@@ -32,6 +32,7 @@
     "filter-tooltip-supernatural_type": "",
     "filter-tooltip-dimension": "",
     "filter-tooltip-location": "",
+    "filter-tooltip-centuries": "",
     "filter-tooltip-codices": "",
     
 
@@ -81,8 +82,10 @@
     "dimension-label": "Dimension",
     "codices-label": "Codices",
     "locations-label": "Locations",
+    "centuries-label": "Centuries",
 
     "location-select": "Filter locations",
+    "century-select": "Filter centuries",
 
     "agent-all": "All",
     "agent-active": "Active",

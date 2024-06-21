@@ -108,3 +108,18 @@
 .MuiSvgIcon-root{
     fill: #4A1515 !important;
 }
+
+@keyframes updown {
+  0% {
+    transform: translateY(-10%);
+  }
+
+  70% {
+    transform: translateY(20%);
+  }
+
+  100% {
+    transform: translateY(-10%);
+  }
+}
+
