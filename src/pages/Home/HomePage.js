@@ -168,7 +168,7 @@ const HomePage = (props) => {
             <div className="section left">
                 <h1 className='title big'>{t("adam")}</h1>
                 <p>{t("home-subtitle")}</p>
-                <button type="button" className="button-home"><Link to="/dashboard">{t("btnDiscover")}</Link></button>
+                <Link to="/dashboard"><button type="button" className="button-home">{t("btnDiscover")}</button></Link>
             </div>
             <div className="section right">
                 <div className='map-section'>

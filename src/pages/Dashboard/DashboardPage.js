@@ -360,23 +360,38 @@ const DashboardPage = (props) => {
         setActiveCodices([...sortedkeys])
         if (navigation.state && navigation.state.mark){
             let places = []
+            let cent = []
             
             navigation.state.mark.places.forEach(entry => {
                 if (!places.includes(entry[3])){
                     places.push(entry[3])
                 }
+
+                entry[4].forEach(c => {
+                    if (!cent.includes(c[0]))
+                        cent.push(c[0])
+                })
             })
             window.history.replaceState({}, '')
 
             data = data.filter((d) => {
+                let passPlaces = false
+                let passCent = false
                 if (places && places.length)
-                    return places.includes(d[props.csvIndexes.place])
-                return true
+                    passPlaces = places.includes(d[props.csvIndexes.place])
+                
+                if (cent && cent.length)
+                    d[props.csvIndexes.chronology].split(" ").forEach(c => {
+                        passCent = cent.includes(c)                   
+                    })
+                return passPlaces && passCent
             });
 
             if (places.length) 
                 setActiveLocations(places)
             
+            if (cent.length) 
+                setActiveCenturies(cent)
         }
         
         setGlobalData([...data])
@@ -683,14 +698,14 @@ const DashboardPage = (props) => {
                     <div className='dashboard-row3'>
 
                         <button className="citations-btn" type='button' onClick={() => {setIsOpen(!isOpen); setNetworkLink(null)}}>
-                            <img alt="up-arrow" width="20px" height="20px" style={{ marginLeft:"10px", transform: "rotate(180deg)" }} src={doubleArrow} />
+                            <img alt="up-arrow" width="20px" height="20px" style={{ animation: "downup 2s ease infinite", marginLeft:"10px", transform: "rotate(180deg)" }} src={doubleArrow} />
                             {t("citations-label")}
                         </button>
 
                         <Drawer backdrop={false} open={isOpen} onClose={handleClose} 
                             className='citations-drawer shadow' position='bottom'>
                             <button className="citations-btn" type='button' onClick={() => {setIsOpen(false); setNetworkLink(null)}}>
-                                <img alt="up-arrow" width="20px" height="20px" style={{animation: "updown 2s ease infinite", marginLeft:"10px"}} src={doubleArrow} />
+                                <img alt="up-arrow" width="20px" height="20px" style={{marginLeft:"10px"}} src={doubleArrow} />
                                 {t("citations-label")}
                             </button>
                             <Citations

@@ -109,17 +109,20 @@
     fill: #4A1515 !important;
 }
 
-@keyframes updown {
+@keyframes downup {
   0% {
-    transform: translateY(-10%);
+    transform: translateY(10%);
+    rotate: 180deg;
   }
 
   70% {
-    transform: translateY(20%);
+    transform: translateY(-20%);
+    rotate: 180deg;
   }
 
   100% {
-    transform: translateY(-10%);
+    transform: translateY(10%);
+    rotate: 180deg;
   }
 }
 

@@ -188,8 +188,6 @@ const TabContent = (props) => {
         const mouseover = function (event, d, type) {
             tooltipPyramid.style("opacity", 1)
             d3.select(`.pyramid-${type === "masc" ? "Masc" : "Fem"}-${noSpaces(d[0])}`).transition().duration(100).style("stroke-width", 1)
-
-
         };
 
         const mousemove = function (event, d, type) {
@@ -209,7 +207,7 @@ const TabContent = (props) => {
             if (type === "total") name = "Total"
             tooltipPyramid
                 .html(`<center><b>${d[0]} - ${name.charAt(0).toUpperCase() + name.slice(1)}</b></center>
-                        Percentage: ${d3.format(".1f")((data / participants_total) * 100)}%<br>
+                        ${t("pyramid-percentage")}: ${d3.format(".1f")((data / participants_total) * 100)}%<br>
                         ${t("heatmap-occurrence")}: ${data}`)
                 .style("top", event.pageY - 10 + "px")
                 .style("left", event.pageX + 10 + "px");

@@ -201,7 +201,7 @@ const HeatmapChart = (props) => {
 
 
 	function cellClick(event, d) {
-		
+
 
 		if (Object.keys(details).length)
 			return
@@ -259,8 +259,8 @@ const HeatmapChart = (props) => {
 			tooltipHeatmap.style("opacity", 1)
 
 			d3.select(this).transition().duration(100)
-				.style("opacity", 1)
 				.style("stroke", "black")
+				.style("opacity", 1)
 
 			let svg = d3.select(".heatmap-graph").select("svg").select("g")
 			let x = Number(d3.select(this).attr("x"))
@@ -271,26 +271,33 @@ const HeatmapChart = (props) => {
 			let dim = 20
 
 			if (Object.keys(details).length === 0)
-			svg.append("image")
-				.attr("href", expand)
-				.attr("width", dim)
-				.attr("height", dim)
-				.attr("id", "image-expand")
-				.attr("x", x + (width/2) - (dim/2))
-				.attr("y", y + (height/2) - (dim/2))
-				.on("mousemove", (event) => {
-					tooltipHeatmap
-				.html(`<center><b>${d[0] ? d[0] : "--"} x ${d[1] ? d[1] : "--"}</b></center>
+				svg.append("image")
+					.attr("href", expand)
+					.attr("width", dim)
+					.attr("height", dim)
+					.attr("id", "image-expand")
+					.attr("x", x + (width / 2) - (dim / 2))
+					.attr("y", y + (height / 2) - (dim / 2))
+					.on("mousemove", (event) => {
+
+						d3.select(`.heatmap-${noSpaces(d[0])}-${noSpaces(d[1])}`)
+							.style("stroke", "black")
+							.style("opacity", 1)
+
+						tooltipHeatmap.style("opacity", 1)
+
+						tooltipHeatmap
+							.html(`<center><b>${d[0] ? d[0] : "--"} x ${d[1] ? d[1] : "--"}</b></center>
 						${t("heatmap-occurrence")}: ${d[2]}`)
-				.style("top", event.pageY - 10 + "px")
-				.style("left", event.pageX + 10 + "px");
-				})
-				.on("click", () => cellClick(event, d))
-				.style("opacity", 0)
-				.style("cursor", "pointer")
-				.transition()
-				.style("opacity", 1)
-				
+							.style("top", event.pageY - 10 + "px")
+							.style("left", event.pageX + 10 + "px");
+					})
+					.on("click", () => cellClick(event, d))
+					.style("opacity", 0)
+					.style("cursor", "pointer")
+					.transition()
+					.style("opacity", 1)
+
 		}
 
 		// Three function that change the tooltip when user hover / move / leave a cell
@@ -304,13 +311,13 @@ const HeatmapChart = (props) => {
 		}
 
 		const mouseleave = function (event, d) {
-			if (document.elementFromPoint(event.clientX, event.clientY).id === "image-expand")
-				return
+
 
 			tooltipHeatmap.style("opacity", 0)
 			d3.select(this).transition().duration(100)
 				.style("stroke", "#ECECEC")
-
+			if (document.elementFromPoint(event.clientX, event.clientY).id === "image-expand")
+				return
 			d3.select(".heatmap-graph").select("svg").select("g").selectAll("image").remove()
 
 			let element = document.getElementById('tooltipHeatmap')
@@ -572,10 +579,10 @@ const HeatmapChart = (props) => {
 		d3.select(".heatmap-bottom-header")
 			.select(".domain").remove()
 
-		
+
 
 		tooltipHeatmap = d3.select("body")
-		.select("#tooltip")
+			.select("#tooltip")
 
 
 		d3.select("#infoHeatmap")

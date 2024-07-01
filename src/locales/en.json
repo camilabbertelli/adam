@@ -61,9 +61,11 @@
 
     "pyramid-group-info":"Group people",
     "pyramid-separate-info":"Separate people by sex",
+    "pyramid-percentage": "Percentage",
 
 
     "no-data-to-show": "No data to show",
+
 
     "clear-selection-filter": "Clear selection",
     "clear-all-filter": "Clear all",
@@ -115,6 +117,16 @@
     "dimension-transcendental": "Transcendental",
 
     "citations-label": "citations",
+    
+    "imp-label": "Important people",
+    "imp-no-selection-label" : "Select a person",
+    "search-imp-placeholder": "Search people",
+
+    "network-label": "Relationship network",
+    "network-about-whom": "About whom",
+    "network-with-whom": "With whom",
+    "network-tooltip-about": "About",
+    "network-tooltip-with": "With",
 
     "icon-expand" : "Expand",
     "icon-shrink" : "Shrink",
@@ -135,15 +147,6 @@
 
     "heatmap-occurrence": "Occurrence",
 
-    "imp-label": "Important people",
-    "imp-no-selection-label" : "Select a person",
-    "search-imp-placeholder": "Search people",
-
-    "network-label": "Relationship network",
-    "network-about-whom": "About whom",
-    "network-with-whom": "With whom",
-    "network-tooltip-about": "About",
-    "network-tooltip-with": "With",
 
     "database-content": "Content",
     "database-select-all" : "Select all",
@@ -157,11 +160,11 @@
     "library-genre-all": "All genres",
 
 
-
     "lost": "Lost?",
     "not-found": "404: Page Not Found!",
     "not-found-text": "The page you are looking for might be someplace else... or never existed.",
     "not-found-button": "Go to Home",
 
+    
     "mobile-warning": "For optimal experience, please use a device with a larger screen (e.g., 13 inches or larger) and rotate to landscape mode when possible."
 }
