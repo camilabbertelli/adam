@@ -167,12 +167,11 @@ const TimelineChart = ({ centuries }) => {
             }
         }
 
-
         d3.selectAll(`.image-component`)
             .on("mouseover", mouseover)
             .on("mouseleave", mouseleave)
             .on("click", mouseclick)
-    }, [centuries]);
+    }, [centuries, selectedCodex]);
 
     return (
         <div className='timeline-principal'>

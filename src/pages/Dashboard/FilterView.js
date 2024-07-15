@@ -344,7 +344,8 @@ const FilterView = (props) => {
                                     <div className="category-buttons" key={"category_" + key}>
                                         <Draggable key={key} id={key}><button className={`shadow dashboard-filter-category` + (props.activeCategories.includes(key) ? " selected" : "")} id={key}
                                             style={(index === 0) ? { borderRadius: "20px 20px 0 0" } :
-                                                (index === Object.keys(props.categories).length - 1 ? { borderRadius: "0 0 20px 20px" } : null)}
+                                                (index === Object.keys(props.categories).length - 1 ? //its the last category
+                                                (d3.select(`[id="filter-dropdown-${key}"]`).node() && !d3.select(`[id="filter-dropdown-${key}"]`).classed("filter-dropdown-content-show") ? { borderRadius: "0 0 20px 20px" } : { borderRadius: "0" }) : null)}
                                             onClick={() => toggleDropdownCategory(key, index)} >
                                             {t(key)}
                                             <ArrowForwardIosIcon id={`citation-arrow-${key}`} className="arrow-dropdown" style={{ position: "absolute", right: "0", width: "15px", marginRight: "5px", marginTop: "2px" }} />
