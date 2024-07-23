@@ -181,6 +181,11 @@ const TabContent = (props) => {
 
                 setSelectedSex({ sex: s, category: c, categoryIndex: index })
                 props.setPyramidData({ sex: s, category: c, categoryIndex: index })
+            } else{
+                let c = (selectedSex.category === d[0]) ? "" : d[0]
+
+                setSelectedSex({ sex: "", category: c, categoryIndex: index })
+                props.setPyramidData({ sex: "", category: c, categoryIndex: index })
             }
         }
 
@@ -325,7 +330,7 @@ const TabContent = (props) => {
             .attr("class", "pyramid-bottom-axis")
             .attr("transform", `translate(10,0)`)
             .attr("id", "axismale")
-            .call(d3.axisBottom(xScaleMasc).tickSize(0).tickPadding(2).ticks((factor === 0.01) ? 3 : (oneSideScale ? 3 : 5), "%").tickFormat(x => { if (x === 0) return 0; else return `${(+(x * 100).toFixed(1))}%` }))
+            .call(d3.axisBottom(xScaleMasc).tickSize(0).tickPadding(2).ticks((factor === 0.01) ? 3 : (oneSideScale ? 3 : 4), "%").tickFormat(x => { if (x === 0) return 0; else return `${(+(x * 100).toFixed(1))}%` }))
             .call(function (d) { return d.select(".domain").remove() });
 
         let bottom_legend = axes_bottom
@@ -363,7 +368,7 @@ const TabContent = (props) => {
                 .attr("class", "pyramid-bottom-axis")
                 .attr("transform", `translate(10,0)`)
                 .attr("id", "axisfemale")
-                .call(d3.axisBottom(xScaleFem).tickSize(0).tickPadding(2).ticks((factor === 0.01) ? 3 : (oneSideScale ? 3 : 5), "%").tickFormat(x => { if (x === 0) return; else return `${(+(x * 100).toFixed(1))}%` }))
+                .call(d3.axisBottom(xScaleFem).tickSize(0).tickPadding(2).ticks((factor === 0.01) ? 3 : (oneSideScale ? 3 : 4), "%").tickFormat(x => { if (x === 0) return; else return `${(+(x * 100).toFixed(1))}%` }))
                 .call(function (d) { return d.select(".domain").remove() });
 
             bottom_legend
@@ -596,7 +601,7 @@ const TabContent = (props) => {
             .call(GridLineM()
                 .tickSize(scrollableHeight, 0, 0)
                 .tickFormat("")
-                .ticks(7)
+                .ticks(5)
             )
 
         // set vertical grid line
@@ -608,7 +613,7 @@ const TabContent = (props) => {
                 .call(GridLineF()
                     .tickSize(scrollableHeight, 0, 0)
                     .tickFormat("")
-                    .ticks(7)
+                    .ticks(5)
                 );
 
         setChangedTotal(false)
@@ -619,7 +624,7 @@ const TabContent = (props) => {
 
     const changeTotalOccurrence = () => {
         setTotalOccurrences(!totalOccurrences)
-        if (selectedSex.sex !== "") {
+        if (selectedSex.sex !== "" || selectedSex.category !== "") {
             setSelectedSex({ sex: "", category: "", categoryIndex: "" })
             props.setPyramidData({ sex: "", category: "", categoryIndex: "" })
         }

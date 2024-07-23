@@ -221,7 +221,7 @@ const ImportantPeopleChart = (props) => {
             tooltipImp
                 .html(
                     `<b>${t("imp-tooltip-person")}: </b>${impPeople[person].name}<br/>
-                         <b>${t("imp-tooltip-field")}: </b>${key} <br/><br/>
+                         <b>${t("imp-tooltip-field")}: </b>${props.csvNames[key]} <br/><br/>
                          <b>${t("imp-tooltip-value")}: </b>${spanText} <br/>
                          <b>${t("heatmap-occurrence")}: </b>${parentData[spanText]} <br/>`)
                          
@@ -339,7 +339,7 @@ const ImportantPeopleChart = (props) => {
                                     </div>
                                 </div>
                                 <div className='imp-selected-section'>
-                                    <table width={"100%"} key={`table-imp`}>
+                                    <table className="table-imp-people" key={`table-imp`}>
                                         <tbody key={`tbody-imp`}>
                                             {Object.keys(props.csvIndexes).map((key, index) => {
                                                 if (props.csvNames[key] === props.csvNames.index || props.csvNames[key] === props.csvNames.description || props.csvNames[key] === props.csvNames.subject_name)
