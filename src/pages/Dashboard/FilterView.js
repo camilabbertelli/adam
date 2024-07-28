@@ -10,6 +10,7 @@ import info from "./../../assets/images/info-black.png"
 import close from "./../../assets/images/close.png"
 
 import * as d3 from "d3"
+import { useLocation } from "react-router-dom";
 
 function noSpaces(str) {
     if (str)
@@ -68,7 +69,7 @@ const FilterView = (props) => {
 
 
         tooltipCategories = d3.select("body")
-        .select("#tooltip")
+            .select("#tooltip")
 
         d3.selectAll("#infoFilter")
             .on("mouseover", infoMouseOverCategories)
@@ -248,11 +249,14 @@ const FilterView = (props) => {
 
         sublist.forEach(subitem => {
             const indexSub = aux[category].sublist.indexOf(noSpaces(subitem));
-            if (source.checked) {
+            if (source.checked || indexSub === -1) {
+                source.checked = true
                 aux[category].sublist.push(noSpaces(subitem))
             }
-            else if (indexSub !== -1)
+            else if (indexSub !== -1){
+                source.checked = false
                 aux[category].sublist.splice(indexSub, 1);
+            }
         })
 
         props.setActiveFilters([], [], [], [], [], aux)
@@ -316,6 +320,38 @@ const FilterView = (props) => {
         d3.select(".category-buttons-group").style("border", "2px solid transparent")
     }
 
+
+    let navigation = useLocation()
+
+    const [onlyOnce, setOnlyOnce] = useState(false)
+
+    useEffect(() => {
+        if (!onlyOnce && navigation.state && navigation.state.type && navigation.state.item && navigation.state.subitems) {
+
+            let type = navigation.state.type
+            let item = navigation.state.item
+
+            props.advancedCategoryFilters[type] && props.advancedCategoryFilters[type].sublist.forEach(subkey => {
+                let target = document.getElementById(`checkbox-sub-${subkey}`);
+                if (target)
+                    target.checked = true
+            })
+
+            let source = document.getElementById(`checkbox-${item}`)
+            let checkboxes = document.getElementsByName(`checkbox-sub-${item}`);
+            
+            if (!source)
+                return
+
+
+            setOnlyOnce(true)
+
+            source.checked = true
+
+            window.history.replaceState({}, '')
+        }
+    })
+
     return (
         <>
 
@@ -345,7 +381,7 @@ const FilterView = (props) => {
                                         <Draggable key={key} id={key}><button className={`shadow dashboard-filter-category` + (props.activeCategories.includes(key) ? " selected" : "")} id={key}
                                             style={(index === 0) ? { borderRadius: "20px 20px 0 0" } :
                                                 (index === Object.keys(props.categories).length - 1 ? //its the last category
-                                                (d3.select(`[id="filter-dropdown-${key}"]`).node() && !d3.select(`[id="filter-dropdown-${key}"]`).classed("filter-dropdown-content-show") ? { borderRadius: "0 0 20px 20px" } : { borderRadius: "0" }) : null)}
+                                                    (d3.select(`[id="filter-dropdown-${key}"]`).node() && !d3.select(`[id="filter-dropdown-${key}"]`).classed("filter-dropdown-content-show") ? { borderRadius: "0 0 20px 20px" } : { borderRadius: "0" }) : null)}
                                             onClick={() => toggleDropdownCategory(key, index)} >
                                             {t(key)}
                                             <ArrowForwardIosIcon id={`citation-arrow-${key}`} className="arrow-dropdown" style={{ position: "absolute", right: "0", width: "15px", marginRight: "5px", marginTop: "2px" }} />

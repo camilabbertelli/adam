@@ -18,6 +18,7 @@ import $ from "jquery"
 
 import * as d3 from "d3";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 
 var tooltipPyramid;
 
@@ -125,6 +126,18 @@ const TabContent = (props) => {
         }
 
     }, [props.resetComponents])
+
+    let navigation = useLocation()
+    const [onlyOnce, setOnlyOnce] = useState(false)
+
+    useEffect(() => {
+        if (!onlyOnce && navigation.state && navigation.state.sex) {
+
+            let s = navigation.state.sex
+            setSelectedSex({ sex: s, category: "", categoryIndex: "" })
+            setOnlyOnce(true)
+        }
+    })
 
     function clearSelection() {
         setSelectedSex({ sex: "", category: "", categoryIndex: "" })
@@ -818,7 +831,7 @@ const TabChart = (props) => {
                         setPyramidData={props.setPyramidData}
                         isExpanded={props.isExpanded} setIsExpanded={props.setIsExpanded}
                         currentSorting={currentSorting} setCurrentSorting={setCurrentSorting}
-                        changedFilter={props.changedFilter} setChangedFilter={props.setChangedFilter} />}
+                        changedFilter={props.changedFilter} setChangedFilter={props.setChangedFilter} changeCurrentCategory={changeCurrentCategory}/>}
                 {data.length === 0 &&
                     <div className="tab-content shadow">
                         {t("no-data-to-show")}

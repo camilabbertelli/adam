@@ -160,7 +160,7 @@ const DashboardPage = (props) => {
             csv_name: "Alma",
             index: props.csvIndexes.dimension
         },
-        "dimension-transcendental": { 
+        "dimension-transcendental": {
             csv_name: "Transcendental",
             index: props.csvIndexes.dimension
         },
@@ -286,15 +286,15 @@ const DashboardPage = (props) => {
 
         setOriginalGlobalData([...data])
 
-        let loc = d3.flatGroup(data, d=>d[props.csvIndexes.place])
-                    .filter(entry => {return entry !== "Não aplicável"})
-                    .flatMap(d => [d[0]]).sort()
+        let loc = d3.flatGroup(data, d => d[props.csvIndexes.place])
+            .filter(entry => { return entry !== "Não aplicável" })
+            .flatMap(d => [d[0]]).sort()
 
         setLocations(loc)
-        
-        let centJoined = d3.flatGroup(data, d=>d[props.csvIndexes.chronology])
-        .filter(entry => {return entry !== "Não aplicável"})
-        .flatMap(d => [d[0]])
+
+        let centJoined = d3.flatGroup(data, d => d[props.csvIndexes.chronology])
+            .filter(entry => { return entry !== "Não aplicável" })
+            .flatMap(d => [d[0]])
 
         let cent = []
         centJoined.forEach(c => {
@@ -358,12 +358,12 @@ const DashboardPage = (props) => {
         setActiveCategories([Object.keys(categoriesAux)[0], Object.keys(categoriesAux)[1]])
         setCurrentTabchartCategory(Object.keys(categoriesAux)[0])
         setActiveCodices([...sortedkeys])
-        if (navigation.state && navigation.state.mark){
+        if (navigation.state && navigation.state.mark) {
             let places = []
             let cent = []
-            
+
             navigation.state.mark.places.forEach(entry => {
-                if (!places.includes(entry[3])){
+                if (!places.includes(entry[3])) {
                     places.push(entry[3])
                 }
 
@@ -379,21 +379,83 @@ const DashboardPage = (props) => {
                 let passCent = false
                 if (places && places.length)
                     passPlaces = places.includes(d[props.csvIndexes.place])
-                
+
                 if (cent && cent.length)
                     d[props.csvIndexes.chronology].split(" ").forEach(c => {
-                        passCent = cent.includes(c)                   
+                        passCent = cent.includes(c)
                     })
                 return passPlaces && passCent
             });
 
-            if (places.length) 
+            if (places.length)
                 setActiveLocations(places)
-            
-            if (cent.length) 
+
+            if (cent.length)
                 setActiveCenturies(cent)
         }
-        
+
+        if (navigation.state && navigation.state.type && navigation.state.item && navigation.state.subitems) {
+
+            console.log(navigation.state)
+
+            let type = navigation.state.type
+            let item = navigation.state.item
+            let subitems = navigation.state.subitems
+
+            advancedFilterAux[type].sublist = subitems
+            if (subitems.length === 0){
+
+                let category = categoriesAux[type]
+                let sublist = []
+                category.list.some(categorylist => {
+                    let i = categorylist[0]
+
+                    if (item)
+                        sublist = categorylist[1].map(d => d[1])
+                    else{
+                        sublist.concat(categorylist[1].map(d => d[1]))
+                    }
+                    
+                    return i === item
+                })
+
+                advancedFilterAux[type].sublist = sublist
+            }
+
+            data = data.filter((d) => {
+                let passAdvanced = true
+
+                for (const [key, v] of Object.entries(advancedFilterAux)) {
+                    let passIntern = false
+                    let indexList = categoriesAux[key].index
+                    let indexSublist = categoriesAux[key].indexSubcategory
+
+                    if (v.list.length)
+                        if (v.list.includes(noSpaces(d[indexList])))
+                            passIntern = true
+
+                    if (v.sublist.length)
+                        if (v.sublist.includes(noSpaces(d[indexSublist])))
+                            passIntern = true
+
+                    if (v.list.length === 0 && v.sublist.length === 0)
+                        passIntern = true
+
+                    passAdvanced = passAdvanced && passIntern
+                }
+
+                return passAdvanced;
+            })
+
+        }
+
+        if (navigation.state && navigation.state.sex){
+            let s = navigation.state.sex
+
+            updatePyramidData({ sex: s, category: "", categoryIndex: "" })
+            // TODO: link with pyramid data and filter data
+        }
+
         setGlobalData([...data])
         setActiveFilters({
             intention: Object.keys(intention)[0],
@@ -439,15 +501,15 @@ const DashboardPage = (props) => {
             else if (!activeCodices.includes(noSpaces(d[props.csvIndexes.title])))
                 return false;
 
-            if (locationFilter){
+            if (locationFilter) {
                 if (locationFilter.length)
                     return locationFilter.includes(d[props.csvIndexes.place])
-            } 
+            }
             else if (activeLocations.length)
                 return activeLocations.includes(d[props.csvIndexes.place]);
 
-            if (centuryFilter){
-                if (centuryFilter.length){
+            if (centuryFilter) {
+                if (centuryFilter.length) {
                     let pass = false
                     let centuries = d[props.csvIndexes.chronology].split(" ")
                     centuries.forEach(c => {
@@ -456,8 +518,8 @@ const DashboardPage = (props) => {
                     })
                     return pass
                 }
-            } 
-            else if (activeCenturies.length){
+            }
+            else if (activeCenturies.length) {
                 let pass = false
                 let centuries = d[props.csvIndexes.chronology].split(" ")
                 centuries.forEach(c => {
@@ -506,18 +568,18 @@ const DashboardPage = (props) => {
 
         setGlobalData(filtered)
         setActiveFilters(filters)
-        if (advFilters) 
+        if (advFilters)
             setAdvancedCategoryFilters(advFilters)
-        
+
         if (codicesFilter && codicesFilter.length)
             setActiveCodices(codicesFilter)
 
-        if (locationFilter) 
+        if (locationFilter)
             setActiveLocations(locationFilter)
 
-        if (centuryFilter) 
+        if (centuryFilter)
             setActiveCenturies(centuryFilter)
-        
+
         setChangedFilter(true)
     }
 
@@ -548,7 +610,7 @@ const DashboardPage = (props) => {
         setPyramidData({ sex: "", category: "", categoryIndex: "" })
         setHeatmapData([])
         setNetworkData({ selected: [], people: [] })
-        
+
         setResetComponents(true)
     }
 
@@ -583,12 +645,12 @@ const DashboardPage = (props) => {
         pointerSensor
     )
 
-    function highlightDefaultCategory(proceed){
-        if (proceed){
+    function highlightDefaultCategory(proceed) {
+        if (proceed) {
             d3.selectAll(".heatmap-drag").selectAll(".default").style("background-color", "#D8BABA")
             d3.select(".category-buttons-group").style("border", "2px dashed #8C5E5E")
         }
-        
+
         setTimeout(() => {
             d3.selectAll(".heatmap-drag").selectAll(".default").style("background-color", "white")
             d3.select(".category-buttons-group").style("border", "2px solid transparent")
@@ -618,7 +680,7 @@ const DashboardPage = (props) => {
                     codices={codices}
                     colorCodices={colorCodices}
                     genres={genres}
-                    activeLocations={activeLocations} activeCenturies={activeCenturies} 
+                    activeLocations={activeLocations} activeCenturies={activeCenturies}
                     activeFilters={activeFilters} setActiveFilters={setFilters} advancedCategoryFilters={advancedCategoryFilters} resetFilters={resetFilters} />
                 <DragOverlay dropAnimation={{ duration: 500 }}>
                     {activeCategory ? (
@@ -697,15 +759,15 @@ const DashboardPage = (props) => {
                     </div>
                     <div className='dashboard-row3'>
 
-                        <button className="citations-btn" type='button' onClick={() => {setIsOpen(!isOpen); setNetworkLink(null)}}>
-                            <img alt="up-arrow" width="20px" height="20px" style={{ animation: "downup 2s ease infinite", marginLeft:"10px", transform: "rotate(180deg)" }} src={doubleArrow} />
+                        <button className="citations-btn" type='button' onClick={() => { setIsOpen(!isOpen); setNetworkLink(null) }}>
+                            <img alt="up-arrow" width="20px" height="20px" style={{ animation: "downup 2s ease infinite", marginLeft: "10px", transform: "rotate(180deg)" }} src={doubleArrow} />
                             {t("citations-label")}
                         </button>
 
-                        <Drawer backdrop={false} open={isOpen} onClose={handleClose} 
+                        <Drawer backdrop={false} open={isOpen} onClose={handleClose}
                             className='citations-drawer shadow' position='bottom'>
-                            <button className="citations-btn" type='button' onClick={() => {setIsOpen(false); setNetworkLink(null)}}>
-                                <img alt="up-arrow" width="20px" height="20px" style={{marginLeft:"10px"}} src={doubleArrow} />
+                            <button className="citations-btn" type='button' onClick={() => { setIsOpen(false); setNetworkLink(null) }}>
+                                <img alt="up-arrow" width="20px" height="20px" style={{ marginLeft: "10px" }} src={doubleArrow} />
                                 {t("citations-label")}
                             </button>
                             <Citations
@@ -716,7 +778,7 @@ const DashboardPage = (props) => {
                                 currentTabchartCategory={currentTabchartCategory}
                                 csvIndexes={props.csvIndexes} csvNames={props.csvNames}
                                 isOpen={isOpen} setIsOpen={setIsOpen}
-                                />
+                            />
                         </Drawer>
                     </div>
                 </div>

@@ -5,8 +5,30 @@ import 'mdb-ui-kit/css/mdb.min.css';
 import '../../styles/Home/GalleryChart.css';
 
 import gallery from './../../assets/gallery.js';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
-const GalleryImage = ({ src, title, description }) => {
+
+
+
+const GalleryImage = ({ src, title, description, type, item, subitems, sex }) => {
+
+
+    const { t } = useTranslation();
+    let navigate = useNavigate();
+
+    const mouseclick = (type, item, subitems, sex) => {
+
+        navigate("/dashboard", {
+            state: {
+                type: type,
+                item: item,
+                subitems: subitems,
+                sex: sex
+            }
+        })
+    }
+
     return (
         <>
             <div className='col'>
@@ -23,14 +45,17 @@ const GalleryImage = ({ src, title, description }) => {
                         } 
                     }} className="mask text-light d-flex justify-content-center flex-column text-left card-img">
                         <h4 className="title smaller">{title}</h4>
-                        <p>{description}</p>
+                        {/* <p>{description}</p> */}
                     </div>
                     <dialog className="dialog-gallery" id={`dialog-gallery-${title.replace(/\s+/g, '')}`}>
 
                         <div id="dialog-content">
-                            <img className="max-w-bg" alt="medieval-img" src={require(`./../../assets/images/gallery/${src}`)} />
+                            <img className="dialog-gallery-open" alt="medieval-img" src={require(`./../../assets/images/gallery/${src}`)} />
                             <h4>{title}</h4>
-                            <p>{description}</p>
+                            {/* <p>{description}</p> */}
+                            <center>
+                                <button className="btn-filter-dashboard" onClick={() => mouseclick(type, item, subitems, sex)}>{t("gallery-filter-dashboard")}</button>
+                            </center>
                         </div>
                     </dialog>
                 </div>
@@ -49,7 +74,7 @@ const GalleryImages = ({ currentRow }) => {
         const element = gallery[index];
         if (element)
             content.push(
-                <GalleryImage key={`gallery_` + index} src={element.src} title={element.title} description={element.description} />
+                <GalleryImage key={`gallery_` + index} src={element.src} title={element.title} description={element.description} type={element.type} item={element.item} subitems={element.subitems} sex={element.sex}/>
             )
     }
 

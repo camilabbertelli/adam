@@ -1,32 +1,46 @@
 const gallery = [{
-    src: "1.png",
-    title: "Vestibulum prima",
-    description: "Integer sit amet pulvinar lectus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;"
+    src: "Alma.jpg",
+    title: "Alma",
+    description: "Integer sit amet pulvinar lectus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;",
+    type: "category-body",
+    item: "Alma",
+    subitems: [],
 },
 {
-    src: "2.png",
-    title: "Vestibulum seconda",
-    description: "Integer sit amet pulvinar lectus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;"
+    src: "Cabeca.jpg",
+    title: "Cabeça",
+    description: "Integer sit amet pulvinar lectus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;",
+    type: "category-body",
+    item: "Cabeça",
+    subitems: [],
 },
 {
-    src: "3.png",
-    title: "Vestibulum terca",
-    description: "Integer sit amet pulvinar lectus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;"
+    src: "Tronco.jpg",
+    title: "Tronco",
+    description: "Integer sit amet pulvinar lectus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;",
+    type: "category-body",
+    item: "Tronco",
+    subitems: [],
 },
 {
-    src: "4.png",
-    title: "Vestibulum quarta",
-    description: "Integer sit amet pulvinar lectus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;"
+    src: "Membros.jpg",
+    title: "Membros",
+    description: "Integer sit amet pulvinar lectus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;",
+    type: "category-body",
+    item: "Membros",
+    subitems: ["Mãos", "Pernas", "Pés"],
 },
 {
-    src: "5.png",
-    title: "Vestibulum quinta",
-    description: "Integer sit amet pulvinar lectus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;"
+    src: "Gestos.jpg",
+    title: "Gestos",
+    description: "Integer sit amet pulvinar lectus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;",
+    sex: "Fem."
 },
 {
-    src: "6.png",
-    title: "Vestibulum sexta",
-    description: "Integer sit amet pulvinar lectus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;"
+    src: "CorpoIntegral.jpg",
+    title: "Corpo integral",
+    description: "Integer sit amet pulvinar lectus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;",
+    sex: "Masc."
 }]
 
 

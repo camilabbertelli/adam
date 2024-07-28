@@ -79,7 +79,7 @@ dialog[open] {
     display: flex;
     text-align: left;
 	background: #fff4e3;
-	max-width: 30%;
+    max-width: 30%;
 	border-radius: 20px;
 	border: 0;
 	box-shadow: 0 5px 30px 0 rgb(0 0 0 / 10%);
@@ -100,6 +100,20 @@ dialog[open] {
     }
 }
 
+#dialog-content{
+    width: 100% !important;
+}
+
+.dialog-gallery{
+    width: 30% !important;
+}
+
+.dialog-gallery-open{
+    width: 100% !important;
+    height: auto !important;
+    max-width: none !important;
+}
+
 @keyframes fadeIn {
 	from {
 		opacity: 0;
@@ -116,4 +130,13 @@ dialog[open] {
 	to {
 		opacity: 0;
 	}
+}
+
+.btn-filter-dashboard{
+    width: 80%;
+    padding: 3%;
+    background-color: #D9AB96;
+    color: black;
+    border-radius: 10px;
+    margin-bottom: 10%;
 }
