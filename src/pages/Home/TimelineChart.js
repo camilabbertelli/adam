@@ -8,6 +8,7 @@ import minus from "./../../assets/images/minus.png"
 import { useEffect, useState } from 'react';
 
 import * as d3 from 'd3'
+import { useTranslation } from 'react-i18next';
 
 function noSpaces(str) {
     if (str)
@@ -15,12 +16,14 @@ function noSpaces(str) {
     return str
 }
 
+var tooltipTimeline;
 
 const CodicesSec = ({ century, codices }) => {
     let content = []
     Object.keys(codices).forEach(codex => {
         content.push(
-            <div key={`${century}-${noSpaces(codex)}`} id={`${century}-${noSpaces(codex)}`} className="image-component" title={codex}>
+            <div key={`${century}-${noSpaces(codex)}`} id={`${century}-${noSpaces(codex)}`} className="image-component"
+                data-dict={JSON.stringify({ ...codices[codex] })}>
                 <img src={spine} className="timeline card-img-top" alt="book" />
                 <div className='centered'>{codex}</div>
             </div>
@@ -32,8 +35,6 @@ const CodicesSec = ({ century, codices }) => {
 
 const Sec = ({ centuries }) => {
     let content = []
-
-
 
     for (const [century, codices] of Object.entries(centuries)) {
 
@@ -54,12 +55,28 @@ const Sec = ({ centuries }) => {
 }
 
 const TimelineChart = ({ centuries }) => {
-    const [selectedCodex, setSelectedCodex] = useState("")
+    const [selectedCodices, setSelectedCodices] = useState([])
+
+    const { t } = useTranslation();
 
     useEffect(() => {
 
         let mouseover = function (event, d) {
-            let century_title = d3.select(this).attr('id')
+
+            let [century, title, publication] = d3.select(this).attr('id').split("-")
+
+            let century_title = century + "-" + title
+
+            let parentData = d3.select(this).node().getAttribute("data-dict")
+            let codex = JSON.parse(parentData)
+
+
+            tooltipTimeline
+                .style("opacity", "1");
+
+            tooltipTimeline
+                .html(`<center><b>${codex.title}</b></center>
+                ${t("timeline-tooltip-publication")}: ${codex.publication}`)
 
             d3.selectAll(`.mark`)
                 .transition().duration(200)
@@ -70,7 +87,7 @@ const TimelineChart = ({ centuries }) => {
                 .attr("opacity", 1)
                 .attr("r", 2)
 
-            if (selectedCodex !== century_title)
+            if (!selectedCodices.includes(century_title))
                 d3.select(`#${century_title}`)
                     .transition().duration(50)
                     .style("transform", "translateY(-5px)")
@@ -78,12 +95,30 @@ const TimelineChart = ({ centuries }) => {
                     .style("opacity", 1)
         }
 
+        let mousemove = function (event, d) {
+            let xposition = event.pageX + 10
+            let yposition = event.pageY - 10
+            let tooltip_rect = tooltipTimeline.node().getBoundingClientRect();
+            if (xposition + tooltip_rect.width > window.innerWidth)
+                xposition = xposition - 20 - tooltip_rect.width
+            if (yposition + tooltip_rect.height > window.innerHeight)
+                yposition = yposition + 20 - tooltip_rect.height
+
+            tooltipTimeline
+                .style("top", yposition + "px")
+                .style("left", xposition + "px")
+        }
+
         let mouseleave = function (event, d) {
             let century_title = d3.select(this).attr('id')
+
+            tooltipTimeline
+                .style("opacity", "0")
 
             let element = document.getElementById('tooltip')
             if (element)
                 element.innerHTML = "";
+
 
             d3.selectAll(`.mark`)
                 .transition()
@@ -92,49 +127,35 @@ const TimelineChart = ({ centuries }) => {
                 .attr("r", 1.3)
 
 
-            if (selectedCodex !== century_title)
+            if (!selectedCodices.includes(century_title))
                 d3.select(`#${century_title}`)
                     .transition().duration(50)
                     .style("transform", "translateY(5px)")
                     .style("box-shadow", "none")
-                    .style("opacity", 0.8)
+                    .style("opacity", 0.6)
 
-            if (selectedCodex) {
+
+            if (selectedCodices.length)
                 d3.selectAll(`.mark`)
                     .transition().duration(200)
                     .attr("opacity", 0.6)
                     .attr("r", 1.3)
 
+            selectedCodices.forEach(selectedCodex => {
                 d3.selectAll(`.mark.${selectedCodex}`)
                     .transition()
                     .duration(200)
                     .attr("opacity", 1)
                     .attr("r", 2)
-            }
+            })
         }
 
         let mouseclick = function (event, d) {
 
             let century_title = d3.select(this).attr('id')
 
-            if (selectedCodex === century_title) {
-                d3.selectAll(`.mark`)
-                    .transition()
-                    .duration(200)
-                    .attr("opacity", 1)
-                    .attr("r", 2)
-                    .style("fill", "#ffffff")
-                    .style("stroke", "#54220b")
-
-                d3.select(`#${century_title}`)
-                    .transition().duration(50)
-                    .style("transform", "translateY(5px)")
-                    .style("box-shadow", "none")
-                    .style("opacity", 0.8)
-
-                setSelectedCodex("")
-            } else {
-                d3.selectAll(`.mark`)
+            if (selectedCodices.includes(century_title)) {
+                d3.selectAll(`.mark.${century_title}`)
                     .transition()
                     .duration(200)
                     .attr("opacity", 0.6)
@@ -142,6 +163,29 @@ const TimelineChart = ({ centuries }) => {
                     .style("fill", "#ffffff")
                     .style("stroke", "#54220b")
 
+
+
+                d3.select(`#${century_title}`)
+                    .transition().duration(50)
+                    .style("transform", "translateY(5px)")
+                    .style("box-shadow", "none")
+                    .style("opacity", 0.6)
+
+                let aux = [...selectedCodices]
+                aux.splice(selectedCodices.indexOf(century_title), 1)
+
+                aux.forEach(selectedCodex => {
+                    d3.selectAll(`.mark.${selectedCodex}`)
+                        .transition()
+                        .duration(200)
+                        .attr("opacity", 1)
+                        .attr("r", 2)
+                        .style("fill", "#54220b")
+                        .style("stroke", "#ffffff")
+                })
+
+                setSelectedCodices(aux)
+            } else {
                 d3.selectAll(`.mark.${century_title}`)
                     .transition()
                     .duration(200)
@@ -150,12 +194,6 @@ const TimelineChart = ({ centuries }) => {
                     .style("fill", "#54220b")
                     .style("stroke", "#ffffff")
 
-                if (selectedCodex)
-                    d3.select(`#${selectedCodex}`)
-                        .transition().duration(50)
-                        .style("transform", "translateY(5px)")
-                        .style("box-shadow", "none")
-                        .style("opacity", 0.8)
 
                 d3.select(`#${century_title}`)
                     .transition().duration(50)
@@ -163,15 +201,22 @@ const TimelineChart = ({ centuries }) => {
                     .style("box-shadow", "none")
                     .style("opacity", 1)
 
-                setSelectedCodex(century_title)
+                let aux = [...selectedCodices]
+                aux.push(century_title)
+                setSelectedCodices(aux)
             }
         }
 
         d3.selectAll(`.image-component`)
             .on("mouseover", mouseover)
+            .on("mousemove", mousemove)
             .on("mouseleave", mouseleave)
             .on("click", mouseclick)
-    }, [centuries, selectedCodex]);
+
+
+        tooltipTimeline = d3.select("body")
+            .select("#tooltip")
+    }, [centuries, selectedCodices]);
 
     return (
         <div className='timeline-principal'>

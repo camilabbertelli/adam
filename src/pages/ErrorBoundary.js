@@ -1,17 +1,14 @@
-import { Component } from "react";
 import { ErrorBoundary as ReactErrorBoundary } from "react-error-boundary";
+import "./../styles/ErrorBoundary.css";
 
 function ErrorPage(props) {
     return (
         <div className={"error-page"}>
-            <div className={"oops"}>Oops!</div>
-            <div className={"message"}>Something went wrong...</div>
-            {props.resetErrorBoundary && (
-                <div>
-                    <button className={"retry-button"} onClick={props.resetErrorBoundary}>
-                        🔄 Try Again!
-                    </button>
-                </div>
+            <div className={"messageError"}>Something went wrong...</div>
+            <br/>
+            {props.resetErrorBoundary && (<button className={"retry-button"} onClick={props.resetErrorBoundary}>
+                Go to Home Page
+            </button>
             )}
         </div>
         
@@ -28,16 +25,11 @@ export default function ErrorBoundary(props) {
                 console.log("Error caught!");
                 console.error(error);
                 console.error(errorInfo);
-
-                // record the error in an APM tool...
             }}
             onReset={() => {
-                // reloading the page to restore the initial state
-                // of the current page
                 console.log("reloading the page...");
                 window.location.reload();
 
-                // other reset logic...
             }}
         >
             {props.children}

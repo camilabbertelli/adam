@@ -423,7 +423,7 @@ const NetworkChart = (props) => {
         let forceNode = d3.forceManyBody();
         let forceLink = d3.forceLink(links).id(d => d.person);
         let nodeStrength = -200
-        let linkStrength
+        let linkStrength    
         if (nodeStrength !== undefined) forceNode.strength(nodeStrength);
         if (linkStrength !== undefined) forceLink.strength(linkStrength);
 

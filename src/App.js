@@ -15,7 +15,7 @@ import ErrorBoundary from './pages/ErrorBoundary';
 import React, { useEffect, useState } from 'react';
 import MobileWarning from './pages/MobileWarning';
 
-import csv_data from "./assets/data3.csv"
+import csv_data from "./assets/data.csv"
 
 import * as d3 from "d3"
 
@@ -54,6 +54,7 @@ const App = () => {
 				names.material_type = "Tipo"
 				names.genre = "Género literário"
 				names.title = "Título"
+				names.publication = "Século de publicação"
 				names.description = "Passo do texto"
 				names.subject_name = "Nome_Sujeito"
 				names.agent = "Posição"

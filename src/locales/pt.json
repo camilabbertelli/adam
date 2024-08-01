@@ -11,7 +11,7 @@
     "btnDiscover": "Descubra mais",
     "titleGallery": "Nossa Galeria",
     "titleAboutUs": "Sobre nós",
-    "home-map-title": "Localidades descritas na narrativa medieval",
+    "home-map-title": "Localidades e séculos descritos na narrativa medieval",
     "icon-language": "Idioma",
 
 
@@ -39,6 +39,8 @@
     "mapchart-place": "Lugar", 
     "mapchart-title": "Título",
     "mapchart-occurrences":"Ocorrências",
+    
+    "timeline-tooltip-publication": "Século de publicação",
 
     "gallery-filter-dashboard": "Filtrar dashboard!",
 
@@ -77,7 +79,7 @@
     "category-label": "Categoria",
     "category-action": "Ações",
     "category-causes-group": "Causas das ações",
-    "category-body": "Partes anatómicas",
+    "category-body": "Anatomia",
     "agent-label": "Agente",
     "intention-label": "Intenção",
     "value-label": "Valor",

@@ -313,15 +313,16 @@ const HeatmapChart = (props) => {
 		const mouseleave = function (event, d) {
 
 
-			tooltipHeatmap.style("opacity", 0)
 			d3.select(this).transition().duration(100)
-				.style("stroke", "#ECECEC")
+			.style("stroke", "#ECECEC")
 			if (document.elementFromPoint(event.clientX, event.clientY).id === "image-expand")
 				return
 			d3.select(".heatmap-graph").select("svg").select("g").selectAll("image").remove()
-
-			let element = document.getElementById('tooltipHeatmap')
-			if (element) element.innerHTML = "";
+			
+			tooltipHeatmap.style("opacity", 0)
+			let element = document.getElementById('tooltip')
+			if (element) 
+				element.innerHTML = "";
 		}
 
 

@@ -149,12 +149,12 @@ const TabContent = (props) => {
         let sexIndex = props.csvIndexes.subject_sex
 
         let pyramidData = d3.rollup(props.data, v => ({
-            masc: d3.sum(v, d => ((d[sexIndex] === "Masc." || d[sexIndex] === "Mult." || d[sexIndex] === "N") ? 1 : 0)),
-            fem: d3.sum(v, d => ((d[sexIndex] === "Fem." || d[sexIndex] === "Mult." || d[sexIndex] === "N") ? 1 : 0)),
+            masc: d3.sum(v, d => ((d[sexIndex] === "Masculino" || d[sexIndex] === "Ambos") ? 1 : 0)),
+            fem: d3.sum(v, d => ((d[sexIndex] === "Feminino" || d[sexIndex] === "Ambos") ? 1 : 0)),
             total: d3.sum(v, d => {
-                if (d[sexIndex] === "Masc." || d[sexIndex] === "Fem.")
+                if (d[sexIndex] === "Masculino" || d[sexIndex] === "Feminino")
                     return 1
-                if (d[sexIndex] === "Mult." || d[sexIndex] === "N")
+                if (d[sexIndex] === "Ambos")
                     return 2
 
                 return 0
@@ -358,10 +358,10 @@ const TabContent = (props) => {
             .attr("height", 13)
             .attr("cursor", "pointer")
             .style("fill", (totalOccurrences) ? "#935959" : "#7BB3B7")
-            .style("opacity", selectedSex.sex !== "Fem." ? 1 : 0.5)
+            .style("opacity", selectedSex.sex !== "Feminino" ? 1 : 0.5)
             .on("click", () => {
                 if (!totalOccurrences) {
-                    let s = (selectedSex.sex === "") ? "Masc." : ""
+                    let s = (selectedSex.sex === "") ? "Masculino" : ""
                     setSelectedSex({ sex: s, category: "", categoryIndex: "" })
                     props.setPyramidData({ sex: s, category: "", categoryIndex: "" })
                 }
@@ -373,7 +373,7 @@ const TabContent = (props) => {
             .style("font-size", "smaller")
             .attr("x", ((totalOccurrences) ? barsWidth / 2 : 0) + 20)
             .attr("y", margin.top + 12)
-            .style("opacity", selectedSex.sex !== "Fem." ? 1 : 0.5)
+            .style("opacity", selectedSex.sex !== "Feminino" ? 1 : 0.5)
             .text((totalOccurrences) ? "Total" : t("pyramid-masculine"))
 
         if (!totalOccurrences) {
@@ -393,10 +393,10 @@ const TabContent = (props) => {
                 .attr("height", 13)
                 .attr("cursor", "pointer")
                 .style("fill", "#DA9C80")
-                .style("opacity", selectedSex.sex !== "Masc." ? 1 : 0.5)
+                .style("opacity", selectedSex.sex !== "Masculino" ? 1 : 0.5)
                 .on("click", () => {
                     if (!totalOccurrences) {
-                        let s = (selectedSex.sex === "") ? "Fem." : ""
+                        let s = (selectedSex.sex === "") ? "Feminino" : ""
 
                         setSelectedSex({ sex: s, category: "", categoryIndex: "" })
                         props.setPyramidData({ sex: s, category: "", categoryIndex: "" })
@@ -409,7 +409,7 @@ const TabContent = (props) => {
                 .style("font-size", "smaller")
                 .attr("x", barsWidth + 20)
                 .attr("y", margin.top + 12)
-                .style("opacity", selectedSex.sex !== "Masc." ? 1 : 0.5)
+                .style("opacity", selectedSex.sex !== "Masculino" ? 1 : 0.5)
                 .text(t("pyramid-feminine"))
         }
 
@@ -462,7 +462,7 @@ const TabContent = (props) => {
                     .style("fill", "#7BB3B7")
                     .style("opacity", d => {
 
-                        if (selectedSex.sex === "Fem.")
+                        if (selectedSex.sex === "Feminino")
                             return 0.5
                         if (selectedSex.category === "" || selectedSex.category === d[0])
                             return 1
@@ -482,7 +482,7 @@ const TabContent = (props) => {
                     .style("fill", "#DA9C80")
                     .style("opacity", d => {
 
-                        if (selectedSex.sex === "Masc.")
+                        if (selectedSex.sex === "Masculino")
                             return 0.5
                         if (selectedSex.category === "" || selectedSex.category === d[0])
                             return 1
@@ -516,7 +516,7 @@ const TabContent = (props) => {
                 .style("fill", (totalOccurrences) ? "#935959" : "#7BB3B7")
                 .style("opacity", d => {
 
-                    if (selectedSex.sex === "Fem.")
+                    if (selectedSex.sex === "Feminino")
                         return 0.5
                     if (selectedSex.category === "" || selectedSex.category === d[0])
                         return 1
@@ -528,7 +528,7 @@ const TabContent = (props) => {
                 .on("mouseover", (event, d) => mouseover(event, d, "masc"))
                 .on("mousemove", (event, d) => mousemove(event, d, "masc"))
                 .on("mouseleave", (event, d) => mouseleave(event, d, "masc"))
-                .on("click", (event, d) => mouseclick(event, d, "Masc."))
+                .on("click", (event, d) => mouseclick(event, d, "Masculino"))
 
             svg.selectAll(".linePyramidHorizontal")
                 .data(pyramidData)
@@ -554,7 +554,7 @@ const TabContent = (props) => {
                 .style("fill", "#DA9C80")
                 .style("opacity", d => {
 
-                    if (selectedSex.sex === "Masc.")
+                    if (selectedSex.sex === "Masculino")
                         return 0.5
 
                     if (selectedSex.category === "" || selectedSex.category === d[0])
@@ -567,7 +567,7 @@ const TabContent = (props) => {
                 .on("mouseover", (event, d) => mouseover(event, d, "fem"))
                 .on("mousemove", (event, d) => mousemove(event, d, "fem"))
                 .on("mouseleave", (event, d) => mouseleave(event, d, "fem"))
-                .on("click", (event, d) => mouseclick(event, d, "Fem."))
+                .on("click", (event, d) => mouseclick(event, d, "Feminino"))
         }
 
 

@@ -6,6 +6,15 @@
     height: calc(100dvh - var(--nav-bar-height));
 }
 
+
+h3{
+    margin-bottom: 0;
+}
+
+th.cell,th.cardinal{
+    vertical-align: middle;
+}
+
 .database-filter-view {
     width: 20%;
     height: 100%;

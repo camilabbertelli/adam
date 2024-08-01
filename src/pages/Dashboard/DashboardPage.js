@@ -253,6 +253,7 @@ const DashboardPage = (props) => {
             d => d[props.csvNames.material_type],
             d => d[props.csvNames.genre],
             d => d[props.csvNames.title],
+            d => d[props.csvNames.publication],
             d => d[props.csvNames.description],
             d => d[props.csvNames.subject_name],
             d => d[props.csvNames.agent],
@@ -395,9 +396,6 @@ const DashboardPage = (props) => {
         }
 
         if (navigation.state && navigation.state.type && navigation.state.item && navigation.state.subitems) {
-
-            console.log(navigation.state)
-
             let type = navigation.state.type
             let item = navigation.state.item
             let subitems = navigation.state.subitems
@@ -453,7 +451,6 @@ const DashboardPage = (props) => {
             let s = navigation.state.sex
 
             updatePyramidData({ sex: s, category: "", categoryIndex: "" })
-            // TODO: link with pyramid data and filter data
         }
 
         setGlobalData([...data])

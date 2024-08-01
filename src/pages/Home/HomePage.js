@@ -27,6 +27,8 @@ function noSpaces(str) {
 }
 
 function flatLatLong(latlong) {
+    if (latlong.charAt(latlong.length-1) === 'W')
+        return "-".concat(latlong.split("°")[0]);
     return latlong.split("°")[0];
 }
 
@@ -77,6 +79,7 @@ const HomePage = (props) => {
             d => d[props.csvNames.material_type],
             d => d[props.csvNames.genre],
             d => d[props.csvNames.title],
+            d => d[props.csvNames.publication],
             d => d[props.csvNames.description],
             d => d[props.csvNames.subject_name],
             d => d[props.csvNames.agent],
@@ -124,24 +127,26 @@ const HomePage = (props) => {
             places: entry[2]
         }))
 
-        let centuriesArray = d3.flatRollup(data, v => v.length, d => d[props.csvIndexes.chronology], d => d[props.csvIndexes.title])
-
-        let centuriesAux = {}
-
-
         let codwithLocation = loc.map(entry => {
             return [...new Set(entry.places.flatMap(place => place[2]))]
         })
 
         codwithLocation = [... new Set(codwithLocation.flat())]
 
-        centuriesArray.forEach(([cJoined, v, occurrences]) => {
-            if (codwithLocation.includes(v)) {
+        let centuriesArray = d3.flatRollup(data, v => v.length, d => d[props.csvIndexes.chronology], d => d[props.csvIndexes.title], d => d[props.csvIndexes.publication])
+
+        let centuriesAux = {}
+
+        centuriesArray.forEach(([cJoined, codex, publication]) => {
+            if (codwithLocation.includes(codex)) {
 
                 let cIndividual = cJoined.split(" ")
                 cIndividual.forEach(c => {
                     let codices = (centuriesAux[c] ? centuriesAux[c] : {})
-                    codices[v] = codices[v] ? codices[v] + occurrences : occurrences
+                    codices[codex] = {
+                        title: codex,
+                        publication: publication,
+                    }
                     centuriesAux[c] = codices
                 })
             }

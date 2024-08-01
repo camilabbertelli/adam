@@ -94,8 +94,18 @@ const MapChart = ({ locations }) => {
 
         tooltipMark
             .html(placesString.join("<br>"))
-            .style("top", event.pageY - 10 + "px")
-            .style("left", event.pageX + 10 + "px")
+
+        let xposition = event.pageX + 10
+        let yposition = event.pageY - 10
+        let tooltip_rect = tooltipMark.node().getBoundingClientRect();
+        if (xposition + tooltip_rect.width > window.innerWidth)
+            xposition = xposition - 20 - tooltip_rect.width
+        if (yposition + tooltip_rect.height > window.innerHeight)
+            yposition = yposition + 20 - tooltip_rect.height
+
+        tooltipMark
+            .style("top", yposition + "px")
+            .style("left", xposition + "px")
     }
 
     let mouseleave = function (event, d) {
@@ -159,7 +169,7 @@ const MapChart = ({ locations }) => {
 
         const projection = d3.geoMercator().fitSize([width, height], europeData);
 
-        // Creating path generator fromt the projecttion created above.
+        // Creating path generator fromt the projection created above.
         const pathGenerator = d3.geoPath()
             .projection(projection);
 
@@ -167,19 +177,14 @@ const MapChart = ({ locations }) => {
         const mapGroup = svgInitial.append("g");
 
 
-        // Creating state layer on top of counties layer.
         mapGroup.append("g")
             .attr("id", "countries")
             .selectAll("path")
             .data(europeData.features)
             .enter()
             .append("path")
-            .attr("key", feature => {
-                return feature.properties.NAME
-            })
             .attr("d", pathGenerator)
             .attr("class", "country")
-            // Here's an example of what I was saying in my previous comment.
             .attr("fill", "#d8b89a")
 
         // Create zoom behavior for the map
@@ -195,7 +200,7 @@ const MapChart = ({ locations }) => {
         // Apply zoom behavior to the SVG element
         svgInitial.call(zoom);
 
-        svgInitial.call(zoom.transform, d3.zoomIdentity.translate(-width / (1.5), -height / (0.8)).scale(2.5))
+        svgInitial.call(zoom.transform, d3.zoomIdentity.translate(-width / (1.5), -height / (1.1)).scale(2.5))
 
         // Function to handle the zoom event
         function zoomed(event) {

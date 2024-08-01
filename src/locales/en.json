@@ -11,7 +11,7 @@
     "btnDiscover": "Discover more",
     "titleGallery": "Our Gallery",
     "titleAboutUs": "About us",
-    "home-map-title": "Places present in the medieval narrative",
+    "home-map-title": "Localities and centuries present in the medieval narrative",
     "icon-language": "Language",
 
 
@@ -39,6 +39,8 @@
     "mapchart-place": "Place", 
     "mapchart-title": "Title",
     "mapchart-occurrences":"Occurrences",
+
+    "timeline-tooltip-publication": "Publication century",
 
     "gallery-filter-dashboard": "Filter dashboard!",
 

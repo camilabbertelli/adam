@@ -338,11 +338,9 @@ const FilterView = (props) => {
             })
 
             let source = document.getElementById(`checkbox-${item}`)
-            let checkboxes = document.getElementsByName(`checkbox-sub-${item}`);
             
             if (!source)
                 return
-
 
             setOnlyOnce(true)
 
