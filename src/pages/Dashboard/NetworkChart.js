@@ -52,7 +52,7 @@ const NetworkChart = (props) => {
         let aux = props.data.filter(entry => {
             let pyramidFilter = true
             let heatmapFilter = true
-            let sexes = ["Mult.", "N", props.pyramidData.sex]
+            let sexes = ["Ambos", props.pyramidData.sex]
 
             if (props.pyramidData.sex)
                 pyramidFilter = sexes.includes(entry[props.csvIndexes.subject_sex]) &&

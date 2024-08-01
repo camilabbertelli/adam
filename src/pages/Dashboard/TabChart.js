@@ -161,6 +161,12 @@ const TabContent = (props) => {
             })
         }), d => d[index])
 
+        pyramidData = d3.filter(pyramidData, entry => {
+            return (entry[1].total !== 0)
+        })
+
+        pyramidData = new d3.InternMap(pyramidData)
+
         let participants_total = 0
 
         for (let [, value] of pyramidData)
@@ -205,7 +211,7 @@ const TabContent = (props) => {
         // tooltipPyramid events
         const mouseover = function (event, d, type) {
             tooltipPyramid.style("opacity", 1)
-            d3.select(`.pyramid-${type === "masc" ? "Masc" : "Fem"}-${noSpaces(d[0])}`).transition().duration(100).style("stroke-width", 1)
+            d3.select(`.pyramid-${type === "masc" ? "Masculino" : "Feminino"}-${noSpaces(d[0])}`).transition().duration(100).style("stroke-width", 1)
         };
 
         const mousemove = function (event, d, type) {
@@ -237,7 +243,7 @@ const TabContent = (props) => {
             let element = document.getElementById('tooltip')
             if (element) element.innerHTML = "";
 
-            d3.select(`.pyramid-${type === "masc" ? "Masc" : "Fem"}-${noSpaces(d[0])}`).transition().duration(100).style("stroke-width", 0)
+            d3.select(`.pyramid-${type === "masc" ? "Masculino" : "Feminino"}-${noSpaces(d[0])}`).transition().duration(100).style("stroke-width", 0)
         };
 
         let infoMouseLeavePyramid = function (event, d) {
@@ -454,7 +460,7 @@ const TabContent = (props) => {
                     .data(pyramidData)
                     .transition()
                     .duration(500)
-                    .attr("class", d => `barMasc pyramid-Masc-${noSpaces(d[0])}`)
+                    .attr("class", d => `barMasc pyramid-Masculino-${noSpaces(d[0])}`)
                     .attr("x", d => xScaleMasc(d[1].masc / participants_total))
                     .attr("y", d => yScale(d[0]))
                     .attr("width", d => barsWidth - xScaleMasc(d[1].masc / participants_total))
@@ -474,7 +480,7 @@ const TabContent = (props) => {
                     .data(pyramidData)
                     .transition()
                     .duration(500)
-                    .attr("class", d => `barFem pyramid-Fem-${noSpaces(d[0])}`)
+                    .attr("class", d => `barFem pyramid-Feminino-${noSpaces(d[0])}`)
                     .attr("x", xScaleFem(0))
                     .attr("y", d => yScale(d[0]))
                     .attr("width", d => xScaleFem(d[1].fem / participants_total) - xScaleFem(0))
@@ -505,7 +511,7 @@ const TabContent = (props) => {
             svg.selectAll(".barMasc")
                 .data(pyramidData)
                 .join("rect")
-                .attr("class", d => `barMasc pyramid-Masc-${noSpaces(d[0])}`)
+                .attr("class", d => `barMasc pyramid-Masculino-${noSpaces(d[0])}`)
                 .attr("cursor", "pointer")
                 .attr("x", d => (totalOccurrences) ? xScaleMasc(0) : (xScaleMasc(d[1].masc / participants_total)))
                 .attr("y", d => yScale(d[0]))
@@ -545,7 +551,7 @@ const TabContent = (props) => {
             svg.selectAll(".barFem")
                 .data(pyramidData)
                 .join("rect")
-                .attr("class", d => `barFem pyramid-Fem-${noSpaces(d[0])}`)
+                .attr("class", d => `barFem pyramid-Feminino-${noSpaces(d[0])}`)
                 .attr("cursor", "pointer")
                 .attr("x", xScaleFem(0))
                 .attr("y", d => yScale(d[0]))

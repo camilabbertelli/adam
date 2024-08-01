@@ -10,13 +10,13 @@ const gallery = [{
     src: "Mulher.jpg",
     title: "Mulher",
     description: "Integer sit amet pulvinar lectus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;",
-    sex: "Fem."
+    sex: "Feminino"
 },
 {
     src: "Homem.jpg",
     title: "Homem",
     description: "Integer sit amet pulvinar lectus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;",
-    sex: "Masc."
+    sex: "Masculino"
 },
 {
     src: "Cabeca.jpg",

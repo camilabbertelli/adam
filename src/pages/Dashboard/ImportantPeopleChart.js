@@ -65,7 +65,7 @@ const ImportantPeopleChart = (props) => {
             let networkFilter = true
             let pyramidFilter = true
             let detailsFilter = true
-            let sexes = ["Mult.", "N", props.pyramidData.sex]
+            let sexes = ["Ambos", props.pyramidData.sex]
 
             if (props.networkData.people.length)
                 networkFilter = (props.networkData.people.includes(entry[props.csvIndexes.subject_name]))

@@ -58,13 +58,13 @@ const Citations = (props) => {
             let pyramidSex = []
             let pyramidOriginalSex = entry[props.csvIndexes.subject_sex]
 
-            if (pyramidOriginalSex === "Mult." || pyramidOriginalSex === "N") {
-                pyramidSex.push("Fem")
-                pyramidSex.push("Masc")
-            } else if (pyramidOriginalSex === "Fem.")
-                pyramidSex.push("Fem")
-            else if (pyramidOriginalSex === "Masc.")
-                pyramidSex.push("Masc")
+            if (pyramidOriginalSex === "Ambos") {
+                pyramidSex.push("Feminino")
+                pyramidSex.push("Masculino")
+            } else if (pyramidOriginalSex === "Feminino")
+                pyramidSex.push("Feminino")
+            else if (pyramidOriginalSex === "Masculino")
+                pyramidSex.push("Masculino")
 
             let pyramidKey = noSpaces(entry[indexPyramid])
 
@@ -127,7 +127,7 @@ const Citations = (props) => {
             let networkFilter = true
             let pyramidFilter = true
 			let detailsFilter = true
-            let sexes = ["Mult.", "N", props.pyramidData.sex]
+            let sexes = ["Ambos", props.pyramidData.sex]
 
             if (props.networkData.selected.length)
                 networkFilter = props.networkData.people.includes(entry[props.csvIndexes.subject_name]) || 

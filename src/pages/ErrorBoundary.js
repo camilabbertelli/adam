@@ -29,7 +29,6 @@ export default function ErrorBoundary(props) {
             onReset={() => {
                 console.log("reloading the page...");
                 window.location.reload();
-
             }}
         >
             {props.children}
