@@ -63,9 +63,7 @@ const TimelineChart = ({ centuries }) => {
 
         let mouseover = function (event, d) {
 
-            let [century, title, publication] = d3.select(this).attr('id').split("-")
-
-            let century_title = century + "-" + title
+            let century_title = d3.select(this).attr('id')
 
             let parentData = d3.select(this).node().getAttribute("data-dict")
             let codex = JSON.parse(parentData)
@@ -80,12 +78,14 @@ const TimelineChart = ({ centuries }) => {
 
             d3.selectAll(`.mark`)
                 .transition().duration(200)
-                .attr("opacity", 0.6)
-                .attr("r", 1.3)
+                .attr("opacity", 0.3)
+                .attr("r", 1.1)
             d3.selectAll(`.mark.${century_title}`)
                 .transition().duration(200)
                 .attr("opacity", 1)
                 .attr("r", 2)
+
+            d3.selectAll(`.mark.${century_title}`).raise()
 
             if (!selectedCodices.includes(century_title))
                 d3.select(`#${century_title}`)
@@ -124,7 +124,7 @@ const TimelineChart = ({ centuries }) => {
                 .transition()
                 .duration(200)
                 .attr("opacity", 1)
-                .attr("r", 1.3)
+                .attr("r", 1.1)
 
 
             if (!selectedCodices.includes(century_title))
@@ -138,8 +138,8 @@ const TimelineChart = ({ centuries }) => {
             if (selectedCodices.length)
                 d3.selectAll(`.mark`)
                     .transition().duration(200)
-                    .attr("opacity", 0.6)
-                    .attr("r", 1.3)
+                    .attr("opacity", 0.3)
+                    .attr("r", 1.1)
 
             selectedCodices.forEach(selectedCodex => {
                 d3.selectAll(`.mark.${selectedCodex}`)
@@ -155,14 +155,18 @@ const TimelineChart = ({ centuries }) => {
             let century_title = d3.select(this).attr('id')
 
             if (selectedCodices.includes(century_title)) {
-                d3.selectAll(`.mark.${century_title}`)
-                    .transition()
-                    .duration(200)
-                    .attr("opacity", 0.6)
-                    .attr("r", 1.3)
-                    .style("fill", "#ffffff")
-                    .style("stroke", "#54220b")
+                d3.selectAll(`.mark.${century_title}`).each(function (selection, i) {
 
+                    let classes = this.classList.value.split(" ")
+                    let color = classes[classes.length - 1]
+
+                    d3.select(this)
+                        .transition()
+                        .duration(200)
+                        .attr("opacity", 1)
+                        .attr("r", 1.1)
+                        .style("fill", color)
+                })
 
 
                 d3.select(`#${century_title}`)
@@ -180,8 +184,7 @@ const TimelineChart = ({ centuries }) => {
                         .duration(200)
                         .attr("opacity", 1)
                         .attr("r", 2)
-                        .style("fill", "#54220b")
-                        .style("stroke", "#ffffff")
+                        .style("fill", "#656d9b")
                 })
 
                 setSelectedCodices(aux)
@@ -191,8 +194,7 @@ const TimelineChart = ({ centuries }) => {
                     .duration(200)
                     .attr("opacity", 1)
                     .attr("r", 2)
-                    .style("fill", "#54220b")
-                    .style("stroke", "#ffffff")
+                    .style("fill", "#656d9b")
 
 
                 d3.select(`#${century_title}`)

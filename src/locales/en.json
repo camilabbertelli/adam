@@ -16,7 +16,7 @@
 
 
     "information": "Information",
-    "information-map": "Hover on a mark for more information.",
+    "information-map": "Hover on a mark for more information. Legend represents the total amount of occurrences for each narrative pair location-century.",
     "information-pyramid": "Hover on a bar for more information. <br>Click on the icon on the right to change grouping types.",
     "information-heatmap": "Hover on a cell for more information. <br>Click on it to change to the detailed view.",
     "information-imp": "Hover on a cell for more information. Choose two people ('subject') to compare their characteristics. Shared terms will be highlighted for easy comparison. Each term is accompanied by the number of occurrences in the database when hovered.",
@@ -33,7 +33,7 @@
     "filter-tooltip-dimension": "Defines the dimension of the body.",
     "filter-tooltip-location": "Localities present in the narrative.",
     "filter-tooltip-centuries": "Centuries present in the narrative.",
-    "filter-tooltip-codices": "Codices analysed in the research.",
+    "filter-tooltip-codices": "Texts analysed in the research.",
     
 
     "mapchart-place": "Place", 
@@ -57,8 +57,8 @@
     "network-tooltip-target": "Target",
     "network-tooltip-value": "Amount",
     "network-tooltip-type": "Type",
-    "network-tooltip-citation": "Citations",
-    "network-tooltip-see-more": "Click on this link to see the corresponding citations.",
+    "network-tooltip-citation": "Excerpts",
+    "network-tooltip-see-more": "Click on this link to see the corresponding excerpts.",
 
     "network-about-info": "Represents when person A talks ABOUT person B",
     "network-with-info": "Represents when person A talks WITH person B",
@@ -86,7 +86,7 @@
     "supernatural_type-label": "Supernatural Type",
     "nature-label": "Nature",
     "dimension-label": "Dimension",
-    "codices-label": "Codices",
+    "codices-label": "Texts",
     "locations-label": "Locations",
     "centuries-label": "Centuries",
 
@@ -120,7 +120,7 @@
     "dimension-soul": "Soul",
     "dimension-transcendental": "Transcendental",
 
-    "citations-label": "citations",
+    "citations-label": "excerpts",
     
     "imp-label": "Important people",
     "imp-no-selection-label" : "Select a person",
@@ -160,7 +160,7 @@
     "library-filter-ancient": "Ancient portuguese",
     "library-filter-modern": "Modern portuguese",
     "library-filter-lightsoff": "Lights-off mode",
-    "library-available-codices": "Available codices",
+    "library-available-codices": "Available texts",
     "library-genre-all": "All genres",
 
 

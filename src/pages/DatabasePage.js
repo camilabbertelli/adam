@@ -179,7 +179,10 @@ const DatabasePage = (props) => {
             let aux = {}
             Object.keys(item).forEach(key => {
                 if (checkedKeys.includes(key))
-                    aux[key] = item[key]
+                    if (item[key].includes(","))
+                        aux[key] = "\"" + item[key] + "\""
+                    else
+                        aux[key] = item[key]
             })
             refinedData.push(Object.values(aux))
         })

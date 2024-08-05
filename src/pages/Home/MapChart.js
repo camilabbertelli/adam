@@ -5,6 +5,7 @@ import './../../styles/Home/MapChart.css'
 
 import drag from "./../../assets/images/left-click.png"
 import scroll from "./../../assets/images/scroll.png"
+import info from "../../assets/images/info-white.png"
 
 // Geo json files
 import europeData from "./../../assets/maps/europe.json";
@@ -73,75 +74,11 @@ const MapChart = ({ locations }) => {
             element.innerHTML = "";
     }
 
-    let mouseover = function (event, d) {
-        d3.selectAll(`#${noSpaces(d.title)}`)
-            .classed("hover", true)
-
-        tooltipMark
-            .style("opacity", "1");
-
-            let placesString = []
-
-            d.places.forEach(place => {
-                let centuriesOccurrences = []
-                place[4].forEach(century => {
-                     centuriesOccurrences.push(`${century[0]} (${century[1]})`)
-                })
-                placesString.push(`<b>${t("mapchart-place")}:</b> ${place[3]} <br>
-                <b>${t("mapchart-title")}:</b> ${place[2]} <br>
-                <b>${t("mapchart-occurrences")}:</b> ${centuriesOccurrences.join(", ")} <br>`)
-            })
-
-        tooltipMark
-            .html(placesString.join("<br>"))
-
-        let xposition = event.pageX + 10
-        let yposition = event.pageY - 10
-        let tooltip_rect = tooltipMark.node().getBoundingClientRect();
-        if (xposition + tooltip_rect.width > window.innerWidth)
-            xposition = xposition - 20 - tooltip_rect.width
-        if (yposition + tooltip_rect.height > window.innerHeight)
-            yposition = yposition + 20 - tooltip_rect.height
-
-        tooltipMark
-            .style("top", yposition + "px")
-            .style("left", xposition + "px")
-    }
-
-    let mouseleave = function (event, d) {
-        tooltipMark
-            .style("opacity", "0")
-
-        let element = document.getElementById('tooltip')
-        if (element)
-            element.innerHTML = "";
-
-        d3.selectAll(`#${noSpaces(d.title)}`)
-            .classed("hover", false)
-    }
-
-    let mouseclick = function (event, d) {
-        tooltipMark
-            .style("opacity", "0")
-
-        let element = document.getElementById('tooltip')
-        if (element)
-            element.innerHTML = "";
-
-        d3.selectAll(`#${noSpaces(d.title)}`)
-            .classed("hover", false)
-
-        navigate("/dashboard", {
-            state: {
-                mark: d
-            }
-        })
-    }
-
     useEffect(() => {
 
         let box = document.querySelector('.viz');
-        let width = box.offsetWidth;
+        let width = box.offsetWidth * 0.87;
+        let width_legend = box.offsetWidth * 0.13;
         let height = box.offsetHeight;
 
         // create a tooltipMark
@@ -152,7 +89,7 @@ const MapChart = ({ locations }) => {
             .on("mouseover", infoMouseOverMap)
             .on("mouseleave", infoMouseLeaveMap)
 
-        d3.select(".viz").html("");
+        d3.select(".viz").selectAll("svg").remove();
 
         // Create an SVG element to hold the map
         const svgInitial = d3
@@ -185,7 +122,6 @@ const MapChart = ({ locations }) => {
             .append("path")
             .attr("d", pathGenerator)
             .attr("class", "country")
-            .attr("fill", "#d8b89a")
 
         // Create zoom behavior for the map
         const zoom = d3
@@ -209,26 +145,191 @@ const MapChart = ({ locations }) => {
 
         var marks = gatherCodicesMarks();
 
+        let colorRange = ["#f1f1f1", "#E4D1D1", "#B88989", "#A16666", "#894343", "#712121"]
+
+        function pinOccurences(d) {
+            let occurrences = 0
+            d.places.forEach(place => {
+                place[4].forEach(century => {
+                    occurrences += century[1]
+                })
+            })
+            return occurrences
+        }
+
+        function domainColorsHeatmap() {
+
+            let unique = [...new Set(marks.map(d => pinOccurences(d)))];
+            let min = Math.min(...unique)
+            let max = Math.max(...unique)
+
+            const colorScale = d3.scaleQuantile()
+                .domain(unique)
+                .range(colorRange)
+
+            let quantiles = colorScale.quantiles()
+
+            if (min < quantiles[0])
+                quantiles.unshift(min)
+
+            let domain = []
+
+            quantiles.forEach((c) => {
+                domain.push(Math.ceil(c))
+            })
+
+            domain = [...new Set(domain)]
+
+            return [domain, max]
+        }
+
+        let [domain, maxValue] = domainColorsHeatmap()
+
+        // Build color scale
+        const myColor = d3.scaleThreshold()
+            .range(["none"].concat(colorRange))
+            .domain(domain)
+
+
+        let svg_legend = d3.select(".maplegend")
+            .append("svg")
+            .attr("width", width_legend)
+            .attr("height", height)
+            .append("g")
+
+        svg_legend.append("g")
+            .selectAll(".legendRect")
+            .data(colorRange)
+            .join("rect")
+            .attr("x", 10)
+            .attr("y", (d, i) => i * (height / (colorRange.length + 1)) + 5)
+            .attr("ry", 5)
+            .attr("width", 10)
+            .attr("height", (height / (colorRange.length)) - ((colorRange.length === 1) ? 5 : 0))
+            .style("stroke", "black")
+            .style("stroke-width", 1)
+            .style("fill", d => d)
+
+
+        svg_legend.append("g")
+            .selectAll(".legendText")
+            .data(colorRange)
+            .join('text')
+            .style("font-size", 14)
+            .style("fill", "white")
+            .style("font-family", "lato")
+            .attr("y", (d, i) => i * (height / (colorRange.length + 1)) + 25)
+            .attr("dx", "2em")
+            .attr("dy", (height / (colorRange.length + 1)) / colorRange.length)
+            .attr("class", "seasonLabels")
+            .text((d, i) => {
+                if (i + 1 < domain.length) {
+                    if (domain[i] === (domain[i + 1] + 1))
+                        return domain[i];
+                    if (domain[i] === (domain[i + 1] - 1))
+                        return domain[i]
+                    return domain[i] + "-" + (domain[i + 1] - 1);
+                }
+                if (i + 1 === domain.length) {
+                    if (maxValue > domain[i])
+                        return domain[i] + "-" + maxValue;
+                    return domain[i];
+                }
+                if (i >= domain.length)
+                    return "-"
+            });
+
+
+        let mouseover = function (event, d) {
+            d3.selectAll(`#${noSpaces(d.title)}`)
+                .classed("hover", true)
+
+            tooltipMark
+                .style("opacity", "1");
+
+            let placesString = []
+
+            d.places.forEach(place => {
+                let centuriesOccurrences = []
+                place[4].forEach(century => {
+                    centuriesOccurrences.push(`${century[0]} (${century[1]})`)
+                })
+                placesString.push(`<b>${t("mapchart-place")}:</b> ${place[3]} <br>
+                        <b>${t("mapchart-title")}:</b> ${place[2]} <br>
+                        <b>${t("mapchart-occurrences")}:</b> ${centuriesOccurrences.join(", ")} <br>`)
+            })
+
+            tooltipMark
+                .html(placesString.join("<br>"))
+
+            let xposition = event.pageX + 10
+            let yposition = event.pageY - 10
+            let tooltip_rect = tooltipMark.node().getBoundingClientRect();
+            if (xposition + tooltip_rect.width > window.innerWidth)
+                xposition = xposition - 20 - tooltip_rect.width
+            if (yposition + tooltip_rect.height > window.innerHeight)
+                yposition = yposition + 20 - tooltip_rect.height
+
+            tooltipMark
+                .style("top", yposition + "px")
+                .style("left", xposition + "px")
+        }
+
+        let mouseleave = function (event, d) {
+
+            tooltipMark
+                .style("opacity", "0")
+
+            let element = document.getElementById('tooltip')
+            if (element)
+                element.innerHTML = "";
+
+            d3.selectAll(`#${noSpaces(d.title)}`)
+                .classed("hover", false)
+        }
+
+        let mouseclick = function (event, d) {
+            tooltipMark
+                .style("opacity", "0")
+
+            let element = document.getElementById('tooltip')
+            if (element)
+                element.innerHTML = "";
+
+            d3.selectAll(`#${noSpaces(d.title)}`)
+                .classed("hover", false)
+
+            navigate("/dashboard", {
+                state: {
+                    mark: d
+                }
+            })
+        }
+
+        marks.sort((a, b) => pinOccurences(a) - pinOccurences(b))
+
         mapGroup.selectAll(".mark")
             .data(marks)
             .enter()
             .append("circle")
             .attr("class", function (d) {
                 let c = []
+                let occurrences = 0
                 d.places.forEach(place => {
                     place[4].forEach(century => {
+                        occurrences += century[1]
                         if (!c.includes(century[0] + "-" + noSpaces(place[2])))
                             c.push(century[0] + "-" + noSpaces(place[2]))
                     })
                 })
-                return "mark " + c.join(" ")
+                return "mark " + c.join(" ") + " " + myColor(occurrences)
             })
-            .attr("r", 1.3)
+            .attr("r", 1.1)
             .attr("cy", 0)
             .attr("cx", 0)
-            .attr("fill", "white")
-            .attr("stroke", "#54220b")
-            .attr("stroke-width", 0.6)
+            .attr("fill", d => myColor(pinOccurences(d)))
+            .attr("stroke", "#331f1d")
+            .attr("stroke-width", 0.3)
             .attr("cursor", "pointer")
             .attr("transform", function (d) { return "translate(" + projection([d.long, d.lat]) + ")"; })
             .on("mouseover", mouseover)
@@ -238,13 +339,13 @@ const MapChart = ({ locations }) => {
 
     const [firstTimeTooltip, setFirstTimeTooltip] = useState(true)
 
-    function mapmouseenter(){
-        if (firstTimeTooltip){
+    function mapmouseenter() {
+        if (firstTimeTooltip) {
             setFirstTimeTooltip(false)
             d3.selectAll(".map-icons").transition().duration(500).style("opacity", 1)
 
             setTimeout(() => {
-                d3.selectAll(".map-icons").transition().duration(500).style("opacity", 0)  
+                d3.selectAll(".map-icons").transition().duration(500).style("opacity", 0)
             }, 5000);
         }
     }
@@ -252,9 +353,11 @@ const MapChart = ({ locations }) => {
     return (
         <>
             <div className="map" onMouseEnter={mapmouseenter}>
-                <img title="Zoom" className="map-icons" alt="icon-zoom" src={scroll} style={{ opacity: 0}}/>
-                <img title="Drag" className="map-icons" alt="icon-drag" src={drag} style={{ marginLeft: "35px", opacity:0}}/>
+                <img title="Zoom" className="map-icons" alt="icon-zoom" src={scroll} style={{ opacity: 0 }} />
+                <img title="Drag" className="map-icons" alt="icon-drag" src={drag} style={{ marginLeft: "35px", opacity: 0 }} />
                 <div className="viz">
+                    <div className="maplegend">
+                    </div>
                 </div>
             </div>
         </>

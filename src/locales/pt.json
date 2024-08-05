@@ -16,7 +16,7 @@
 
 
     "information": "Informação",
-    "information-map": "Passe o rato sobre um pin para obter mais informações.",
+    "information-map": "Passe o rato sobre um pin para obter mais informações. A legenda representa o total de ocorrências para cada par narrativo localidade-século.",
     "information-pyramid": "Passe o rato sobre uma barra para obter mais informações. <br/>Clique no ícone à direita para alterar os tipos de agrupamento.",
     "information-heatmap": "Passe o mouse sobre uma célula para obter mais informações. <br/>Clique na mesma para mudar para a visualização detalhada.",
     "information-imp": "Passe o mouse sobre uma célula para obter mais informações. Escolha duas pessoas ('sujeito') para comparar suas características. Termos em comum serão destacados para facilitar a comparação. Cada termo é acompanhado pelo número de ocorrências no banco de dados quando o rato é passado sobre o mesmo.",
@@ -33,7 +33,7 @@
     "filter-tooltip-dimension": "Define a dimensão do corpo.",
     "filter-tooltip-location": "Localidades presentes na narrativa.",
     "filter-tooltip-centuries": "Séculos presentes na narrativa.",
-    "filter-tooltip-codices": "Codices analisados na pesquisa.",
+    "filter-tooltip-codices": "Textos analisados na pesquisa.",
     
 
     "mapchart-place": "Lugar", 
@@ -57,7 +57,7 @@
     "network-tooltip-target": "Destino",
     "network-tooltip-value": "Quantidade",
     "network-tooltip-type": "Tipo",
-    "network-tooltip-citation": "Citações",
+    "network-tooltip-citation": "Excertos",
     "network-tooltip-see-more": "Clique neste link para ver as citações correspondentes.",
 
     "network-about-info": "Representa quando a pessoa A conversa SOBRE a pessoa B",
@@ -86,7 +86,7 @@
     "supernatural_type-label": "Tipo de sobrenatural",
     "nature-label": "Natureza",
     "dimension-label": "Dimensão",
-    "codices-label": "Códices",
+    "codices-label": "Textos",
     "locations-label": "Localidades",
     "centuries-label": "Séculos",
 
@@ -120,7 +120,7 @@
     "dimension-soul": "Alma",
     "dimension-transcendental": "Transcendental",
 
-    "citations-label": "citações",
+    "citations-label": "excertos",
 
     "imp-label": "Pessoas importantes",
     "imp-no-selection-label" : "Selecione uma pessoa",
@@ -160,7 +160,7 @@
     "library-filter-ancient": "Português antigo",
     "library-filter-modern": "Português Moderno",
     "library-filter-lightsoff": "Luzes apagadas",
-    "library-available-codices": "Códices disponíveis",
+    "library-available-codices": "Textos disponíveis",
     "library-genre-all": "Todos os géneros",
 
 

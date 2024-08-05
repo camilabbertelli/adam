@@ -5,13 +5,20 @@
 
 .viz {
 	position: relative;
+	display: flex;
+	flex-direction: row-reverse;
 	width: 45dvw;
 	height: 35dvh;
 }
 
+.maplegend{
+	width: 13%;
+	height: 35dvh;
+}
+
 #countries {
-	fill: none;
-	stroke: rgb(216, 184, 154);
+	fill: #d8b89a;
+	stroke: #d8b89a;
 	stroke-linejoin: round;
 	stroke-width: 0.5px;
 }
@@ -27,7 +34,7 @@
 
 
 .mark:hover {
-	fill: #6d2c0e
+	fill: #656d9b !important
 }
 
 .map-icons{

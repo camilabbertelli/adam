@@ -40,7 +40,7 @@ const gallery = [{
     description: "Integer sit amet pulvinar lectus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;",
     type: "category-body",
     item: "Membros",
-    subitems: ["Mãos", "Pernas", "Pés"],
+    subitems: [],
 },
 ]
 
