@@ -152,10 +152,8 @@ const TabContent = (props) => {
             masc: d3.sum(v, d => ((d[sexIndex] === "Masculino" || d[sexIndex] === "Ambos") ? 1 : 0)),
             fem: d3.sum(v, d => ((d[sexIndex] === "Feminino" || d[sexIndex] === "Ambos") ? 1 : 0)),
             total: d3.sum(v, d => {
-                if (d[sexIndex] === "Masculino" || d[sexIndex] === "Feminino")
+                if (d[sexIndex] === "Masculino" || d[sexIndex] === "Feminino" || d[sexIndex] === "Ambos")
                     return 1
-                if (d[sexIndex] === "Ambos")
-                    return 2
 
                 return 0
             })
@@ -791,6 +789,7 @@ const TabChart = (props) => {
         setData(props.data.filter(entry => {
             let heatmapFilter = true
             let networkFilter = true
+            let impFilter = true
 
             if (Object.keys(props.heatmapData).length)
                 heatmapFilter = entry[props.heatmapData.searchKey1] === props.heatmapData.key1 &&
@@ -798,19 +797,27 @@ const TabChart = (props) => {
 
 
             if (props.networkData.selected.length)
-                networkFilter = ((props.networkData.people.includes(entry[subjectIndex]) &&
-                    props.networkData.people.includes(entry[withIndex])) ||
-                    (props.networkData.people.includes(entry[subjectIndex]) &&
-                        props.networkData.people.includes(entry[aboutIndex]))) ||
-                    props.networkData.people.includes(entry[subjectIndex])
+                networkFilter = props.networkData.selected.includes(entry[props.csvIndexes.subject_name]) ||
+								props.networkData.selected.includes(entry[props.csvIndexes.with_name]) ||
+								props.networkData.selected.includes(entry[props.csvIndexes.about_name])
 
-            return heatmapFilter && networkFilter
+            if (!props.impPeopleData.includes(null))
+                impFilter = props.impPeopleData[0] === entry[props.csvIndexes.subject_name] ||
+                            props.impPeopleData[1] === entry[props.csvIndexes.subject_name]
+            else if (props.impPeopleData.includes(null)){
+                if (props.impPeopleData[0] !== null)
+                    impFilter = props.impPeopleData[0] === entry[props.csvIndexes.subject_name]
+                else if (props.impPeopleData[1] !== null)
+                    impFilter = props.impPeopleData[1] === entry[props.csvIndexes.subject_name]
+            }
+    
+            return heatmapFilter && networkFilter && impFilter
 
         }))
 
         props.setChangedFilter(true)
 
-    }, [props.networkData, props.data, props.heatmapData])
+    }, [props.networkData, props.data, props.heatmapData, props.impPeopleData])
 
     return (
         <>

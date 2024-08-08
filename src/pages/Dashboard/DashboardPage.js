@@ -179,9 +179,11 @@ const DashboardPage = (props) => {
     const [activeLocations, setActiveLocations] = useState([])
     const [activeCenturies, setActiveCenturies] = useState([])
     const [activeCodices, setActiveCodices] = useState([])
+
     const [networkData, setNetworkData] = useState({ selected: [], people: [] })
     const [pyramidData, setPyramidData] = useState({ sex: "", category: "", categoryIndex: "" })
     const [heatmapData, setHeatmapData] = useState([])
+    const [impPeopleData, setImpPeopleData] = useState([null, null])
 
     const [networkLink, setNetworkLink] = useState(null)
 
@@ -536,22 +538,29 @@ const DashboardPage = (props) => {
             let passAdvanced = true
 
             for (const [key, v] of Object.entries(advFilters ? advFilters : advancedCategoryFilters)) {
-                let passIntern = false
+                let passList = false
+                let passSublist = false
                 let indexList = categories[key].index
                 let indexSublist = categories[key].indexSubcategory
 
-                if (v.list.length)
+                if (v.list.length){
                     if (v.list.includes(noSpaces(d[indexList])))
-                        passIntern = true
+                        passList = true
+                } else
+                    passList = true
 
-                if (v.sublist.length)
+                if (v.sublist.length){
                     if (v.sublist.includes(noSpaces(d[indexSublist])))
-                        passIntern = true
+                        passSublist = true
+                } else
+                    passSublist = true
 
-                if (v.list.length === 0 && v.sublist.length === 0)
-                    passIntern = true
+                if (v.list.length === 0 && v.sublist.length === 0){
+                    passList = true
+                    passSublist = true
+                }
 
-                passAdvanced = passAdvanced && passIntern
+                passAdvanced = passAdvanced && passList && passSublist
             }
 
             return passAdvanced;
@@ -607,6 +616,7 @@ const DashboardPage = (props) => {
         setPyramidData({ sex: "", category: "", categoryIndex: "" })
         setHeatmapData([])
         setNetworkData({ selected: [], people: [] })
+        setImpPeopleData([null, null])
 
         setResetComponents(true)
     }
@@ -621,6 +631,10 @@ const DashboardPage = (props) => {
 
     function updateNetworkData(d) {
         setNetworkData(d)
+    }
+
+    function updateImpPeopleData(d) {
+        setImpPeopleData(d)
     }
 
     const [isOpen, setIsOpen] = useState(false);
@@ -689,7 +703,7 @@ const DashboardPage = (props) => {
                     <div className="dashboard-row1">
                         <div className="dashboard-viz1">
                             <HeatmapChart data={globalData} resetComponents={resetComponents} setResetComponents={setResetComponents}
-                                setHeatmapData={updateHeatmapData} networkData={networkData} pyramidData={pyramidData}
+                                setHeatmapData={updateHeatmapData} networkData={networkData} pyramidData={pyramidData} impPeopleData={impPeopleData}
                                 csvIndexes={props.csvIndexes}
                                 activeCategories={activeCategories}
                                 activeCategory={activeCategory}
@@ -698,6 +712,7 @@ const DashboardPage = (props) => {
                                 setIsExpanded={setIsHeatmapExpanded}
                                 changedFilter={changedFilter}
                                 setChangedFilter={setChangedFilter}>
+                                    
                                 <div className={"heatmap-drag"} >
                                     <div className={"category " + (activeCategories.length ? "shadow" : "default ") + (activeCategories.length === 2 ? " shrink" : "")}
                                         key={activeCategories.length ? activeCategories[0] : "category1"}
@@ -727,7 +742,7 @@ const DashboardPage = (props) => {
                         <div className={"dashboard-viz2" + ((activeCategory !== null) ? " drag-active" : "")}>
                             <ImportantPeopleChart
                                 data={globalData} resetComponents={resetComponents} setResetComponents={setResetComponents}
-                                networkData={networkData} pyramidData={pyramidData} heatmapData={heatmapData}
+                                setImpPeopleData={updateImpPeopleData} networkData={networkData} pyramidData={pyramidData} heatmapData={heatmapData}
                                 csvIndexes={props.csvIndexes} csvNames={props.csvNames}
                                 isExpanded={isImpPeopleExpanded}
                                 setIsExpanded={setIsImpPeopleExpanded} />
@@ -737,7 +752,7 @@ const DashboardPage = (props) => {
                         <div id="viz3" className={"dashboard-viz3" + ((activeCategory !== null) ? " drag-active" : "")}>
                             <TabChart categories={categories}
                                 data={globalData} resetComponents={resetComponents} setResetComponents={setResetComponents}
-                                setPyramidData={updatePyramidData} networkData={networkData} heatmapData={heatmapData}
+                                setPyramidData={updatePyramidData} networkData={networkData} heatmapData={heatmapData} impPeopleData={impPeopleData}
                                 csvIndexes={props.csvIndexes}
                                 setCurrentTabchartCategory={setCurrentTabchartCategory}
                                 isExpanded={isTabchartExpanded} setIsExpanded={setIsTabchartExpanded}
@@ -746,7 +761,8 @@ const DashboardPage = (props) => {
                         <div className={"dashboard-viz4" + ((activeCategory !== null) ? " drag-active" : "")}>
                             <NetworkChart
                                 data={globalData} resetComponents={resetComponents} setResetComponents={setResetComponents}
-                                setNetworkData={updateNetworkData} pyramidData={pyramidData} heatmapData={heatmapData} setNetworkLink={setNetworkLink}
+                                setNetworkData={updateNetworkData} pyramidData={pyramidData} heatmapData={heatmapData} impPeopleData={impPeopleData}
+                                setNetworkLink={setNetworkLink}
                                 colorCodices={colorCodices}
                                 csvIndexes={props.csvIndexes}
                                 isExpanded={isNetworkExpanded}
@@ -769,7 +785,7 @@ const DashboardPage = (props) => {
                             </button>
                             <Citations
                                 data={globalData}
-                                networkData={networkData} pyramidData={pyramidData} heatmapData={heatmapData} networkLink={networkLink} setNetworkLink={setNetworkLink}
+                                networkData={networkData} pyramidData={pyramidData} heatmapData={heatmapData} impPeopleData={impPeopleData} networkLink={networkLink} setNetworkLink={setNetworkLink}
                                 categories={categories}
                                 activeCategories={activeCategories}
                                 currentTabchartCategory={currentTabchartCategory}

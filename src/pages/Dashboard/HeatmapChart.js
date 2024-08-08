@@ -170,12 +170,24 @@ const HeatmapChart = (props) => {
 			let networkFilter = true
 			let pyramidFilter = true
 			let detailsFilter = true
+			let impFilter = true
 			let sexes = ["Ambos", props.pyramidData.sex]
 
 			if (props.networkData.selected.length)
-				networkFilter = props.networkData.people.includes(entry[props.csvIndexes.subject_name]) ||
-					props.networkData.people.includes(entry[props.csvIndexes.with_name])
-			props.networkData.people.includes(entry[props.csvIndexes.about_name])
+				networkFilter = props.networkData.selected.includes(entry[props.csvIndexes.subject_name]) ||
+					props.networkData.selected.includes(entry[props.csvIndexes.with_name]) ||
+					props.networkData.selected.includes(entry[props.csvIndexes.about_name])
+
+
+			if (!props.impPeopleData.includes(null))
+				impFilter = props.impPeopleData[0] === entry[props.csvIndexes.subject_name] ||
+					props.impPeopleData[1] === entry[props.csvIndexes.subject_name]
+			else if (props.impPeopleData.includes(null)) {
+				if (props.impPeopleData[0] !== null)
+					impFilter = props.impPeopleData[0] === entry[props.csvIndexes.subject_name]
+				else if (props.impPeopleData[1] !== null)
+					impFilter = props.impPeopleData[1] === entry[props.csvIndexes.subject_name]
+			}
 
 			if (props.pyramidData.sex)
 				pyramidFilter = sexes.includes(entry[props.csvIndexes.subject_sex])
@@ -187,11 +199,11 @@ const HeatmapChart = (props) => {
 				detailsFilter = (entry[details.searchKey1] ? entry[details.searchKey1] : "--") === details.key1 &&
 					(entry[details.searchKey2] ? entry[details.searchKey2] : "--") === details.key2
 
-			return networkFilter && pyramidFilter && detailsFilter
+			return networkFilter && pyramidFilter && detailsFilter && impFilter
 		})
 
 		setData(dataInitial)
-	}, [props.data, props.networkData, props.pyramidData, details])
+	}, [props.data, props.networkData, props.pyramidData, props.impPeopleData, details])
 
 	useEffect(() => {
 		if (props.activeCategories.length === 2) {
@@ -314,14 +326,14 @@ const HeatmapChart = (props) => {
 
 
 			d3.select(this).transition().duration(100)
-			.style("stroke", "#ECECEC")
+				.style("stroke", "#ECECEC")
 			if (document.elementFromPoint(event.clientX, event.clientY).id === "image-expand")
 				return
 			d3.select(".heatmap-graph").select("svg").select("g").selectAll("image").remove()
-			
+
 			tooltipHeatmap.style("opacity", 0)
 			let element = document.getElementById('tooltip')
-			if (element) 
+			if (element)
 				element.innerHTML = "";
 		}
 
@@ -682,85 +694,90 @@ const HeatmapChart = (props) => {
 			{props.data.length > 0 &&
 				<>
 					<div id="droppable" ref={setNodeRef} className={"shadow heatmap-area" + ((props.activeCategory !== null && props.activeCategories.length !== 2) ? " dashed" : "")} style={(props.activeCategories.length === 2) ? {} : null}>
-						<div className='heatmap-content'>
-							<div style={{ display: "flex", marginLeft: "20%", width: "100%", height: (props.activeCategories.length === 2 ? "15%" : "100%") }}>
-								<img alt="info" id="infoHeatmap" src={info}
-									style={{ position: "absolute", left: "0", marginTop: "10px", marginLeft: "10px", cursor: "pointer" }} width="15" height="15"
-								/>
-								{props.children}
-							</div>
-							{props.activeCategories.length === 2 && <>
-								<div id="heatmap-chart">
-									<div style={{ display: 'flex', flexDirection: "row", alignItems: "center", height: "10%" }}>
+						<div style={{ position: "relative", display: "flex", flexDirection: "row", justifyContent: "center", width: "100%"}}>
+							<img alt="info" id="infoHeatmap" src={info}
+								style={{ position: "absolute", left: "0", marginTop: "10px", marginLeft: "10px", cursor: "pointer" }} width="15" height="15"
+							/>
+							<h5 className="pyramid-title" style={{ marginTop: "5px", marginLeft: "40px" }}>{t("heatmap-title")}</h5>
+							<img title={isExpanded ? t("icon-shrink") : t("icon-expand")} alt="info" src={isExpanded ? shrink : expand}
+								style={{ position: "absolute", right: "0", marginTop: "10px", marginRight: "10px", cursor: "pointer" }} width="15px" height="15px"
+								onClick={expandHeatmap}
+							/>
+						</div>
+						<div className="heatmap-title">
+							<div className='heatmap-content'>
+								<div style={{ display: "flex", marginLeft: "20%", width: "100%", height: (props.activeCategories.length === 2 ? "15%" : "100%") }}>
+									{props.children}
+								</div>
+								{props.activeCategories.length === 2 && <>
+									<div id="heatmap-chart">
+										<div style={{ display: 'flex', flexDirection: "row", alignItems: "center", height: "10%" }}>
 
-										<div id="heatmap-dropdown1" className='tabchart-dropdown'>
-											<button className='tabchart-dropbtn' onClick={changeStyle1}>
+											<div id="heatmap-dropdown1" className='tabchart-dropdown'>
+												<button className='tabchart-dropbtn' onClick={changeStyle1}>
+													<img title={t("icon-sort")} alt="total" src={sorting_icon}
+														style={{ "marginLeft": 5 + "px" }} className="tabchart-sorting-icon"
+
+													/></button>
+												<div id="heatmap-dropdown-icon1" className={"shadow tabchart-dropdown-content-hide"}>
+													<button className={currentSorting1 === "name_asc" ? "sorting-active" : ""} onClick={() => changeSorting1("name_asc")}> {t(props.activeCategories[0])} - {t("pyramid-ascending")} </button>
+													<button className={currentSorting1 === "name_desc" ? "sorting-active" : ""} onClick={() => changeSorting1("name_desc")}> {t(props.activeCategories[0])} -  {t("pyramid-descending")}</button>
+													<button className={currentSorting1 === "value_asc" ? "sorting-active" : ""} onClick={() => changeSorting1("value_asc")}> {t("heatmap-occurrence")} - {t("pyramid-low-high")} </button>
+													<button className={currentSorting1 === "value_desc" ? "sorting-active" : ""} onClick={() => changeSorting1("value_desc")}> {t("heatmap-occurrence")} - {t("pyramid-high-low")} </button>
+
+												</div>
+											</div>
+											<div className="heatmap-details-sector">
+												{Object.keys(details).length !== 0 &&
+													<>
+														<img title={t("icon-back")} alt="info" src={back}
+															style={{ width: "15px", height: "15px", marginRight: "10px", cursor: "pointer" }}
+															onClick={backDetails}
+														/>
+														<span>{details.key1}</span>
+														<span>&nbsp;&&nbsp;</span>
+														<span>{details.key2}</span>
+													</>
+												}</div>
+										</div>
+										<div className='heatmap-top-sector'>
+
+											<div onScroll={handleLeftScroll} className='heatmap-left-header'></div>
+											<div onScroll={handleGraphScroll} className='heatmap-graph'></div>
+										</div>
+										<div className='heatmap-bottom-sector'>
+											<div className='heatmap-empty-space'></div>
+											<div onScroll={handleBottomScroll} className='heatmap-bottom-header'></div>
+										</div>
+									</div>
+								</>}
+							</div>
+							<div className='heatmap-right-sector'>
+								<div className='heatmap-expand-icon'>
+
+								</div>
+								{props.activeCategories.length === 2 &&
+									<>
+
+										<div className='heatmap-legend'></div>
+										<div id="heatmap-dropdown2" className='tabchart-dropdown'>
+											<button className='tabchart-dropbtn' onClick={changeStyle2}>
 												<img title={t("icon-sort")} alt="total" src={sorting_icon}
 													style={{ "marginLeft": 5 + "px" }} className="tabchart-sorting-icon"
 
 												/></button>
-											<div id="heatmap-dropdown-icon1" className={"shadow tabchart-dropdown-content-hide"}>
-												<button className={currentSorting1 === "name_asc" ? "sorting-active" : ""} onClick={() => changeSorting1("name_asc")}> {t(props.activeCategories[0])} - {t("pyramid-ascending")} </button>
-												<button className={currentSorting1 === "name_desc" ? "sorting-active" : ""} onClick={() => changeSorting1("name_desc")}> {t(props.activeCategories[0])} -  {t("pyramid-descending")}</button>
-												<button className={currentSorting1 === "value_asc" ? "sorting-active" : ""} onClick={() => changeSorting1("value_asc")}> {t("heatmap-occurrence")} - {t("pyramid-low-high")} </button>
-												<button className={currentSorting1 === "value_desc" ? "sorting-active" : ""} onClick={() => changeSorting1("value_desc")}> {t("heatmap-occurrence")} - {t("pyramid-high-low")} </button>
+											<div id="heatmap-dropdown-icon2" className={"shadow tabchart-dropdown-content-hide"}>
+												<button className={currentSorting2 === "name_asc" ? "sorting-active" : ""} onClick={() => changeSorting2("name_asc")}> {t(props.activeCategories[1])} - {t("pyramid-ascending")} </button>
+												<button className={currentSorting2 === "name_desc" ? "sorting-active" : ""} onClick={() => changeSorting2("name_desc")}> {t(props.activeCategories[1])} - {t("pyramid-descending")} </button>
+												<button className={currentSorting2 === "value_asc" ? "sorting-active" : ""} onClick={() => changeSorting2("value_asc")}> {t("heatmap-occurrence")} - {t("pyramid-low-high")} </button>
+												<button className={currentSorting2 === "value_desc" ? "sorting-active" : ""} onClick={() => changeSorting2("value_desc")}> {t("heatmap-occurrence")} - {t("pyramid-high-low")} </button>
 
 											</div>
 										</div>
-										<div className="heatmap-details-sector">
-											{Object.keys(details).length !== 0 &&
-												<>
-													<img title={t("icon-back")} alt="info" src={back}
-														style={{ width: "15px", height: "15px", marginRight: "10px", cursor: "pointer" }}
-														onClick={backDetails}
-													/>
-													<span>{details.key1}</span>
-													<span>&nbsp;&&nbsp;</span>
-													<span>{details.key2}</span>
-												</>
-											}</div>
-									</div>
-									<div className='heatmap-top-sector'>
-
-										<div onScroll={handleLeftScroll} className='heatmap-left-header'></div>
-										<div onScroll={handleGraphScroll} className='heatmap-graph'></div>
-									</div>
-									<div className='heatmap-bottom-sector'>
-										<div className='heatmap-empty-space'></div>
-										<div onScroll={handleBottomScroll} className='heatmap-bottom-header'></div>
-									</div>
-								</div>
-							</>}
-						</div>
-						<div className='heatmap-right-sector'>
-							<div className='heatmap-expand-icon'>
-								<img title={isExpanded ? t("icon-shrink") : t("icon-expand")} alt="info" src={isExpanded ? shrink : expand}
-									style={{ marginTop: "10px", marginRight: "10px", float: "right", cursor: "pointer" }} width="15px" height="15px"
-									onClick={expandHeatmap}
-								/>
+									</>
+								}
 							</div>
-							{props.activeCategories.length === 2 &&
-								<>
-
-									<div className='heatmap-legend'></div>
-									<div id="heatmap-dropdown2" className='tabchart-dropdown'>
-										<button className='tabchart-dropbtn' onClick={changeStyle2}>
-											<img title={t("icon-sort")} alt="total" src={sorting_icon}
-												style={{ "marginLeft": 5 + "px" }} className="tabchart-sorting-icon"
-
-											/></button>
-										<div id="heatmap-dropdown-icon2" className={"shadow tabchart-dropdown-content-hide"}>
-											<button className={currentSorting2 === "name_asc" ? "sorting-active" : ""} onClick={() => changeSorting2("name_asc")}> {t(props.activeCategories[1])} - {t("pyramid-ascending")} </button>
-											<button className={currentSorting2 === "name_desc" ? "sorting-active" : ""} onClick={() => changeSorting2("name_desc")}> {t(props.activeCategories[1])} - {t("pyramid-descending")} </button>
-											<button className={currentSorting2 === "value_asc" ? "sorting-active" : ""} onClick={() => changeSorting2("value_asc")}> {t("heatmap-occurrence")} - {t("pyramid-low-high")} </button>
-											<button className={currentSorting2 === "value_desc" ? "sorting-active" : ""} onClick={() => changeSorting2("value_desc")}> {t("heatmap-occurrence")} - {t("pyramid-high-low")} </button>
-
-										</div>
-									</div>
-								</>
-							}
 						</div>
-
 					</div>
 				</>}
 			{props.data.length === 0 &&

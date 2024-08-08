@@ -39,21 +39,6 @@ const ImportantPeopleChart = (props) => {
         props.setIsExpanded(!isExpanded)
     }
 
-    function highlightNode(networkKey) {
-
-        let selectionNetwork = d3.select(`#network-${networkKey}`);
-        let elementNetwork = selectionNetwork.node();
-
-        if (elementNetwork) {
-            elementNetwork.scrollIntoView({ block: "center" });
-            selectionNetwork.transition().duration(500).attr("r", 100)
-        }
-
-        setTimeout(() => {
-            selectionNetwork.transition().duration(500).attr("r", 15)
-        }, 2000);
-    }
-
     useEffect(() => {
         setIsExpanded(props.isExpanded)
         d3.selectAll(".imp-people-area").classed("imp-expand", props.isExpanded)
@@ -116,6 +101,8 @@ const ImportantPeopleChart = (props) => {
 		}
 
         setSelectedImp(aux)
+        props.setImpPeopleData(aux)
+        
         setData(dataInitial)
         setImpPeople(imp)
         setSearchedPeople(Array.from(Object.keys(imp)))
@@ -125,6 +112,7 @@ const ImportantPeopleChart = (props) => {
         let aux = [...selectedImp]
         aux[index] = null
         setSelectedImp(aux)
+        props.setImpPeopleData(aux)
     }
 
     function changeSelected(key) {
@@ -136,11 +124,9 @@ const ImportantPeopleChart = (props) => {
         else {
             if (aux[0] === null) {
                 aux[0] = key
-                highlightNode(key)
             }
             else if (aux[1] === null) {
                 aux[1] = key
-                highlightNode(key)
             }
             else {
                 d3.selectAll(".default-selection").transition().duration(500)
@@ -155,6 +141,7 @@ const ImportantPeopleChart = (props) => {
         }
 
         setSelectedImp(aux)
+        props.setImpPeopleData(aux)
     }
 
     useEffect(() => {

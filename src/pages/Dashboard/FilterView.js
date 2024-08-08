@@ -249,13 +249,20 @@ const FilterView = (props) => {
 
         sublist.forEach(subitem => {
             const indexSub = aux[category].sublist.indexOf(noSpaces(subitem));
-            if (source.checked || indexSub === -1) {
+            const index = aux[category].list.indexOf(noSpaces(key));
+            if (source.checked) {
                 source.checked = true
-                aux[category].sublist.push(noSpaces(subitem))
+                if (!aux[category].sublist.includes(noSpaces(subitem)))
+                    aux[category].sublist.push(noSpaces(subitem))
+                if (!aux[category].list.includes(key))
+                    aux[category].list.push(key) 
             }
-            else if (indexSub !== -1){
+            else{
                 source.checked = false
-                aux[category].sublist.splice(indexSub, 1);
+                if (aux[category].sublist.includes(noSpaces(subitem)))
+                    aux[category].sublist.splice(indexSub, 1);
+                if (aux[category].list.includes(noSpaces(key)))
+                    aux[category].list.splice(index, 1);
             }
         })
 
@@ -275,9 +282,16 @@ const FilterView = (props) => {
         let aux = { ...props.advancedCategoryFilters }
 
         if (!target.checked) {
-            const index = aux[category].sublist.indexOf(subkey);
-            aux[category].sublist.splice(index, 1);
-        } else aux[category].sublist.push(subkey)
+            const index = aux[category].list.indexOf(noSpaces(key));
+            const indexSub = aux[category].sublist.indexOf(subkey);
+            if (aux[category].list.includes(noSpaces(key)) && !source.checked)
+                aux[category].list.splice(index, 1);
+            aux[category].sublist.splice(indexSub, 1);
+        } else {
+            if (!aux[category].list.includes(key))
+                aux[category].list.push(key)
+            aux[category].sublist.push(subkey)
+        }
 
         props.setActiveFilters([], [], [], [], [], aux)
     }
@@ -398,7 +412,7 @@ const FilterView = (props) => {
                                                                     {item} {sublist.length > 1 && <ArrowForwardIosIcon className="arrow-dropdown" id={`citation-sub-arrow-${noSpaces(item)}`} style={{ position: "absolute", right: 0, width: "15px", marginRight: "5px", marginTop: "2px" }} />}
                                                                 </button>
                                                             </div>
-                                                            {sublist.length > 1 && <div id={`filter-sub-dropdown-${noSpaces(item)}`} className={"filter-dropdown-content-hide"} key={"hidden-sub-dropdown"}>
+                                                            {sublist.length > 1 && <div id={`filter-sub-dropdown-${noSpaces(item)}`} style={{overflow: "hidden"}} className={"filter-dropdown-content-hide"} key={"hidden-sub-dropdown"}>
                                                                 <ul>
                                                                     {sublist.map(subitem => (
                                                                         <li key={"li_sub_" + subitem}>

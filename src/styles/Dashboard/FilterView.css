@@ -172,6 +172,9 @@ div.dashboard-image-component {
     font-size: 15px;
 	background-color: white;
     width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
     padding: 1%;
 }
 
@@ -215,6 +218,9 @@ div.dashboard-image-component {
     font-size: 14px;
 	background-color: white;
     width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
     padding: 0%;
     border-radius: 0 0 20px 20px;
 }
@@ -260,6 +266,9 @@ div.dashboard-image-component {
     font-size: 14px;
 	background-color: white;
     width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
     padding: 0%;
     border-radius: 0 0 20px 20px;
 }

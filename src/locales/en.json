@@ -16,11 +16,12 @@
 
 
     "information": "Information",
-    "information-map": "Hover on a mark for more information. Legend represents the total amount of occurrences for each narrative pair location-century.",
+    "information-map": "Hover on a mark for more information.",
+    "information-legend-map": "Legend represents the total amount of occurrences for each narrative pair location-century.",
     "information-pyramid": "Hover on a bar for more information. <br>Click on the icon on the right to change grouping types.",
     "information-heatmap": "Hover on a cell for more information. <br>Click on it to change to the detailed view.",
     "information-imp": "Hover on a cell for more information. Choose two people ('subject') to compare their characteristics. Shared terms will be highlighted for easy comparison. Each term is accompanied by the number of occurrences in the database when hovered.",
-    "information-network": "Hover over the connections or cells for more information. In applicable cases, the 'About whom' links appear associated with and originating from the corresponding 'With whom' link.<br/><b>Attention:</b> Zoom out to see all connections.",
+    "information-network": "Hover over the connections or cells for more information. In applicable cases, the 'About whom' links appear associated with and originating from the corresponding 'With whom' link. The number of interactions is proportional to the link's thickness. <br/><b>Attention:</b> Zoom out to see all connections.",
     "information-database": "Select the columns of the database to be seen.",
     
     
@@ -150,7 +151,7 @@
     "pyramid-high-low": "High to Low",
 
     "heatmap-occurrence": "Occurrence",
-
+    "heatmap-title": "Category correlation",
 
     "database-content": "Content",
     "database-select-all" : "Select all",

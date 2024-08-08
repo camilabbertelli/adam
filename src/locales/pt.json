@@ -16,11 +16,12 @@
 
 
     "information": "Informação",
-    "information-map": "Passe o rato sobre um pin para obter mais informações. A legenda representa o total de ocorrências para cada par narrativo localidade-século.",
+    "information-map": "Passe o rato sobre um pin para obter mais informações.",
+    "information-legend-map": "A legenda representa o total de ocorrências para cada par narrativo localidade-século.",
     "information-pyramid": "Passe o rato sobre uma barra para obter mais informações. <br/>Clique no ícone à direita para alterar os tipos de agrupamento.",
-    "information-heatmap": "Passe o mouse sobre uma célula para obter mais informações. <br/>Clique na mesma para mudar para a visualização detalhada.",
-    "information-imp": "Passe o mouse sobre uma célula para obter mais informações. Escolha duas pessoas ('sujeito') para comparar suas características. Termos em comum serão destacados para facilitar a comparação. Cada termo é acompanhado pelo número de ocorrências no banco de dados quando o rato é passado sobre o mesmo.",
-    "information-network": "Passe o rato sobre uma conexão ou célula para obter mais informações. <br/> Nos casos aplicáveis, os links 'Sobre quem' aparecem associados e com origem no link correspondente 'Com quem'.<br/><b>Atenção:</b> Afaste para ver todas as conexões.",
+    "information-heatmap": "Passe o rato sobre uma célula para obter mais informações. <br/>Clique na mesma para mudar para a visualização detalhada.",
+    "information-imp": "Passe o rato sobre uma célula para obter mais informações. Escolha duas pessoas ('sujeito') para comparar suas características. Termos em comum serão destacados para facilitar a comparação. Cada termo é acompanhado pelo número de ocorrências no banco de dados quando o rato é passado sobre o mesmo.",
+    "information-network": "Passe o rato sobre uma conexão ou célula para obter mais informações. <br/> Nos casos aplicáveis, os links 'Sobre quem' aparecem associados e com origem no link correspondente 'Com quem'. O número de interações é proporcional à espessura do link.<br/><b>Atenção:</b> Afaste para ver todas as conexões.",
     "information-database": "Selecione as colunas da base de dados para serem visualizadas.",
     
 
@@ -150,6 +151,7 @@
     "pyramid-high-low": "Maior para Menor",
 
     "heatmap-occurrence": "Ocorrências",
+    "heatmap-title": "Correlação entre categorias",
 
 
     "database-content": "Conteúdo",

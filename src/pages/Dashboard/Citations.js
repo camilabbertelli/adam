@@ -31,12 +31,13 @@ const Citations = (props) => {
 
             let indexKey1 = props.categories[props.activeCategories[0]].index
             let indexKey2 = props.categories[props.activeCategories[1]].index
+
             // heatmap
-            if (Object.keys(props.heatmapData).length !== 0){
+            if (Object.keys(props.heatmapData).length !== 0) {
                 indexKey1 = props.categories[props.activeCategories[0]].indexSubcategory
-                indexKey2 = props.categories[props.activeCategories[1]].indexSubcategory    
+                indexKey2 = props.categories[props.activeCategories[1]].indexSubcategory
             }
-            
+
             let heatmapKey1 = noSpaces(entry[indexKey1])
             let heatmapKey2 = noSpaces(entry[indexKey2])
 
@@ -126,13 +127,25 @@ const Citations = (props) => {
         let aux = props.data.filter(entry => {
             let networkFilter = true
             let pyramidFilter = true
-			let detailsFilter = true
+            let detailsFilter = true
+            let impFilter = true
             let sexes = ["Ambos", props.pyramidData.sex]
 
             if (props.networkData.selected.length)
-                networkFilter = props.networkData.people.includes(entry[props.csvIndexes.subject_name]) || 
-                                props.networkData.people.includes(entry[props.csvIndexes.with_name])
-                                props.networkData.people.includes(entry[props.csvIndexes.about_name])
+                networkFilter = props.networkData.selected.includes(entry[props.csvIndexes.subject_name]) ||
+                                props.networkData.selected.includes(entry[props.csvIndexes.with_name]) ||
+                                props.networkData.selected.includes(entry[props.csvIndexes.about_name])
+
+            
+            if (!props.impPeopleData.includes(null))
+                impFilter = props.impPeopleData[0] === entry[props.csvIndexes.subject_name] ||
+                            props.impPeopleData[1] === entry[props.csvIndexes.subject_name]
+            else if (props.impPeopleData.includes(null)){
+                if (props.impPeopleData[0] !== null)
+                    impFilter = props.impPeopleData[0] === entry[props.csvIndexes.subject_name]
+                else if (props.impPeopleData[1] !== null)
+                    impFilter = props.impPeopleData[1] === entry[props.csvIndexes.subject_name]
+            }
 
             if (props.pyramidData.sex)
                 pyramidFilter = sexes.includes(entry[props.csvIndexes.subject_sex])
@@ -141,11 +154,11 @@ const Citations = (props) => {
                 pyramidFilter = pyramidFilter && entry[props.pyramidData.categoryIndex] === props.pyramidData.category
 
             if (Object.keys(props.heatmapData).length)
-				detailsFilter = entry[props.heatmapData.searchKey1] === props.heatmapData.key1 && 
-								entry[props.heatmapData.searchKey2] === props.heatmapData.key2
+                detailsFilter = entry[props.heatmapData.searchKey1] === props.heatmapData.key1 &&
+                    entry[props.heatmapData.searchKey2] === props.heatmapData.key2
 
 
-			return networkFilter && pyramidFilter && detailsFilter
+            return networkFilter && pyramidFilter && detailsFilter && impFilter
         })
 
         setData(aux)
@@ -156,35 +169,35 @@ const Citations = (props) => {
             data: aux,
             pageCount: Math.ceil(aux.length / prevState.numberPerPage),
             currentData: aux.slice(0, pagination.numberPerPage),
-            offset:0
+            offset: 0
         }))
-    }, [props.data, props.pyramidData, props.networkData, props.heatmapData])
+    }, [props.data, props.pyramidData, props.networkData, props.heatmapData, props.impPeopleData])
 
     const [backupData, setBackupData] = useState([])
 
     useEffect(() => {
-        
-        if (props.networkLink){
+
+        if (props.networkLink) {
 
             let toBeFiltered = backupData.length ? [...backupData] : [...data]
             let aux = toBeFiltered.filter(entry => {
                 let passNetworkLink = false
                 props.networkLink.forEach(l => {
-                    
+
                     let isAgentActive = entry[props.csvIndexes.agent] === "Ativo"
 
 
-                    if (isAgentActive){
+                    if (isAgentActive) {
                         if (l.source.person === entry[props.csvIndexes.subject_name])
                             if (l.target.person === entry[l.type === "with" ? props.csvIndexes.with_name : props.csvIndexes.about_name])
                                 passNetworkLink = true
-                    }else{ // passive action, requires switch
+                    } else { // passive action, requires switch
                         if (l.source.person === entry[l.type === "with" ? props.csvIndexes.with_name : props.csvIndexes.about_name])
                             if (l.target.person === entry[props.csvIndexes.subject_name])
                                 passNetworkLink = true
                     }
 
-                }); 
+                });
 
                 return passNetworkLink
             })
@@ -196,21 +209,21 @@ const Citations = (props) => {
                 data: aux,
                 pageCount: Math.ceil(aux.length / prevState.numberPerPage),
                 currentData: aux.slice(0, pagination.numberPerPage),
-                offset:0
+                offset: 0
             }))
-            
+
             props.setIsOpen(true)
             props.setNetworkLink(null)
         }
 
         function clickCitation(e) {
-            if ("network-lines" === e.target.className.baseVal){
+            if ("network-lines" === e.target.className.baseVal) {
                 window.removeEventListener("click", clickCitation)
-            }else if (d3.select(".citations-btn").node() && d3.select(".citations-btn").node().contains(e.target)){
+            } else if (d3.select(".citations-btn").node() && d3.select(".citations-btn").node().contains(e.target)) {
                 setData([...backupData])
                 setBackupData([])
                 window.removeEventListener("click", clickCitation)
-            } else if (d3.select(".citations-drawer").node() && !d3.select(".citations-drawer").node().contains(e.target)){
+            } else if (d3.select(".citations-drawer").node() && !d3.select(".citations-drawer").node().contains(e.target)) {
                 props.setIsOpen(!props.isOpen)
                 setData([...backupData])
                 setBackupData([])
@@ -218,7 +231,7 @@ const Citations = (props) => {
             }
         }
 
-        if (props.isOpen){
+        if (props.isOpen) {
             window.addEventListener("click", clickCitation)
         }
     }, [props.networkLink])
@@ -234,7 +247,7 @@ const Citations = (props) => {
     const handlePageClick = event => {
         const selected = event.selected;
         const offset = selected * pagination.numberPerPage
-        setPagination({ ...pagination, offset:offset })
+        setPagination({ ...pagination, offset: offset })
     }
 
     const { t } = useTranslation()
@@ -299,7 +312,7 @@ const Citations = (props) => {
                             previousClassName={"item previous"}
                             previousLabel={<ArrowBackIosIcon style={{ width: 15 }} />}
                             renderOnZeroPageCount={null}
-                            forcePage={pagination.offset/pagination.numberPerPage}
+                            forcePage={pagination.offset / pagination.numberPerPage}
                         />
                     </div>
                 </>

@@ -54,14 +54,24 @@ const MapChart = ({ locations }) => {
         return marks;
     }
 
-    let infoMouseOverMap = function (event, d) {
+    let infoMouseOverMap = function (event, d, type) {
         tooltipMark
             .style("opacity", 1);
 
         tooltipMark.html(`<center><b>${t("information")}</b></center>
-                      ${t("information-map")}`)
-            .style("top", event.pageY - 10 + "px")
-            .style("left", event.pageX + 10 + "px")
+                      ${type === "legend" ? t("information-legend-map") : t("information-map")}`)
+
+        let xposition = event.pageX + 10
+        let yposition = event.pageY - 10
+        let tooltip_rect = tooltipMark.node().getBoundingClientRect();
+        if (xposition + tooltip_rect.width > window.innerWidth)
+            xposition = xposition - 20 - tooltip_rect.width
+        if (yposition + tooltip_rect.height > window.innerHeight)
+            yposition = yposition + 20 - tooltip_rect.height
+
+        tooltipMark
+            .style("top", yposition + "px")
+            .style("left", xposition + "px")
     }
 
 
@@ -86,8 +96,13 @@ const MapChart = ({ locations }) => {
             .select("#tooltip")
 
         d3.select("#infoMap")
-            .on("mouseover", infoMouseOverMap)
+            .on("mouseover", (event, d) => infoMouseOverMap(event, d, "map"))
             .on("mouseleave", infoMouseLeaveMap)
+
+            
+        d3.select("#infoMapLegend")
+        .on("mouseover", (event, d) => infoMouseOverMap(event, d, "legend"))
+        .on("mouseleave", infoMouseLeaveMap)
 
         d3.select(".viz").selectAll("svg").remove();
 
@@ -356,6 +371,7 @@ const MapChart = ({ locations }) => {
                 <img title="Zoom" className="map-icons" alt="icon-zoom" src={scroll} style={{ opacity: 0 }} />
                 <img title="Drag" className="map-icons" alt="icon-drag" src={drag} style={{ marginLeft: "35px", opacity: 0 }} />
                 <div className="viz">
+                    <img alt="info" id="infoMapLegend" src={info} className='map-legend-icon'/>
                     <div className="maplegend">
                     </div>
                 </div>

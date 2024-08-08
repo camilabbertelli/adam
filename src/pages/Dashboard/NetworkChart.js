@@ -52,22 +52,33 @@ const NetworkChart = (props) => {
         let aux = props.data.filter(entry => {
             let pyramidFilter = true
             let heatmapFilter = true
+            let impFilter = true
             let sexes = ["Ambos", props.pyramidData.sex]
 
             if (props.pyramidData.sex)
                 pyramidFilter = sexes.includes(entry[props.csvIndexes.subject_sex]) &&
-                    sexes.includes(entry[props.csvIndexes.with_sex]) &&
-                    sexes.includes(entry[props.csvIndexes.about_sex])
+                    (sexes.includes(entry[props.csvIndexes.with_sex]) || entry[props.csvIndexes.with_sex] === "Não aplicável") &&
+                    (sexes.includes(entry[props.csvIndexes.about_sex]) || entry[props.csvIndexes.about_sex] === "Não aplicável")
 
             if (props.pyramidData.category)
                 pyramidFilter = pyramidFilter && entry[props.pyramidData.categoryIndex] === props.pyramidData.category
 
 
+            if (!props.impPeopleData.includes(null))
+                impFilter = props.impPeopleData[0] === entry[props.csvIndexes.subject_name] ||
+                    props.impPeopleData[1] === entry[props.csvIndexes.subject_name]
+            else if (props.impPeopleData.includes(null)) {
+                if (props.impPeopleData[0] !== null)
+                    impFilter = props.impPeopleData[0] === entry[props.csvIndexes.subject_name]
+                else if (props.impPeopleData[1] !== null)
+                    impFilter = props.impPeopleData[1] === entry[props.csvIndexes.subject_name]
+            }
+
             if (Object.keys(props.heatmapData).length)
                 heatmapFilter = entry[props.heatmapData.searchKey1] === props.heatmapData.key1 &&
                     entry[props.heatmapData.searchKey2] === props.heatmapData.key2
 
-            return pyramidFilter && heatmapFilter
+            return pyramidFilter && heatmapFilter && impFilter
         })
 
         d3.select(".network-graph").selectAll("svg").remove("")
@@ -79,9 +90,7 @@ const NetworkChart = (props) => {
         let with_nodes = d3.flatGroup(aux, d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.title], d => d[props.csvIndexes.with_sex], d => d[props.csvIndexes.with_qualities]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4]]])
         let about_nodes = d3.flatGroup(aux, d => d[props.csvIndexes.about_name], d => d[props.csvIndexes.title], d => d[props.csvIndexes.about_sex], d => d[props.csvIndexes.about_qualities]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4]]])
 
-        subject_nodes = subject_nodes.filter(entry => {
-            return true//(entry[2] === "Individual")
-        }).flatMap(d => [[d[0], d[1], d[3], d[4]]])
+        subject_nodes = subject_nodes.flatMap(d => [[d[0], d[1], d[3], d[4]]])
 
         let concat_arrays = [...new Set([...subject_nodes, ...with_nodes, ...about_nodes])]
 
@@ -114,16 +123,16 @@ const NetworkChart = (props) => {
         }))
 
 
-        let with_links = d3.flatRollup(aux, v => v.length, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.description], d=>d[props.csvIndexes.agent]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4], d[5]]])
+        let with_links = d3.flatRollup(aux, v => v.length, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.description], d => d[props.csvIndexes.agent]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4], d[5]]])
 
         with_links = with_links.filter(entry => {
             return (entry[0] !== "Não aplicável" && entry[1] !== "Não aplicável") // entry[2] === "Individual"
         }).flatMap(d => [[d[0], d[1], d[3], d[4], d[5]]])
-        
-        with_links = d3.flatGroup(with_links, d => d[0], d => d[1], d=>d[3])
+
+        with_links = d3.flatGroup(with_links, d => d[0], d => d[1], d => d[3])
 
         with_links = with_links.map((entry) => {
-            if (entry[2] !== "Ativo"){
+            if (entry[2] !== "Ativo") {
                 let temp = entry[0]
                 entry[0] = entry[1]
                 entry[1] = temp
@@ -132,7 +141,7 @@ const NetworkChart = (props) => {
             return entry
         })
 
-        with_links = d3.flatGroup(with_links, d => d[0], d => d[1], d=>d[2])
+        with_links = d3.flatGroup(with_links, d => d[0], d => d[1], d => d[2])
 
         with_links = with_links.map((entry, index) => ({
             id: index,
@@ -143,16 +152,16 @@ const NetworkChart = (props) => {
             citations: [...new Set(entry[3].flatMap(d => d[3].flatMap(d => d[2])))]
         }))
 
-        let about_links = d3.flatRollup(aux, v => v.length, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.about_name], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.description], d=> d[props.csvIndexes.agent]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4], d[5], d[6]]])
+        let about_links = d3.flatRollup(aux, v => v.length, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.about_name], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.description], d => d[props.csvIndexes.agent]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4], d[5], d[6]]])
 
         about_links = about_links.filter(entry => {
             return (entry[0] !== "Não aplicável" && entry[2] !== "Não aplicável") // entry[3] === "Individual"
         }).flatMap(d => [[d[0], d[2], d[4], d[5], d[6]]])
 
-        about_links = d3.flatGroup(about_links, d => d[0], d => d[1], d=>d[3])
+        about_links = d3.flatGroup(about_links, d => d[0], d => d[1], d => d[3])
 
         about_links = about_links.map((entry) => {
-            if (entry[2] !== "Ativo"){
+            if (entry[2] !== "Ativo") {
                 let temp = entry[0]
                 entry[0] = entry[1]
                 entry[1] = temp
@@ -161,7 +170,7 @@ const NetworkChart = (props) => {
             return entry
         })
 
-        about_links = d3.flatGroup(about_links, d => d[0], d => d[1], d=>d[2])
+        about_links = d3.flatGroup(about_links, d => d[0], d => d[1], d => d[2])
 
         about_links = about_links.map((entry, index) => ({
             id: index,
@@ -180,7 +189,7 @@ const NetworkChart = (props) => {
         setLinksGlobal(d3.map(linksOriginal, (d, i) => ({ id: i, source: d.source, target: d.target, value: d.value, type: d.type, with_id: d["with_id"], citations: d.citations })));
 
         setData(aux)
-    }, [props.data, props.pyramidData, props.heatmapData])
+    }, [props.data, props.pyramidData, props.heatmapData, props.impPeopleData])
 
     const [nodeClickCheck, setNodeClickCheck] = useState(false)
 
@@ -221,6 +230,7 @@ const NetworkChart = (props) => {
             return passLinks
         })
 
+
         if (nodeClickCheck) {
             props.setNetworkData({ selected: selectedNodes, people: nodes.map(d => d.person) })
             setNodeClickCheck(false)
@@ -231,10 +241,10 @@ const NetworkChart = (props) => {
                 .style("opacity", "1");
         }
 
-        let nodemousemove = function (event, d){
+        let nodemousemove = function (event, d) {
             let groups = d.groups.join("<br/>")
 
-            
+
             tooltipNetwork
                 .html(`<b>${t("network-tooltip-person")}: </b>${d.person}<br/>
                        <b>${t("network-tooltip-groups")}: </b>${d.multipleGroups ? "<br/>" : ""} ${groups}<br/>
@@ -269,8 +279,9 @@ const NetworkChart = (props) => {
 
         }
 
-        let linemousemove = function (event, d){
+        let linemousemove = function (event, d) {
             let aux = links.filter(l => (
+                l.source.person !== l.target.person &&
                 l.source.person === d.target.person &&
                 l.target.person === d.source.person) ||
                 (l.source.person === d.source.person && l.target.person === d.target.person && l.type !== d.type))
@@ -310,8 +321,8 @@ const NetworkChart = (props) => {
             if (element)
                 element.innerHTML = "";
         }
-        
-        function lineClick(event, d){
+
+        function lineClick(event, d) {
             let aux = links.filter(l => (
                 l.source.person === d.target.person &&
                 l.target.person === d.source.person) ||
@@ -398,11 +409,11 @@ const NetworkChart = (props) => {
 
         d3.select(".network-graph").selectAll("svg").remove("")
 
-       
+
         // create a tooltipNetwork
         tooltipNetwork = d3.select("body")
-        .select("#tooltip")
-        
+            .select("#tooltip")
+
         d3.select("#infoNetwork")
             .on("mouseover", infoMouseOverNetwork)
             .on("mouseleave", infoMouseLeaveNetwork)
@@ -423,7 +434,7 @@ const NetworkChart = (props) => {
         let forceNode = d3.forceManyBody();
         let forceLink = d3.forceLink(links).id(d => d.person);
         let nodeStrength = -200
-        let linkStrength    
+        let linkStrength
         if (nodeStrength !== undefined) forceNode.strength(nodeStrength);
         if (linkStrength !== undefined) forceLink.strength(linkStrength);
 
@@ -496,11 +507,12 @@ const NetworkChart = (props) => {
         const link = svg.append("g")
             .selectAll("line")
             .data(links)
-            .join("line")
+            .join("path")
             .attr("class", "network-lines")
             .attr("stroke-linecap", "round")
             .attr("stroke-linejoin", "round")
             .attr("stroke", d => colorLine(d.type))
+            .attr("fill", "none")
             .attr("stroke-dasharray", d => d.type === "about" ? "3, 3" : "")
             .attr("stroke-width", d => Math.sqrt(d.value))
             .attr("marker-end", d => `url(#arrow-${d.type})`)
@@ -544,21 +556,55 @@ const NetworkChart = (props) => {
 
         function ticked() {
 
-            link
-                .attr("x1", d => {
-                    if (typeClick !== "about" && d.type === "about" && d.with_id !== undefined && d.with_id !== -1 && links[d.with_id] !== undefined)
-                        return (links[d.with_id].source.x + links[d.with_id].target.x) / 2
+            link.attr("d", function (d) {
+                let x1 = d.source.x
+                let y1 = d.source.y
+                let x2 = d.target.x
+                let y2 = d.target.y
 
-                    return d.source.x
-                })
-                .attr("y1", d => {
-                    if (typeClick !== "about" && d.type === "about" && d.with_id !== undefined && d.with_id !== -1 && links[d.with_id] !== undefined)
-                        return (links[d.with_id].source.y + links[d.with_id].target.y) / 2
+                if (typeClick !== "about" && d.type === "about" && d.with_id !== undefined && d.with_id !== -1 && links[d.with_id] !== undefined)
+                    x1 = (links[d.with_id].source.x + links[d.with_id].target.x) / 2
 
-                    return d.source.y
-                })
-                .attr("x2", d => d.target.x)
-                .attr("y2", d => d.target.y);
+                if (typeClick !== "about" && d.type === "about" && d.with_id !== undefined && d.with_id !== -1 && links[d.with_id] !== undefined)
+                    y1 = (links[d.with_id].source.y + links[d.with_id].target.y) / 2
+
+
+                let dx = 0
+                let dy = 0
+                let dr = Math.sqrt(dx * dx + dy * dy)
+
+                // Defaults for normal edge.
+                let drx = dr
+                let dry = dr
+                let xRotation = 0 // degrees
+                let largeArc = 0 // 1 or 0
+                let sweep = 1 // 1 or 0
+
+                // Self edge.
+                if (x1 === x2 && y1 === y2) {
+                    // Fiddle with this angle to get loop oriented.
+                    xRotation = -45;
+
+                    // Needs to be 1.
+                    largeArc = 1;
+
+                    // Change sweep to change orientation of loop. 
+                    //sweep = 0;
+
+                    // Make drx and dry different to get an ellipse
+                    // instead of a circle.
+                    drx = 20;
+                    dry = 20;
+
+                    // For whatever reason the arc collapses to a point if the beginning
+                    // and ending points of the arc are the same, so kludge it.
+                    x2 = x2 + 1;
+                    y2 = y2 + 1;
+                }
+
+                return "M" + x1 + "," + y1 + "A" + drx + "," + dry + " " + xRotation + "," + largeArc + "," + sweep + " " + x2 + "," + y2;
+
+            })
 
             node
                 .attr("cx", d => d.x)

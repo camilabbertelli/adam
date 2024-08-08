@@ -16,6 +16,11 @@
 	height: 35dvh;
 }
 
+.map-legend-icon{
+	width: 15px;
+	height: 15px;
+}
+
 #countries {
 	fill: #d8b89a;
 	stroke: #d8b89a;
