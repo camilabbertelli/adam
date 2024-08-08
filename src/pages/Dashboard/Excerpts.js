@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import "./../../styles/Dashboard/Citations.css";
+import "./../../styles/Dashboard/Excerpts.css";
 
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
@@ -16,16 +16,16 @@ function noSpaces(str) {
     return str
 }
 
-const Citations = (props) => {
+const Excerpts = (props) => {
 
     const [data, setData] = useState([])
 
-    const toggleCitation = (entry) => {
+    const toggleExcerpt = (entry) => {
 
         let id = entry[props.csvIndexes.index]
-        let state = !d3.select(`[id="${id}"]`).classed("citations-sub-none")
-        d3.select(`[id="${id}"]`).classed("citations-sub-none", state)
-        d3.select(`[id="citation-arrow-${id}"]`).style("transform", state ? "none" : "rotate(90deg)")
+        let state = !d3.select(`[id="${id}"]`).classed("excerpts-sub-none")
+        d3.select(`[id="${id}"]`).classed("excerpts-sub-none", state)
+        d3.select(`[id="excerpt-arrow-${id}"]`).style("transform", state ? "none" : "rotate(90deg)")
 
         if (!state) {
 
@@ -216,23 +216,23 @@ const Citations = (props) => {
             props.setNetworkLink(null)
         }
 
-        function clickCitation(e) {
+        function clickExcerpt(e) {
             if ("network-lines" === e.target.className.baseVal) {
-                window.removeEventListener("click", clickCitation)
-            } else if (d3.select(".citations-btn").node() && d3.select(".citations-btn").node().contains(e.target)) {
+                window.removeEventListener("click", clickExcerpt)
+            } else if (d3.select(".excerpts-btn").node() && d3.select(".excerpts-btn").node().contains(e.target)) {
                 setData([...backupData])
                 setBackupData([])
-                window.removeEventListener("click", clickCitation)
-            } else if (d3.select(".citations-drawer").node() && !d3.select(".citations-drawer").node().contains(e.target)) {
+                window.removeEventListener("click", clickExcerpt)
+            } else if (d3.select(".excerpts-drawer").node() && !d3.select(".excerpts-drawer").node().contains(e.target)) {
                 props.setIsOpen(!props.isOpen)
                 setData([...backupData])
                 setBackupData([])
-                window.removeEventListener("click", clickCitation)
+                window.removeEventListener("click", clickExcerpt)
             }
         }
 
         if (props.isOpen) {
-            window.addEventListener("click", clickCitation)
+            window.addEventListener("click", clickExcerpt)
         }
     }, [props.networkLink])
 
@@ -260,24 +260,24 @@ const Citations = (props) => {
                 </div>}
             {data.length !== 0 &&
                 <>
-                    <div className='citations-content' id='citations-content'>
+                    <div className='excerpts-content' id='excerpts-content'>
                         <p><b>{pagination.offset + 1}</b> - <b>{pagination.offset + pagination.currentData.length}</b> {t("excerpts-of")} <b>{data.length}</b> {t("excerpts-results")}</p>
                         {pagination.currentData && pagination.currentData.map(((entry) => (
-                            <div className='citations-dropdown' key={`div-${entry[props.csvIndexes.index]}`}>
-                                <button className='citations-dropbtn' key={`btn-${entry[props.csvIndexes.index]}`} onClick={() => toggleCitation(entry)}>
-                                    <ArrowForwardIosIcon id={`citation-arrow-${entry[props.csvIndexes.index]}`} style={{ width: "15px", marginRight: "5px" }} />
+                            <div className='excerpts-dropdown' key={`div-${entry[props.csvIndexes.index]}`}>
+                                <button className='excerpts-dropbtn' key={`btn-${entry[props.csvIndexes.index]}`} onClick={() => toggleExcerpt(entry)}>
+                                    <ArrowForwardIosIcon id={`excerpt-arrow-${entry[props.csvIndexes.index]}`} style={{ width: "15px", marginRight: "5px" }} />
                                     {entry[props.csvIndexes.description]}
                                 </button>
-                                <div className="citations-sub-content citations-sub-none" key={`dropdown-${entry[props.csvIndexes.index]}`} id={entry[props.csvIndexes.index]}>
-                                    <table width={"100%"} key={`tables-citation-${entry[props.csvIndexes.index]}`}>
+                                <div className="excerpts-sub-content excerpts-sub-none" key={`dropdown-${entry[props.csvIndexes.index]}`} id={entry[props.csvIndexes.index]}>
+                                    <table width={"100%"} key={`tables-excerpt-${entry[props.csvIndexes.index]}`}>
                                         <tbody key={`tbody-${entry[props.csvIndexes.index]}`}>
                                             {Object.keys(props.csvIndexes).map((key) => {
                                                 if (props.csvNames[key] === props.csvNames.description)
                                                     return ""
                                                 return (
-                                                    <tr className="citations-table" key={`tr-${entry[props.csvIndexes.index]}-${key}`}>
-                                                        <th className="citations-table" key={`th-${entry[props.csvIndexes.index]}`}>{props.csvNames[key]}</th>
-                                                        <td className="citations-table" key={`td-${entry[props.csvIndexes.index]}`}>{entry[props.csvIndexes[key]]}</td>
+                                                    <tr className="excerpts-table" key={`tr-${entry[props.csvIndexes.index]}-${key}`}>
+                                                        <th className="excerpts-table" key={`th-${entry[props.csvIndexes.index]}`}>{props.csvNames[key]}</th>
+                                                        <td className="excerpts-table" key={`td-${entry[props.csvIndexes.index]}`}>{entry[props.csvIndexes[key]]}</td>
                                                     </tr>
                                                 )
                                             })}
@@ -322,4 +322,4 @@ const Citations = (props) => {
     )
 }
 
-export default Citations;
+export default Excerpts;

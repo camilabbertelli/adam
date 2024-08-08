@@ -198,7 +198,7 @@ const FilterView = (props) => {
 
             let dropDownActive = !d3.select(`[id="filter-dropdown-${key}"]`).classed("filter-dropdown-content-show")
             d3.select(`[id="filter-dropdown-${key}"]`).classed("filter-dropdown-content-show", dropDownActive)
-            d3.select(`[id="citation-arrow-${key}"]`).style("transform", dropDownActive ? "rotate(90deg)" : "none")
+            d3.select(`[id="excerpt-arrow-${key}"]`).style("transform", dropDownActive ? "rotate(90deg)" : "none")
 
             if (index === Object.keys(props.categories).length - 1)
                 d3.select(`[id="${key}"]`).style("border-radius", dropDownActive ? "0" : "0 0 20px 20px")
@@ -208,7 +208,7 @@ const FilterView = (props) => {
     function toggleDropdownSubCategory(key) {
         let subDropDownActive = !d3.select(`[id="filter-sub-dropdown-${key}"]`).classed("filter-dropdown-content-show")
         d3.select(`[id="filter-sub-dropdown-${key}"]`).classed("filter-dropdown-content-show", subDropDownActive)
-        d3.select(`[id="citation-sub-arrow-${key}"]`).style("transform", subDropDownActive ? "rotate(90deg)" : "none")
+        d3.select(`[id="excerpt-sub-arrow-${key}"]`).style("transform", subDropDownActive ? "rotate(90deg)" : "none")
 
     }
 
@@ -396,7 +396,7 @@ const FilterView = (props) => {
                                                     (d3.select(`[id="filter-dropdown-${key}"]`).node() && !d3.select(`[id="filter-dropdown-${key}"]`).classed("filter-dropdown-content-show") ? { borderRadius: "0 0 20px 20px" } : { borderRadius: "0" }) : null)}
                                             onClick={() => toggleDropdownCategory(key, index)} >
                                             {t(key)}
-                                            <ArrowForwardIosIcon id={`citation-arrow-${key}`} className="arrow-dropdown" style={{ position: "absolute", right: "0", width: "15px", marginRight: "5px", marginTop: "2px" }} />
+                                            <ArrowForwardIosIcon id={`excerpt-arrow-${key}`} className="arrow-dropdown" style={{ position: "absolute", right: "0", width: "15px", marginRight: "5px", marginTop: "2px" }} />
                                         </button>
                                         </Draggable>
                                         <div id={`filter-dropdown-${key}`} style={(index === Object.keys(props.categories).length - 1 ? { borderRadius: "0 0 20px 20px" } : null)} className={"shadow filter-dropdown-content-hide"} key={"hidden-dropdown"}>
@@ -409,7 +409,7 @@ const FilterView = (props) => {
                                                             <div style={{ display: "flex", alignItems: "center", width: "100%", height: "100%", borderRadius: "20px" }} key={"item-pack-" + item}>
                                                                 <input id={`checkbox-${noSpaces(item)}`} type="checkbox" onClick={() => clickDropdownCategory(key, noSpaces(item), sublist)} />
                                                                 <button onClick={() => toggleDropdownSubCategory(noSpaces(item))} style={{ width: "100%", height: "100%", display: "flex" }}>
-                                                                    {item} {sublist.length > 1 && <ArrowForwardIosIcon className="arrow-dropdown" id={`citation-sub-arrow-${noSpaces(item)}`} style={{ position: "absolute", right: 0, width: "15px", marginRight: "5px", marginTop: "2px" }} />}
+                                                                    {item} {sublist.length > 1 && <ArrowForwardIosIcon className="arrow-dropdown" id={`excerpt-sub-arrow-${noSpaces(item)}`} style={{ position: "absolute", right: 0, width: "15px", marginRight: "5px", marginTop: "2px" }} />}
                                                                 </button>
                                                             </div>
                                                             {sublist.length > 1 && <div id={`filter-sub-dropdown-${noSpaces(item)}`} style={{overflow: "hidden"}} className={"filter-dropdown-content-hide"} key={"hidden-sub-dropdown"}>

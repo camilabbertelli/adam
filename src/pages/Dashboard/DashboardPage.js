@@ -21,7 +21,7 @@ import { useLocation } from "react-router-dom";
 import * as d3 from "d3"
 
 import FilterView from './FilterView';
-import Citations from './Citations';
+import Excerpts from './Excerpts';
 
 
 function noSpaces(str) {
@@ -774,18 +774,18 @@ const DashboardPage = (props) => {
                     </div>
                     <div className='dashboard-row3'>
 
-                        <button className="citations-btn" type='button' onClick={() => { setIsOpen(!isOpen); setNetworkLink(null) }}>
+                        <button className="excerpts-btn" type='button' onClick={() => { setIsOpen(!isOpen); setNetworkLink(null) }}>
                             <img alt="up-arrow" width="20px" height="20px" style={{ animation: "downup 2s ease infinite", marginLeft: "10px", transform: "rotate(180deg)" }} src={doubleArrow} />
-                            {t("citations-label")}
+                            {t("excerpts-label")}
                         </button>
 
                         <Drawer backdrop={false} open={isOpen} onClose={handleClose}
-                            className='citations-drawer shadow' position='bottom'>
-                            <button className="citations-btn" type='button' onClick={() => { setIsOpen(false); setNetworkLink(null) }}>
+                            className='excerpts-drawer shadow' position='bottom'>
+                            <button className="excerpts-btn" type='button' onClick={() => { setIsOpen(false); setNetworkLink(null) }}>
                                 <img alt="up-arrow" width="20px" height="20px" style={{ marginLeft: "10px" }} src={doubleArrow} />
-                                {t("citations-label")}
+                                {t("excerpts-label")}
                             </button>
-                            <Citations
+                            <Excerpts
                                 data={globalData}
                                 networkData={networkData} pyramidData={pyramidData} heatmapData={heatmapData} impPeopleData={impPeopleData} networkLink={networkLink} setNetworkLink={setNetworkLink}
                                 categories={categories}

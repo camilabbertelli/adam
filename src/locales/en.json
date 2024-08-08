@@ -58,7 +58,7 @@
     "network-tooltip-target": "Target",
     "network-tooltip-value": "Amount",
     "network-tooltip-type": "Type",
-    "network-tooltip-citation": "Excerpts",
+    "network-tooltip-excerpt": "Excerpts",
     "network-tooltip-see-more": "Click on this link to see the corresponding excerpts.",
 
     "network-about-info": "Represents when person A talks ABOUT person B",
@@ -121,7 +121,7 @@
     "dimension-soul": "Soul",
     "dimension-transcendental": "Transcendental",
 
-    "citations-label": "excerpts",
+    "excerpts-label": "excerpts",
     "excerpts-results": "results",
     "excerpts-of": "of",
     

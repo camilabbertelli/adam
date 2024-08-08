@@ -58,7 +58,7 @@
     "network-tooltip-target": "Destino",
     "network-tooltip-value": "Quantidade",
     "network-tooltip-type": "Tipo",
-    "network-tooltip-citation": "Excertos",
+    "network-tooltip-excerpt": "Excertos",
     "network-tooltip-see-more": "Clique neste link para ver as citações correspondentes.",
 
     "network-about-info": "Representa quando a pessoa A conversa SOBRE a pessoa B",
@@ -121,7 +121,7 @@
     "dimension-soul": "Alma",
     "dimension-transcendental": "Transcendental",
 
-    "citations-label": "excertos",
+    "excerpts-label": "excertos",
     "excerpts-results": "resultados",
     "excerpts-of": "de",
 

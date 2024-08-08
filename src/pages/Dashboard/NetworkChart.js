@@ -149,7 +149,7 @@ const NetworkChart = (props) => {
             target: entry[1],
             value: [...new Set(entry[3].flatMap(d => d[3].flatMap(d => d[2])))].length,
             type: "with",
-            citations: [...new Set(entry[3].flatMap(d => d[3].flatMap(d => d[2])))]
+            excerpts: [...new Set(entry[3].flatMap(d => d[3].flatMap(d => d[2])))]
         }))
 
         let about_links = d3.flatRollup(aux, v => v.length, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.about_name], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.description], d => d[props.csvIndexes.agent]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4], d[5], d[6]]])
@@ -179,14 +179,14 @@ const NetworkChart = (props) => {
             value: [...new Set(entry[3].flatMap(d => d[3].flatMap(d => d[2])))].length,
             type: "about",
             with_id: with_links.findIndex(({ source, target }) => (source === entry[0] && target === entry[1])),
-            citations: [...new Set(entry[3].flatMap(d => d[3].flatMap(d => d[2])))]
+            excerpts: [...new Set(entry[3].flatMap(d => d[3].flatMap(d => d[2])))]
         }))
 
         let linksOriginal = [...new Set([...with_links, ...about_links])]
 
         // Replace the input nodes and links with mutable objects for the simulation.
         setNodesGlobal(d3.map(nodesOriginal, d => ({ person: d.person, multipleGroups: d.multipleGroups, groups: d.groups, sex: d.sex, qualities: d.qualities })));
-        setLinksGlobal(d3.map(linksOriginal, (d, i) => ({ id: i, source: d.source, target: d.target, value: d.value, type: d.type, with_id: d["with_id"], citations: d.citations })));
+        setLinksGlobal(d3.map(linksOriginal, (d, i) => ({ id: i, source: d.source, target: d.target, value: d.value, type: d.type, with_id: d["with_id"], excerpts: d.excerpts })));
 
         setData(aux)
     }, [props.data, props.pyramidData, props.heatmapData, props.impPeopleData])
@@ -290,13 +290,13 @@ const NetworkChart = (props) => {
                 after += `<br/><b>${t("network-tooltip-source")}: </b>${str.source.person}<br/>
                             <b>${t("network-tooltip-target")}: </b>${str.target.person}<br/>
                             <b>${t("network-tooltip-type")}: </b><i>${str.type === "with" ? t("network-tooltip-with") : t("network-tooltip-about")}</i><br/>
-                            <b>${t("network-tooltip-citation")}: </b><i>${str.value}</i><br/>`)
+                            <b>${t("network-tooltip-excerpt")}: </b><i>${str.value}</i><br/>`)
 
             tooltipNetwork
                 .html(`<b>${t("network-tooltip-source")}: </b>${d.source.person}<br/>
                        <b>${t("network-tooltip-target")}: </b>${d.target.person}<br/>
                        <b>${t("network-tooltip-type")}: </b><i>${d.type === "with" ? t("network-tooltip-with") : t("network-tooltip-about")}</i><br/>
-                       <b>${t("network-tooltip-citation")}: </b><i>${d.value}</i><br/>${after}<br/>
+                       <b>${t("network-tooltip-excerpt")}: </b><i>${d.value}</i><br/>${after}<br/>
                        
                        <b>${t("network-tooltip-see-more")}</b>`)
 

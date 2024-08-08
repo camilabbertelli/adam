@@ -1,5 +1,5 @@
 
-.citations-btn{
+.excerpts-btn{
     padding: 0;
     border-radius: 20px 20px 0 0;
     width: 100%;
@@ -16,7 +16,7 @@
 }
 
 
-.citations-drawer{
+.excerpts-drawer{
     border-radius: 20px 20px 0 0;
     width: 20%;
     background-color: #FFEFD5 !important;
@@ -26,7 +26,7 @@
     overflow: hidden !important;
 }
 
-.citations-content{
+.excerpts-content{
     width: 100%;
     height: calc((100dvh - var(--nav-bar-height)) * 0.7);
     padding: 2% 5%;
@@ -34,21 +34,21 @@
     overflow-y: auto;
 }
 
-.citations-dropbtn {
+.excerpts-dropbtn {
     font-style: italic;
     border: none;
     text-align: left;
 }
 
-.citations-sub-content {
+.excerpts-sub-content {
     font-size: 15px;
 }
 
-.citations-sub-content.citations-sub-none {
+.excerpts-sub-content.excerpts-sub-none {
     display: none;
 }
 
-.citations-table {
+.excerpts-table {
     border: 2px solid #F2E3CB;
     border-collapse: collapse;
 }
