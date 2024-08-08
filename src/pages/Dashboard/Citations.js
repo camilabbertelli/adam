@@ -261,6 +261,7 @@ const Citations = (props) => {
             {data.length !== 0 &&
                 <>
                     <div className='citations-content' id='citations-content'>
+                        <p><b>{pagination.offset + 1}</b> - <b>{pagination.offset + pagination.currentData.length}</b> {t("excerpts-of")} <b>{data.length}</b> {t("excerpts-results")}</p>
                         {pagination.currentData && pagination.currentData.map(((entry) => (
                             <div className='citations-dropdown' key={`div-${entry[props.csvIndexes.index]}`}>
                                 <button className='citations-dropbtn' key={`btn-${entry[props.csvIndexes.index]}`} onClick={() => toggleCitation(entry)}>

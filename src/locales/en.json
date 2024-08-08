@@ -79,8 +79,8 @@
     "categories-label": "Categories",
     "category-label": "Category",
     "category-action": "Actions",
-    "category-causes-group": "Action Causes",
-    "category-body": "Anatomical parts",
+    "category-action-causes": "Action Causes",
+    "category-anatomy": "Anatomical parts",
     "agent-label": "Agent",
     "intention-label": "Intention",
     "value-label": "Value",
@@ -122,6 +122,8 @@
     "dimension-transcendental": "Transcendental",
 
     "citations-label": "excerpts",
+    "excerpts-results": "results",
+    "excerpts-of": "of",
     
     "imp-label": "Important people",
     "imp-no-selection-label" : "Select a person",

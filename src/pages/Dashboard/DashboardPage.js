@@ -315,16 +315,18 @@ const DashboardPage = (props) => {
                 indexSubcategory: props.csvIndexes.action,
                 list: []
             },
-            "category-causes-group": {
+            "category-action-causes": {
                 index: props.csvIndexes.causes_group,
                 indexSubcategory: props.csvIndexes.causes,
                 list: []
             },
-            "category-body": {
+            "category-anatomy": {
                 index: props.csvIndexes.anatomical_part,
                 indexSubcategory: props.csvIndexes.organs,
                 list: []
-            }
+            },
+            
+            
         }
 
         let advancedFilterAux = {}

@@ -445,7 +445,13 @@ const TabContent = (props) => {
                     .attr("width", d => xScaleMasc(d[1].total / participants_total))
                     .attr("height", yScale.bandwidth())
                     .style("fill", "#935959")
-                    .style("opacity", 1)
+                    .style("opacity", d => {
+
+                        if (selectedSex.category === "" || selectedSex.category === d[0])
+                            return 1
+
+                        return 0.5
+                    })
 
                 femaleBars
                     .data(pyramidData)
@@ -641,7 +647,7 @@ const TabContent = (props) => {
 
     const changeTotalOccurrence = () => {
         setTotalOccurrences(!totalOccurrences)
-        if (selectedSex.sex !== "" || selectedSex.category !== "") {
+        if (!(selectedSex.sex === "" && selectedSex.category !== "") && (selectedSex.sex !== "" || selectedSex.category !== "")) {
             setSelectedSex({ sex: "", category: "", categoryIndex: "" })
             props.setPyramidData({ sex: "", category: "", categoryIndex: "" })
         }
