@@ -67,7 +67,7 @@ const App = () => {
 				names.subject_qualities = "Qualificativo do Sujeito"
 				names.action = "Ação"
 				names.causes_group = "Causas das ações"
-				names.causes = "Causa"
+				names.causes = "Causa específica"
 				names.time = "Quando"
 				names.place = "Onde"
 				names.latitude = "Latitude"

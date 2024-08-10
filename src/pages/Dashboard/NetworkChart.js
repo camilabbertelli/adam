@@ -5,7 +5,7 @@ import "./../../styles/Dashboard/NetworkChart.css";
 import info from "./../../assets/images/info-black.png"
 import expand from "./../../assets/images/dashboard/expand.png"
 import shrink from "./../../assets/images/dashboard/shrink.png"
-import close from "./../../assets/images/close.png"
+import trash from "./../../assets/images/recycle-bin.png"
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -448,7 +448,7 @@ const NetworkChart = (props) => {
                 .y0(-height * 2)
                 .y1(height * 2)
                 .cushionWidth(width / 3)
-                .cushionStrength(50))
+                .cushionStrength(70))
             .on("tick", ticked)
 
         const svgInitial = d3
@@ -702,10 +702,9 @@ const NetworkChart = (props) => {
                 <div className='network-top-section'>
                     {(selectedNodes.length !== 0) &&
                         <button className="network-btn-clear-selection" onClick={clearSelection} title={t("clear-selection-filter")}>
-                            <img alt="close" src={close}
-                                style={{ margin: "0 5px", cursor: "pointer", width: "10px", height: "10px" }}
+                            <img alt="close" src={trash}
+                                style={{ cursor: "pointer"}}
                             />
-                            <span className="network-btn-clear-selection-text">{t("clear-selection-filter")}</span>
                         </button>
                     }
                     <div className='network-title'>

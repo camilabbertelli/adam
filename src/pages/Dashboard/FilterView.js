@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import spine from "./../../assets/images/spine.png"
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import info from "./../../assets/images/info-black.png"
-import close from "./../../assets/images/close.png"
+import trash from "./../../assets/images/recycle-bin.png"
 
 import * as d3 from "d3"
 import { useLocation } from "react-router-dom";
@@ -266,7 +266,7 @@ const FilterView = (props) => {
             }
         })
 
-        props.setActiveFilters([], [], [], [], [], aux)
+        props.setActiveFilters([], [], null, null, null, aux)
     }
 
     function clickDropdownSubCategory(category, key, subkey) {
@@ -368,15 +368,13 @@ const FilterView = (props) => {
         <>
 
             <div className="dashboard-filter-view" key={"filterview"}>
-                <div key={"clean-all-button"} style={{ position: "relative", width: "95%", display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-                    <button key="clean-all-button-content" className="btn-clear-all" onClick={resetFilters}>
-                        <img alt="close" src={close}
-                            style={{ margin: "0 5px", cursor: "pointer", width: "10px", height: "10px" }}
-                        />
-                        {t("clear-all-filter")}
-                    </button>
-                </div>
-                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center" }} key={"actual-filters"}>
+                
+                <button key="clean-all-button-content" className="btn-clear-all" onClick={resetFilters} title={t("clear-all-filter")}>
+                    <img alt="close" src={trash}
+                        style={{ cursor: "pointer"}}
+                    />
+                </button>
+                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "10px 0" }} key={"actual-filters"}>
                     <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center" }}>
                         {t("categories-label")}
                         <img alt="info" id="infoFilter" className="categories" src={info}

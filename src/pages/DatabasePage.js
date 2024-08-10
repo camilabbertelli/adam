@@ -72,14 +72,13 @@ class Table extends React.Component {
         let checkedKeys = this.props.checkedKeys;
         let names = this.props.csvNames; 
 
-        let loader = document.getElementById("loader");
-        loader.classList.add('loader--hide');
-
         return (
             <>
-            <strong>{this.state.t("database-results")}</strong>: {Object.keys(data_table).length}
-            <table className="table table-sm table-bordered table-hover">
-                <thead className='table-dark text-dark'>
+            <div className="database-results">
+                <strong>{this.state.t("database-results")}</strong>: {Object.keys(data_table).length}
+            </div>
+            <table className="table table-sm table-bordered table-hover scrolldown">
+            <thead className='table-dark text-dark'>
                     <TableFilter
                         rows={data_table}
                         rowClass="h5 text-center"
@@ -105,7 +104,7 @@ class Table extends React.Component {
 
                     </TableFilter>
                 </thead>
-                <tbody>
+                <tbody className="tbody-database">
                     {data_table.map((item, index) => {
                         return (
                             <tr key={"row_" + index}>
@@ -210,6 +209,11 @@ const DatabasePage = (props) => {
     }
 
     useEffect(() => {
+        d3.selectAll("#tooltip").style("opacity", 0)
+        let element = document.getElementById('tooltip')
+            if (element)
+                element.innerHTML = "";
+
         setData(props.data)
 
         if (props.data.length) {
@@ -307,7 +311,6 @@ const DatabasePage = (props) => {
             </div>
             <div className="database-table-view">
                 <Table t={t} checkedKeys={checkedKeys} csvNames={props.csvNames} data={data} setData={setData} filterConfiguration={props.databaseFilterConfiguration} setFilterConfiguration={props.setDatabaseFilterConfiguration} />
-                <div id="loader" className="loader"></div>
             </div>
         </div>)
 }

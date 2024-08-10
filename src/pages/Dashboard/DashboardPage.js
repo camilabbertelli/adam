@@ -250,6 +250,12 @@ const DashboardPage = (props) => {
 
     useEffect(() => {
 
+        
+        d3.selectAll("#tooltip").style("opacity", 0)
+        let element = document.getElementById('tooltip')
+            if (element)
+                element.innerHTML = "";
+
         let data = d3.flatRollup(props.data, v => v.length,
             d => d[props.csvNames.index],
             d => d[props.csvNames.material_type],
@@ -380,16 +386,18 @@ const DashboardPage = (props) => {
             window.history.replaceState({}, '')
 
             data = data.filter((d) => {
-                let passPlaces = false
-                let passCent = false
                 if (places && places.length)
-                    passPlaces = places.includes(d[props.csvIndexes.place])
-
+                    if (!places.includes(d[props.csvIndexes.place]))
+                        return false
+                    
+                let passCent = false
                 if (cent && cent.length)
                     d[props.csvIndexes.chronology].split(" ").forEach(c => {
-                        passCent = cent.includes(c)
+                        if(cent.includes(c))
+                            passCent = true
                     })
-                return passPlaces && passCent
+
+                return passCent
             });
 
             if (places.length)
@@ -494,6 +502,7 @@ const DashboardPage = (props) => {
 
     function setFilters(newFilters, types, codicesFilter, locationFilter, centuryFilter, advFilters) {
 
+
         let filtered = originalGlobalData.filter((d) => {
             if (codicesFilter && codicesFilter.length) {
                 if (!codicesFilter.includes(noSpaces(d[props.csvIndexes.title])))
@@ -502,22 +511,26 @@ const DashboardPage = (props) => {
             else if (!activeCodices.includes(noSpaces(d[props.csvIndexes.title])))
                 return false;
 
+
             if (locationFilter) {
-                if (locationFilter.length)
-                    return locationFilter.includes(d[props.csvIndexes.place])
+                if (locationFilter.length && !locationFilter.includes(d[props.csvIndexes.place]))
+                    return false
             }
-            else if (activeLocations.length)
-                return activeLocations.includes(d[props.csvIndexes.place]);
+            else if (activeLocations.length && !activeLocations.includes(d[props.csvIndexes.place]))
+                return false
 
             if (centuryFilter) {
                 if (centuryFilter.length) {
+                    
                     let pass = false
                     let centuries = d[props.csvIndexes.chronology].split(" ")
                     centuries.forEach(c => {
                         if (centuryFilter.includes(c))
                             pass = true
                     })
-                    return pass
+
+                    if (!pass)
+                        return false
                 }
             }
             else if (activeCenturies.length) {
@@ -527,7 +540,9 @@ const DashboardPage = (props) => {
                     if (activeCenturies.includes(c))
                         pass = true
                 })
-                return pass
+
+                if (!pass)
+                    return false
             }
 
             for (const [key, v] of Object.entries(activeFilters)) {

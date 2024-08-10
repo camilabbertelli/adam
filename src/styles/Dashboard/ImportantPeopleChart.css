@@ -215,6 +215,7 @@ h5.imp-top-title {
     text-align: center;
 
     cursor: auto;
+    user-select: none;
 }
 
 

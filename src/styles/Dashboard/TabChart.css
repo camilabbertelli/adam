@@ -133,28 +133,17 @@
 }
 
 .pyramid-btn-clear-selection{
-	display: flex;
-    align-items: center;
-    margin-top: 10px;
-	margin-left:10px;
-    font-size: small;
-    background-color: #f1f1f1;
-    border-color: #6e6e6e;
-    border-width: 2px;
-    padding-right: 5px;
+	position: absolute;
+    bottom: 8px;
+    left: 10px;
+    z-index: 1;
+    width: 28px;
 
-	transition: 0.3s;
-	max-width: 100%;
+    transition: 0.3s;
 
     &:hover{
-        background-color: #dbdbdb;
+        transform: scale(1.2);
     }
-}
-
-.pyramid-btn-clear-selection-text{
-	white-space: nowrap;
-    overflow: hidden;
-	text-overflow: ellipsis;
 }
 
 .pyramid-axes-bottom{

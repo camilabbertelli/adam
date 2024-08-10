@@ -12,7 +12,7 @@ import sorting_icon from "./../../assets/images/dashboard/sorting.png"
 
 import expand from "./../../assets/images/dashboard/expand.png"
 import shrink from "./../../assets/images/dashboard/shrink.png"
-import close from "./../../assets/images/close.png"
+import trash from "./../../assets/images/recycle-bin.png"
 
 import $ from "jquery"
 
@@ -178,7 +178,7 @@ const TabContent = (props) => {
         let maxTotal = d3.max(pyramidData, d => d[1].total / participants_total)
         let maxScale = (totalOccurrences) ? maxTotal : Math.max(maxMasc, maxFem)
 
-        let oneSideScale = (totalOccurrences) ? false : (maxMasc === 0 || maxFem === 0) 
+        let oneSideScale = (totalOccurrences) ? false : (maxMasc === 0 || maxFem === 0)
 
         let factor = maxScale > 0.1 ? 0.05 : 0.01
 
@@ -198,7 +198,7 @@ const TabContent = (props) => {
 
                 setSelectedSex({ sex: s, category: c, categoryIndex: index })
                 props.setPyramidData({ sex: s, category: c, categoryIndex: index })
-            } else{
+            } else {
                 let c = (selectedSex.category === d[0]) ? "" : d[0]
 
                 setSelectedSex({ sex: "", category: c, categoryIndex: index })
@@ -313,7 +313,7 @@ const TabContent = (props) => {
         let scrollableHeight = pyramidData.size * 30
 
         tooltipPyramid = d3.select("body")
-        .select("#tooltip")
+            .select("#tooltip")
 
         d3.select("#infoPyramid")
             .on("mouseover", infoMouseOverPyramid)
@@ -681,7 +681,7 @@ const TabContent = (props) => {
             .style("opacity", 1);
 
         tooltipPyramid.html(`<center><b>${t("information")}</b></center>
-                      ${totalOccurrences? t("pyramid-separate-info") : t("pyramid-group-info")}`)
+                      ${totalOccurrences ? t("pyramid-separate-info") : t("pyramid-group-info")}`)
             .style("top", event.pageY - 10 + "px")
             .style("left", event.pageX + 10 + "px")
     }
@@ -740,28 +740,27 @@ const TabContent = (props) => {
 
             </div>
             <div className="pyramid-all-content">
-            <div className="pyramid-top-content">
-                <div onScroll={handleLeftScroll} className="pyramid-axes-left">
+                <div className="pyramid-top-content">
+                    <div onScroll={handleLeftScroll} className="pyramid-axes-left">
+                    </div>
+                    <div onScroll={handleContentScroll} className="pyramid-content">
+                    </div>
                 </div>
-                <div onScroll={handleContentScroll} className="pyramid-content">
+                <div className="pyramid-bottom-content">
+                    <div className="pyramid-empty-space">
+                        {(selectedSex.sex || selectedSex.category) &&
+                            <button className="pyramid-btn-clear-selection" onClick={clearSelection} title={t("clear-selection-filter")}>
+                                <img alt="close" src={trash}
+                                    style={{ cursor: "pointer" }}
+                                />
+                            </button>
+                        }
+                    </div>
+                    <div className="pyramid-axes-bottom">
+                    </div>
                 </div>
             </div>
-            <div className="pyramid-bottom-content">
-                <div className="pyramid-empty-space">
-                    {(selectedSex.sex || selectedSex.category) &&
-                        <button className="pyramid-btn-clear-selection" onClick={clearSelection} title={t("clear-selection-filter")}>
-                            <img alt="close" src={close}
-                                style={{ margin: "0 5px", cursor: "pointer", width: "10px", height: "10px" }}
-                            />
-                            <span className="pyramid-btn-clear-selection-text">{t("clear-selection-filter")}</span>
-                        </button>
-                    }
-                </div>
-                <div className="pyramid-axes-bottom">
-                </div>
-            </div>
-            </div>
-            
+
         </div>
     </>)
 }
@@ -804,19 +803,19 @@ const TabChart = (props) => {
 
             if (props.networkData.selected.length)
                 networkFilter = props.networkData.selected.includes(entry[props.csvIndexes.subject_name]) ||
-								props.networkData.selected.includes(entry[props.csvIndexes.with_name]) ||
-								props.networkData.selected.includes(entry[props.csvIndexes.about_name])
+                    props.networkData.selected.includes(entry[props.csvIndexes.with_name]) ||
+                    props.networkData.selected.includes(entry[props.csvIndexes.about_name])
 
             if (!props.impPeopleData.includes(null))
                 impFilter = props.impPeopleData[0] === entry[props.csvIndexes.subject_name] ||
-                            props.impPeopleData[1] === entry[props.csvIndexes.subject_name]
-            else if (props.impPeopleData.includes(null)){
+                    props.impPeopleData[1] === entry[props.csvIndexes.subject_name]
+            else if (props.impPeopleData.includes(null)) {
                 if (props.impPeopleData[0] !== null)
                     impFilter = props.impPeopleData[0] === entry[props.csvIndexes.subject_name]
                 else if (props.impPeopleData[1] !== null)
                     impFilter = props.impPeopleData[1] === entry[props.csvIndexes.subject_name]
             }
-    
+
             return heatmapFilter && networkFilter && impFilter
 
         }))
@@ -850,7 +849,7 @@ const TabChart = (props) => {
                         setPyramidData={props.setPyramidData}
                         isExpanded={props.isExpanded} setIsExpanded={props.setIsExpanded}
                         currentSorting={currentSorting} setCurrentSorting={setCurrentSorting}
-                        changedFilter={props.changedFilter} setChangedFilter={props.setChangedFilter} changeCurrentCategory={changeCurrentCategory}/>}
+                        changedFilter={props.changedFilter} setChangedFilter={props.setChangedFilter} changeCurrentCategory={changeCurrentCategory} />}
                 {data.length === 0 &&
                     <div className="tab-content shadow">
                         {t("no-data-to-show")}

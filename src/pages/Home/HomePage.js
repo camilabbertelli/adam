@@ -61,6 +61,12 @@ const HomePage = (props) => {
     const [centuries, setCenturies] = useState([])
 
     useEffect(() => {
+        
+        d3.selectAll("#tooltip").style("opacity", 0)
+        let element = document.getElementById('tooltip')
+            if (element)
+                element.innerHTML = "";
+
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
