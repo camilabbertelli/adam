@@ -46,16 +46,29 @@ h5.network-top-title {
 
 .network-btn-clear-selection{
     position: absolute;
-    top: 10px;
-    left: 7px;
-    z-index: 1;
-    width: 28px;
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+	margin-left:10px;
+    font-size: small;
+    background-color: #ececec;
+    border-color: #6e6e6e;
+    border-width: 2px;
+	border-radius: 20px;
+    padding-right: 5px;
 
     transition: 0.3s;
+	max-width: 30%;
 
     &:hover{
-        transform: scale(1.2);
+        background-color: #dbdbdb;
     }
+}
+
+.network-btn-clear-selection-text{
+	white-space: nowrap;
+    overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .network-bottom-section {

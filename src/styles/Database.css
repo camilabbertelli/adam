@@ -68,6 +68,11 @@ table.scrolldown{
     align-items: center;
 }
 
+.thead-database{
+    width: 80dvw;
+    overflow: hidden;
+}
+
 table.scrolldown tbody {
 
     /* Set the height of table body */
@@ -91,36 +96,6 @@ td.description {
 th.cardinal,
 td.cardinal {
     min-width: 80px;
-}
-
-.loader {
-    position: relative;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 6em;
-    height: 6em;
-    border: 1.1em solid rgba(0, 0, 0, 0.2);
-    border-left: 1.1em solid #000000;
-    border-radius: 50%;
-    animation: load8 1.1s infinite linear;
-    transition: opacity 0.3s;
-}
-
-.loader--hide {
-    opacity: 0;
-    animation: none;
-    transition: none;
-}
-
-@keyframes load8 {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
 }
 
 .search-input{

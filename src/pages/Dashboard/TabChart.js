@@ -12,7 +12,7 @@ import sorting_icon from "./../../assets/images/dashboard/sorting.png"
 
 import expand from "./../../assets/images/dashboard/expand.png"
 import shrink from "./../../assets/images/dashboard/shrink.png"
-import trash from "./../../assets/images/recycle-bin.png"
+import trash from "./../../assets/images/clear-filter.png"
 
 import $ from "jquery"
 
@@ -749,11 +749,12 @@ const TabContent = (props) => {
                 <div className="pyramid-bottom-content">
                     <div className="pyramid-empty-space">
                         {(selectedSex.sex || selectedSex.category) &&
-                            <button className="pyramid-btn-clear-selection" onClick={clearSelection} title={t("clear-selection-filter")}>
-                                <img alt="close" src={trash}
-                                    style={{ cursor: "pointer" }}
-                                />
-                            </button>
+                             <button className="pyramid-btn-clear-selection" onClick={clearSelection} title={t("clear-selection-filter")}>
+                             <img alt="close" src={trash}
+                                 style={{ margin: "0 5px", cursor: "pointer", width: "20px", height: "20px" }}
+                             />
+                             <span className="pyramid-btn-clear-selection-text">{t("clear-selection-filter")}</span>
+                         </button>
                         }
                     </div>
                     <div className="pyramid-axes-bottom">

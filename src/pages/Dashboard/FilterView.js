@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import spine from "./../../assets/images/spine.png"
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import info from "./../../assets/images/info-black.png"
-import trash from "./../../assets/images/recycle-bin.png"
+import trash from "./../../assets/images/clear-filter.png"
 
 import * as d3 from "d3"
 import { useLocation } from "react-router-dom";
@@ -364,17 +364,64 @@ const FilterView = (props) => {
         }
     })
 
+    function filtersActive(){
+
+        let breaking = false;
+        
+        Object.keys(props.advancedCategoryFilters).every((key) => {
+            if (props.advancedCategoryFilters[key].list.length){
+                breaking = true
+                return false;
+            }
+
+            if (props.advancedCategoryFilters[key].sublist.length){
+                breaking = true
+                return false;
+            }
+
+            return true;
+        })
+
+
+        if (breaking)
+            return true
+
+        breaking = false
+        Object.keys(props.activeFilters).every((key) => {
+            if (!props.activeFilters[key].includes("-all")){
+                breaking = true
+                return false;
+            }
+
+            return true;
+        })
+
+        if (breaking)
+            return true
+
+        if (props.activeCenturies.length || props.activeLocations.length)
+            return true
+
+        if (currentCodices.length !== Object.keys(props.codices).length)
+            return true
+
+        return false
+    }
+
     return (
         <>
 
             <div className="dashboard-filter-view" key={"filterview"}>
                 
-                <button key="clean-all-button-content" className="btn-clear-all" onClick={resetFilters} title={t("clear-all-filter")}>
-                    <img alt="close" src={trash}
-                        style={{ cursor: "pointer"}}
-                    />
-                </button>
-                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center", padding: "10px 0" }} key={"actual-filters"}>
+                <div key={"clean-all-button"} style={{ position: "relative", width: "95%", display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+                    <button key="clean-all-button-content" className="btn-clear-all" onClick={resetFilters}>
+                        <img alt="close" src={trash}
+                            style={{ margin: "0 5px", cursor: "pointer", width: "20px", height: "20px" }}
+                        />
+                        {t("clear-all-filter")}
+                    </button>
+                </div>
+                <div style={{ width: "95%", display: 'flex', flexDirection: "column", justifyContent: "center" }} key={"actual-filters"}>
                     <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center" }}>
                         {t("categories-label")}
                         <img alt="info" id="infoFilter" className="categories" src={info}

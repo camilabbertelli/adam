@@ -9,6 +9,8 @@ import downloads from "./../assets/images/downloads.png"
 import close from "./../assets/images/dashboard/reset.png"
 import info from "./../assets/images/info-black.png"
 
+import $ from 'jquery';
+
 import { useTranslation } from "react-i18next";
 
 import * as d3 from "d3"
@@ -72,13 +74,21 @@ class Table extends React.Component {
         let checkedKeys = this.props.checkedKeys;
         let names = this.props.csvNames; 
 
+        function handleTbody() {
+            $('.thead-database').scrollLeft($('.tbody-database').scrollLeft());
+        }
+
+        function handleThead() {
+            $('.tbody-database').scrollLeft($('.thead-database').scrollLeft());
+        }
+
         return (
             <>
             <div className="database-results">
                 <strong>{this.state.t("database-results")}</strong>: {Object.keys(data_table).length}
             </div>
             <table className="table table-sm table-bordered table-hover scrolldown">
-            <thead className='table-dark text-dark'>
+            <thead onScroll={handleThead} className='table-dark text-dark thead-database'>
                     <TableFilter
                         rows={data_table}
                         rowClass="h5 text-center"
@@ -104,7 +114,7 @@ class Table extends React.Component {
 
                     </TableFilter>
                 </thead>
-                <tbody className="tbody-database">
+                <tbody onScroll={handleTbody} className="tbody-database">
                     {data_table.map((item, index) => {
                         return (
                             <tr key={"row_" + index}>

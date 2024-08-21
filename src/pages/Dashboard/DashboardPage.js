@@ -241,6 +241,13 @@ const DashboardPage = (props) => {
 
     function removeCategory(index) {
         let aux = [...activeCategories]
+
+        if (aux.length === 0)
+            return
+
+        if (index === 1 && aux.length === 1)
+            return
+
         aux.splice(index, 1);
 
         setActiveCategories(aux)

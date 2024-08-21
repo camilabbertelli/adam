@@ -5,7 +5,7 @@ import "./../../styles/Dashboard/NetworkChart.css";
 import info from "./../../assets/images/info-black.png"
 import expand from "./../../assets/images/dashboard/expand.png"
 import shrink from "./../../assets/images/dashboard/shrink.png"
-import trash from "./../../assets/images/recycle-bin.png"
+import trash from "./../../assets/images/clear-filter.png"
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -702,9 +702,10 @@ const NetworkChart = (props) => {
                 <div className='network-top-section'>
                     {(selectedNodes.length !== 0) &&
                         <button className="network-btn-clear-selection" onClick={clearSelection} title={t("clear-selection-filter")}>
-                            <img alt="close" src={trash}
-                                style={{ cursor: "pointer"}}
-                            />
+                           <img alt="close" src={trash}
+                                style={{ margin: "0 5px", cursor: "pointer", width: "20px", height: "20px" }}
+                                />
+                            <span className="network-btn-clear-selection-text">{t("clear-selection-filter")}</span>
                         </button>
                     }
                     <div className='network-title'>

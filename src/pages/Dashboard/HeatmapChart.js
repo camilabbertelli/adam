@@ -643,8 +643,6 @@ const HeatmapChart = (props) => {
 	const [isExpanded, setIsExpanded] = useState(false)
 
 	function expandHeatmap() {
-		if (props.activeCategories.length !== 2) return
-
 		document.getElementById("overlay").style.display = (!isExpanded) ? "block" : "none";
 
 		d3.selectAll(".heatmap-area").classed("heatmap-expand", !isExpanded)

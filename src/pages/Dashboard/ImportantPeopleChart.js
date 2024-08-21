@@ -6,6 +6,7 @@ import x from "./../../assets/images/dashboard/x.png"
 import info from "./../../assets/images/info-black.png"
 import expand from "./../../assets/images/dashboard/expand.png"
 import shrink from "./../../assets/images/dashboard/shrink.png"
+import search from "./../../assets/images/search.png"
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -110,6 +111,10 @@ const ImportantPeopleChart = (props) => {
 
     function removeSelectedImp(index) {
         let aux = [...selectedImp]
+
+        if (aux[index] === null)
+            return
+
         aux[index] = null
         setSelectedImp(aux)
         props.setImpPeopleData(aux)
@@ -268,7 +273,10 @@ const ImportantPeopleChart = (props) => {
                 {data.length > 0 &&
                     <>
                         <div className='imp-left-section'>
-                            <input id="imp-search-bar" type='text' className='imp-search-bar' placeholder={t("search-imp-placeholder")} text="" onChange={() => changeSearchInput()} />
+                            <div className='div-imp-search-bar'>
+                                <img src={search}></img>
+                                <input id="imp-search-bar" type='text' className='imp-search-bar' placeholder={t("search-imp-placeholder")} text="" onChange={() => changeSearchInput()} />
+                            </div>
                             <div className='imp-left-section-inside'>
                                 {Array.from(searchedPeople).map(key => {
                                     let entry = impPeople[key]
