@@ -172,15 +172,19 @@ div.dashboard-image-component {
     font-size: 15px;
 	background-color: white;
     width: 100%;
-    max-height: 200px;
+    max-height: 300px;
     overflow-y: auto;
     overflow-x: hidden;
     padding: 1%;
 }
 
 .filter-dropdown-content-show ul{
+    display: block;
     padding: 0 2%;
     margin: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .filter-dropdown-content-show li{

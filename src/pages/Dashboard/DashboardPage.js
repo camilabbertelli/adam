@@ -346,12 +346,10 @@ const DashboardPage = (props) => {
         Object.keys(categoriesAux).forEach(key => {
             categoriesAux[key].list = d3.flatGroup(data, d => d[[categoriesAux[key].index]], d => d[[categoriesAux[key].indexSubcategory]])
                 .flatMap(d => [[d[0], d[1]]]).sort()
+            
+            
             categoriesAux[key].list = d3.flatGroup(categoriesAux[key].list, d => d[0])
-
-            advancedFilterAux[key] = {
-                list: [],
-                sublist: []
-            }
+            advancedFilterAux[key] = {}
         })
 
 
@@ -419,7 +417,7 @@ const DashboardPage = (props) => {
             let item = navigation.state.item
             let subitems = navigation.state.subitems
 
-            advancedFilterAux[type].sublist = subitems
+            advancedFilterAux[type][item] = subitems
             if (subitems.length === 0){
 
                 let category = categoriesAux[type]
@@ -436,29 +434,28 @@ const DashboardPage = (props) => {
                     return i === item
                 })
 
-                advancedFilterAux[type].sublist = sublist
+                advancedFilterAux[type][item] = sublist
             }
 
             data = data.filter((d) => {
                 let passAdvanced = true
 
                 for (const [key, v] of Object.entries(advancedFilterAux)) {
-                    let passIntern = false
-                    let indexList = categoriesAux[key].index
-                    let indexSublist = categoriesAux[key].indexSubcategory
+                    let passItem = false
+                    let indexList = categories[key].index
+                    let indexSublist = categories[key].indexSubcategory
 
-                    if (v.list.length)
-                        if (v.list.includes(noSpaces(d[indexList])))
-                            passIntern = true
 
-                    if (v.sublist.length)
-                        if (v.sublist.includes(noSpaces(d[indexSublist])))
-                            passIntern = true
+                    if (noSpaces(d[indexList]) in v)
+                        if (v[noSpaces(d[indexList])].length && v[noSpaces(d[indexList])].includes(d[indexSublist]))
+                            passItem = true
+                        else if (!v[noSpaces(d[indexList])])
+                            passItem = true
 
-                    if (v.list.length === 0 && v.sublist.length === 0)
-                        passIntern = true
+                    if (Object.keys(v).length === 0)
+                        passItem = true
 
-                    passAdvanced = passAdvanced && passIntern
+                    passAdvanced = passAdvanced && passItem
                 }
 
                 return passAdvanced;
@@ -508,7 +505,6 @@ const DashboardPage = (props) => {
     const [resetComponents, setResetComponents] = useState(false)
 
     function setFilters(newFilters, types, codicesFilter, locationFilter, centuryFilter, advFilters) {
-
 
         let filtered = originalGlobalData.filter((d) => {
             if (codicesFilter && codicesFilter.length) {
@@ -560,31 +556,21 @@ const DashboardPage = (props) => {
 
 
             let passAdvanced = true
-
             for (const [key, v] of Object.entries(advFilters ? advFilters : advancedCategoryFilters)) {
-                let passList = false
-                let passSublist = false
+                let passItem = false
                 let indexList = categories[key].index
                 let indexSublist = categories[key].indexSubcategory
 
-                if (v.list.length){
-                    if (v.list.includes(noSpaces(d[indexList])))
-                        passList = true
-                } else
-                    passList = true
+                if (noSpaces(d[indexList]) in v)
+                    if (v[noSpaces(d[indexList])].length && v[noSpaces(d[indexList])].includes(d[indexSublist]))
+                        passItem = true
+                    else if (!v[noSpaces(d[indexList])])
+                        passItem = true
 
-                if (v.sublist.length){
-                    if (v.sublist.includes(noSpaces(d[indexSublist])))
-                        passSublist = true
-                } else
-                    passSublist = true
+                if (Object.keys(v).length === 0)
+                    passItem = true
 
-                if (v.list.length === 0 && v.sublist.length === 0){
-                    passList = true
-                    passSublist = true
-                }
-
-                passAdvanced = passAdvanced && passList && passSublist
+                passAdvanced = passAdvanced && passItem
             }
 
             return passAdvanced;
@@ -618,10 +604,7 @@ const DashboardPage = (props) => {
 
         let advancedFilterAux = { ...advancedCategoryFilters }
         Object.keys(advancedCategoryFilters).forEach(key => {
-            advancedFilterAux[key] = {
-                list: [],
-                sublist: []
-            }
+            advancedFilterAux[key] = {}
         })
 
         setFilters(

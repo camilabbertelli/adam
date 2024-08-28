@@ -73,7 +73,7 @@ const ImportantPeopleChart = (props) => {
 
         let impAux = {}
         impData.forEach(entry => {
-            impAux[noSpaces(entry[0])] = {
+            impAux[entry[0]] = {
                 name: entry[0],
                 entries: entry[1]
             }
@@ -285,7 +285,7 @@ const ImportantPeopleChart = (props) => {
                                             key={key}
                                             id={`imp-${noSpaces(key)}`}
                                             className={"imp-left-btn" + ((selectedImp.includes(key)) ? " selected-imp" : "") + ((props.networkData.selected.includes(entry.name)) ? " network-selected-imp" : "")}
-                                            onClick={() => changeSelected(key)}>
+                                            onClick={() => changeSelected(entry.name)}>
                                             {entry.name}
                                         </button>
                                     )

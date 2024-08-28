@@ -247,24 +247,14 @@ const FilterView = (props) => {
             checkbox.checked = source.checked;
         })
 
-        sublist.forEach(subitem => {
-            const indexSub = aux[category].sublist.indexOf(noSpaces(subitem));
-            const index = aux[category].list.indexOf(noSpaces(key));
-            if (source.checked) {
-                source.checked = true
-                if (!aux[category].sublist.includes(noSpaces(subitem)))
-                    aux[category].sublist.push(noSpaces(subitem))
-                if (!aux[category].list.includes(key))
-                    aux[category].list.push(key) 
-            }
-            else{
-                source.checked = false
-                if (aux[category].sublist.includes(noSpaces(subitem)))
-                    aux[category].sublist.splice(indexSub, 1);
-                if (aux[category].list.includes(noSpaces(key)))
-                    aux[category].list.splice(index, 1);
-            }
-        })
+        if (source.checked) {
+            source.checked = true
+            aux[category][key] = sublist
+        }
+        else{
+            source.checked = false
+            delete aux[category][key];
+        }
 
         props.setActiveFilters([], [], null, null, null, aux)
     }
@@ -282,15 +272,17 @@ const FilterView = (props) => {
         let aux = { ...props.advancedCategoryFilters }
 
         if (!target.checked) {
-            const index = aux[category].list.indexOf(noSpaces(key));
-            const indexSub = aux[category].sublist.indexOf(subkey);
-            if (aux[category].list.includes(noSpaces(key)) && !source.checked)
-                aux[category].list.splice(index, 1);
-            aux[category].sublist.splice(indexSub, 1);
+            let indexSub = -1
+            if (key in aux[category]) 
+                indexSub = aux[category][key].indexOf(subkey);
+            
+            aux[category][key].splice(indexSub, 1);
+            if (key in aux[category] && !source.checked)
+                delete aux[category][key]
         } else {
-            if (!aux[category].list.includes(key))
-                aux[category].list.push(key)
-            aux[category].sublist.push(subkey)
+            if (!(key in aux[category]))
+                aux[category][key] = []
+            aux[category][key].push(subkey)
         }
 
         props.setActiveFilters([], [], [], [], [], aux)
@@ -345,11 +337,14 @@ const FilterView = (props) => {
             let type = navigation.state.type
             let item = navigation.state.item
 
-            props.advancedCategoryFilters[type] && props.advancedCategoryFilters[type].sublist.forEach(subkey => {
-                let target = document.getElementById(`checkbox-sub-${subkey}`);
-                if (target)
-                    target.checked = true
-            })
+            if (props.advancedCategoryFilters[type])
+                Object.keys(props.advancedCategoryFilters[type]).forEach(item => {
+                    props.advancedCategoryFilters[type][item].forEach((subitem) => {
+                        let target = document.getElementById(`checkbox-sub-${subitem}`);
+                        if (target)
+                            target.checked = true
+                    })
+                })
 
             let source = document.getElementById(`checkbox-${item}`)
             
@@ -364,49 +359,49 @@ const FilterView = (props) => {
         }
     })
 
-    function filtersActive(){
+    // function filtersActive(){
 
-        let breaking = false;
+    //     let breaking = false;
         
-        Object.keys(props.advancedCategoryFilters).every((key) => {
-            if (props.advancedCategoryFilters[key].list.length){
-                breaking = true
-                return false;
-            }
+    //     Object.keys(props.advancedCategoryFilters).every((key) => {
+    //         if (props.advancedCategoryFilters[key].list.length){
+    //             breaking = true
+    //             return false;
+    //         }
 
-            if (props.advancedCategoryFilters[key].sublist.length){
-                breaking = true
-                return false;
-            }
+    //         if (props.advancedCategoryFilters[key].sublist.length){
+    //             breaking = true
+    //             return false;
+    //         }
 
-            return true;
-        })
+    //         return true;
+    //     })
 
 
-        if (breaking)
-            return true
+    //     if (breaking)
+    //         return true
 
-        breaking = false
-        Object.keys(props.activeFilters).every((key) => {
-            if (!props.activeFilters[key].includes("-all")){
-                breaking = true
-                return false;
-            }
+    //     breaking = false
+    //     Object.keys(props.activeFilters).every((key) => {
+    //         if (!props.activeFilters[key].includes("-all")){
+    //             breaking = true
+    //             return false;
+    //         }
 
-            return true;
-        })
+    //         return true;
+    //     })
 
-        if (breaking)
-            return true
+    //     if (breaking)
+    //         return true
 
-        if (props.activeCenturies.length || props.activeLocations.length)
-            return true
+    //     if (props.activeCenturies.length || props.activeLocations.length)
+    //         return true
 
-        if (currentCodices.length !== Object.keys(props.codices).length)
-            return true
+    //     if (currentCodices.length !== Object.keys(props.codices).length)
+    //         return true
 
-        return false
-    }
+    //     return false
+    // }
 
     return (
         <>
@@ -449,6 +444,7 @@ const FilterView = (props) => {
                                                 {category.list.map(categorylist => {
                                                     let item = categorylist[0]
                                                     let sublist = categorylist[1].map(d => d[1])
+
                                                     return (
                                                         <li key={"li_" + item}>
                                                             <div style={{ display: "flex", alignItems: "center", width: "100%", height: "100%", borderRadius: "20px" }} key={"item-pack-" + item}>
@@ -457,7 +453,7 @@ const FilterView = (props) => {
                                                                     {item} {sublist.length > 1 && <ArrowForwardIosIcon className="arrow-dropdown" id={`excerpt-sub-arrow-${noSpaces(item)}`} style={{ position: "absolute", right: 0, width: "15px", marginRight: "5px", marginTop: "2px" }} />}
                                                                 </button>
                                                             </div>
-                                                            {sublist.length > 1 && <div id={`filter-sub-dropdown-${noSpaces(item)}`} style={{overflow: "hidden"}} className={"filter-dropdown-content-hide"} key={"hidden-sub-dropdown"}>
+                                                            {sublist.length > 1 && <div id={`filter-sub-dropdown-${noSpaces(item)}`} className={"filter-dropdown-content-hide"} key={"hidden-sub-dropdown"}>
                                                                 <ul>
                                                                     {sublist.map(subitem => (
                                                                         <li key={"li_sub_" + subitem}>

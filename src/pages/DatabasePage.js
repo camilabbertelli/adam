@@ -88,7 +88,7 @@ class Table extends React.Component {
                 <strong>{this.state.t("database-results")}</strong>: {Object.keys(data_table).length}
             </div>
             <table className="table table-sm table-bordered table-hover scrolldown">
-            <thead onScroll={handleThead} className='table-dark text-dark thead-database'>
+            <thead className='table-dark text-dark'>
                     <TableFilter
                         rows={data_table}
                         rowClass="h5 text-center"
@@ -114,7 +114,7 @@ class Table extends React.Component {
 
                     </TableFilter>
                 </thead>
-                <tbody onScroll={handleTbody} className="tbody-database">
+                <tbody className="tbody-database">
                     {data_table.map((item, index) => {
                         return (
                             <tr key={"row_" + index}>

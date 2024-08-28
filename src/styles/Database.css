@@ -28,6 +28,8 @@ th.cell,th.cardinal{
     align-items: center;
     padding: 2% 0%;
 
+
+    max-height: 100%;
     overflow: auto;
 }
 
@@ -35,28 +37,19 @@ th.cell,th.cardinal{
     background-color: white;
     width: 80%;
     height: 100%;
-
-    display: flex;
-    flex-direction: column;
+    
+    max-height: 100%;
+    overflow: auto;
 }
 
 .database-filter-body {
     max-height: 100%;
     width: 60%;
+    overflow: auto;
 }
 
 .filter-label {
     color: black;
-}
-
-table.scrolldown tbody,
-table.scrolldown thead {
-    display: block;
-}
-
-table.scrolldown{
-    width: 100%;
-    height: 86%;
 }
 
 .database-results{
@@ -66,21 +59,6 @@ table.scrolldown{
     display: flex;
     flex-direction: row;
     align-items: center;
-}
-
-.thead-database{
-    width: 80dvw;
-    overflow: hidden;
-}
-
-table.scrolldown tbody {
-
-    /* Set the height of table body */
-    height: 100%;
-    width: 80dvw;
-
-    /* Set vertical scroll */
-    overflow: auto;
 }
 
 th.cell,
