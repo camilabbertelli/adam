@@ -68,6 +68,7 @@ const TimelineChart = ({ centuries }) => {
             let parentData = d3.select(this).node().getAttribute("data-dict")
             let codex = JSON.parse(parentData)
 
+            let zoomFactor = d3.select(".svgMap").node().getAttribute("data-zoomFactor")
 
             tooltipTimeline
                 .style("opacity", "1");
@@ -79,11 +80,11 @@ const TimelineChart = ({ centuries }) => {
             d3.selectAll(`.mark`)
                 .transition().duration(200)
                 .attr("opacity", 0.3)
-                .attr("r", 1.1)
+                .attr("r", 1.4 / zoomFactor)
             d3.selectAll(`.mark.${century_title}`)
                 .transition().duration(200)
                 .attr("opacity", 1)
-                .attr("r", 2)
+                .attr("r", 2 / zoomFactor)
 
             d3.selectAll(`.mark.${century_title}`).raise()
 
@@ -111,6 +112,7 @@ const TimelineChart = ({ centuries }) => {
 
         let mouseleave = function (event, d) {
             let century_title = d3.select(this).attr('id')
+            let zoomFactor = d3.select(".svgMap").node().getAttribute("data-zoomFactor")
 
             tooltipTimeline
                 .style("opacity", "0")
@@ -124,7 +126,7 @@ const TimelineChart = ({ centuries }) => {
                 .transition()
                 .duration(200)
                 .attr("opacity", 1)
-                .attr("r", 1.1)
+                .attr("r", 1.4 / zoomFactor)
 
 
             if (!selectedCodices.includes(century_title))
@@ -139,20 +141,21 @@ const TimelineChart = ({ centuries }) => {
                 d3.selectAll(`.mark`)
                     .transition().duration(200)
                     .attr("opacity", 0.3)
-                    .attr("r", 1.1)
+                    .attr("r", 1.4 / zoomFactor)
 
             selectedCodices.forEach(selectedCodex => {
                 d3.selectAll(`.mark.${selectedCodex}`)
                     .transition()
                     .duration(200)
                     .attr("opacity", 1)
-                    .attr("r", 2)
+                    .attr("r", 2 / zoomFactor)
             })
         }
 
         let mouseclick = function (event, d) {
 
             let century_title = d3.select(this).attr('id')
+            let zoomFactor = d3.select(".svgMap").node().getAttribute("data-zoomFactor")
 
             if (selectedCodices.includes(century_title)) {
                 d3.selectAll(`.mark.${century_title}`).each(function (selection, i) {
@@ -164,7 +167,7 @@ const TimelineChart = ({ centuries }) => {
                         .transition()
                         .duration(200)
                         .attr("opacity", 1)
-                        .attr("r", 1.1)
+                        .attr("r", 1.4 / zoomFactor)
                         .style("fill", color)
                 })
 
@@ -183,7 +186,7 @@ const TimelineChart = ({ centuries }) => {
                         .transition()
                         .duration(200)
                         .attr("opacity", 1)
-                        .attr("r", 2)
+                        .attr("r", 2 / zoomFactor)
                         .style("fill", "#656d9b")
                 })
 
@@ -193,7 +196,7 @@ const TimelineChart = ({ centuries }) => {
                     .transition()
                     .duration(200)
                     .attr("opacity", 1)
-                    .attr("r", 2)
+                    .attr("r", 2 / zoomFactor)
                     .style("fill", "#656d9b")
 
 

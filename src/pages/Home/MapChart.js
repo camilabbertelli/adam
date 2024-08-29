@@ -110,6 +110,7 @@ const MapChart = ({ locations }) => {
         const svgInitial = d3
             .select(".viz")
             .append("svg")
+            .attr("class", "svgMap")
             .attr("width", width)
             .attr("height", height)
 
@@ -156,6 +157,23 @@ const MapChart = ({ locations }) => {
         // Function to handle the zoom event
         function zoomed(event) {
             mapGroup.attr("transform", event.transform);
+
+            let baseZoom = 2.5
+            let zoomFactor = (d3.zoomTransform(svgInitial.node()).k / baseZoom) * 0.5
+            if (zoomFactor < 1)
+                zoomFactor = 1
+
+            svgInitial.attr("data-zoomFactor", zoomFactor)
+
+            let map = d3.selectAll(".mark")
+
+            if (map.node() !== null)
+            map
+            .data(marks)
+            .transition()
+            .duration(500)
+            .attr("r", 1.4 / zoomFactor)
+            .attr("stroke-width", 0.3 / zoomFactor)
         }
 
         var marks = gatherCodicesMarks();
@@ -339,7 +357,7 @@ const MapChart = ({ locations }) => {
                 })
                 return "mark " + c.join(" ") + " " + myColor(occurrences)
             })
-            .attr("r", 1.1)
+            .attr("r", 1.4)
             .attr("cy", 0)
             .attr("cx", 0)
             .attr("fill", d => myColor(pinOccurences(d)))

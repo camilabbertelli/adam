@@ -161,8 +161,10 @@ const HeatmapChart = (props) => {
 		prevActiveCategories.current = [...props.activeCategories]
 		prevCategories.current = { ...props.categories }
 
-		setDetails({})
-		props.setHeatmapData({})
+		if (Object.keys(details).length !== 0){
+			setDetails({})
+			props.setHeatmapData({})
+		}
 	}, [props.activeCategories, props.categories])
 
 	useEffect(() => {
