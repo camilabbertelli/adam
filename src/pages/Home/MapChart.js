@@ -165,15 +165,11 @@ const MapChart = ({ locations }) => {
 
             svgInitial.attr("data-zoomFactor", zoomFactor)
 
-            let map = d3.selectAll(".mark")
-
-            if (map.node() !== null)
-            map
-            .data(marks)
-            .transition()
-            .duration(500)
-            .attr("r", 1.4 / zoomFactor)
-            .attr("stroke-width", 0.3 / zoomFactor)
+            d3.selectAll(".mark")
+                .transition()
+                .duration(200)
+                .attr("r", 1.4 / zoomFactor)
+                .attr("stroke-width", 0.3 / zoomFactor)
         }
 
         var marks = gatherCodicesMarks();
