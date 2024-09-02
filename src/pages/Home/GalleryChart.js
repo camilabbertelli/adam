@@ -51,9 +51,10 @@ const GalleryImage = ({ src, title, description, type, item, subitems, sex }) =>
 
                         <div id="dialog-content">
                             <img className="dialog-gallery-open" alt="medieval-img" src={require(`./../../assets/images/gallery/${src}`)} />
-                            <h4>{title}</h4>
+                            
                             {/* <p>{description}</p> */}
                             <center>
+                                <h4>{title}</h4>
                                 <button className="btn-filter-dashboard" onClick={() => mouseclick(type, item, subitems, sex)}>{t("gallery-filter-dashboard")}</button>
                             </center>
                         </div>

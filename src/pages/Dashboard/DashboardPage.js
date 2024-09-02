@@ -442,9 +442,8 @@ const DashboardPage = (props) => {
 
                 for (const [key, v] of Object.entries(advancedFilterAux)) {
                     let passItem = false
-                    let indexList = categories[key].index
-                    let indexSublist = categories[key].indexSubcategory
-
+                    let indexList = categoriesAux[key].index
+                    let indexSublist = categoriesAux[key].indexSubcategory
 
                     if (noSpaces(d[indexList]) in v)
                         if (v[noSpaces(d[indexList])].length && v[noSpaces(d[indexList])].includes(d[indexSublist]))
