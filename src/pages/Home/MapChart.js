@@ -121,7 +121,7 @@ const MapChart = ({ locations }) => {
             .attr("fill", "transparent");
 
         const projection = d3.geoMercator().fitSize([width, height], europeData);
-
+ 
         // Creating path generator fromt the projection created above.
         const pathGenerator = d3.geoPath()
             .projection(projection);

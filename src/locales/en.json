@@ -11,13 +11,13 @@
     "btnDiscover": "Discover more",
     "titleGallery": "Our Gallery",
     "titleAboutUs": "About us",
-    "home-map-title": "Localities and centuries present in the medieval narrative",
+    "home-map-title": "Localities and centuries present in the medieval texts",
     "icon-language": "Language",
 
 
     "information": "Information",
     "information-map": "Hover on a mark for more information.",
-    "information-legend-map": "Legend represents the total amount of occurrences for each narrative pair location-century.",
+    "information-legend-map": "Legend represents the total amount of occurrences for each textual pair location-century.",
     "information-pyramid": "Hover on a bar for more information. <br/>Click on the icon on the right to change grouping types.",
     "information-heatmap": "Hover on a cell for more information. Click on it to change to the detailed view. <br/>The categories can be dragged via the filters on the left.",
     "information-imp": "Hover on a cell for more information. Choose two people ('subject') to compare their characteristics. Shared terms will be highlighted for easy comparison. Each term is accompanied by the number of occurrences in the database when hovered.",
@@ -32,8 +32,8 @@
     "filter-tooltip-nature": "Defines the nature of the act and subject.",
     "filter-tooltip-supernatural_type": "If 'Nature' is supernatural, defines the type.",
     "filter-tooltip-dimension": "Defines the dimension of the body.",
-    "filter-tooltip-location": "Localities present in the narrative.",
-    "filter-tooltip-centuries": "Centuries present in the narrative.",
+    "filter-tooltip-location": "Localities present in the texts.",
+    "filter-tooltip-centuries": "Centuries present in the texts.",
     "filter-tooltip-codices": "Texts analysed in the research.",
     
 
@@ -84,7 +84,7 @@
     "agent-label": "Agent",
     "intention-label": "Intention",
     "value-label": "Value",
-    "supernatural_type-label": "Supernatural Type",
+    "supernatural_type-label": "Supernatural Act Type",
     "nature-label": "Nature",
     "dimension-label": "Dimension",
     "codices-label": "Texts",
@@ -109,7 +109,7 @@
     "supernatural_type-all": "All",
     "supernatural_type-miraculous": "Miraculous",
     "supernatural_type-wonderful": "Wonderful",
-    "supernatural_type-none": "None",
+    "supernatural_type-none": "Not applicable",
 
     "nature-all": "All",
     "nature-animal": "Animal",
@@ -117,9 +117,8 @@
     "nature-supernatural": "Supernatural",
 
     "dimension-all": "All",
-    "dimension-body": "Body",
-    "dimension-soul": "Soul",
-    "dimension-transcendental": "Transcendental",
+    "dimension-body": "Corporeal",
+    "dimension-non-body": "Not corporeal",
 
     "excerpts-label": "excerpts",
     "excerpts-results": "results",
@@ -164,7 +163,7 @@
     "library-filter-modern": "Modern portuguese",
     "library-filter-lightsoff": "Lights-off mode",
     "library-available-codices": "Available texts",
-    "library-genre-all": "All genres",
+    "library-genre-all": "All literature genres",
 
 
     "lost": "Lost?",

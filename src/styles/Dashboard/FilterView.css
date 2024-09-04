@@ -6,10 +6,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 1% 20px;
+    padding: 1%;
+    padding-left: 0.5%;
+    padding-right: 1%;
 
     text-align: left;
-    font-size: 17px;
+    font-size: 15px;
 
     max-height: 100%;
     overflow: auto;
@@ -27,7 +29,6 @@ button.dashboard-filter-category{
     border: solid;
     border-color: #EAEAEA;
     background-color: white;
-    font-size: medium;
     vertical-align: middle;
     display: grid;
     grid-template-columns: 100% 0%;
@@ -50,7 +51,7 @@ button.dashboard-filter-category.drag{
 
     border: solid;
     border-color: #dad8d8;
-    font-size: 14px;
+    font-size: 13px;
 	transition: 0.3s;
     
     &:hover{
@@ -75,7 +76,7 @@ button.dashboard-filter-category.drag{
 
 .dashboard.form-select {
     width: 100%;
-    font-size: smaller;
+    font-size: small;
     border-radius: 20px;
 }
 
@@ -143,7 +144,6 @@ div.dashboard-image-component {
     width: 63%;
     height: 8%;
     border-radius: 100px;
-    font-size: 13px;
     text-align: center;
 
     cursor: pointer;
@@ -169,7 +169,7 @@ div.dashboard-image-component {
 
 .filter-dropdown-content-show {
     display: block;
-    font-size: 15px;
+    font-size: 13px;
 	background-color: white;
     width: 100%;
     max-height: 300px;
@@ -206,7 +206,7 @@ div.dashboard-image-component {
     overflow: hidden;
     text-wrap: nowrap;
     width: 100%;
-    font-size: 14px;
+    font-size: 13px;
     padding: 2% 5%;
     border-radius: 20px;
     text-align: left;
@@ -219,7 +219,7 @@ div.dashboard-image-component {
 
 .location-dropdown-content-show {
     display: block;
-    font-size: 14px;
+    font-size: 13px;
 	background-color: white;
     width: 100%;
     max-height: 200px;
@@ -254,7 +254,7 @@ div.dashboard-image-component {
     overflow: hidden;
     text-wrap: nowrap;
     width: 100%;
-    font-size: 14px;
+    font-size: 13px;
     padding: 2% 5%;
     border-radius: 20px;
     text-align: left;
@@ -267,7 +267,7 @@ div.dashboard-image-component {
 
 .century-dropdown-content-show {
     display: block;
-    font-size: 14px;
+    font-size: 13px;
 	background-color: white;
     width: 100%;
     max-height: 200px;

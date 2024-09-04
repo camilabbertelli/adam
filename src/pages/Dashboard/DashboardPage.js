@@ -153,17 +153,13 @@ const DashboardPage = (props) => {
             index: props.csvIndexes.dimension
         },
         "dimension-body": {
-            csv_name: "Corpo",
+            csv_name: "Corpórea",
             index: props.csvIndexes.dimension
         },
-        "dimension-soul": {
-            csv_name: "Alma",
+        "dimension-non-body": {
+            csv_name: "Não corpórea",
             index: props.csvIndexes.dimension
-        },
-        "dimension-transcendental": {
-            csv_name: "Transcendental",
-            index: props.csvIndexes.dimension
-        },
+        }
     }
 
     const [globalData, setGlobalData] = useState([])

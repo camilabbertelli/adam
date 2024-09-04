@@ -83,7 +83,7 @@ const App = () => {
 				names.about_qualities = "Qualificativo do Sobre-Quem"
 				names.object = "Objeto"
 				names.value = "Valor"
-				names.supernatural_type = "Tipo de sobrenatural"
+				names.supernatural_type = "Tipo de ato sobrenatural"
 				names.pp = "PP."
 
 				Object.keys(names).forEach((key, index) => {

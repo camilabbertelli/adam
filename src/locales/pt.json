@@ -11,13 +11,13 @@
     "btnDiscover": "Descubra mais",
     "titleGallery": "Nossa Galeria",
     "titleAboutUs": "Sobre nós",
-    "home-map-title": "Localidades e séculos descritos na narrativa medieval",
+    "home-map-title": "Localidades e séculos descritos nos textos medievais",
     "icon-language": "Idioma",
 
 
     "information": "Informação",
     "information-map": "Passe o rato sobre um pin para obter mais informações.",
-    "information-legend-map": "A legenda representa o total de ocorrências para cada par narrativo localidade-século.",
+    "information-legend-map": "A legenda representa o total de ocorrências para cada par textual localidade-século.",
     "information-pyramid": "Passe o rato sobre uma barra para obter mais informações. <br/>Clique no ícone à direita para alterar os tipos de agrupamento.",
     "information-heatmap": "Passe o rato sobre uma célula para obter mais informações. Clique na mesma para mudar para a visualização detalhada. <br/> As categorias podem ser arrastadas a partir dos filtros à esquerda",
     "information-imp": "Passe o rato sobre uma célula para obter mais informações. Escolha duas pessoas ('sujeito') para comparar suas características. Termos em comum serão destacados para facilitar a comparação. Cada termo é acompanhado pelo número de ocorrências no banco de dados quando o rato é passado sobre o mesmo.",
@@ -32,8 +32,8 @@
     "filter-tooltip-nature": "Define a natureza do ato e do sujeito.",
     "filter-tooltip-supernatural_type": "Se a 'Natureza' é sobrenatural, define o tipo.",
     "filter-tooltip-dimension": "Define a dimensão do corpo.",
-    "filter-tooltip-location": "Localidades presentes na narrativa.",
-    "filter-tooltip-centuries": "Séculos presentes na narrativa.",
+    "filter-tooltip-location": "Localidades presentes nos textos.",
+    "filter-tooltip-centuries": "Séculos presentes nos textos.",
     "filter-tooltip-codices": "Textos analisados na pesquisa.",
     
 
@@ -84,7 +84,7 @@
     "agent-label": "Agente",
     "intention-label": "Intenção",
     "value-label": "Valor",
-    "supernatural_type-label": "Tipo de sobrenatural",
+    "supernatural_type-label": "Tipo de ato sobrenatural",
     "nature-label": "Natureza",
     "dimension-label": "Dimensão",
     "codices-label": "Textos",
@@ -109,7 +109,7 @@
     "supernatural_type-all": "Todos",
     "supernatural_type-miraculous": "Miraculoso",
     "supernatural_type-wonderful": "Maravilhoso",
-    "supernatural_type-none": "Nenhum",
+    "supernatural_type-none": "Não aplicável",
 
     "nature-all": "Todos",
     "nature-animal": "Animal",
@@ -117,9 +117,8 @@
     "nature-supernatural": "Sobrenatural",
 
     "dimension-all": "Todos",
-    "dimension-body": "Corpo",
-    "dimension-soul": "Alma",
-    "dimension-transcendental": "Transcendental",
+    "dimension-body": "Corpórea",
+    "dimension-non-body": "Não corpórea",
 
     "excerpts-label": "excertos",
     "excerpts-results": "resultados",
@@ -165,7 +164,7 @@
     "library-filter-modern": "Português Moderno",
     "library-filter-lightsoff": "Luzes apagadas",
     "library-available-codices": "Textos disponíveis",
-    "library-genre-all": "Todos os géneros",
+    "library-genre-all": "Todos os géneros literários",
 
 
     "lost": "Perdido?",

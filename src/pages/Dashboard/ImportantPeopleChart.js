@@ -98,7 +98,8 @@ const ImportantPeopleChart = (props) => {
 			props.setResetComponents(false)
             
             let element = document.getElementById('imp-search-bar')
-            element.value = ""
+            if (element)
+                element.value = ""
 		}
 
         setSelectedImp(aux)

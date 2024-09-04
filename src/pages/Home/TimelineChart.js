@@ -134,7 +134,7 @@ const TimelineChart = ({ centuries }) => {
                     .transition().duration(50)
                     .style("transform", "translateY(5px)")
                     .style("box-shadow", "none")
-                    .style("opacity", 0.6)
+                    .style("opacity", 0.4)
 
 
             if (selectedCodices.length)
@@ -162,13 +162,14 @@ const TimelineChart = ({ centuries }) => {
 
                     let classes = this.classList.value.split(" ")
                     let color = classes[classes.length - 1]
+                    console.log(classes)
 
                     d3.select(this)
                         .transition()
                         .duration(200)
                         .attr("opacity", 1)
                         .attr("r", 1.4 / zoomFactor)
-                        .style("fill", color)
+                        .attr("fill", color)
                 })
 
 
@@ -176,7 +177,8 @@ const TimelineChart = ({ centuries }) => {
                     .transition().duration(50)
                     .style("transform", "translateY(5px)")
                     .style("box-shadow", "none")
-                    .style("opacity", 0.6)
+                    .style("opacity", 0.4)
+                    .style("border-color", "#4A1515")
 
                 let aux = [...selectedCodices]
                 aux.splice(selectedCodices.indexOf(century_title), 1)
@@ -187,7 +189,7 @@ const TimelineChart = ({ centuries }) => {
                         .duration(200)
                         .attr("opacity", 1)
                         .attr("r", 2 / zoomFactor)
-                        .style("fill", "#656d9b")
+                        .attr("fill", "#656d9b")
                 })
 
                 setSelectedCodices(aux)
@@ -197,7 +199,7 @@ const TimelineChart = ({ centuries }) => {
                     .duration(200)
                     .attr("opacity", 1)
                     .attr("r", 2 / zoomFactor)
-                    .style("fill", "#656d9b")
+                    .attr("fill", "#656d9b")
 
 
                 d3.select(`#${century_title}`)
@@ -205,6 +207,7 @@ const TimelineChart = ({ centuries }) => {
                     .style("transform", "translateY(-5px)")
                     .style("box-shadow", "none")
                     .style("opacity", 1)
+                    .style("border-color", "#656d9b")
 
                 let aux = [...selectedCodices]
                 aux.push(century_title)
