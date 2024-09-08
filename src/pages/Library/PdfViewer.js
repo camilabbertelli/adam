@@ -17,6 +17,7 @@ const PdfViewer = ({ fileUrl, theme }) => {
         PrintMenuItem: () => <></>,
         SwitchTheme: () => <></>,
         SwitchThemeMenuItem: () => <></>,
+        EnterFullScreen: () => <></>,
     });
 
     const renderToolbar = Toolbar => (

@@ -163,19 +163,29 @@ const TabContent = (props) => {
             return (entry[1].total !== 0)
         })
 
-        pyramidData = new d3.InternMap(pyramidData)
-
         let participants_total = 0
 
-        for (let [, value] of pyramidData)
-            participants_total += value.masc + value.fem
+        pyramidData.forEach(entry => {
+            participants_total += entry[1].total
+        })
 
         if (participants_total === 0)
             participants_total = 1
 
-        let maxMasc = d3.max(pyramidData, d => d[1].masc / participants_total)
-        let maxFem = d3.max(pyramidData, d => d[1].fem / participants_total)
-        let maxTotal = d3.max(pyramidData, d => d[1].total / participants_total)
+        pyramidData = pyramidData.map(entry => {
+            return [entry[0], {
+                masc: entry[1].masc,
+                fem: entry[1].fem,
+                total: entry[1].total,
+                totalParticipants: participants_total
+            }]
+        })
+
+        pyramidData = new d3.InternMap(pyramidData)
+
+        let maxMasc = d3.max(pyramidData, d => d[1].masc / d[1].totalParticipants)
+        let maxFem = d3.max(pyramidData, d => d[1].fem / d[1].totalParticipants)
+        let maxTotal = d3.max(pyramidData, d => d[1].total / d[1].totalParticipants)
         let maxScale = (totalOccurrences) ? maxTotal : Math.max(maxMasc, maxFem)
 
         let oneSideScale = (totalOccurrences) ? false : (maxMasc === 0 || maxFem === 0)
@@ -227,9 +237,10 @@ const TabContent = (props) => {
 
             let name = type === "masc" ? t("pyramid-masculine") : t("pyramid-feminine")
             if (type === "total") name = "Total"
+
             tooltipPyramid
                 .html(`<center><b>${d[0]} - ${name.charAt(0).toUpperCase() + name.slice(1)}</b></center>
-                        ${t("pyramid-percentage")}: ${d3.format(".1f")((data / participants_total) * 100)}%<br>
+                        ${t("pyramid-percentage")}: ${d3.format(".1f")((data / d[1].totalParticipants) * 100)}%<br>
                         ${t("heatmap-occurrence")}: ${data}`)
                 .style("top", event.pageY - 10 + "px")
                 .style("left", event.pageX + 10 + "px");
@@ -347,7 +358,7 @@ const TabContent = (props) => {
             .attr("class", "pyramid-bottom-axis")
             .attr("transform", `translate(10,0)`)
             .attr("id", "axismale")
-            .call(d3.axisBottom(xScaleMasc).tickSize(0).tickPadding(2).ticks((factor === 0.01) ? 3 : (oneSideScale ? 3 : 4), "%").tickFormat(x => { if (x === 0) return 0; else return `${(+(x * 100).toFixed(1))}%` }))
+            .call(d3.axisBottom(xScaleMasc).tickSize(0).tickPadding(2).ticks((factor === 0.01) ? 3 : (oneSideScale ? 3 : 3), "%").tickFormat(x => { if (x === 0) return 0; else return `${(+(x * 100).toFixed(1))}%` }))
             .call(function (d) { return d.select(".domain").remove() });
 
         let bottom_legend = axes_bottom
@@ -385,7 +396,7 @@ const TabContent = (props) => {
                 .attr("class", "pyramid-bottom-axis")
                 .attr("transform", `translate(10,0)`)
                 .attr("id", "axisfemale")
-                .call(d3.axisBottom(xScaleFem).tickSize(0).tickPadding(2).ticks((factor === 0.01) ? 3 : (oneSideScale ? 3 : 4), "%").tickFormat(x => { if (x === 0) return; else return `${(+(x * 100).toFixed(1))}%` }))
+                .call(d3.axisBottom(xScaleFem).tickSize(0).tickPadding(2).ticks((factor === 0.01) ? 3 : (oneSideScale ? 3 :3), "%").tickFormat(x => { if (x === 0) return; else return `${(+(x * 100).toFixed(1))}%` }))
                 .call(function (d) { return d.select(".domain").remove() });
 
             bottom_legend
@@ -442,7 +453,7 @@ const TabContent = (props) => {
                     .duration(500)
                     .attr("x", xScaleMasc(0))
                     .attr("y", d => yScale(d[0]))
-                    .attr("width", d => xScaleMasc(d[1].total / participants_total))
+                    .attr("width", d => xScaleMasc(d[1].total / d[1].totalParticipants))
                     .attr("height", yScale.bandwidth())
                     .style("fill", "#935959")
                     .style("opacity", d => {
@@ -465,9 +476,9 @@ const TabContent = (props) => {
                     .transition()
                     .duration(500)
                     .attr("class", d => `barMasc pyramid-Masculino-${noSpaces(d[0])}`)
-                    .attr("x", d => xScaleMasc(d[1].masc / participants_total))
+                    .attr("x", d => xScaleMasc(d[1].masc / d[1].totalParticipants))
                     .attr("y", d => yScale(d[0]))
-                    .attr("width", d => barsWidth - xScaleMasc(d[1].masc / participants_total))
+                    .attr("width", d => barsWidth - xScaleMasc(d[1].masc / d[1].totalParticipants))
                     .attr("height", yScale.bandwidth())
                     .style("fill", "#7BB3B7")
                     .style("opacity", d => {
@@ -487,7 +498,7 @@ const TabContent = (props) => {
                     .attr("class", d => `barFem pyramid-Feminino-${noSpaces(d[0])}`)
                     .attr("x", xScaleFem(0))
                     .attr("y", d => yScale(d[0]))
-                    .attr("width", d => xScaleFem(d[1].fem / participants_total) - xScaleFem(0))
+                    .attr("width", d => xScaleFem(d[1].fem / d[1].totalParticipants) - xScaleFem(0))
                     .attr("height", yScale.bandwidth())
                     .style("fill", "#DA9C80")
                     .style("opacity", d => {
@@ -517,11 +528,11 @@ const TabContent = (props) => {
                 .join("rect")
                 .attr("class", d => `barMasc pyramid-Masculino-${noSpaces(d[0])}`)
                 .attr("cursor", "pointer")
-                .attr("x", d => (totalOccurrences) ? xScaleMasc(0) : (xScaleMasc(d[1].masc / participants_total)))
+                .attr("x", d => (totalOccurrences) ? xScaleMasc(0) : (xScaleMasc(d[1].masc / d[1].totalParticipants)))
                 .attr("y", d => yScale(d[0]))
                 .attr("width", d => (totalOccurrences) ?
-                    xScaleMasc(d[1].total / participants_total) :
-                    (barsWidth - xScaleMasc(d[1].masc / participants_total)))
+                    xScaleMasc(d[1].total / d[1].totalParticipants) :
+                    (barsWidth - xScaleMasc(d[1].masc / d[1].totalParticipants)))
                 .attr("height", yScale.bandwidth())
                 .style("fill", (totalOccurrences) ? "#935959" : "#7BB3B7")
                 .style("opacity", d => {
@@ -559,7 +570,7 @@ const TabContent = (props) => {
                 .attr("cursor", "pointer")
                 .attr("x", xScaleFem(0))
                 .attr("y", d => yScale(d[0]))
-                .attr("width", (totalOccurrences) ? 0 : d => xScaleFem(d[1].fem / participants_total) - xScaleFem(0))
+                .attr("width", (totalOccurrences) ? 0 : d => xScaleFem(d[1].fem / d[1].totalParticipants) - xScaleFem(0))
                 .attr("height", yScale.bandwidth())
                 .style("fill", "#DA9C80")
                 .style("opacity", d => {
@@ -788,9 +799,6 @@ const TabChart = (props) => {
     const [data, setData] = useState([])
 
     useEffect(() => {
-        let subjectIndex = props.csvIndexes.subject_name
-        let withIndex = props.csvIndexes.with_name
-        let aboutIndex = props.csvIndexes.about_name
 
         setData(props.data.filter(entry => {
             let heatmapFilter = true

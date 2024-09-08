@@ -189,6 +189,7 @@ const DashboardPage = (props) => {
     const [changedFilter, setChangedFilter] = useState(false)
 
     function handleDragStart(event) {
+
         setActiveCategory(event.active.id);
 
         if (activeCategories.length === 2) {
@@ -206,6 +207,7 @@ const DashboardPage = (props) => {
 
 
     function handleDragEnd({ active, delta }) {
+
         let droppableRect = document.getElementById("droppable").getBoundingClientRect()
         let draggableRect = document.getElementById(active.id).getBoundingClientRect()
 

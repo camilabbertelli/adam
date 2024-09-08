@@ -162,7 +162,6 @@ const TimelineChart = ({ centuries }) => {
 
                     let classes = this.classList.value.split(" ")
                     let color = classes[classes.length - 1]
-                    console.log(classes)
 
                     d3.select(this)
                         .transition()

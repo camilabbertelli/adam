@@ -30,7 +30,7 @@
     "filter-tooltip-intention": "Defines the intention associated with the action.",
     "filter-tooltip-value": "Defines whether the action is literal or symbolic.",
     "filter-tooltip-nature": "Defines the nature of the act and subject.",
-    "filter-tooltip-supernatural_type": "If 'Nature' is supernatural, defines the type.",
+    "filter-tooltip-supernatural_type": "Defines the type of supernatural act, wether 'Nature' is 'supernatural' or not.",
     "filter-tooltip-dimension": "Defines the dimension of the body.",
     "filter-tooltip-location": "Localities present in the texts.",
     "filter-tooltip-centuries": "Centuries present in the texts.",

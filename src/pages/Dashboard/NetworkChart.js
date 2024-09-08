@@ -232,7 +232,10 @@ const NetworkChart = (props) => {
 
 
         if (nodeClickCheck) {
-            props.setNetworkData({ selected: selectedNodes, people: nodes.map(d => d.person) })
+            let p = nodes.map(d => d.person)
+            if (selectedNodes.length === 0)
+                p = []
+            props.setNetworkData({ selected: selectedNodes, people: p })
             setNodeClickCheck(false)
         }
 

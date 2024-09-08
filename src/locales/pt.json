@@ -30,7 +30,7 @@
     "filter-tooltip-intention": "Define a intenção associada à ação.",
     "filter-tooltip-value": "Define se a ação é literal ou simbólica.",
     "filter-tooltip-nature": "Define a natureza do ato e do sujeito.",
-    "filter-tooltip-supernatural_type": "Se a 'Natureza' é sobrenatural, define o tipo.",
+    "filter-tooltip-supernatural_type": "Define o tipo de ato sobrenatural, seja a 'Natureza' 'sobrenatural' ou não.",
     "filter-tooltip-dimension": "Define a dimensão do corpo.",
     "filter-tooltip-location": "Localidades presentes nos textos.",
     "filter-tooltip-centuries": "Séculos presentes nos textos.",

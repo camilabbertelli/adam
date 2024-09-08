@@ -74,6 +74,9 @@ class Table extends React.Component {
         let checkedKeys = this.props.checkedKeys;
         let names = this.props.csvNames; 
 
+        let loader = document.getElementById("loader");
+        loader.classList.add('loader--hide');
+
         function handleTbody() {
             $('.thead-database').scrollLeft($('.tbody-database').scrollLeft());
         }
@@ -321,6 +324,7 @@ const DatabasePage = (props) => {
             </div>
             <div className="database-table-view">
                 <Table t={t} checkedKeys={checkedKeys} csvNames={props.csvNames} data={data} setData={setData} filterConfiguration={props.databaseFilterConfiguration} setFilterConfiguration={props.setDatabaseFilterConfiguration} />
+                <div id="loader" className="loader"></div>
             </div>
         </div>)
 }

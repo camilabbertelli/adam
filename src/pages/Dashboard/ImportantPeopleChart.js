@@ -47,6 +47,7 @@ const ImportantPeopleChart = (props) => {
 
     useEffect(() => {
 
+
         let dataInitial = props.data.filter(entry => {
             let networkFilter = true
             let pyramidFilter = true
@@ -104,7 +105,6 @@ const ImportantPeopleChart = (props) => {
 
         setSelectedImp(aux)
         props.setImpPeopleData(aux)
-        
         setData(dataInitial)
         setImpPeople(imp)
         setSearchedPeople(Array.from(Object.keys(imp)))
@@ -124,6 +124,7 @@ const ImportantPeopleChart = (props) => {
     function changeSelected(key) {
 
         let aux = [...selectedImp]
+        let cancel = false
 
         if (aux.includes(key))
             aux[aux.indexOf(key)] = null
@@ -142,12 +143,16 @@ const ImportantPeopleChart = (props) => {
                     d3.selectAll(".default-selection").transition().duration(500)
                         .style("background-color", "white")
                 }, 1000);
+
+                cancel = true
             }
 
         }
-
-        setSelectedImp(aux)
-        props.setImpPeopleData(aux)
+        
+        if (!cancel){
+            setSelectedImp(aux)
+            props.setImpPeopleData(aux)
+        }
     }
 
     useEffect(() => {
