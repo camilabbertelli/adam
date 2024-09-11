@@ -85,7 +85,7 @@ div.image-component {
     transition: all 0.2s ease-in-out !important;
 
     cursor: pointer;
-    
+    opacity: 0.4;
     border: 5px solid #4A1515;
 }
 
