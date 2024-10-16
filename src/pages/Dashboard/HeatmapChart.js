@@ -725,10 +725,10 @@ const HeatmapChart = (props) => {
 													<button className={currentSorting1 === "value_asc" ? "sorting-active" : ""} onClick={() => changeSorting1("value_asc")}> {t("heatmap-occurrence")} - {t("pyramid-low-high")} </button>
 													<button className={currentSorting1 === "value_desc" ? "sorting-active" : ""} onClick={() => changeSorting1("value_desc")}> {t("heatmap-occurrence")} - {t("pyramid-high-low")} </button>
 
-												</div>
+												</div>				
 											</div>
 											<div className="heatmap-details-sector">
-												{Object.keys(details).length !== 0 &&
+											{Object.keys(details).length !== 0 &&
 													<>
 														<img title={t("icon-back")} alt="info" src={back}
 															style={{ width: "15px", height: "15px", marginRight: "10px", cursor: "pointer" }}

@@ -56,9 +56,10 @@ const NetworkChart = (props) => {
             let sexes = ["Ambos", props.pyramidData.sex]
 
             if (props.pyramidData.sex)
-                pyramidFilter = sexes.includes(entry[props.csvIndexes.subject_sex]) &&
-                    (sexes.includes(entry[props.csvIndexes.with_sex]) || entry[props.csvIndexes.with_sex] === "Não aplicável") &&
-                    (sexes.includes(entry[props.csvIndexes.about_sex]) || entry[props.csvIndexes.about_sex] === "Não aplicável")
+                pyramidFilter = sexes.includes(entry[props.csvIndexes.subject_sex]) //&&
+                    //(sexes.includes(entry[props.csvIndexes.with_sex]) || entry[props.csvIndexes.with_sex] === "Não aplicável") &&
+                    //(sexes.includes(entry[props.csvIndexes.about_sex]) || entry[props.csvIndexes.about_sex] === "Não aplicável")
+
 
             if (props.pyramidData.category)
                 pyramidFilter = pyramidFilter && entry[props.pyramidData.categoryIndex] === props.pyramidData.category
@@ -82,9 +83,6 @@ const NetworkChart = (props) => {
         })
 
         d3.select(".network-graph").selectAll("svg").remove("")
-
-        if (aux.length === 0)
-            return
 
         let subject_nodes = d3.flatGroup(aux, d => d[props.csvIndexes.subject_name], d => d[props.csvIndexes.title], d => d[props.csvIndexes.subject_number], d => d[props.csvIndexes.subject_sex], d => d[props.csvIndexes.subject_qualities]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4]]])
         let with_nodes = d3.flatGroup(aux, d => d[props.csvIndexes.with_name], d => d[props.csvIndexes.title], d => d[props.csvIndexes.with_sex], d => d[props.csvIndexes.with_qualities]).flatMap(d => [[d[0], d[1], d[2], d[3], d[4]]])
@@ -225,7 +223,7 @@ const NetworkChart = (props) => {
             })
 
             if (links.length === 0)
-                passLinks = selectedNodes.includes(n.person)
+                passLinks = true
 
             return passLinks
         })
@@ -412,6 +410,9 @@ const NetworkChart = (props) => {
 
         d3.select(".network-graph").selectAll("svg").remove("")
 
+    
+        if (data.length === 0)
+            return
 
         // create a tooltipNetwork
         tooltipNetwork = d3.select("body")

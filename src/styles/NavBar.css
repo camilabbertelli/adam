@@ -35,7 +35,11 @@ nav li {
     padding: 1dvh;
 }
 
-nav a {
+a h1{
+    color: white;
+}
+
+nav li a {
     text-decoration: none;
     color: #805956;
     font-weight: bold;
@@ -44,7 +48,7 @@ nav a {
 	border-radius: 20px;
 }
 
-nav a:hover {
+nav li a:hover {
     background: #805956;
     color: white;
 }

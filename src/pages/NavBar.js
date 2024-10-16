@@ -41,7 +41,7 @@ const NavBar = () => {
     return (
         <nav className="sticky-top">
             <div style={{height: "60%"}}>
-                <h1 className="title">A.D.A.M.</h1>
+                <NavLink to="/" className={(navData) => (navData.isActive ? "navbar-selected" : null)}><h1 className="title">A.D.A.M.</h1></NavLink>
                 <img alt="ornament" className="ornament" src={ornament} />
             </div>
             <ul>
