@@ -29,29 +29,31 @@ const Excerpts = (props) => {
 
         if (!state) {
 
-            let indexKey1 = props.categories[props.activeCategories[0]].index
-            let indexKey2 = props.categories[props.activeCategories[1]].index
+            if (props.categories[props.activeCategories[0]] && props.categories[props.activeCategories[1]]) {
+                let indexKey1 = props.categories[props.activeCategories[0]].index
+                let indexKey2 = props.categories[props.activeCategories[1]].index
 
-            // heatmap
-            if (Object.keys(props.heatmapData).length !== 0) {
-                indexKey1 = props.categories[props.activeCategories[0]].indexSubcategory
-                indexKey2 = props.categories[props.activeCategories[1]].indexSubcategory
+                // heatmap
+                if (Object.keys(props.heatmapData).length !== 0) {
+                    indexKey1 = props.categories[props.activeCategories[0]].indexSubcategory
+                    indexKey2 = props.categories[props.activeCategories[1]].indexSubcategory
+                }
+
+                let heatmapKey1 = noSpaces(entry[indexKey1])
+                let heatmapKey2 = noSpaces(entry[indexKey2])
+
+                let selectionHeatmap = d3.select(`.heatmap-${heatmapKey1}-${heatmapKey2}`);
+                let elementHeatmap = selectionHeatmap.node();
+
+                if (elementHeatmap) {
+                    elementHeatmap.scrollIntoView({ block: "center" });
+                    selectionHeatmap.transition().duration(500).style("stroke", "black")
+                }
+
+                setTimeout(() => {
+                    selectionHeatmap.transition().duration(500).style("stroke", "#ECECEC")
+                }, 2000);
             }
-
-            let heatmapKey1 = noSpaces(entry[indexKey1])
-            let heatmapKey2 = noSpaces(entry[indexKey2])
-
-            let selectionHeatmap = d3.select(`.heatmap-${heatmapKey1}-${heatmapKey2}`);
-            let elementHeatmap = selectionHeatmap.node();
-
-            if (elementHeatmap) {
-                elementHeatmap.scrollIntoView({ block: "center" });
-                selectionHeatmap.transition().duration(500).style("stroke", "black")
-            }
-
-            setTimeout(() => {
-                selectionHeatmap.transition().duration(500).style("stroke", "#ECECEC")
-            }, 2000);
 
             let indexPyramid = props.categories[props.currentTabchartCategory].index
 
@@ -133,14 +135,14 @@ const Excerpts = (props) => {
 
             if (props.networkData.selected.length)
                 networkFilter = props.networkData.selected.includes(entry[props.csvIndexes.subject_name]) ||
-                                props.networkData.selected.includes(entry[props.csvIndexes.with_name]) ||
-                                props.networkData.selected.includes(entry[props.csvIndexes.about_name])
+                    props.networkData.selected.includes(entry[props.csvIndexes.with_name]) ||
+                    props.networkData.selected.includes(entry[props.csvIndexes.about_name])
 
-            
+
             if (!props.impPeopleData.includes(null))
                 impFilter = props.impPeopleData[0] === entry[props.csvIndexes.subject_name] ||
-                            props.impPeopleData[1] === entry[props.csvIndexes.subject_name]
-            else if (props.impPeopleData.includes(null)){
+                    props.impPeopleData[1] === entry[props.csvIndexes.subject_name]
+            else if (props.impPeopleData.includes(null)) {
                 if (props.impPeopleData[0] !== null)
                     impFilter = props.impPeopleData[0] === entry[props.csvIndexes.subject_name]
                 else if (props.impPeopleData[1] !== null)
